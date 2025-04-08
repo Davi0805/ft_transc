@@ -6,7 +6,7 @@
 /*   By: davi <davi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 22:52:12 by davi              #+#    #+#             */
-/*   Updated: 2025/04/08 23:07:31 by davi             ###   ########.fr       */
+/*   Updated: 2025/04/09 00:34:14 by davi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@ const knex = require('knex');
 const db = knex({
     client: 'sqlite3',
     connection: {
-        filename: './dev.sqlite3',
+        filename: './config/dev.sqlite3',
     },
+    useNullAsDefault: true
 });
 
 module.exports = db;
