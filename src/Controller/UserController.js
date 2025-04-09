@@ -22,7 +22,7 @@ class UserController {
         const result = await userService.createUser(user);
         if (!result)
             return reply.code(400).send();
-        return reply.code(201);
+        return reply.code(201).send();
     }
 
     async Login(req, reply)
@@ -31,7 +31,7 @@ class UserController {
         const IsAuth = await userService.Login(user);
         if (!IsAuth)
             return reply.code(404).send();
-        reply.send();
+        return reply.code(200).send();
     }
 }
 

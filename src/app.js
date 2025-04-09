@@ -14,7 +14,7 @@ const setup = () => {
 const run = () => {
     const app = setup();
     try {
-        app.listen({ port: 8080});
+        app.listen({ port: 8080, host: '0.0.0.0' });
         console.log("Listening...");
     } catch (error) {
         console.log("FATAL");
