@@ -14,6 +14,11 @@ class UserRepository {
         return db.raw('SELECT * FROM users WHERE user_id = ?', [id]);
     }
 
+    async findByUsername(username)
+    {
+        return db.raw('SELECT username, password_hash FROM users WHERE username = ?', [username]);
+    }
+
     async save(user) {
         return db('users').insert(user);
     }
