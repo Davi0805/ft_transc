@@ -16,7 +16,8 @@ COPY package.json .
 
 RUN npm install
 
-RUN 
+RUN npm install jsonwebtoken
+
 # trying to fix an issue i think related to bind volume
 #RUN npm install bcrypt
 
