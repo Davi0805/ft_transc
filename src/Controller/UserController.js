@@ -1,7 +1,8 @@
 const userService = require('../Services/UserService');
+const jwtService = require('../Services/JwtService');
+const redisService = require('../Services/RedisService');
 
 
-// todo: learn how to check this fucking structured | no structured classes
 class UserController {
 
     async getAll(req, reply)
@@ -28,10 +29,12 @@ class UserController {
     async Login(req, reply)
     {
         const user = req.body;
-        const IsAuth = await userService.Login(user);
-        if (!IsAuth)
+        const user_id = await userService.Login(user);
+        if (!user_id)
             return reply.code(404).send();
-        return reply.code(200).send();
+
+        const token = await jwtService.generate(user_id);
+        return reply.send({token: token});
     }
 }
 
