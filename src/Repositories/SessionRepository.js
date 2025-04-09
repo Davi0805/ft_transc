@@ -10,8 +10,9 @@ class SessionRepository {
 
     async findByJwt(jwToken)
     {
-        const metadata = await redis.hGetAll(`session:${jwToken}`);
-        return Object.keys(metadata).length > 0 ? metadata : null;
+        const result = await redis.hGetAll(`session:${jwToken}`);
+        const metadata = JSON.stringify(result);
+        return Object.keys(metadata).length > 2 ? metadata : null; // size 2 = {}
     }
 }
 
