@@ -1,9 +1,7 @@
 const redis = require('redis');
 
 const client = redis.createClient({
-    socket: {
-        port: 6378
-    }
+    url: 'redis://redis:6378'
 });
 
 client.on('error', err => {

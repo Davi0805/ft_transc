@@ -1,3 +1,5 @@
 FROM redis
 
-CMD [ "redis-server" ]
+COPY redis.conf .
+
+CMD [ "redis-server", "./redis.conf" ]
