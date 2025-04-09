@@ -7,13 +7,13 @@ services:
       - net
   
   user-backend:
-    build: ./src
+    build: ./src/User-Friends
     ports:
       - "8080:8080"
     environment:
       - NODE_ENV=development
     volumes:
-      - ./src:/app
+      - ./src/User-Friends:/app
       - /app/node_modules
     depends_on:
       - redis
