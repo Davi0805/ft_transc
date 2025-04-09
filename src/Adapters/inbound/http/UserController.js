@@ -1,6 +1,6 @@
-const userService = require('../Services/UserService');
-const jwtService = require('../Services/JwtService');
-const redisService = require('../Services/RedisService');
+const userService = require('../../../Application/Services/UserService');
+const jwtService = require('../../../Application/Services/JwtService');
+const redisService = require('../../../Application/Services/RedisService');
 
 
 class UserController {
