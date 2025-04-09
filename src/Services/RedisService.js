@@ -16,8 +16,14 @@ class RedisService {
 
     async postMessage(topic, message)
     {
-        messageRepository.send(topic, message);
+        await messageRepository.send(topic, message);
     }
+
+    /* async readTopic(topic)
+    {
+        const result = await messageRepository.listenWithoutGroup(topic);
+        return result;
+    } */
 }
 
 module.exports = new RedisService();
