@@ -4,13 +4,9 @@ class MessageRepository {
 
     async send(topic, message)
     {
-        await redis.XADD(topic, '*', message);
+        const messageArray = Object.entries(message).flat();
+        await redis.XADD(topic, '*', ...messageArray);
     }
-
-    /* async listenWithoutGroup(topic)
-    {
-        await redis.xRead();
-    } */
 
 }
 
