@@ -1,4 +1,5 @@
 const userRepository = require('../Repositories/UserRepository');
+
 //const bcrypt = require('bcryptjs'); // hashing lib to the passwords
 //import bcrypt from "bcryptjs";
 // dont forget the infinite await/s in the returns and controller 
@@ -7,7 +8,6 @@ const userRepository = require('../Repositories/UserRepository');
 class UserService {
 
     async getAll() {
-        console.log("ALOOOOOOOOOOOOOOOOOOOOOOoo");
         return await userRepository.findAll();
     }
 
@@ -34,15 +34,14 @@ class UserService {
 
     async Login(User)
     {
-        const result = await userRepository.findByUsername(User.username);
         try {
+            const result = await userRepository.findByUsername(User.username);
             /* await this.fastify.bcrypt.compare(User.password, result[0].password_hash); */
-            console.log(result[0].password_hash + " = " + User.password);
             if (User.password == result[0].password_hash)
-                return true;
+                return result[0].user_id;
         } catch (error) {
             console.log(error);
-            return false;
+            return null;
         }
     }
 };
