@@ -11,7 +11,7 @@ class UserRepository {
     }
 
     async findById(id) {
-        return db.raw('SELECT * FROM users WHERE id = ?', [id]);
+        return db.raw('SELECT * FROM users WHERE user_id = ?', [id]);
     }
 
     async save(user) {
