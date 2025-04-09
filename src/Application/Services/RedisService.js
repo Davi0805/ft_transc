@@ -1,5 +1,5 @@
-const sessionRepository = require('../Repositories/SessionRepository');
-const messageRepository = require('../Repositories/MessageRepository');
+const sessionRepository = require('../../Adapters/outbound/Repositories/SessionRepository');
+const messageRepository = require('../../Adapters/outbound/Repositories/MessageRepository');
 
 
 class RedisService {

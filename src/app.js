@@ -1,5 +1,5 @@
 const Fastify = require('fastify');
-const userRoutes = require('./routes/UserRoutes');
+const userRoutes = require('./Infrastructure/routes/UserRoutes');
 const sensible = require('fastify-sensible');
 
 const setup = () => {

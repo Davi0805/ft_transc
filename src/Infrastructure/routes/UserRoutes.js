@@ -1,4 +1,4 @@
-const userController = require('../Controller/UserController');
+const userController = require('../../Adapters/inbound/http/UserController');
 
 async function userRoutes(fastify, options) {
     fastify.get('/users', userController.getAll);

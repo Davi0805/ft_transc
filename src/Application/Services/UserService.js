@@ -1,4 +1,4 @@
-const userRepository = require('../Repositories/UserRepository');
+const userRepository = require('../../Adapters/outbound/Repositories/UserRepository');
 
 //const bcrypt = require('bcryptjs'); // hashing lib to the passwords
 //import bcrypt from "bcryptjs";

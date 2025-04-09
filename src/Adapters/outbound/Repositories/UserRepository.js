@@ -1,4 +1,4 @@
-const db = require('../config/Sqlite');
+const db = require('../../../Infrastructure/config/Sqlite');
 // remember to use await in the queries
 
 

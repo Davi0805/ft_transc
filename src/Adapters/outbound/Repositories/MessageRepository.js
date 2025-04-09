@@ -1,4 +1,4 @@
-const redis = require('../config/Redis');
+const redis = require('../../../Infrastructure/config/Redis');
 
 class MessageRepository {
 
