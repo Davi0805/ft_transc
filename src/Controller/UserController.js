@@ -7,14 +7,22 @@ class UserController {
 
     async getAll(req, reply)
     {
+        const session = await redisService.getSession((req.headers.authorization));
+        console.log("SESSION: " + session);
+        if (!session)
+            return reply.code(400).send();
         const users = await userService.getAll();
         reply.send(users);
     }
 
     async getById(req, reply)
     {
+        const session = await redisService.getSession((req.headers.authorization));
+        console.log("SESSION: " + session);
+        if (!session)
+            return reply.code(400).send();
         const user = await userService.findById(req.params.id);
-        reply.send(user);
+        return reply.send(user);
     }
 
     async createUser(req, reply) 
@@ -34,6 +42,7 @@ class UserController {
             return reply.code(404).send();
 
         const token = await jwtService.generate(user_id);
+        await redisService.saveSession(token, {user_id: user_id});
         return reply.send({token: token});
     }
 }
