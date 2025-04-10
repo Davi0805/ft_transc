@@ -6,7 +6,7 @@
 /*   By: davi <davi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 23:32:49 by davi              #+#    #+#             */
-/*   Updated: 2025/04/09 23:01:04 by davi             ###   ########.fr       */
+/*   Updated: 2025/04/10 01:32:09 by davi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,20 @@ const sql_scheme = fs.readFileSync('./Infrastructure/config/init.sql', 'utf-8');
 
 // here i call our db instance
 // to read raw queries from init.sql
-db.raw(sql_scheme).then(() => {
-    console.log('happiness!');
-    process.exit(0);
-  }).catch(err => {
-    console.error('Sadness:', err);
-    process.exit(1);
-  });
+const queries = sql_scheme
+    .split(';')
+    .map(query => query.trim())
+    .filter(query => query.length > 0);
+
+(async () => {
+    try {
+        for (const query of queries) {
+            await db.raw(query);
+        }
+        console.log('happiness!');
+        process.exit(0);
+    } catch (err) {
+        console.error('Sadness:', err);
+        process.exit(1);
+    }
+})();
