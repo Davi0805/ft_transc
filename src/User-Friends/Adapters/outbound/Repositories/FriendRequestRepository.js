@@ -43,15 +43,15 @@ class FriendRequestRepository {
 
     async getAllFriends(user_id)
     {
-        return await db.raw('SELECT u.user_id, u.name, u.username, u.email, u.user_image, '+
-                            'fr.created_at as friends_since '+
+        return await db.raw('SELECT u.user_id, u.name, u.username, u.email, u.user_image '+
                             'FROM users u '+
                             'JOIN friend_requests fr '+
                             'ON (fr.from_user_id = u.user_id OR fr.to_user_id = u.user_id) '+
                             'WHERE fr.status = ? AND '+
                             '('+
                             '(fr.from_user_id = ? AND fr.to_user_id = u.user_id) OR '+
-                            '(fr.to_user_id = ? AND fr.from_user_id = u.user_id) ', 
+                            '(fr.to_user_id = ? AND fr.from_user_id = u.user_id)'+
+                            ')', 
                             ['ACCEPTED', user_id, user_id]);
     }
 }
