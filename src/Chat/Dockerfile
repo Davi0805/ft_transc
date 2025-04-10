@@ -21,6 +21,6 @@ RUN npm install jsonwebtoken
 # trying to fix an issue i think related to bind volume
 #RUN npm install bcrypt
 
-EXPOSE 8080
+EXPOSE 8081
 
 CMD ["node", "app.js"]
