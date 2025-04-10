@@ -6,9 +6,9 @@ class FriendRequestService {
         return await friendRequestRepo.getAll();
     }
 
-    async newRequest()
+    async newRequest(sender_id, receiver_id)
     {
-        return await friendRequestRepo.newRequest();
+        return await friendRequestRepo.newRequest(sender_id, receiver_id);
     }
 }
 

@@ -1,11 +1,13 @@
 const Fastify = require('fastify');
 const userRoutes = require('./Infrastructure/routes/UserRoutes');
+const friendRequestRoutes = require('./Infrastructure/routes/FriendRequestRoutes');
 const sensible = require('fastify-sensible');
 
 const setup = () => {
     const app = Fastify({ logger: true });
 
     app.register(userRoutes);
+    app.register(friendRequestRoutes);
     app.register(sensible);
 
     return app;
