@@ -16,31 +16,40 @@ class FriendRequestController {
     }
 
     async listPendingRequests(req, reply) {
-        const session = await redisService.getSession((req.headers.authorization));
-        console.log("SESSION: " + session);
+        const session = JSON.parse(await redisService.getSession((req.headers.authorization)));
+        console.log("SESSION: " + JSON.stringify(session));
+        if (!session)
+            return reply.code(400).send();
         const pendingRequests = await friendRequest.listPendingRequests(session.user_id);
         return reply.send(pendingRequests);
     }
 
     async acceptRequest(req, reply) {
         const request_id = req.params.id;
-        const user_id = req.body.user_id;
-        const session = await redisService.getSession((req.headers.authorization));
-        console.log("SESSION: " + session);
-        await friendRequest.acceptRequest(request_id, user_id);
+        const session = JSON.parse(await redisService.getSession((req.headers.authorization)));
+        console.log("SESSION: " + JSON.stringify(session));
+        if (!session)
+            return reply.code(400).send();
+        await friendRequest.acceptRequest(request_id, session.user_id);
         return reply.send();
     }
 
     async rejectRequest(req, reply) {
         const request_id = req.params.id;
-        const user_id = req.body.user_id;
-        await friendRequest.rejectRequest(request_id, user_id);
+        const session = JSON.parse(await redisService.getSession((req.headers.authorization)));
+        console.log("SESSION: " + JSON.stringify(session));
+        if (!session)
+            return reply.code(400).send();
+        await friendRequest.rejectRequest(request_id, session.user_id);
         return reply.send();
     }
 
     async getAllFriends(req, reply) {
-        const user_id = req.query.user_id;
-        const friends = await friendRequest.getAllFriends(user_id);
+        const session = JSON.parse(await redisService.getSession((req.headers.authorization)));
+        console.log("SESSION: " + JSON.stringify(session));
+        if (!session)
+            return reply.code(400).send();
+        const friends = await friendRequest.getAllFriends(session.user_id);
         return reply.send(friends);
     }
 }
