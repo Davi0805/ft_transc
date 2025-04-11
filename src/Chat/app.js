@@ -1,6 +1,8 @@
 const Fastify = require('fastify');
 const sensible = require('fastify-sensible');
 const webSocketRoutes = require('./Infrastructure/routes/WebSocketRoutes');
+const conversationRoutes = require('./Infrastructure/routes/ConversationRoutes');
+const chatMessageRoutes = require('./Infrastructure/routes/ChatMessagesRoutes');
 
 const setup = () => {
     const app = Fastify({ logger: true });
@@ -8,6 +10,8 @@ const setup = () => {
 
     app.register(sensible);
     app.register(webSocketRoutes);
+    app.register(conversationRoutes);
+    app.register(chatMessageRoutes);
 
     return app;
 }
