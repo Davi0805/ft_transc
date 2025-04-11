@@ -4,7 +4,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE conversations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user1_id INTEGER NOT NULL,
-    user2_id INTEGER NOT NULL
+    user2_id INTEGER NOT NULL,
 
     UNIQUE(user1_id, user2_id),
     CHECK (user1_id != user2_id)
