@@ -30,7 +30,9 @@ class FriendRequestController {
         console.log("SESSION: " + JSON.stringify(session));
         if (!session)
             return reply.code(400).send();
+        // todo: make a query that change and return the row 
         await friendRequest.acceptRequest(request_id, session.user_id);
+        await redisService.postMessage('newFriendshipEvent', {user1: 1, user2: 2});
         return reply.send();
     }
 
