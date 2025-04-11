@@ -4,6 +4,8 @@ const webSocketRoutes = require('./Infrastructure/routes/WebSocketRoutes');
 const conversationRoutes = require('./Infrastructure/routes/ConversationRoutes');
 const chatMessageRoutes = require('./Infrastructure/routes/ChatMessagesRoutes');
 
+const consumeNewFriendsEvent = require('./Adapters/inbound/Redis Streams/streamsConsumer');
+
 const setup = () => {
     const app = Fastify({ logger: true });
     app.register(require('@fastify/websocket'));
@@ -18,6 +20,9 @@ const setup = () => {
 
 const run = () => {
     const app = setup();
+
+    consumeNewFriendsEvent();
+    
     try {
         app.listen({ port: 8081, host: '0.0.0.0' });
         console.log("Listening...");
