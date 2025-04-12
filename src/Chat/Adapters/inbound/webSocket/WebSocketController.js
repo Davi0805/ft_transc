@@ -21,7 +21,14 @@ class WebSocketController {
             const parsedMessage = JSON.parse(message);
             // TODO: CHECAR SE USER FAZ PARTE DE CONVERSATION ID
             await chatMessageService.saveMessage(parsedMessage.conversation_id, session.user_id, parsedMessage.message);
-            //add message logic here
+            
+            //todo: PENSAR EM LOGICA OTIMIZADA PARA BROADCAST DE MENSAGENS
+            //todo: POIS PRECISO DO ID DO USER QUE VAI RECEBER
+
+            const receiverSocket = await connectionsService.getUser(String(parsedMessage.receiver_id));
+            console.log('RECEIVER ID = '+parsedMessage.receiver_id + ' | socket = '+receiverSocket);
+            if (receiverSocket)
+                receiverSocket.send(JSON.stringify({conversation_id: parsedMessage.conversation_id, message: parsedMessage.message}));
         })
 
         socket.on('close', async () => {
