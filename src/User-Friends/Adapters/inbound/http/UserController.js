@@ -43,6 +43,9 @@ class UserController {
 
         const token = await jwtService.generate(user_id);
         await redisService.saveSession(token, {user_id: user_id});
+        // testing cause later will be cached via message queue
+        //await redisService.cacheFriends(user_id);
+        await redisService.postMessage('cacheFriends', JSON.stringify({user_id: user_id}));
         return reply.send({token: token});
     }
 }

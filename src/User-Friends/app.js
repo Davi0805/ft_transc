@@ -2,6 +2,8 @@ const Fastify = require('fastify');
 const userRoutes = require('./Infrastructure/routes/UserRoutes');
 const friendRequestRoutes = require('./Infrastructure/routes/FriendRequestRoutes');
 const sensible = require('fastify-sensible');
+const consumeFriendsCacheEvent = require('./Adapters/inbound/Redis Streams/FriendsCacheConsumer');
+
 
 const setup = () => {
     const app = Fastify({ logger: true });
@@ -15,6 +17,7 @@ const setup = () => {
 
 const run = () => {
     const app = setup();
+    consumeFriendsCacheEvent();
     try {
         app.listen({ port: 8080, host: '0.0.0.0' });
         console.log("Listening...");
