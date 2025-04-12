@@ -2,7 +2,19 @@
 class ConnectedUsersRepository {
     constructor()
     {
+        if (!!ConnectedUsersRepository.instance)
+            return ConnectedUsersRepository.instance;
+
+        ConnectedUsersRepository.instance = this;
+        
         this.users = new Map();
+
+        return this;
+    }
+
+    async getAllValues()
+    {
+        return this.users.values()
     }
 
     async addUser(userId, socket)
