@@ -34,6 +34,9 @@ async function consumeNewFriendsEvent()
                   const data = JSON.parse(characters);
                   console.log('IS IT WORKING ???? | USERID1 = ' + data.user1 + ' | USERID2 = ' + data.user2);
                   
+                  // todo: query should return the new conversation_id
+                  await conversationService.save(data.user1, data.user2);
+
                   // todo: modify the type of data that is been stored in redis, cause
                   // todo: on that you never know what type it is
                   const user1Socket = await connectedUsersService.getUser(String(data.user1));
@@ -41,9 +44,12 @@ async function consumeNewFriendsEvent()
                     await user1Socket.send(JSON.stringify({ conversation_id: '<ID DA CONVERSA>',
                       message: 'You now can talk with user ' + data.user2, metadata: 'newConversation'})); 
                   }
-                  
-                  // todo: query should return the new conversation_id
-                  await conversationService.save(data.user1, data.user2);
+
+                  const user2Socket = await connectedUsersService.getUser(String(data.user2));
+                  if (user2Socket) {
+                    await user2Socket.send(JSON.stringify({ conversation_id: '<ID DA CONVERSA>',
+                      message: 'You now can talk with user ' + data.user1, metadata: 'newConversation'})); 
+                  }
                   
                   
                 } catch (err) {
