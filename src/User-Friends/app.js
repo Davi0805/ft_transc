@@ -1,13 +1,18 @@
 const Fastify = require('fastify');
 const userRoutes = require('./Infrastructure/routes/UserRoutes');
 const friendRequestRoutes = require('./Infrastructure/routes/FriendRequestRoutes');
-const sensible = require('fastify-sensible');
+const sensible = require('@fastify/sensible');
 const consumeFriendsCacheEvent = require('./Adapters/inbound/Redis Streams/FriendsCacheConsumer');
 
 
+const cors = require('@fastify/cors');
+
 const setup = () => {
     const app = Fastify({ logger: true });
-
+    
+    app.register(cors, {
+        origin: true
+      });
     app.register(userRoutes);
     app.register(friendRequestRoutes);
     app.register(sensible);
