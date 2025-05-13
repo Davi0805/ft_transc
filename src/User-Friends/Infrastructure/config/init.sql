@@ -10,7 +10,9 @@ CREATE TABLE users (
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    user_image VARCHAR(255)
+    user_image VARCHAR(255),
+    twofa_secret VARCHAR(255),
+    twofa_enabled BOOLEAN DEFAULT FALSE
 );
 CREATE TABLE friend_requests (
     request_id INTEGER PRIMARY KEY AUTOINCREMENT,
