@@ -17,7 +17,9 @@
     "fastify-plugin": "^5.0.1",
     "jsonwebtoken": "9.0.2",
     "knex": "^3.1.0",
+    "qrcode": "^1.5.4",
     "redis": "^4.7.0",
+    "speakeasy": "^2.0.0",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
