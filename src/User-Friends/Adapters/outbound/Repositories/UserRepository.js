@@ -16,11 +16,17 @@ class UserRepository {
 
     async findByUsername(username)
     {
-        return db.raw('SELECT user_id, username, password_hash FROM users WHERE username = ?', [username]);
+        return db.raw('SELECT user_id, username, password_hash, twofa_secret FROM users WHERE username = ?', [username]);
     }
 
     async save(user) {
         return db('users').insert(user);
+    }
+
+    async addTwoFactorAuth(user_id, twofa_secret)
+    {
+        return db.raw('UPDATE users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?',
+        [twofa_secret, true, user_id]);
     }
 }
 
