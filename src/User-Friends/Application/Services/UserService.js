@@ -38,12 +38,25 @@ class UserService {
             const result = await userRepository.findByUsername(User.username);
             /* await this.fastify.bcrypt.compare(User.password, result[0].password_hash); */
             if (User.password == result[0].password_hash)
-                return result[0].user_id;
+                return {user_id: result[0].user_id, twofa_secret: result[0].twofa_secret};
+            else
+                return null;
         } catch (error) {
             console.log(error);
             return null;
         }
     }
+
+    async activateTwoFactorAuth(user_id, twofa_secret)
+    {
+        try {
+            const result = await userRepository.addTwoFactorAuth(user_id, twofa_secret);
+            console.log('TWO FA REPO ANSWER = ' + result);
+        } catch (error) {
+            console.log('ERRO: Activate Two Factor Auth - ' + error);
+        }
+    }
+
 };
 
 module.exports = new UserService();
