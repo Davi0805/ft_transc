@@ -43,3 +43,5 @@ coverage/
 
 # Mac system files
 *.swp
+
+test
