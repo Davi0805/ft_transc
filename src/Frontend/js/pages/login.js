@@ -2,9 +2,11 @@ export const LoginPage = {
     template() {
         return `
             <div class="login">
-                <input type="text" placeholder="username" name="username" id="user">
-                <input type="password" name="password" placeholder="password" id="pass">
-                <button class="btn">Log In</button>
+                <form action=/login method="POST">
+                    <input type="text" placeholder="username" name="username" id="user" required>
+                    <input type="password" name="password" placeholder="password" id="pass" required>
+                    <button type="submit">Log In</button>
+                </form>
             </div>
         `;
     }, 
