@@ -1,0 +1,113 @@
+import { App } from "../system/App";
+import { AScene } from "../system/AScene";
+import { Point } from "@pixi/math"
+import '@pixi/math-extras'
+import { Assets, Sprite } from "pixi.js"
+import { EventBus } from "../system/EventBus";
+import CBall from "./CBall";
+import CPaddle from "./CPaddle";
+import { CGameDTO, CGameSceneConfigs, SGameDTO, TControls, TControlsState } from "../../../misc/types";
+//import { GameDTO } from "../../../misc/types";
+
+
+/* export type KeyboardDTO = {
+    left: { pressed: boolean };
+    right: { pressed: boolean };
+    spacebar: { pressed: boolean };
+} */
+
+export class GameScene extends AScene<CGameSceneConfigs> {
+    override async init(gameSceneConfigs: CGameSceneConfigs) {
+        this._assets = await Assets.loadBundle("gameScene"); //TODO: Probably not needed if assets are only needed once??
+
+        const ballState = gameSceneConfigs.gameInitialState.ball;
+        const ballSprite = new Sprite(this._assets.ball);// TODO Fix this to accept the sprite in the configs
+        this._root.addChild(ballSprite);
+        
+        this._ball = new CBall(new Point(ballState.pos.x, ballState.pos.y), ballSprite); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
+        
+        for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) {
+            const paddleSprite = new Sprite(this._assets.paddle) // TODO Fix this to accept the sprite in the configs
+            this._root.addChild(paddleSprite);
+            this.paddles.push( new CPaddle(
+                paddleConf.side,
+                new Point(paddleConf.pos.x, paddleConf.pos.y),
+                new Sprite(paddleSprite)
+            ))
+        }
+
+        this._onKeyDown = this._getOnKeyDown(gameSceneConfigs.controls);
+        this._onKeyUp = this._getOnKeyUp(gameSceneConfigs.controls);
+        window.addEventListener("keydown", this._onKeyDown);
+        window.addEventListener("keyup", this._onKeyUp);
+    }
+    override async destroy(): Promise<void> {
+        this.root.destroy();
+        window.removeEventListener("keydown", this._onKeyDown);
+        window.removeEventListener("keyup", this._onKeyUp);
+    }
+    override serverUpdate(dto: unknown): void {
+        const gameDto = dto as SGameDTO;
+        try {
+            this.ball.pos = gameDto.ball.pos;
+            for (const i in gameDto.paddles) {
+                this.paddles[i].pos = gameDto.paddles[i].pos
+            }
+        } catch (error) {console.log(error)}
+    }
+
+    // Callbacks like these must be arrow functions and not methods!
+    // This way, if it is needed to use class members (like _keys in this case),
+    // the "this" keyword inherits context when passed as callback
+    private _onKeyDown!: (event: KeyboardEvent) => void;
+    private _getOnKeyDown(controls: TControls) {
+        return (event: KeyboardEvent) => {
+            if (event.key === controls.left) {
+                this.controlsState.left.pressed = true;
+            } else if (event.key === controls.right) {
+                this.controlsState.right.pressed = true;
+            } else if (event.key === controls.pause) {
+                this.controlsState.pause.pressed = true;
+            }
+            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: {controlsState: this.controlsState}}))
+        }
+    }
+
+    private _onKeyUp!: (event: KeyboardEvent) => void;
+    private _getOnKeyUp = (controls: TControls) => {
+        return (event: KeyboardEvent) => {
+            if (event.key === controls.left) {
+                this.controlsState.left.pressed = false;
+            } else if (event.key === controls.right) {
+                this.controlsState.right.pressed = false;
+            } else if (event.key === controls.pause) {
+                this.controlsState.pause.pressed = false;
+            }
+            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: { controlsState: this.controlsState}}))
+        }
+    }
+
+    private _controlsState: TControlsState = {
+        left: { pressed: false },
+        right: { pressed: false },
+        pause: { pressed: false }
+    }
+    get controlsState() {
+        return this._controlsState;
+    }
+
+    private _ball: CBall | undefined;
+    get ball() {
+        if (!this._ball) {
+            throw new Error("Ball is undefined!");
+        }
+        return this._ball
+    }
+    private _paddles: CPaddle[] = [];
+    get paddles() {
+        return this._paddles
+    }
+    set paddles(value: CPaddle[]) {
+        this._paddles = value
+    }
+}

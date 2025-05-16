@@ -1,0 +1,110 @@
+import { ApplicationOptions } from "pixi.js"
+import SPaddle from "../server/SPaddle.js"
+
+
+
+import { Point } from "@pixi/math"
+import "@pixi/math-extras"
+
+//TODO CHANGE THE ABOVE FOR THE BELOW
+
+/* export type point = {
+    x: number,
+    y: number
+} */
+ 
+export enum SIDES {
+    LEFT,
+    RIGHT,
+    BOTTOM,
+    TOP
+}
+
+// Common
+
+type TWindow = {
+    size: Point,
+    backgroundSprite: number
+}
+
+type TBall = {
+    size: number
+    pos: Point,
+    direction: Point,
+    speed: number
+    spriteID: number,
+}
+
+type TPaddle = {
+    side: SIDES,
+    size: Point,
+    pos: Point,
+    speed: number,
+    spriteID: number
+}
+
+export type TControlsState = {
+    left: {
+        pressed: boolean;
+    },
+    right: {
+        pressed: boolean;
+    },
+    pause: {
+        pressed: boolean;
+    }
+}
+
+export type TPlayer = {
+    keyboardState: TControlsState
+    paddleSide: SIDES 
+}
+
+export type TControls = {
+    left: string,
+    right: string,
+    pause: string
+}
+
+// Client
+
+export type CGameState = {
+    ball: Pick<TBall, "size" | "pos" | "spriteID">
+    paddles: Pick<TPaddle, "side" | "size" | "pos" | "spriteID">[]
+}
+
+export type CGameSceneConfigs = {
+    controls: TControls
+    gameInitialState: CGameState
+}
+
+export type CAppConfigs = {
+    websocket: WebSocket,
+    appConfigs: Partial<ApplicationOptions>,
+    gameSceneConfigs: CGameSceneConfigs
+}
+
+
+// Server
+
+export type SGameState = {
+    ball: Pick<TBall, "pos" | "size" | "speed" | "direction">,
+    paddles: Pick<TPaddle, "side" | "size" | "pos" | "speed">[]
+}
+
+export type SGameConfigs = {
+    window: Pick<TWindow, "size">,
+    players: TPlayer[],
+    gameInitialState: SGameState,
+}
+
+// Server to Client
+export type SGameDTO = {
+    ball: Pick<TBall, "pos">,
+    paddles: Pick<TPaddle, "side" | "pos">[]
+}
+
+// Client to server
+export type CGameDTO = {
+    controlsState: TControlsState
+}
