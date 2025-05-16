@@ -3,19 +3,14 @@ import { PlayPage } from '../pages/play.js'
 import { LoginPage } from '../pages/login.js'
 import { NotFoundPage } from '../pages/404.js'
 
-//? template is the function that returns the html
-//? script is the page-sepecific logic
-//! this export here could be at the end just export routes?
-//! how does this import work and whats the diference between import and require
-//! could i even use require the same way?
 // list of routes objects with the path, title, template and script
 export const routes = [
     // Home
     {
-        path: '/',
-        title: 'Home',
-        template: HomePage.template,
-        script: HomePage
+        path: '/',                      // URL path
+        title: 'Home',                  // Page title
+        template: HomePage.template,    // function that returns the html
+        script: HomePage                // page specific logic/behaviour
     },
     // Play
     {

@@ -29,18 +29,15 @@ export class Router {
         this.loadRoute();
     }
 
-    //! o que é o async
     async loadRoute() {
         // Get current path
         const path =  window.location.pathname;
 
         // Find matching route or fallback to 404 not found
-        //! Aqui o que é r => something e also o || é a mesma coisa que ter um if else e settar 404 se nao encontrar no find?
         const route = this.routes.find(r => r.path === path) || this.routes.find(r => r.path === '/404');
 
         if (route) {
             // Load HTML template
-            //! o que é o await
             document.getElementById('main').innerHTML = await route.template();
             // Update page title
             document.title = route.title;
