@@ -8,12 +8,28 @@ class RedisService {
     // Sessions - JWT e metadata
     async saveSession(token, metadata)
     {
+        if (!token || !metadata) throw 400;
+
         await sessionRepository.save(token, metadata);
+    }
+
+    async validateSession(token)
+    {
+        if (!token) throw 400;
+
+        const metadata = JSON.parse(await sessionRepository.findByJwt(token.substring(7)));
+        
+        if (!metadata || metadata.twofa_verified != 1) throw 401;
+
+        return metadata;
     }
 
     async getSession(token)
     {
+        if (!token) throw 400;
+
         const metadata = await sessionRepository.findByJwt(token.substring(7));
+        if (!metadata) throw 401;
         return metadata;
     }
 

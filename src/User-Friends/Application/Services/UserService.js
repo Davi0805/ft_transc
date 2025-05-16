@@ -40,10 +40,10 @@ class UserService {
             if (User.password == result[0].password_hash)
                 return {user_id: result[0].user_id, twofa_secret: result[0].twofa_secret};
             else
-                return null;
+                throw 401;
         } catch (error) {
             console.log(error);
-            return null;
+            throw 401;
         }
     }
 
