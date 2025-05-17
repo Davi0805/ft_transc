@@ -1,0 +1,43 @@
+/* Template para ja s*/
+
+/* Reset default margins/paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Basic styling for navigation */
+#header nav ul {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f0f0f0;
+    list-style: none;
+}
+
+#header nav a {
+    text-decoration: none;
+    color: #333;
+}
+
+#header nav a:hover {
+    color: #0066cc;
+}
+
+/* Main content area */
+#main {
+    padding: 2rem;
+    flex: 1;
+    background-color: #706464;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
