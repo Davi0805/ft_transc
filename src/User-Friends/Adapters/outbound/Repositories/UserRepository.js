@@ -28,6 +28,13 @@ class UserRepository {
         return db.raw('UPDATE users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?',
         [twofa_secret, true, user_id]);
     }
+
+    async updateUserImagePath(path, user_id)
+    {
+        return db.raw('UPDATE users SET user_image = ? WHERE user_id = ?'
+            , [path, user_id]
+        );
+    }
 }
 
 module.exports = new UserRepository();
