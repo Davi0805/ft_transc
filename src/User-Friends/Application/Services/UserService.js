@@ -51,10 +51,14 @@ class UserService {
     {
         try {
             const result = await userRepository.addTwoFactorAuth(user_id, twofa_secret);
-            console.log('TWO FA REPO ANSWER = ' + result);
         } catch (error) {
             console.log('ERRO: Activate Two Factor Auth - ' + error);
         }
+    }
+
+    async uploadAvatar(path, user_id)
+    {
+        return await userRepository.updateUserImagePath(path, user_id);
     }
 
 };
