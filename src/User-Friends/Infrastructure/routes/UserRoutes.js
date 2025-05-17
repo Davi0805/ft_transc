@@ -7,6 +7,11 @@ async function userRoutes(fastify, options) {
     fastify.post('/login', userController.Login);
     fastify.post('/twofa/activate', userController.activateTwoFactorAuth);
     fastify.post('/twofa/auth', userController.twofa_verify);
+    fastify.post('/users/upload-avatar', {
+        preHandler: fastify.blob.single('avatar'),
+        handler: userController.uploadAvatar
+      });
+    fastify.get('/users/avatar/:id', userController.getAvatar);
 }
 
 module.exports = userRoutes;

@@ -2,6 +2,8 @@ const userService = require('../../../Application/Services/UserService');
 const jwtService = require('../../../Application/Services/JwtService');
 const redisService = require('../../../Application/Services/RedisService');
 const twofaService = require('../../../Application/Services/TwoFactorAuthService');
+const fs = require('fs');
+const path = require('path');
 
 class UserController {
 
@@ -71,6 +73,67 @@ class UserController {
         }
     }
 
+
+    // todo: safer way to upload files, cause it saves the file
+    // todo: in the server, even if the user is not authenticated
+    // todo: or the request fails
+    /* 
+        Endpoint to upload user avatar as multipart/form-data
+        POST - localhost:8080/users/upload-avatar
+        @params {HTTP Header} Authorization: Bearer <JWT> 
+        @params avatar: (file) - file to be uploaded
+    */
+    async uploadAvatar(req, reply)
+    {
+        try {
+            const session = await redisService.validateSession((req.headers.authorization));
+            const file = req.file;
+            if (!file) throw 400;
+
+            await userService.uploadAvatar(file.path, session.user_id);
+
+            return reply.send();
+        } catch (error) {
+            if (typeof error === 'number')
+                return reply.code(error).send();
+
+            return reply.code(400).send();
+        }
+    }
+
+    /* 
+        Endpoint to be able to get the static avatar picture from the server
+        GET - localhost:8080/users/avatar/{id}
+        @params {HTTP Header} Authorization
+        @params {id: (long)} - user_id that is being searched
+        @returns {file: (file)} - file to be downloaded
+    */
+    // todo: I will let this here for now, but in the future
+    // todo: when the frontend is ready, i finish this to be more accurate
+    // !FIX this, its not working properly
+    async getAvatar(req, reply) {
+        try {
+            const session = await redisService.validateSession((req.headers.authorization));
+            const user = await userService.findById(req.params.id);
+            if (!user || Object.keys(user).length === 0) throw 404;
+    
+            const imagePath = user[0].user_image;
+            if (!imagePath) throw 404;
+    
+            // Check if file exists
+            console.log(imagePath);
+            /* if (!fs.existsSync(imagePath)) throw 404; */
+            
+            // Stream the file directly
+            const stream = fs.createReadStream(imagePath);
+            return reply.type('image').send(stream);
+        } catch (error) {
+            if (typeof error === 'number')
+                return reply.code(error).send();
+            console.log(error);
+            return reply.code(400).send();
+        }
+    }
 
     /* 
         Login endpoint to authenticate users and cache friendships on redis
