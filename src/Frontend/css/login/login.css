@@ -24,14 +24,16 @@
 .input-box input {
   width: 100%;
   height: 50px;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.2);
   border: none;
   outline: none;
-  color: #111111;
-  font-weight: 600;
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 40px;
   padding: 20px 45px 20px 20px;
+  caret-color: #fff;
 }
 
 .input-box input::placeholder {
@@ -43,6 +45,7 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
+  fill: #fff;
 }
 
 .loggin-wrapper .forgot {

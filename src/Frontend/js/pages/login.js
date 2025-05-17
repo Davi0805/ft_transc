@@ -5,12 +5,12 @@ export const LoginPage = {
         <form action="">
           <h1>Login</h1>
           <div class="input-box">
-            <input type="text" placeholder="Username" required />
-            <img src="../Assets/icons/user-square.png" />
+            <input type="text" placeholder="Username" name="username" required />
+            <img src="../Assets/icons/user.svg" />
           </div>
           <div class="input-box">
-            <input type="password" placeholder="Password" required />
-            <img src="../Assets/icons/lock.png" />
+            <input type="password" placeholder="Password" name="password" required />
+            <img id="visibility" src="../Assets/icons/visibility-on.svg" />
           </div>
 
           <div class="forgot">
@@ -29,5 +29,20 @@ export const LoginPage = {
 
   init() {
     console.log("Login Page loaded!");
+
+    const visibility_icon = document.getElementById('visibility');
+    const password = document.querySelector('input[name="password"]');
+
+    /* This changes the onclick method */
+    visibility_icon.onclick = () => {
+      if (password.type === "password") {
+        password.type = "text";
+        visibility_icon.src="../Assets/icons/visibility-off.svg";
+      }
+      else {
+        password.type = "password";
+        visibility_icon.src="../Assets/icons/visibility-on.svg"
+      }
+    };
   },
 };
