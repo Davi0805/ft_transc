@@ -5,52 +5,22 @@
   padding: 0;
   font-family: "Poppins", sans-serif;
   box-sizing: border-box;
-  list-style-type: none;;
+  list-style-type: none;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /*? check here */
+  min-height: 100vh;
   background: url("../Assets/bg.jpeg") no-repeat;
   background-size: cover;
   background-position: center;
 }
 
-/* Basic styling for navigation */
-#header-wrapper {
-  background: transparent;
-  backdrop-filter: blur(15px);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.4);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-  width: 100%;
-  height: 45px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10; /* check this */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#header-wrapper .links {
-  display: flex;
-  gap: 20px;
-}
-
-#header-wrapper .links a {
-
-  text-decoration: none;
-  color: #fff;
-  transition: 0.1s ease-in-out;
-}
-
-#header-wrapper nav a:hover {
-  color: #f1a10a;
-}
 
 #main {
-  min-height: calc(100vh - 45px);
+  /* second arg is the header height */
+  min-height: calc(100vh - 60px);
   display: flex;
   justify-content: center;
   align-items: center;
