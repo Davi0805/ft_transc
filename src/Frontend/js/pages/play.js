@@ -6,7 +6,7 @@ export const PlayPage = {
             <div class="play-container">
                 <h2>Game Area</h2>
                 <div class="game-placeholder">Game</div>
-                </div>        
+            </div>        
         `;
     }, 
 
