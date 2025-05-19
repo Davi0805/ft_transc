@@ -28,8 +28,8 @@
   border: none;
   outline: none;
   color: #fff;
-  font-weight: 700;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: 500;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 40px;
   padding: 20px 45px 20px 20px;
@@ -38,6 +38,7 @@
 
 .input-box input::placeholder {
   color: #fff;
+  font-size: 16px;
 }
 
 .input-box img {
@@ -45,7 +46,7 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  fill: #fff;
+  fill: #000;
 }
 
 .loggin-wrapper .forgot {
