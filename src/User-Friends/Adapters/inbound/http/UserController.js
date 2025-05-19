@@ -177,7 +177,7 @@ class UserController {
             if (user.twofa_enabled) throw 400;
             const twofa = await twofaService.generateSecret();
             await userService.activateTwoFactorAuth(session.user_id, twofa.secret);
-            return reply.send(twofa.qrCodeUrl);
+            return reply.send({qrcode: twofa.qrCodeUrl});
         } catch (error) {
             if (typeof error === 'number')
                 return reply.code(error).send();
