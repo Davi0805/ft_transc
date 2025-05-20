@@ -66,7 +66,7 @@ fastify.register(async (fastify) => {
             //console.log(message.toString())
             game.players[clientId].controls = (JSON.parse(message.toString()) as CGameDTO).controlsState; //TODO This will definitely have to be done from within the game Class to check if client is 
             //console.log(game.players[clientId].controls)
-            console.log((JSON.parse(message.toString()) as CGameDTO))
+            //console.log((JSON.parse(message.toString()) as CGameDTO))
         })
         socket.on('close', () => {
             console.log(`Client ${clientId} left`);

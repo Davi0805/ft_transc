@@ -12,10 +12,11 @@ export default abstract class CObject extends AObject {
         this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
     }
 
-    override move(movVector: Point): void {
-        super.move(movVector);
-        this.sprite.position.set(this.pos.x, this.pos.y)
+    override set pos(pos: Point) {
+        super.pos = pos;
+        this.sprite.position.set(this.pos.x, this.pos.y);
     }
+    override get pos(): Point { return super.pos;}
 
     protected _sprite: Sprite;
     set sprite(sprite: Sprite) {

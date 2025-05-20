@@ -9,13 +9,9 @@ export default abstract class AObject {
 
     protected _pos: Point;
     set pos(pos: Point) {this._pos = pos}
-    get pos(): Point {return this._pos}
+    get pos(): Point { return this._pos}
 
     protected _orientation: Point;
     set orientation(orientation: Point) {this._orientation = orientation;}
     get orientation(): Point { return this._orientation;}
-
-    move(movVector: Point): void {
-        this.pos.add(movVector);
-    }
 }

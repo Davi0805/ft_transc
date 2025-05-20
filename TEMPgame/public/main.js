@@ -52788,9 +52788,6 @@ var AObject = class {
   get orientation() {
     return this._orientation;
   }
-  move(movVector) {
-    this.pos.add(movVector);
-  }
 };
 
 // dist/abstracts/CObject.js
@@ -52802,9 +52799,12 @@ var CObject = class extends AObject {
     this._sprite.position.set(pos.x, pos.y);
     this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
   }
-  move(movVector) {
-    super.move(movVector);
+  set pos(pos) {
+    super.pos = pos;
     this.sprite.position.set(this.pos.x, this.pos.y);
+  }
+  get pos() {
+    return super.pos;
   }
   _sprite;
   set sprite(sprite) {
@@ -53047,7 +53047,7 @@ function buildCAppConfigs(devCustoms, userCustoms, clientID, websocket2) {
 }
 
 // dist/misc/gameOptions.js
-var WINDOW_SIZE = { x: 800, y: 400 };
+var WINDOW_SIZE = { x: 200, y: 200 };
 var PADDLE_COMMON_VARS = {
   size: { x: 16, y: 64 },
   speed: 150

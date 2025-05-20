@@ -1,11 +1,11 @@
-import APaddle from "../../../abstracts/CObject";
 import { SIDES } from "../../../misc/types.js";
 import { computeOrientation } from "../../../misc/utils";
 import { Sprite } from "pixi.js";
 import { Point } from "@pixi/math";
+import CObject from "../../../abstracts/CObject";
 
 
-export default class CPaddle extends APaddle {
+export default class CPaddle extends CObject {
     constructor(side: SIDES, pos: Point, sprite: Sprite) {
         super(pos, computeOrientation(side), sprite);
         this._side = side;
