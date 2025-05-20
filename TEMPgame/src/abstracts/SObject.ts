@@ -4,7 +4,7 @@ import '@pixi/math-extras'
 
 export default abstract class SObject extends AObject {
     constructor(pos: Point, orientation: Point, size: Point, speed: number) {
-        super(pos, orientation);
+        super(pos, size, orientation);
         this._size = size;
         this._cbox = this._calculateCBox();
         this._speed = speed;
@@ -18,15 +18,13 @@ export default abstract class SObject extends AObject {
         super.pos = pos;
         this.cbox = this._calculateCBox();
     }
-    override get pos() {return(super.pos)}
+    override get pos() { return super.pos; }
 
-    protected _size: Point;
-    set size(size: Point) {
-        this._size = size;
+    override set size(size: Point) {
+        super.size = size;
+        this.cbox = this._calculateCBox();
     }
-    get size(): Point {
-        return this._size;
-    }
+    override get size(): Point { return super.size; }
 
     protected _cbox: Rectangle;
     set cbox(cbox: Rectangle) {

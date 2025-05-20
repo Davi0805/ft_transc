@@ -24,7 +24,10 @@ export class GameScene extends AScene<CGameSceneConfigs> {
         const ballSprite = new Sprite(this._assets.ball);// TODO Fix this to accept the sprite in the configs
         this._root.addChild(ballSprite);
         
-        this._ball = new CBall(new Point(ballState.pos.x, ballState.pos.y), ballSprite); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
+        this._ball = new CBall(
+            new Point(ballState.pos.x, ballState.pos.y),
+            new Point(ballState.size.x, ballState.size.y),
+            ballSprite); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
         
         for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) {
             const paddleSprite = new Sprite(this._assets.paddle) // TODO Fix this to accept the sprite in the configs
@@ -32,6 +35,7 @@ export class GameScene extends AScene<CGameSceneConfigs> {
             this.paddles.push( new CPaddle(
                 paddleConf.side,
                 new Point(paddleConf.pos.x, paddleConf.pos.y),
+                new Point(paddleConf.size.x, paddleConf.size.y),
                 new Sprite(paddleSprite)
             ))
         }

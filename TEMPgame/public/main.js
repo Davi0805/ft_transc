@@ -52770,8 +52770,9 @@ Rectangle2.prototype.union = function(other, outRect) {
 
 // dist/abstracts/AObject.js
 var AObject = class {
-  constructor(pos, orientation) {
+  constructor(pos, size, orientation) {
     this._pos = pos;
+    this._size = size;
     this._orientation = orientation;
   }
   _pos;
@@ -52780,6 +52781,13 @@ var AObject = class {
   }
   get pos() {
     return this._pos;
+  }
+  _size;
+  set size(size) {
+    this._size = size;
+  }
+  get size() {
+    return this._size;
   }
   _orientation;
   set orientation(orientation) {
@@ -52792,10 +52800,11 @@ var AObject = class {
 
 // dist/abstracts/CObject.js
 var CObject = class extends AObject {
-  constructor(pos, orientation, sprite) {
-    super(pos, orientation);
+  constructor(pos, size, orientation, sprite) {
+    super(pos, size, orientation);
     this._sprite = sprite;
     this._sprite.anchor.set(0.5);
+    this._sprite.setSize(size.x, size.y);
     this._sprite.position.set(pos.x, pos.y);
     this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
   }
@@ -52817,8 +52826,8 @@ var CObject = class extends AObject {
 
 // dist/client/scripts/game/CBall.js
 var CBall = class extends CObject {
-  constructor(pos, sprite) {
-    super(pos, new Point(1, 0), sprite);
+  constructor(pos, size, sprite) {
+    super(pos, size, new Point(1, 0), sprite);
   }
 };
 
@@ -52844,8 +52853,8 @@ function computeOrientation(paddleSide) {
 
 // dist/client/scripts/game/CPaddle.js
 var CPaddle = class extends CObject {
-  constructor(side, pos, sprite) {
-    super(pos, computeOrientation(side), sprite);
+  constructor(side, pos, size, sprite) {
+    super(pos, size, computeOrientation(side), sprite);
     this._side = side;
   }
   _side;
@@ -52864,11 +52873,11 @@ var GameScene = class extends AScene {
     const ballState = gameSceneConfigs.gameInitialState.ball;
     const ballSprite = new Sprite(this._assets.ball);
     this._root.addChild(ballSprite);
-    this._ball = new CBall(new Point2(ballState.pos.x, ballState.pos.y), ballSprite);
+    this._ball = new CBall(new Point2(ballState.pos.x, ballState.pos.y), new Point2(ballState.size.x, ballState.size.y), ballSprite);
     for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) {
       const paddleSprite = new Sprite(this._assets.paddle);
       this._root.addChild(paddleSprite);
-      this.paddles.push(new CPaddle(paddleConf.side, new Point2(paddleConf.pos.x, paddleConf.pos.y), new Sprite(paddleSprite)));
+      this.paddles.push(new CPaddle(paddleConf.side, new Point2(paddleConf.pos.x, paddleConf.pos.y), new Point2(paddleConf.size.x, paddleConf.size.y), new Sprite(paddleSprite)));
     }
     this._onKeyDown = this._getOnKeyDown(gameSceneConfigs.controls);
     this._onKeyUp = this._getOnKeyUp(gameSceneConfigs.controls);
@@ -53049,7 +53058,7 @@ function buildCAppConfigs(devCustoms, userCustoms, clientID, websocket2) {
 // dist/misc/gameOptions.js
 var WINDOW_SIZE = { x: 200, y: 200 };
 var PADDLE_COMMON_VARS = {
-  size: { x: 16, y: 64 },
+  size: { x: 16, y: 20 },
   speed: 150
 };
 var DevCustoms = {

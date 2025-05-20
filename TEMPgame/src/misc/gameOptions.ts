@@ -2,7 +2,7 @@ import { SIDES } from "./types.js"
 
 const WINDOW_SIZE = { x: 200, y: 200 } // Has to be a square if it can accept four players, BUT in that case a better angle calculation for the ball is needed to avoid repetitive paths
 const PADDLE_COMMON_VARS = {
-    size: { x: 16, y: 64 },
+    size: { x: 16, y: 20 },
     speed: 150
 }
 

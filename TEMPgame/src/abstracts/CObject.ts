@@ -4,10 +4,11 @@ import '@pixi/math-extras'
 import { Sprite } from "pixi.js";
 
 export default abstract class CObject extends AObject {
-    constructor(pos: Point, orientation: Point, sprite: Sprite) {
-        super(pos, orientation);
+    constructor(pos: Point, size: Point, orientation: Point, sprite: Sprite) {
+        super(pos, size, orientation);
         this._sprite = sprite;
         this._sprite.anchor.set(0.5);
+        this._sprite.setSize(size.x, size.y)
         this._sprite.position.set(pos.x, pos.y);
         this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
     }

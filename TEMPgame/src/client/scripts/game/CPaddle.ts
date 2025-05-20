@@ -6,8 +6,8 @@ import CObject from "../../../abstracts/CObject";
 
 
 export default class CPaddle extends CObject {
-    constructor(side: SIDES, pos: Point, sprite: Sprite) {
-        super(pos, computeOrientation(side), sprite);
+    constructor(side: SIDES, pos: Point, size: Point, sprite: Sprite) {
+        super(pos, size, computeOrientation(side), sprite);
         this._side = side;
     }
 
