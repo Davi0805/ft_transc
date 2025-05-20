@@ -1,4 +1,3 @@
-import { App } from "../system/App";
 import { AScene } from "../system/AScene";
 import { Point } from "@pixi/math"
 import '@pixi/math-extras'
@@ -6,15 +5,8 @@ import { Assets, Sprite } from "pixi.js"
 import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
-import { CGameDTO, CGameSceneConfigs, SGameDTO, TControls, TControlsState } from "../../../misc/types";
-//import { GameDTO } from "../../../misc/types";
+import { CGameSceneConfigs, SGameDTO, TControls, TControlsState } from "../../../misc/types";
 
-
-/* export type KeyboardDTO = {
-    left: { pressed: boolean };
-    right: { pressed: boolean };
-    spacebar: { pressed: boolean };
-} */
 
 export class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {

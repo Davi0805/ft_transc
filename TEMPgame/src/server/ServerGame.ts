@@ -108,7 +108,7 @@ class ServerGame {
                 const movDistance = (paddle.speed + this.ball.speed) * delta; // This in theory compensates for moving-into-ball paddles
                 const movVector = this.ball.direction.clone().multiplyScalar(movDistance);
                 this.ball.move(movVector);
-                this.ball.speed += 10;
+                //this.ball.speed += 10;
                 for (let paddle of this.paddles) {
                     paddle.speed += 2;
                 }

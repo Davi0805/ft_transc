@@ -16,6 +16,7 @@ export default abstract class CObject extends AObject {
     override set pos(pos: Point) {
         super.pos = pos;
         this.sprite.position.set(this.pos.x, this.pos.y);
+        //console.log(this.sprite.rotation)
     }
     override get pos(): Point { return super.pos;}
 

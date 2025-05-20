@@ -53058,7 +53058,7 @@ function buildCAppConfigs(devCustoms, userCustoms, clientID, websocket2) {
 // dist/misc/gameOptions.js
 var WINDOW_SIZE = { x: 200, y: 200 };
 var PADDLE_COMMON_VARS = {
-  size: { x: 16, y: 20 },
+  size: { x: 16, y: 64 },
   speed: 150
 };
 var DevCustoms = {
@@ -53101,16 +53101,20 @@ var DevCustoms = {
 var UserCustoms = {
   window: {
     backgroundSprite: 0
+    //NOT USED YET
   },
   gameLength: 3,
+  //NOT USED YET
   ball: {
     spriteID: 0
+    //NOT USED YET
   },
-  paddlesAmount: 4,
+  paddlesAmount: 3,
   clients: [
     {
       side: SIDES.LEFT,
       paddleSprite: 0,
+      //NOT USED YET
       controls: {
         left: "a",
         right: "z",
@@ -53120,9 +53124,19 @@ var UserCustoms = {
     {
       side: SIDES.RIGHT,
       paddleSprite: 1,
+      //NOT USED YET
       controls: {
         left: "m",
         right: "k",
+        pause: " "
+      }
+    },
+    {
+      side: SIDES.BOTTOM,
+      paddleSprite: 0,
+      controls: {
+        left: "ArrowLeft",
+        right: "ArrowRight",
         pause: " "
       }
     }
@@ -53131,12 +53145,15 @@ var UserCustoms = {
 
 // dist/client/client.js
 var websocket = new WebSocket(`ws://${window.location.hostname}:3000/ws`);
-websocket.addEventListener("message", (event) => {
+websocket.addEventListener("message", onInitMessage);
+function onInitMessage(event) {
   const message = JSON.parse(event.data);
   const clientID = message.id;
+  console.log("CLIENTID: ", message.id);
   const gameConfigs = buildCAppConfigs(DevCustoms, UserCustoms, clientID, websocket);
   App.init(gameConfigs);
-});
+  websocket.removeEventListener("message", onInitMessage);
+}
 /*! Bundled license information:
 
 punycode/punycode.js:
