@@ -1,6 +1,6 @@
 import { Point, Rectangle } from "@pixi/math"
 import '@pixi/math-extras'
-import { SIDES } from "./types";
+import { SIDES } from "./types.js";
 
 // Returns the wall of the FIRST rect that collides with the second rect
 export function areColliding(rect1: Readonly<Rectangle>, rect2: Readonly<Rectangle>): SIDES | null{
@@ -37,4 +37,14 @@ export function rotatePoint(point: Point, angleInDegrees: number): Point {
     const rotatedY = point.x * sin + point.y * cos;
 
     return new Point(rotatedX, rotatedY);
+}
+
+export function computeOrientation(paddleSide: SIDES): Point {
+    const sidesToOrientation = {
+        [SIDES.LEFT]: new Point(1, 0),
+        [SIDES.RIGHT]: new Point(-1, 0),
+        [SIDES.BOTTOM]: new Point(0, -1),
+        [SIDES.TOP]: new Point(0, 1)
+    }
+    return sidesToOrientation[paddleSide]
 }

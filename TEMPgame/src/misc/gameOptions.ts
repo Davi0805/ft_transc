@@ -13,7 +13,7 @@ export const DevCustoms = {
     ball: {
         pos: { x: WINDOW_SIZE. x / 2, y: WINDOW_SIZE.y / 2 },
         direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
-        size: 4,
+        size: { x: 4, y: 4 },
         speed: 100
     },
     paddles: [

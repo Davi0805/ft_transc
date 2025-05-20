@@ -1,8 +1,8 @@
-import { CAppConfigs, SGameConfigs, SIDES } from "../misc/types";
+import { CAppConfigs, SGameConfigs, SIDES } from "./types";
 import { Point } from "@pixi/math";
 import '@pixi/math-extras'
 
-import { DevCustoms, UserCustoms } from "../misc/gameOptions";
+import { DevCustoms, UserCustoms } from "./gameOptions";
 
 function chooseSprite(side: SIDES, clients: {side: number, paddleSprite: number}[]): number {
     for (const client of clients) {
@@ -25,7 +25,7 @@ export function buildCAppConfigs(devCustoms: typeof DevCustoms,
       controls: userCustoms.clients[clientID].controls,
       gameInitialState: {
         ball: {
-          size: devCustoms.ball.size,
+          size: new Point(devCustoms.ball.size.x, devCustoms.ball.size.y),
           pos: new Point(devCustoms.ball.pos.x, devCustoms.ball.pos.y),
           spriteID: userCustoms.ball.spriteID
         },
@@ -55,7 +55,7 @@ export function buildSGameConfigs(devCustoms: typeof DevCustoms,
     gameInitialState: {
       ball: {
         pos: new Point(devCustoms.ball.pos.x, devCustoms.ball.pos.y),
-        size: devCustoms.ball.size,
+        size: new Point(devCustoms.ball.size.x, devCustoms.ball.size.y),
         speed: devCustoms.ball.speed,
         direction: new Point(devCustoms.ball.direction.x, devCustoms.ball.direction.y)
       },

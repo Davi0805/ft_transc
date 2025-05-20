@@ -1,5 +1,5 @@
 import { App } from './scripts/system/App';
-import { buildCAppConfigs } from '../server/buildGameOptions';
+import { buildCAppConfigs } from '../misc/buildGameOptions';
 import { DevCustoms, UserCustoms } from '../misc/gameOptions';
 
 const websocket = new WebSocket(`ws://${window.location.hostname}:3000/ws`);

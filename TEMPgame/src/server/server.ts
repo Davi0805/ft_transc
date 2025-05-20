@@ -6,7 +6,7 @@ import path from 'path' // utility to work with paths
 import { DevCustoms, UserCustoms } from '../misc/gameOptions.js';
 import ServerGame from './ServerGame.js';
 import { CGameDTO } from '../misc/types.js';
-import { buildSGameConfigs } from './buildGameOptions.js';
+import { buildSGameConfigs } from '../misc/buildGameOptions.js';
 
 
 

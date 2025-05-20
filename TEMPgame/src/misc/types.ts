@@ -1,7 +1,4 @@
 import { ApplicationOptions } from "pixi.js"
-import SPaddle from "../server/SPaddle.js"
-
-
 
 import { Point } from "@pixi/math"
 import "@pixi/math-extras"
@@ -28,7 +25,7 @@ type TWindow = {
 }
 
 type TBall = {
-    size: number
+    size: Point
     pos: Point,
     direction: Point,
     speed: number

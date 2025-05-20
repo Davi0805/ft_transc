@@ -52768,27 +52768,57 @@ Rectangle2.prototype.union = function(other, outRect) {
   return outRect.x = x1, outRect.y = y1, outRect.width = x2 - x1, outRect.height = y2 - y1, outRect;
 };
 
-// dist/abstracts/ABall.js
-var ABall = class {
-  _pos = new Point(0, 0);
-};
-
-// dist/client/scripts/game/CBall.js
-var CBall = class extends ABall {
-  constructor(pos, sprite) {
-    super();
+// dist/abstracts/AObject.js
+var AObject = class {
+  constructor(pos, orientation) {
     this._pos = pos;
-    this._sprite = sprite;
-    this._sprite.anchor.set(0.5);
-    this._sprite.position.set(pos.x, pos.y);
+    this._orientation = orientation;
   }
-  _sprite;
+  _pos;
+  set pos(pos) {
+    this._pos = pos;
+  }
   get pos() {
     return this._pos;
   }
-  set pos(value) {
-    this._pos = value;
-    this._sprite.position.set(value.x, value.y);
+  _orientation;
+  set orientation(orientation) {
+    this._orientation = orientation;
+  }
+  get orientation() {
+    return this._orientation;
+  }
+  move(movVector) {
+    this.pos.add(movVector);
+  }
+};
+
+// dist/abstracts/CObject.js
+var CObject = class extends AObject {
+  constructor(pos, orientation, sprite) {
+    super(pos, orientation);
+    this._sprite = sprite;
+    this._sprite.anchor.set(0.5);
+    this._sprite.position.set(pos.x, pos.y);
+    this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
+  }
+  move(movVector) {
+    super.move(movVector);
+    this.sprite.position.set(this.pos.x, this.pos.y);
+  }
+  _sprite;
+  set sprite(sprite) {
+    this._sprite = sprite;
+  }
+  get sprite() {
+    return this._sprite;
+  }
+};
+
+// dist/client/scripts/game/CBall.js
+var CBall = class extends CObject {
+  constructor(pos, sprite) {
+    super(pos, new Point(1, 0), sprite);
   }
 };
 
@@ -52801,56 +52831,29 @@ var SIDES;
   SIDES2[SIDES2["TOP"] = 3] = "TOP";
 })(SIDES || (SIDES = {}));
 
-// dist/abstracts/APaddle.js
-var APaddle = class {
-  constructor(side, pos) {
+// dist/misc/utils.js
+function computeOrientation(paddleSide) {
+  const sidesToOrientation = {
+    [SIDES.LEFT]: new Point2(1, 0),
+    [SIDES.RIGHT]: new Point2(-1, 0),
+    [SIDES.BOTTOM]: new Point2(0, -1),
+    [SIDES.TOP]: new Point2(0, 1)
+  };
+  return sidesToOrientation[paddleSide];
+}
+
+// dist/client/scripts/game/CPaddle.js
+var CPaddle = class extends CObject {
+  constructor(side, pos, sprite) {
+    super(pos, computeOrientation(side), sprite);
     this._side = side;
-    this._pos = pos;
-    this._orientation = this._computeOrientation(side);
   }
   _side;
-  get side() {
-    return this._side;
-  }
   set side(side) {
     this._side = side;
   }
-  _pos;
-  _orientation;
-  // SCREEN ORIENTATION (+y is down)
-  get orientation() {
-    return this._orientation;
-  }
-  set orientation(value) {
-    this._orientation = value;
-  }
-  _computeOrientation(paddleSide) {
-    const sidesToOrientation = {
-      [SIDES.LEFT]: new Point2(1, 0),
-      [SIDES.RIGHT]: new Point2(-1, 0),
-      [SIDES.BOTTOM]: new Point2(0, -1),
-      [SIDES.TOP]: new Point2(0, 1)
-    };
-    return sidesToOrientation[paddleSide];
-  }
-};
-
-// dist/client/scripts/game/CPaddle.js
-var CPaddle = class extends APaddle {
-  constructor(side, pos, sprite) {
-    super(side, pos);
-    this._sprite = sprite;
-    this._sprite.anchor.set(0.5);
-    this._sprite.position.set(pos.x, pos.y);
-    this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
-  }
-  _sprite;
-  get pos() {
-    return this._pos;
-  }
-  set pos(value) {
-    this._pos = value;
-    this._sprite.position.set(value.x, value.y);
+  get side() {
+    return this._side;
   }
 };
 
@@ -53002,7 +53005,7 @@ var FtApplication = class {
 };
 var App = new FtApplication();
 
-// dist/server/buildGameOptions.js
+// dist/misc/buildGameOptions.js
 function chooseSprite(side, clients) {
   for (const client of clients) {
     if (client.side === side) {
@@ -53023,7 +53026,7 @@ function buildCAppConfigs(devCustoms, userCustoms, clientID, websocket2) {
       controls: userCustoms.clients[clientID].controls,
       gameInitialState: {
         ball: {
-          size: devCustoms.ball.size,
+          size: new Point2(devCustoms.ball.size.x, devCustoms.ball.size.y),
           pos: new Point2(devCustoms.ball.pos.x, devCustoms.ball.pos.y),
           spriteID: userCustoms.ball.spriteID
         },
@@ -53056,7 +53059,7 @@ var DevCustoms = {
   ball: {
     pos: { x: WINDOW_SIZE.x / 2, y: WINDOW_SIZE.y / 2 },
     direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
-    size: 4,
+    size: { x: 4, y: 4 },
     speed: 100
   },
   paddles: [

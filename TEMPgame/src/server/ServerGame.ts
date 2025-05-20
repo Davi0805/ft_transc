@@ -2,7 +2,6 @@ import SBall from "./SBall.js";
 import SPaddle from "./SPaddle.js"
 import SPlayer from "./SPlayer.js";
 import { getNewPosition, areColliding, rotatePoint } from "../misc/utils.js";
-//import { GameDTO, Player, GameOpts, SIDES } from "../misc/types.js";
 import '@pixi/math-extras'
 import { SIDES, SGameConfigs, SGameDTO } from "../misc/types.js";
 
@@ -65,11 +64,11 @@ class ServerGame {
         if (player.paddle.pos.x > this.windowSize.x) {
             player.paddle.pos.x = this.windowSize.x;
         }
-        if (player.paddle.collisionBox.y < 0) {
-            player.paddle.pos.y = player.paddle.collisionBox.height / 2;
+        if (player.paddle.cbox.y < 0) {
+            player.paddle.pos.y = player.paddle.cbox.height / 2;
         }
-        if (player.paddle.collisionBox.y + player.paddle.collisionBox.height > this.windowSize.y) {
-            player.paddle.pos.y = this.windowSize.y - player.paddle.collisionBox.height / 2;
+        if (player.paddle.cbox.y + player.paddle.cbox.height > this.windowSize.y) {
+            player.paddle.pos.y = this.windowSize.y - player.paddle.cbox.height / 2;
         }
     }
 
@@ -88,15 +87,15 @@ class ServerGame {
             } else {
                 this.players[0].score += 1;
             }*/
-        } else if (newPos.y - this.ball.collisionBox.height / 2 < 0
-                    || newPos.y + this.ball.collisionBox.height / 2 > this.windowSize.y) {
+        } else if (newPos.y - this.ball.cbox.height / 2 < 0
+                    || newPos.y + this.ball.cbox.height / 2 > this.windowSize.y) {
             this.ball.direction.y *= -1
         } else {
             this.ball.move(movVector);
         }
         newPos.clone()
         for (let paddle of this.paddles) {
-            const collision = areColliding(this.ball.collisionBox, paddle.collisionBox); // Returns collision wall of FIRST object
+            const collision = areColliding(this.ball.cbox, paddle.cbox); // Returns collision wall of FIRST object
             if (collision !== null) {
                 console.log(SIDES[collision]);
                 if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
@@ -110,7 +109,7 @@ class ServerGame {
                 const movVector = this.ball.direction.clone().multiplyScalar(movDistance);
                 this.ball.move(movVector);
                 this.ball.speed += 10;
-                for (paddle of this.paddles) {
+                for (let paddle of this.paddles) {
                     paddle.speed += 2;
                 }
             }
