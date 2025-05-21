@@ -7,12 +7,6 @@ import { GameScene } from '../game/GameScene';
 import { CAppConfigs } from '../../../misc/types';
 
 
-
-
-
-
-import { Texture, Sprite } from 'pixi.js';
-
 class FtApplication {
     async init(gameConfigs: CAppConfigs) {
         // Socket setup
@@ -67,7 +61,7 @@ class FtApplication {
                 }
             ]
         }
-        // assetsManifest has the assets bundles, which include all pahts to all sprites and their alias
+        // assetsManifest has the assets bundles, which include all paths to all sprites and their alias
         // This makes the bundles available directly in Assets, which is globally accessible
         Assets.init({manifest: assetsManifest})
         //Assets.addBundle('sprites', gameConfigs.assetsBundle);

@@ -1,10 +1,20 @@
-/* import { Container } from "pixi.js";
+import { Container } from "pixi.js";
 import { AScene } from "./AScene";
 import { EventBus } from "./EventBus";
+import { CGameSceneConfigs } from "../../../misc/types";
+
+type ExampleSceneConfigs = {
+
+}
+
+type SceneConfigMap = {
+    "exampleScene": ExampleSceneConfigs
+    "gameScene": CGameSceneConfigs
+}
 
 // This is how the ScenesManager saves the scenes
 export type ScenesManifest = {
-    [name: string]: new () => AScene<T>
+    [K in keyof SceneConfigMap]: new () => AScene<SceneConfigMap[K]>
 }
 
 export class ScenesManager {
@@ -18,13 +28,51 @@ export class ScenesManager {
         // they can just send a signal to the EventBus singleton and this listener will catch it and deal with the change
         // TODO: Is there a way to type that first argument to only accept custom signal names?
         // TODO: Is there a way to type the "detail" attribute so it only acceps scene names?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
         EventBus.addEventListener("changeScene", async (event: Event) => {
-            const sceneName = (event as CustomEvent).detail as string;
+            const sceneName = (event as CustomEvent).detail as keyof ScenesManifest; //TODO Pass the configs through here too
             await this.goToScene(sceneName);
         })
     }
 
-    async goToScene(scene: string) { // TODO probably there is a better, more specific way to type the parameter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    async goToScene(scene: keyof ScenesManifest, configs: any) { // TODO probably there is a better, more specific way to type the parameter
         if (this.currentScene) {
             await this.currentScene.remove();
             this.container.removeChildren();
@@ -32,7 +80,7 @@ export class ScenesManager {
         this._currentScene = new this._SCENES[scene]();
         // Runs each custom initialization, like asset loading, etc.
         // Needs to be separated from constructor because it may run asynchronous tasks
-        await this._currentScene.init();
+        await this._currentScene.init(configs);
         // Makes it so what the scene adds to its root shows up on screen
         this.container.addChild(this.currentScene!.root);
     }
@@ -42,10 +90,10 @@ export class ScenesManager {
         return this._container;
     }
 
-    private _currentScene: AScene | null;
+    private _currentScene: AScene<T> | null;
     get currentScene() {
         return this._currentScene;
     }
     
     private _SCENES: ScenesManifest;
-} */
+}
