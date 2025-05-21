@@ -1,4 +1,5 @@
-import { Sprite, Point } from "pixi.js";
+import { Sprite } from "pixi.js";
+import Point from "../../../misc/Point";
 import CObject from "../../../abstracts/CObject";
 
 export default class CBall extends CObject {

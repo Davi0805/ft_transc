@@ -1,6 +1,5 @@
 import { AScene } from "../system/AScene";
-import { Point } from "@pixi/math"
-import '@pixi/math-extras'
+import Point from "../../../misc/Point";
 import { Assets, Sprite } from "pixi.js"
 import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
@@ -17,20 +16,23 @@ export class GameScene extends AScene<CGameSceneConfigs> {
         this._root.addChild(ballSprite);
         
         this._ball = new CBall(
-            new Point(ballState.pos.x, ballState.pos.y),
-            new Point(ballState.size.x, ballState.size.y),
-            ballSprite); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
+            ballState.pos,
+            ballState.size,
+            ballSprite
+        ); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
         
         for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) {
             const paddleSprite = new Sprite(this._assets.paddle) // TODO Fix this to accept the sprite in the configs
             this._root.addChild(paddleSprite);
             this.paddles.push( new CPaddle(
                 paddleConf.side,
-                new Point(paddleConf.pos.x, paddleConf.pos.y),
-                new Point(paddleConf.size.x, paddleConf.size.y),
-                new Sprite(paddleSprite)
+                paddleConf.pos,
+                paddleConf.size,
+                paddleSprite
             ))
         }
+
+
 
         this._onKeyDown = this._getOnKeyDown(gameSceneConfigs.controls);
         this._onKeyUp = this._getOnKeyUp(gameSceneConfigs.controls);
@@ -45,11 +47,23 @@ export class GameScene extends AScene<CGameSceneConfigs> {
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
         try {
-            this.ball.pos = gameDto.ball.pos;
+            this.ball.pos = Point.fromObj(gameDto.ball.pos);
             for (const i in gameDto.paddles) {
-                this.paddles[i].pos = gameDto.paddles[i].pos
+                this.paddles[i].pos = Point.fromObj(gameDto.paddles[i].pos);
+                
+                
+                //this.paddles[i].sprite.rotation += 0.1;
+                console.log(this.paddles[i].sprite.rotation)
             }
+            
         } catch (error) {console.log(error)}
+    }
+
+    override tickerUpdate(): void {
+        /* try {
+            const pos = this.paddles[3].pos;
+            this.paddles[3].pos = Point.fromObj({x: pos.x - 1, y: pos.y});
+        } catch (error) {console.log(error)} */
     }
 
     // Callbacks like these must be arrow functions and not methods!

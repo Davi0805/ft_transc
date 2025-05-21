@@ -1,8 +1,7 @@
 import SBall from "./SBall.js";
 import SPaddle from "./SPaddle.js"
 import SPlayer from "./SPlayer.js";
-import { getNewPosition, areColliding, rotatePoint } from "../misc/utils.js";
-import '@pixi/math-extras'
+import { areColliding } from "../misc/utils.js";
 import { SIDES, SGameConfigs, SGameDTO } from "../misc/types.js";
 
 class ServerGame {
@@ -53,7 +52,7 @@ class ServerGame {
             let movVector = player.paddle.orientation.clone()
                                     .multiplyScalar(player.paddle.speed)
                                     .multiplyScalar(delta);
-            movVector = rotatePoint(movVector, player.controls.left.pressed ? -90 : 90);
+            movVector = movVector.rotate(player.controls.left.pressed ? -90 : 90);
             player.paddle.move(movVector);
         }
 
@@ -77,7 +76,7 @@ class ServerGame {
         const movVector = this.ball.direction.clone()
                                 .multiplyScalar(this.ball.speed)
                                 .multiplyScalar(delta);
-        const newPos = getNewPosition(oldPos, movVector);
+        const newPos = oldPos.add(movVector);
 
         
         if (newPos.x < 0 || newPos.x > this.windowSize.x) {
@@ -145,11 +144,11 @@ class ServerGame {
     getGameDTO(): SGameDTO {
         return {
             ball: {
-                pos: this.ball.pos,
+                pos: this.ball.pos.toObj(),
             },
-            paddles: this.players.map(player => ({
-                side: player.paddle.side,
-                pos: player.paddle.pos,
+            paddles: this.paddles.map(paddle => ({
+                side: paddle.side,
+                pos: paddle.pos.toObj(),
             })),
             //score: this.players.map(player => player.score).join(' : ')
         };

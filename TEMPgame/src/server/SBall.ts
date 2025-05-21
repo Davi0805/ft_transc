@@ -1,5 +1,4 @@
-import { Point } from "@pixi/math";
-import '@pixi/math-extras'
+import Point from "../misc/Point.js";
 import SObject from "../abstracts/SObject.js";
 
 

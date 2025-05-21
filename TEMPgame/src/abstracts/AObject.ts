@@ -1,5 +1,4 @@
-import { Point } from "@pixi/math"
-import "@pixi/math-extras"
+import Point from "../misc/Point";
 
 export default abstract class AObject {
     constructor (pos: Point, size: Point, orientation: Point) {

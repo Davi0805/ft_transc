@@ -1,4 +1,4 @@
-import { Point } from "@pixi/math"
+import Point from "../misc/Point"
 import { SIDES } from "../misc/types.js";
 import SObject from "../abstracts/SObject.js";
 import { computeOrientation } from "../misc/utils.js";

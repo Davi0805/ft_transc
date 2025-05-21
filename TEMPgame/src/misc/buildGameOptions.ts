@@ -1,7 +1,5 @@
 import { CAppConfigs, SGameConfigs, SIDES } from "./types";
-import { Point } from "@pixi/math";
-import '@pixi/math-extras'
-
+import Point from "./Point.js";
 import { DevCustoms, UserCustoms } from "./gameOptions";
 
 function chooseSprite(side: SIDES, clients: {side: number, paddleSprite: number}[]): number {
@@ -25,8 +23,8 @@ export function buildCAppConfigs(devCustoms: typeof DevCustoms,
       controls: userCustoms.clients[clientID].controls,
       gameInitialState: {
         ball: {
-          size: new Point(devCustoms.ball.size.x, devCustoms.ball.size.y),
-          pos: new Point(devCustoms.ball.pos.x, devCustoms.ball.pos.y),
+          size: Point.fromObj(devCustoms.ball.size),
+          pos: Point.fromObj(devCustoms.ball.pos),
           spriteID: userCustoms.ball.spriteID
         },
         paddles: []
@@ -37,8 +35,8 @@ export function buildCAppConfigs(devCustoms: typeof DevCustoms,
     const paddleConfigs = devCustoms.paddles[i];
     appConfigs.gameSceneConfigs.gameInitialState.paddles.push({
       side: paddleConfigs.side,
-      size: new Point(paddleConfigs.size.x, paddleConfigs.size.y),
-      pos: new Point(paddleConfigs.pos.x, paddleConfigs.pos.y),
+      size: Point.fromObj(paddleConfigs.size),
+      pos: Point.fromObj(paddleConfigs.pos),
       spriteID: chooseSprite(paddleConfigs.side, userCustoms.clients)
     })
   }
@@ -49,15 +47,15 @@ export function buildSGameConfigs(devCustoms: typeof DevCustoms,
         userCustoms: typeof UserCustoms): SGameConfigs {
   const gameConfigs: SGameConfigs = {
     window: {
-      size: new Point(devCustoms.window.size.x, devCustoms.window.size.y)
+      size: Point.fromObj(devCustoms.window.size)
     },
     players: [],
     gameInitialState: {
       ball: {
-        pos: new Point(devCustoms.ball.pos.x, devCustoms.ball.pos.y),
-        size: new Point(devCustoms.ball.size.x, devCustoms.ball.size.y),
+        pos: Point.fromObj(devCustoms.ball.pos),
+        size: Point.fromObj(devCustoms.ball.size),
         speed: devCustoms.ball.speed,
-        direction: new Point(devCustoms.ball.direction.x, devCustoms.ball.direction.y)
+        direction: Point.fromObj(devCustoms.ball.direction)
       },
       paddles: []
     }
@@ -76,8 +74,8 @@ export function buildSGameConfigs(devCustoms: typeof DevCustoms,
     const paddleConfigs = devCustoms.paddles[i];
     gameConfigs.gameInitialState.paddles.push({
       side: paddleConfigs.side,
-      size: new Point(paddleConfigs.size.x, paddleConfigs.size.y),
-      pos: new Point(paddleConfigs.pos.x, paddleConfigs.pos.y),
+      size: Point.fromObj(paddleConfigs.size),
+      pos: Point.fromObj(paddleConfigs.pos),
       speed: paddleConfigs.speed
     })
   }

@@ -1,14 +1,12 @@
 import { ApplicationOptions } from "pixi.js"
+import Point from "./Point"
 
-import { Point } from "@pixi/math"
-import "@pixi/math-extras"
-
-//TODO CHANGE THE ABOVE FOR THE BELOW
-
-/* export type point = {
+export type Rectangle = {
     x: number,
-    y: number
-} */
+    y: number,
+    width: number,
+    height: number
+}
  
 export enum SIDES {
     LEFT,
@@ -97,8 +95,13 @@ export type SGameConfigs = {
 
 // Server to Client
 export type SGameDTO = {
-    ball: Pick<TBall, "pos">,
-    paddles: Pick<TPaddle, "side" | "pos">[]
+    ball: {
+        pos: { x: number, y: number}
+    }
+    paddles: {
+        side: SIDES,
+        pos: { x: number, y: number }
+    }[]
 }
 
 // Client to server

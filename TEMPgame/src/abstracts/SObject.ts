@@ -1,6 +1,6 @@
 import AObject from "./AObject.js";
-import { Point, Rectangle } from "@pixi/math";
-import '@pixi/math-extras'
+import Point from "../misc/Point.js";
+import Rectangle from "../misc/Rectangle.js";
 
 export default abstract class SObject extends AObject {
     constructor(pos: Point, orientation: Point, size: Point, speed: number) {

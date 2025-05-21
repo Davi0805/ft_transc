@@ -52,7 +52,7 @@ export const UserCustoms = {
     ball: {
         spriteID: 0 //NOT USED YET
     },
-    paddlesAmount: 3,
+    paddlesAmount: 4,
     clients: [
         {
             side: SIDES.LEFT,

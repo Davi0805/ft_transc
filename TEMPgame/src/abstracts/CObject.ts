@@ -1,6 +1,5 @@
 import AObject from "./AObject.js";
-import { Point } from "@pixi/math";
-import '@pixi/math-extras'
+import Point from "../misc/Point.js";
 import { Sprite } from "pixi.js";
 
 export default abstract class CObject extends AObject {
@@ -9,14 +8,13 @@ export default abstract class CObject extends AObject {
         this._sprite = sprite;
         this._sprite.anchor.set(0.5);
         this._sprite.setSize(size.x, size.y)
-        this._sprite.position.set(pos.x, pos.y);
         this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
+        this._sprite.position.set(pos.x, pos.y);
     }
 
     override set pos(pos: Point) {
         super.pos = pos;
-        this.sprite.position.set(this.pos.x, this.pos.y);
-        //console.log(this.sprite.rotation)
+        this._sprite.position.set(pos.x, pos.y);
     }
     override get pos(): Point { return super.pos;}
 

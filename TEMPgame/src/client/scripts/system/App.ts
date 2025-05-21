@@ -6,13 +6,12 @@ import { EventBus } from './EventBus';
 import { GameScene } from '../game/GameScene';
 import { CAppConfigs } from '../../../misc/types';
 
-// This type allows all configs to be present in one file
-/* export type GameConfigs = {
-    websocket: WebSocket,
-    appConfigs: Partial<ApplicationOptions>,
-    assetsManifest: AssetsManifest,
-    scenesManifest: ScenesManifest
-} */
+
+
+
+
+
+import { Texture, Sprite } from 'pixi.js';
 
 class FtApplication {
     async init(gameConfigs: CAppConfigs) {
@@ -30,7 +29,7 @@ class FtApplication {
         // and forward it to the socket. This avoids the scenes to hold references to higher objects in the tree
         EventBus.addEventListener("sendToServer", (event: Event) => {
             const dto = (event as CustomEvent).detail;
-            console.log(dto);
+            //console.log(dto);
             this._socket.send(JSON.stringify(dto))
         })
 
@@ -92,7 +91,7 @@ class FtApplication {
         await gameScene.init(gameConfigs.gameSceneConfigs); //TODO put here the scene configs
         this.app.stage.addChild(gameScene.root);
 
-        
+
     }
 
     private _app!: Application;

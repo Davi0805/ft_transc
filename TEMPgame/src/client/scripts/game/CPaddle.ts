@@ -1,7 +1,7 @@
+import Point from "../../../misc/Point.js";
 import { SIDES } from "../../../misc/types.js";
 import { computeOrientation } from "../../../misc/utils";
 import { Sprite } from "pixi.js";
-import { Point } from "@pixi/math";
 import CObject from "../../../abstracts/CObject";
 
 
