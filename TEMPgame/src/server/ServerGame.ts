@@ -1,7 +1,6 @@
 import SBall from "./SBall.js";
 import SPaddle from "./SPaddle.js"
 import SPlayer from "./SPlayer.js";
-import { areColliding } from "../misc/utils.js";
 import { SIDES, SGameConfigs, SGameDTO } from "../misc/types.js";
 
 class ServerGame {
@@ -94,7 +93,7 @@ class ServerGame {
         }
         newPos.clone()
         for (let paddle of this.paddles) {
-            const collision = areColliding(this.ball.cbox, paddle.cbox); // Returns collision wall of FIRST object
+            const collision = this.ball.cbox.areColliding(paddle.cbox); // Returns collision wall of FIRST object
             if (collision !== null) {
                 console.log(SIDES[collision]);
                 if ((collision === SIDES.LEFT && this.ball.direction.x < 0)

@@ -1,3 +1,5 @@
+import { SIDES } from "./types";
+
 export default class Rectangle {
     constructor(x: number, y: number, width: number, height: number) {
         this._x = x;
@@ -21,4 +23,22 @@ export default class Rectangle {
     private _height: number;
     set height(height: number) { this._height = height; }
     get height(): number { return this._height; }
+
+    areColliding(other: Readonly<Rectangle>): SIDES | null {
+        const collision = this.x < other.x + other.width
+                            && this.x + this.width > other.x
+                            && this.y < other.y + other.height
+                            && this.y + this.height > other.y
+        if (!collision) {
+            return null;
+        }
+
+        const wallDistances = [
+            Math.abs(this.x - (other.x + other.width)),
+            Math.abs((this.x + this.width) - other.x),
+            Math.abs(this.y - (other.y + other.height)),
+            Math.abs((this.y + this.height) - other.y)
+        ]
+        return wallDistances.indexOf(Math.min(...wallDistances))
+    }
 }
