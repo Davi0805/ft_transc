@@ -12,9 +12,11 @@ export class Router {
         
         // Intercept < data-link> clicks and handle manually the navigation
         document.addEventListener('click', (e) => {
-            if (e.target.matches('[data-link]')) {
-                e.preventDefault(); // dont let browser do anything
-                this.navigateTo(e.target.href); // Using our own navigation
+            const link = e.target.closest('a[data-link]'); // Verifica se o clique foi em um <a> com data-link
+            if (link) {
+                e.preventDefault(); // Previne o comportamento padrão do navegador
+                const href = link.getAttribute('href'); // Obtém o valor do href
+                this.navigateTo(href); // Navega para a rota usando o router
             }
         });
     
@@ -38,6 +40,22 @@ export class Router {
         const route = this.routes.find(r => r.path === path) || this.routes.find(r => r.path === '/404');
 
         if (route) {
+
+            console.log(`token ${localStorage.getItem('authToken')}`)
+
+            const login = document.getElementById("login")
+            const register =document.getElementById("sign-up");
+            const profile =document.getElementById("account");
+
+            if (localStorage.getItem('authToken') === null) {
+                login.style.display = 'block';
+                register.style.display = 'block';
+                profile.style.display = 'none';
+            } else {
+                login.style.display = 'none';
+                register.style.display = 'none';
+                profile.style.display = 'block';
+            }
             // Load HTML template
             document.getElementById('main').innerHTML = await route.template();
             // Update page title
@@ -45,6 +63,8 @@ export class Router {
             // Initialize page-specific js (if any)
             if (route.script) 
                 route.script.init();
+
+            
         }
     }
 }

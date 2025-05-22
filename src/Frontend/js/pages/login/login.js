@@ -1,9 +1,30 @@
-import { togglePasswordVisibility } from "../utils/domUtils.js";
+import { togglePasswordVisibility, saveToken, showError } from "../../utils/domUtils.js";
+import { twoFactorAuthentication } from "./twoFactorAuth.js"
+
+
+async function loginUser(userData) {
+  const response = await fetch('http://localhost:8080/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Login Error");
+  }
+
+  return await response.json();
+}
+
+
 
 export const LoginPage = {
   template() {
     return `
-      <div class="loggin-wrapper">
+      <div id="log-wrapper" class="loggin-wrapper">
         <form id="login-form">
           <h1>Login</h1>
           <div class="input-box">
@@ -43,38 +64,22 @@ export const LoginPage = {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
-      const userData = {
-        username,
-        password
-      };
-
+      const userData = { username, password };
       try {
-        const response = await fetch('http://localhost:8080/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(userData)
-        });
+        const response = await loginUser(userData);
 
-        const responseData = await response.json();
-        const token = responseData.token;
+        console.log('DEBUG: Log in check');
 
-        const response2 = await fetch('http://localhost:8080/twofa/activate', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          }
-        });
+        const token = response.token;
 
-        const response2Data = await response2.json();
-        const qrcode = response2Data.qrcode;
-
-        let div = document.createElement('img');
-
-        div.src = `${qrcode}`;
-        const container = document.getElementById('loggin-wrapper');
-        container.appendChild(div);
+        if (!response.verified) {
+          console.log("Needs 2fa");
+          await twoFactorAuthentication(token);
+        }
+        else {
+          saveToken(token);
+          window.router.navigateTo('/');
+        }
 
       }
       catch (e) {
@@ -82,11 +87,6 @@ export const LoginPage = {
         console.log(e);
         return;
       }
-
-
     });
-
-
-
   },
 };
