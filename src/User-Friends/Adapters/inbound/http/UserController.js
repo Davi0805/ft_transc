@@ -89,9 +89,7 @@ class UserController {
             const session = await redisService.validateSession((req.headers.authorization));
             const file = req.file;
             if (!file) throw 400;
-
             await userService.uploadAvatar(file.path, session.user_id);
-
             return reply.send();
         } catch (error) {
             if (typeof error === 'number')
@@ -110,10 +108,8 @@ class UserController {
     */
     // todo: I will let this here for now, but in the future
     // todo: when the frontend is ready, i finish this to be more accurate
-    // !FIX this, its not working properly
     async getAvatar(req, reply) {
         try {
-            const session = await redisService.validateSession((req.headers.authorization));
             const user = await userService.findById(req.params.id);
             if (!user || Object.keys(user).length === 0) throw 404;
     
@@ -124,7 +120,6 @@ class UserController {
             console.log(imagePath);
             /* if (!fs.existsSync(imagePath)) throw 404; */
             
-            // Stream the file directly
             const stream = fs.createReadStream(imagePath);
             return reply.type('image').send(stream);
         } catch (error) {
