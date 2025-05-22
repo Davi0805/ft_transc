@@ -1,10 +1,11 @@
 import { Application, ApplicationOptions, Assets, AssetsManifest } from 'pixi.js'
-//import { ScenesManager, ScenesManifest } from './ScenesManager';
+import { ScenesManager, ScenesManifest } from './ScenesManager';
 import { EventBus } from './EventBus';
 //import { KeyboardDTO } from '../game/GameScene';
 
 import { GameScene } from '../game/GameScene';
 import { CAppConfigs } from '../../../misc/types';
+import { ExampleScene } from '../game/ExampleScene';
 
 
 class FtApplication {
@@ -15,8 +16,8 @@ class FtApplication {
         this._socket.addEventListener("message", (event) => {
             const message = JSON.parse(event.data);
             if (message.type === "gameDTO") {
-                //this._scenesManager.currentScene?.serverUpdate(dto);
-                gameScene.serverUpdate(message.gameDTO);
+                this._scenesManager.currentScene?.serverUpdate(message.gameDTO);
+                //gameScene.serverUpdate(message.gameDTO);
             }
         })
         // And when a message needs to be sent, the scene will send it as a signal, and the App will catch it
@@ -54,8 +55,8 @@ class FtApplication {
                     name: "exampleScene",
                     assets: [
                         {
-                            alias: "ball",
-                            src: "sprites/ball.png"
+                            alias: "example",
+                            src: "sprites/example.png"
                         }
                     ]
                 }
@@ -73,17 +74,21 @@ class FtApplication {
 
 
 
+        const scenesManifest: ScenesManifest = {
+            exampleScene: ExampleScene,
+            gameScene: GameScene
+        }
         // Creates the scenes manager and feeds to it all the scenes of the game through the manifest
-        //this._scenesManager = new ScenesManager(gameConfigs.scenesManifest);
+        this._scenesManager = new ScenesManager(scenesManifest);
         // This makes so anything the scene manager adds to container shows up on screen
-        //this.app.stage.addChild(this._scenesManager.container);
+        this.app.stage.addChild(this._scenesManager.container);
         // Starts the first scene
-        //await this._scenesManager.goToScene("exampleScene"); //TODO change to the correct first scene
+        await this._scenesManager.goToScene("gameScene", gameConfigs.gameSceneConfigs); //TODO change to the correct first scene
 
         // This initiates the game immediately. Use the above if different scenes are needed (although some way is needed to pass the configs to init of each scene)
-        const gameScene = new GameScene();
-        await gameScene.init(gameConfigs.gameSceneConfigs); //TODO put here the scene configs
-        this.app.stage.addChild(gameScene.root);
+        //const gameScene = new GameScene();
+        //await gameScene.init(gameConfigs.gameSceneConfigs); //TODO put here the scene configs
+        //this.app.stage.addChild(gameScene.root);
 
 
     }
@@ -96,7 +101,7 @@ class FtApplication {
         return this._app;
     }
 
-    //private _scenesManager!: ScenesManager;
+    private _scenesManager!: ScenesManager;
 
     private _socket!: WebSocket;
     // All properties are marked with assertion operator because they are only assigned in the init() method.

@@ -80,6 +80,11 @@ export type CAppConfigs = {
 }
 
 
+export type ExampleSceneConfigs = {
+
+}
+
+
 // Server
 
 export type SGameState = {

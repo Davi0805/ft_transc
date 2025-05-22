@@ -5,6 +5,7 @@ import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
 import { CGameSceneConfigs, SGameDTO, TControls, TControlsState } from "../../../misc/types";
+import { ExampleScene } from "./ExampleScene";
 
 
 export class GameScene extends AScene<CGameSceneConfigs> {
@@ -33,8 +34,7 @@ export class GameScene extends AScene<CGameSceneConfigs> {
         }
 
 
-
-        this._onKeyDown = this._getOnKeyDown(gameSceneConfigs.controls);
+        this._onKeyDown = this._getOnKeyDown(gameSceneConfigs.controls); //TODO: Probably should put some of this in the AScene?
         this._onKeyUp = this._getOnKeyUp(gameSceneConfigs.controls);
         window.addEventListener("keydown", this._onKeyDown);
         window.addEventListener("keyup", this._onKeyUp);
@@ -50,10 +50,6 @@ export class GameScene extends AScene<CGameSceneConfigs> {
             this.ball.pos = Point.fromObj(gameDto.ball.pos);
             for (const i in gameDto.paddles) {
                 this.paddles[i].pos = Point.fromObj(gameDto.paddles[i].pos);
-                
-                
-                //this.paddles[i].sprite.rotation += 0.1;
-                console.log(this.paddles[i].sprite.rotation)
             }
             
         } catch (error) {console.log(error)}
@@ -72,6 +68,21 @@ export class GameScene extends AScene<CGameSceneConfigs> {
     private _onKeyDown!: (event: KeyboardEvent) => void;
     private _getOnKeyDown(controls: TControls) {
         return (event: KeyboardEvent) => {
+            
+            
+            if (event.key === "c") { //TODO: TEMPORARY: THIS IS JUST AN EXAMPLE ON HOW TO CHANGE SCENES
+                const exampleSceneConfigs = {
+                    this: "that"
+                }
+                console.log("hereee");
+                EventBus.dispatchEvent(new CustomEvent("changeScene", { detail: {
+                    sceneName: "exampleScene",
+                    configs: exampleSceneConfigs
+                }}))
+                return ;
+            }
+
+
             if (event.key === controls.left) {
                 this.controlsState.left.pressed = true;
             } else if (event.key === controls.right) {

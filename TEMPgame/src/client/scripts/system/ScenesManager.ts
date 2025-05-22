@@ -1,11 +1,8 @@
 import { Container } from "pixi.js";
 import { AScene } from "./AScene";
 import { EventBus } from "./EventBus";
-import { CGameSceneConfigs } from "../../../misc/types";
+import { ExampleSceneConfigs, CGameSceneConfigs } from "../../../misc/types";
 
-type ExampleSceneConfigs = {
-
-}
 
 type SceneConfigMap = {
     "exampleScene": ExampleSceneConfigs
@@ -29,46 +26,14 @@ export class ScenesManager {
         // TODO: Is there a way to type that first argument to only accept custom signal names?
         // TODO: Is there a way to type the "detail" attribute so it only acceps scene names?
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
         EventBus.addEventListener("changeScene", async (event: Event) => {
-            const sceneName = (event as CustomEvent).detail as keyof ScenesManifest; //TODO Pass the configs through here too
-            await this.goToScene(sceneName);
+            console.log("lolololol")
+            const sceneDetails = (event as CustomEvent).detail; //TODO Pass the configs through here too
+            const sceneName = sceneDetails.sceneName as keyof ScenesManifest;
+            const sceneConfigs = sceneDetails.configs;
+            await this.goToScene(sceneName, sceneConfigs);
         })
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -90,7 +55,7 @@ export class ScenesManager {
         return this._container;
     }
 
-    private _currentScene: AScene<T> | null;
+    private _currentScene: AScene<SceneConfigMap[keyof ScenesManifest]> | null;
     get currentScene() {
         return this._currentScene;
     }
