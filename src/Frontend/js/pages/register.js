@@ -87,7 +87,7 @@ export const RegisterPage = {
       };
 
       try {
-        const response = await fetch('http://localhost:8080/users', {
+        await fetch('http://localhost:8080/users', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -95,9 +95,7 @@ export const RegisterPage = {
           body: JSON.stringify(userData)
         });
 
-        const responseData = await response.json();
-        const token = responseData.token;
-        // store token and so on
+        window.router.navigateTo('/');
       }
       catch (e) {
         console.log("FODEU GERAL");
