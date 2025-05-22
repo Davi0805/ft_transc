@@ -5,6 +5,15 @@ services:
       - "6378:6378"
     networks:
       - net
+
+  prometheus:
+    build: ./Prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - user-backend
+    networks:
+      - net
   
   user-backend:
     build: ./src/User-Friends
