@@ -9,11 +9,13 @@ const cors = require('@fastify/cors');
 const fastifyStatic = require('@fastify/static');
 const path = require('path');
 
+const prometheus = require('fastify-metrics');
+
 const setup = () => {
     const app = Fastify({ logger: true,
         bodyLimit: 10 * 1024 * 1024
      });
-
+    app.register(prometheus, {endpoint: '/metrics'});
     app.register(multer.contentParser);
     app.register(multerConfig);
     app.register(cors, {
