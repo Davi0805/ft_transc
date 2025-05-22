@@ -5,7 +5,7 @@ import { WebSocket } from 'ws' // lowlevel type of the websocket to be used by t
 import path from 'path' // utility to work with paths
 import { DevCustoms, UserCustoms } from '../misc/gameOptions.js';
 import ServerGame from './ServerGame.js';
-import { CGameDTO } from '../misc/types.js';
+import { CGameDTO, Adto, DTOAssignID } from '../misc/types.js';
 import { buildSGameConfigs } from '../misc/buildGameOptions.js';
 
 
@@ -13,7 +13,7 @@ import { buildSGameConfigs } from '../misc/buildGameOptions.js';
 const WEBSITE_ROOT_RELATIVE_PATH = '../../public';
 const CLIENT_ENTRYPOINT = 'index.html';
 const SERVER_PORT = 3000;
-const SERVER_HOST = '127.0.0.1'; // 127.0.0.1 for local machine only, 0.0.0.0 for entire network
+const SERVER_HOST = '0.0.0.0'; // 127.0.0.1 for local machine only, 0.0.0.0 for entire network
 
 
 const gameConfigs = buildSGameConfigs(DevCustoms, UserCustoms);
@@ -28,10 +28,11 @@ const broadcastRate = 1000 / 60; // In milliseconds
 // finished before trying to broadcast again.
 (function loop() {
   setTimeout(() => {
-    const data = JSON.stringify({
-        type: "gameDTO",
-        gameDTO: game.getGameDTO()
-    });
+    const message: Adto = {
+        type: "SGameDTO",
+        dto: game.getGameDTO()
+    }
+    const data = JSON.stringify(message);
     for (var client of clients) {
       client.send(data)
     }
@@ -53,9 +54,9 @@ fastify.register(async (fastify) => {
     fastify.get('/ws', {websocket: true}, (socket, _request) => {
         const clientId = clients.length;
         
-        const data = {
-            type: "assignID",
-            id: clientId
+        const data: Adto = {
+            type: "AssignID",
+            dto: { id: clientId }
         }; 
         socket.send(JSON.stringify(data));
 
@@ -63,10 +64,7 @@ fastify.register(async (fastify) => {
         console.log(`Client ${clientId} joined`);
         
         socket.on('message', (message) => {
-            //console.log(message.toString())
             game.players[clientId].controls = (JSON.parse(message.toString()) as CGameDTO).controlsState; //TODO This will definitely have to be done from within the game Class to check if client is 
-            //console.log(game.players[clientId].controls)
-            //console.log((JSON.parse(message.toString()) as CGameDTO))
         })
         socket.on('close', () => {
             console.log(`Client ${clientId} left`);

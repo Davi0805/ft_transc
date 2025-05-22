@@ -1,14 +1,12 @@
-import { AScene } from "../system/AScene";
+import AScene from "../system/AScene";
 import Point from "../../../misc/Point";
 import { Assets, Sprite } from "pixi.js"
 import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
-import { CGameSceneConfigs, SGameDTO, TControls, TControlsState } from "../../../misc/types";
-import { ExampleScene } from "./ExampleScene";
+import { CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState } from "../../../misc/types";
 
-
-export class GameScene extends AScene<CGameSceneConfigs> {
+export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         this._assets = await Assets.loadBundle("gameScene"); //TODO: Probably not needed if assets are only needed once??
 
@@ -55,30 +53,23 @@ export class GameScene extends AScene<CGameSceneConfigs> {
         } catch (error) {console.log(error)}
     }
 
-    override tickerUpdate(): void {
-        /* try {
-            const pos = this.paddles[3].pos;
-            this.paddles[3].pos = Point.fromObj({x: pos.x - 1, y: pos.y});
-        } catch (error) {console.log(error)} */
-    }
+    override tickerUpdate(): void {}
 
-    // Callbacks like these must be arrow functions and not methods!
-    // This way, if it is needed to use class members (like _keys in this case),
-    // the "this" keyword inherits context when passed as callback
     private _onKeyDown!: (event: KeyboardEvent) => void;
     private _getOnKeyDown(controls: TControls) {
+        // Callbacks like these must be arrow functions and not methods!
+        // This way, if it is needed to use class members (like _keys in this case),
+        // the "this" keyword inherits context when passed as callback
         return (event: KeyboardEvent) => {
             
             
-            if (event.key === "c") { //TODO: TEMPORARY: THIS IS JUST AN EXAMPLE ON HOW TO CHANGE SCENES
-                const exampleSceneConfigs = {
-                    this: "that"
-                }
-                console.log("hereee");
-                EventBus.dispatchEvent(new CustomEvent("changeScene", { detail: {
+            if (event.key === "c") { //TODO: TEMPORARY: THIS IS JUST AN EXAMPLE ON HOW TO CHANGE SCENES 
+                const detail: SceneChangeDetail =  {
                     sceneName: "exampleScene",
-                    configs: exampleSceneConfigs
-                }}))
+                    configs: {
+                    }
+                }
+                EventBus.dispatchEvent(new CustomEvent("changeScene", { detail: detail}))
                 return ;
             }
 
@@ -90,7 +81,7 @@ export class GameScene extends AScene<CGameSceneConfigs> {
             } else if (event.key === controls.pause) {
                 this.controlsState.pause.pressed = true;
             }
-            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: {controlsState: this.controlsState}}))
+            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: { controlsState: this.controlsState }}))
         }
     }
 

@@ -1,7 +1,7 @@
 import { Container} from "pixi.js";
 import { App } from "./App"
 
-export abstract class AScene<T> {
+export default abstract class AScene<T> {
     constructor() {
         this._root = new Container(); // All objects of the scene will be appended to this
         // This allows tickerUpdate to be called every pixi tick, in case some updates are needed to be performed automatically

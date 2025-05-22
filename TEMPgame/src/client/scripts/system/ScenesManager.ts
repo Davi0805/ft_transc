@@ -1,18 +1,7 @@
 import { Container } from "pixi.js";
-import { AScene } from "./AScene";
+import AScene from "./AScene";
 import { EventBus } from "./EventBus";
-import { ExampleSceneConfigs, CGameSceneConfigs } from "../../../misc/types";
-
-
-type SceneConfigMap = {
-    "exampleScene": ExampleSceneConfigs
-    "gameScene": CGameSceneConfigs
-}
-
-// This is how the ScenesManager saves the scenes
-export type ScenesManifest = {
-    [K in keyof SceneConfigMap]: new () => AScene<SceneConfigMap[K]>
-}
+import { ScenesManifest, SceneConfigMap } from "../game/Manifests";
 
 export class ScenesManager {
     constructor(scenesManifest: ScenesManifest) {
@@ -20,24 +9,21 @@ export class ScenesManager {
         this._container.interactive = true;  //TODO: Must check if this actually does anything
         this._currentScene = null; // Since the function that creates scenes is async, it cannot be attributed here (constructor)
         this._SCENES = scenesManifest;
+
         // In order for the scenes to not have a reference to this object, a event-handler system is implemented. 
         // This way, when each scene needs to request a scene change,
         // they can just send a signal to the EventBus singleton and this listener will catch it and deal with the change
-        // TODO: Is there a way to type that first argument to only accept custom signal names?
-        // TODO: Is there a way to type the "detail" attribute so it only acceps scene names?
-
         EventBus.addEventListener("changeScene", async (event: Event) => {
-            console.log("lolololol")
-            const sceneDetails = (event as CustomEvent).detail; //TODO Pass the configs through here too
+            const sceneDetails = (event as CustomEvent).detail;
             const sceneName = sceneDetails.sceneName as keyof ScenesManifest;
-            const sceneConfigs = sceneDetails.configs;
+            const sceneConfigs = sceneDetails.configs as SceneConfigMap[keyof ScenesManifest];
             await this.goToScene(sceneName, sceneConfigs);
         })
     }
 
 
 
-    async goToScene(scene: keyof ScenesManifest, configs: any) { // TODO probably there is a better, more specific way to type the parameter
+    async goToScene(scene: keyof ScenesManifest, configs: SceneConfigMap[keyof ScenesManifest]) {
         if (this.currentScene) {
             await this.currentScene.remove();
             this.container.removeChildren();

@@ -1,6 +1,7 @@
 import { ApplicationOptions } from "pixi.js"
 import Point from "./Point"
 
+
 export type Rectangle = {
     x: number,
     y: number,
@@ -81,9 +82,11 @@ export type CAppConfigs = {
 
 
 export type ExampleSceneConfigs = {
-
+    
 }
 
+export type SceneChangeDetail = | { sceneName: "exampleScene", configs: ExampleSceneConfigs }
+                                | { sceneName: "gameScene", configs: CGameSceneConfigs }
 
 // Server
 
@@ -98,7 +101,16 @@ export type SGameConfigs = {
     gameInitialState: SGameState,
 }
 
+// DTO type
+export type Adto = | { type: "AssignID", dto: DTOAssignID }
+                    | { type: "SGameDTO", dto: SGameDTO}
+                    | { type: "CGameDTO", dto: CGameDTO}
+
 // Server to Client
+export type DTOAssignID = {
+    id: number
+}
+
 export type SGameDTO = {
     ball: {
         pos: { x: number, y: number}
