@@ -24,6 +24,7 @@ export default class Rectangle {
     set height(height: number) { this._height = height; }
     get height(): number { return this._height; }
 
+    // Returns collision wall of this instance
     areColliding(other: Readonly<Rectangle>): SIDES | null {
         const collision = this.x < other.x + other.width
                             && this.x + this.width > other.x

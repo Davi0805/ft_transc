@@ -2,6 +2,7 @@ import SBall from "./SBall.js";
 import SPaddle from "./SPaddle.js"
 import SPlayer from "./SPlayer.js";
 import { SIDES, SGameConfigs, SGameDTO } from "../misc/types.js";
+import Point from "../misc/Point.js";
 
 class ServerGame {
     constructor(gameOpts: SGameConfigs) {
@@ -77,7 +78,7 @@ class ServerGame {
                                 .multiplyScalar(delta);
         const newPos = oldPos.add(movVector);
 
-        
+        console.log(this.ball.pos);
         if (newPos.x < 0 || newPos.x > this.windowSize.x) {
             this.ball.direction.x *= -1
             /*if (newPos.x < 0) {
@@ -91,16 +92,16 @@ class ServerGame {
         } else {
             this.ball.move(movVector);
         }
-        newPos.clone()
+
         for (let paddle of this.paddles) {
-            const collision = this.ball.cbox.areColliding(paddle.cbox); // Returns collision wall of FIRST object
+            const collision = this.ball.cbox.areColliding(paddle.cbox);
             if (collision !== null) {
                 console.log(SIDES[collision]);
                 if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
                     || (collision === SIDES.RIGHT && this.ball.direction.x > 0)) {
                     this.ball.direction.x *= -1;
-                } else if ((collision === SIDES.TOP && this.ball.direction.y < 0)
-                    || (collision === SIDES.BOTTOM && this.ball.direction.y > 0)) {
+                } else if ((collision === SIDES.TOP && this.ball.direction.y > 0)
+                    || (collision === SIDES.BOTTOM && this.ball.direction.y < 0)) {
                     this.ball.direction.y *= -1;
                 }
                 const movDistance = (paddle.speed + this.ball.speed) * delta; // This in theory compensates for moving-into-ball paddles
