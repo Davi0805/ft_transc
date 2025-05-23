@@ -78,7 +78,6 @@ class ServerGame {
                                 .multiplyScalar(delta);
         const newPos = oldPos.add(movVector);
 
-        console.log(this.ball.pos);
         if (newPos.x < 0 || newPos.x > this.windowSize.x) {
             this.ball.direction.x *= -1
             /*if (newPos.x < 0) {
@@ -96,7 +95,6 @@ class ServerGame {
         for (let paddle of this.paddles) {
             const collision = this.ball.cbox.areColliding(paddle.cbox);
             if (collision !== null) {
-                console.log(SIDES[collision]);
                 if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
                     || (collision === SIDES.RIGHT && this.ball.direction.x > 0)) {
                     this.ball.direction.x *= -1;
@@ -107,7 +105,7 @@ class ServerGame {
                 const movDistance = (paddle.speed + this.ball.speed) * delta; // This in theory compensates for moving-into-ball paddles
                 const movVector = this.ball.direction.clone().multiplyScalar(movDistance);
                 this.ball.move(movVector);
-                //this.ball.speed += 10;
+                this.ball.speed += 10;
                 for (let paddle of this.paddles) {
                     paddle.speed += 2;
                 }
@@ -121,7 +119,6 @@ class ServerGame {
         const loop = () => {
             const currentTime = Date.now();
             const delta = (currentTime - prevTime) / 1000;
-            //console.log(this.players[0].controls)
             if (this.players[0].controls.pause.pressed) {
                 this.gameRunning = !this.gameRunning;
             }

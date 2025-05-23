@@ -8,10 +8,11 @@ import { CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsSta
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
-        this._assets = await Assets.loadBundle("gameScene"); //TODO: Probably not needed if assets are only needed once??
+        this._assets = await Assets.loadBundle("gameScene");
 
         const ballState = gameSceneConfigs.gameInitialState.ball;
-        const ballSprite = new Sprite(this._assets.ball);// TODO Fix this to accept the sprite in the configs
+        const ballName = "ball" + ballState.spriteID
+        const ballSprite = new Sprite(this._assets[ballName]);// TODO Fix this to accept the sprite in the configs
         this._root.addChild(ballSprite);
         
         this._ball = new CBall(
@@ -21,7 +22,8 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         ); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
         
         for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) {
-            const paddleSprite = new Sprite(this._assets.paddle) // TODO Fix this to accept the sprite in the configs
+            const paddleName = "paddle" + paddleConf.spriteID
+            const paddleSprite = new Sprite(this._assets[paddleName]) // TODO Fix this to accept the sprite in the configs
             this._root.addChild(paddleSprite);
             this.paddles.push( new CPaddle(
                 paddleConf.side,

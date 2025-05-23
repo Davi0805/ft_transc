@@ -28,12 +28,20 @@ export const assetsManifest: AssetsManifest = {
             name: "gameScene",
             assets: [
                 {
-                    alias: "ball",
-                    src: "sprites/ball.png"
+                    alias: "ball0",
+                    src: "sprites/ball0.png"
                 },
                 {
-                    alias: "paddle",
-                    src: "sprites/paddle.png"
+                    alias: "ball1",
+                    src: "sprites/ball1.png"
+                },
+                {
+                    alias: "paddle0",
+                    src: "sprites/paddle0.png"
+                },
+                {
+                    alias: "paddle1",
+                    src: "sprites/paddle1.png"
                 }
             ]
         },

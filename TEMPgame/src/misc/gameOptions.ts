@@ -1,6 +1,6 @@
 import { SIDES } from "./types.js"
 
-const WINDOW_SIZE = { x: 200, y: 800 } // Has to be a square if it can accept four players, BUT in that case a better angle calculation for the ball is needed to avoid repetitive paths
+const WINDOW_SIZE = { x: 200, y: 200 } // Has to be a square if it can accept four players, BUT in that case a better angle calculation for the ball is needed to avoid repetitive paths
 const PADDLE_COMMON_VARS = {
     size: { x: 16, y: 64 },
     speed: 150
@@ -50,13 +50,13 @@ export const UserCustoms = {
     },
     gameLength: 3.0, //NOT USED YET
     ball: {
-        spriteID: 0 //NOT USED YET
+        spriteID: 0
     },
     paddlesAmount: 4,
     clients: [
         {
             side: SIDES.LEFT,
-            paddleSprite: 0, //NOT USED YET
+            paddleSprite: 1,
             controls: {
                 left: "a",
                 right: "z",
@@ -65,7 +65,7 @@ export const UserCustoms = {
         },
         {
             side: SIDES.RIGHT,
-            paddleSprite: 1, //NOT USED YET
+            paddleSprite: 0,
             controls: {
                 left: "m",
                 right: "k",
