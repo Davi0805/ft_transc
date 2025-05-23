@@ -24,9 +24,9 @@ async function loginUser(userData) {
 export const LoginPage = {
   template() {
     return `
-      <div id="log-wrapper" class="loggin-wrapper">
+      <div id="log-wrapper" class="content loggin-wrapper">
         <form id="login-form">
-          <h1>Login</h1>
+          <h1 class="cart-title">Login</h1>
           <div class="input-box">
             <input id="username" type="text" placeholder="Username" name="username" required />
             <img src="../Assets/icons/user.svg" />
@@ -40,7 +40,7 @@ export const LoginPage = {
             <a href="#">Forgot password?</a>
           </div>
 
-          <button type="submit" class="btn">Login</button>
+          <button type="submit" class="button btn">Login</button>
 
           <div class="register-link">
             <p>Don't have an account? <a href="/register" data-link>Register</a></p>
