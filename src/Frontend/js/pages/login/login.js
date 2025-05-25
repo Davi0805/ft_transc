@@ -1,32 +1,17 @@
-import { togglePasswordVisibility, saveToken, showError } from "../../utils/domUtils.js";
-import { twoFactorAuthentication } from "./twoFactorAuth.js"
-
-
-async function loginUser(userData) {
-  const response = await fetch('http://localhost:8080/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(userData)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Login Error");
-  }
-
-  return await response.json();
-}
-
-
+import {
+  togglePasswordVisibility,
+  saveToken,
+  showError,
+} from "../../utils/domUtils.js";
+import { TwoFactorAuth } from "./twoFactorAuth.js";
+import { login } from "../../api/loginAPI.js";
 
 export const LoginPage = {
   template() {
     return `
       <div id="log-wrapper" class="content loggin-wrapper">
         <form id="login-form">
-          <h1 class="cart-title">Login</h1>
+          <h1 class="title">Login</h1>
           <div class="input-box">
             <input id="username" type="text" placeholder="Username" name="username" required />
             <img src="../Assets/icons/user.svg" />
@@ -55,38 +40,38 @@ export const LoginPage = {
 
     togglePasswordVisibility();
 
-    const form = document.getElementById('login-form');
+    const form = document.getElementById("login-form");
+    form.addEventListener("submit", this.handleSubmit);
+  },
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // prevent default browser action
+  async handleSubmit(e) {
+    e.preventDefault(); // prevent default browser action
 
-      // Input
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+    // Input
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const userData = { username, password };
 
-      const userData = { username, password };
-      try {
-        const response = await loginUser(userData);
+    try {
+      const response = await login(userData);
 
-        console.log('DEBUG: Log in check');
+      const token = response.token;
 
-        const token = response.token;
-
-        if (!response.verified) {
-          console.log("Needs 2fa");
-          await twoFactorAuthentication(token);
-        }
-        else {
-          saveToken(token);
-          window.router.navigateTo('/');
-        }
-
-      }
-      catch (e) {
-        console.log("FODEU GERAL");
-        console.log(e);
+      if (!response.verified) {
+        await TwoFactorAuth.show(token); // error checking for this inside
         return;
       }
-    });
+
+      console.log("aqui");
+      saveToken(token);
+      window.router.navigateTo("/");
+    } catch (error) {
+      if (error.status == 401) {
+        // TODO HERE add a function to display the error
+        console.error("Pass ou user wrong");
+      } else console.error(error.message);
+      console.error("FODEU GERAL");
+    }
+    return;
   },
 };
