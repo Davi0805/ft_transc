@@ -1,11 +1,11 @@
-import { togglePasswordVisibility } from "../utils/domUtils.js";
+import { togglePasswordVisibility, showError } from "../utils/domUtils.js";
 
 export const RegisterPage = {
   template() {
     return `
-    <div class="loggin-wrapper">
+    <div class="register-wrapper content">
       <form id="register-form">
-        <h1>Register</h1>
+        <h1 class="title">Register</h1>
 
         <div class="input-box">
           <input id="name" type="text" placeholder="Name" name="name" required />
@@ -41,9 +41,9 @@ export const RegisterPage = {
           <img class="visibility" src="../Assets/icons/visibility-on.svg" />
         </div>
 
-        <span id="match-error" hidden>Passwords do not match!</span>
+        <div id="pass-error" aria-live="polite" hidden>Passwords do not match!</div>
 
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="button">Register</button>
         </div>
       </form>
      </div>
@@ -66,15 +66,10 @@ export const RegisterPage = {
       const email = document.getElementById('email').value;
       const password_hash = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
-      const matchError = document.getElementById('match-error');
-
-      matchError.hidden = true;
+      const matchError = document.getElementById('pass-error');
 
       // check for correct characters, lenght and confirmation match
-      const rule = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*._\\-+=?])[A-Za-z\\d!@#$%^&*._\\-+=?]{8,}$";
       if (password_hash != confirmPassword) {
-
-        // || !rule.test(password))
         matchError.hidden = false;
         return;
       }
