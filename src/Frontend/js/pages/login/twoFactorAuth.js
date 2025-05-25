@@ -5,15 +5,22 @@ export const TwoFactorAuth = {
   renderHTML() {
     return `
       <div id="twofa-wrapper" class="twofa-wrapper">
-        <h1>Two-Factor Authentication</h1>
-    
+      <div class = content>
+
+        <h1 class="title">Two-Factor Authentication</h1>
+        <p class="text text-center">Enter the verification code to continue</p>
         <form id="twofa-form">
-          <div class="input-box">
-            <input id="twofa-code" type="text" placeholder="Enter 2FA Code" name="twofa-code" required />
+          <div id="otp-container">
+          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" autofocus/>
+          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
           </div>
-          <button type="submit" class="btn">Verify</button>
+          <button type="submit" class="button">Verify</button>
         </form>
-        <p>Return to <a href='#'>site</a></p>
+      </div>
       </div>
     `;
   },
@@ -22,11 +29,26 @@ export const TwoFactorAuth = {
     const container = document.getElementById("log-wrapper");
     container.innerHTML = this.renderHTML();
 
+    const inputs = document.querySelectorAll('.otp-input');
+
+    inputs.forEach((input, idx) => {
+      input.addEventListener('input', () => {
+        const val = input.value;
+        if (val.length === 1 && idx < inputs.length - 1)
+            inputs[idx + 1].focus();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && input.value === '' && idx > 0)
+          inputs[idx - 1].focus();
+      })
+    });
+
     const twofaForm = document.getElementById("twofa-form");
     twofaForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const code = document.getElementById("twofa-code").value;
+      const code = Array.from(inputs).map(input => input.value).join('');
       try {
         await verifyTwoFactorCode(token, code);
         saveToken(token);
