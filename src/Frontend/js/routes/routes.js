@@ -1,6 +1,6 @@
 import { HomePage } from '../pages/home.js'
 import { PlayPage } from '../pages/play.js'
-import { LoginPage } from '../pages/login.js'
+import { LoginPage } from '../pages/login/login.js'
 import { NotFoundPage } from '../pages/404.js'
 import { ProfilePage  } from '../pages/profile.js'
 import { RegisterPage } from '../pages/register.js'
