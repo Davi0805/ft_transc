@@ -11,12 +11,12 @@ export const TwoFactorAuth = {
         <p class="text text-center">Enter the verification code to continue</p>
         <form id="twofa-form">
           <div id="otp-container">
-          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" autofocus/>
-          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
-          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
-          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
-          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
-          <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+            <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" autofocus/>
+            <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+            <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+            <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+            <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+            <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
           </div>
           <button type="submit" class="button">Verify</button>
         </form>

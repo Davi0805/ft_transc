@@ -40,6 +40,8 @@
   font-weight: bold;
   text-align: center;
 
+  caret-color: transparent;
+
   border: 2px solid #333;
   border-radius: 6px;
   outline: none;
@@ -49,8 +51,10 @@
 
 .otp-input:focus {
   border-color: #fff;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 3px rgb(0, 85, 150);
 }
+
+
 
 /* Optional: Placeholder color for better UX */
 .otp-input::placeholder {
