@@ -9,11 +9,12 @@ import { login } from "../../api/loginAPI.js";
 export const LoginPage = {
   template() {
     return `
-      <div id="log-wrapper" class="content loggin-wrapper">
+      <div id="log-wrapper" class="loggin-wrapper">
+      <div class = content>
         <form id="login-form">
           <h1 class="title">Login</h1>
           <div class="input-box">
-            <input id="username" type="text" placeholder="Username" name="username" required />
+            <input id="username" type="text" placeholder="Username" name="username" required/>
             <img src="../Assets/icons/user.svg" />
           </div>
           <div class="input-box">
@@ -25,12 +26,14 @@ export const LoginPage = {
             <a href="#">Forgot password?</a>
           </div>
 
-          <button type="submit" class="button btn">Login</button>
+          <button type="submit" class="button">Login</button>
 
           <div class="register-link">
             <p>Don't have an account? <a href="/register" data-link>Register</a></p>
           </div>
         </form>
+      </div>
+
       </div>
         `;
   },

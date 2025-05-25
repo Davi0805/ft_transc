@@ -1,50 +1,65 @@
 .content {
-    background: transparent;
-    backdrop-filter: blur(50px);
-    border: 2px solid rgba(0, 0, 0, 0.4);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-    color: #fff;
-    border-radius: 10px;
-    padding: 30px 40px;
-  }
-  
-  .title{
-    font-size: 36px;
-    text-align: center;
-  }
-  
-  .input-box {
-    width: 100%;
-    height: 50px;
-    margin: 30px 0;
-    position: relative;
-  }
-  
-  .input-box input {
-    width: 100%;
-    height: 50px;
-    background: rgba(0, 0, 0, 0.2);
-    border: none;
-    outline: none;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 500;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 40px;
-    padding: 20px 45px 20px 20px;
-    caret-color: #fff;
-  }
-  
-  .input-box input::placeholder {
-    color: #fff;
-    font-size: 16px;
-  }
-  
-  .input-box img {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    fill: #000;
-  }
-  
+  background: transparent;
+  backdrop-filter: blur(50px);
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  color: #fff;
+  border-radius: 10px;
+  padding: 30px 40px;
+}
+
+.title {
+  font-size: 36px;
+  text-align: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.input-box {
+  width: 100%;
+  height: 50px;
+  margin: 30px 0;
+  position: relative;
+}
+
+.input-box input {
+  width: 100%;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 40px;
+  padding: 20px 45px 20px 20px;
+  caret-color: #fff;
+}
+
+.input-box input::placeholder {
+  color: #fff;
+  font-size: 16px;
+}
+
+.input-box img {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  fill: #000;
+}
+
+.button {
+  border: none;
+  outline: none;
+  border-radius: 40px;
+  box-shadow: 0 1 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.button:active {
+  transform: scale(0.95);
+}
