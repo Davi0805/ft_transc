@@ -1,9 +1,10 @@
 import { togglePasswordVisibility, showError } from "../utils/domUtils.js";
+import { register } from "../api/registerAPI.js"
 
 export const RegisterPage = {
   template() {
     return `
-    <div class="register-wrapper content">
+    <div id="register-wrapper" class="content">
       <form id="register-form">
         <h1 class="title">Register</h1>
 
@@ -41,13 +42,31 @@ export const RegisterPage = {
           <img class="visibility" src="../Assets/icons/visibility-on.svg" />
         </div>
 
-        <div id="pass-error" aria-live="polite" hidden>Passwords do not match!</div>
+        <div id="pass-error" aria-live="polite" hidden></div>
 
         <button type="submit" class="button">Register</button>
         </div>
       </form>
      </div>
       `;
+  },
+
+  renderSuccessHTML() {
+    const wrapper = document.getElementById('register-wrapper');
+    wrapper.innerHTML =  `
+      <div class="registration-success">
+        <h1 class="title">Success!</h1>
+        <p class="description">Congratulations, your account has been successfully created.</p>
+        <div class="options">
+          <button id="btn-h" class="button">Home Page</button>
+          <button id="btn-p" class="button">Log In</button>
+        </div>
+      </div>
+    `;
+    const buttonHome = document.getElementById('btn-h');
+    const buttonPlay = document.getElementById('btn-p');
+    buttonHome.addEventListener('click', () => window.router.navigateTo('/'));
+    buttonPlay.addEventListener('click', () => window.router.navigateTo('/play'));
   },
 
   init() {
@@ -66,38 +85,25 @@ export const RegisterPage = {
       const email = document.getElementById('email').value;
       const password_hash = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
-      const matchError = document.getElementById('pass-error');
+      const registerError = document.getElementById('pass-error');
 
       // check for correct characters, lenght and confirmation match
       if (password_hash != confirmPassword) {
-        matchError.hidden = false;
+        registerError.textContent = "Passwords do not match!"
+        registerError.hidden = false;
         return;
       }
-
-      const userData = {
-        name,
-        username,
-        email,
-        password_hash
-      };
 
       try {
-        await fetch('http://localhost:8080/users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(userData)
-        });
-
-        window.router.navigateTo('/');
-      }
-      catch (e) {
-        console.log("FODEU GERAL");
+        await register (name, username, email, password_hash);
+        this.renderSuccessHTML();
         return;
+      } catch (error) {
+        if (error.status == 400) {
+          registerError.textContent = "Username or email already taken!"
+          registerError.hidden = false;
+        }
       }
-
     });
-
-  },
+  }
 };

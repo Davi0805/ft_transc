@@ -40,22 +40,6 @@ export class Router {
         const route = this.routes.find(r => r.path === path) || this.routes.find(r => r.path === '/404');
 
         if (route) {
-
-            console.log(`token ${localStorage.getItem('authToken')}`)
-
-            const login = document.getElementById("login")
-            const register =document.getElementById("sign-up");
-            const profile =document.getElementById("account");
-
-            if (localStorage.getItem('authToken') === null) {
-                login.style.display = 'block';
-                register.style.display = 'block';
-                profile.style.display = 'none';
-            } else {
-                login.style.display = 'none';
-                register.style.display = 'none';
-                profile.style.display = 'block';
-            }
             // Load HTML template
             document.getElementById('main').innerHTML = await route.template();
             // Update page title
@@ -63,8 +47,6 @@ export class Router {
             // Initialize page-specific js (if any)
             if (route.script) 
                 route.script.init();
-
-            
         }
     }
 }
