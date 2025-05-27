@@ -9,12 +9,17 @@ export const RegisterPage = {
         <h1 class="title">Register</h1>
 
         <div class="input-box">
-          <input id="name" type="text" placeholder="Name" name="name" required />
+          <input id="name" type="text" placeholder="Name" name="name" required 
+          pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
+          title="Name must be 2–40 characters long and can include letters and spaces" />
           <img src="../Assets/icons/id-card.svg" />
         </div>
 
         <div class="input-box">
-          <input id="username" type="text" placeholder="Username" name="username" required />
+          <input id="username" type="text" placeholder="Username" name="username" required 
+          pattern="^[a-zA-Z0-9_-]{3,15}$" 
+          title="Username must be 3-15 characters long and can include letters, numbers, '_' or '-'" />
+
           <img src="../Assets/icons/user.svg" />
         </div>
 
