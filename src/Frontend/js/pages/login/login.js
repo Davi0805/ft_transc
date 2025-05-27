@@ -1,10 +1,10 @@
 import {
   togglePasswordVisibility,
-  saveToken,
   showError,
 } from "../../utils/domUtils.js";
 import { TwoFactorAuth } from "./twoFactorAuth.js";
 import { login } from "../../api/loginAPI.js";
+import { authService } from "../../services/authService.js";
 
 export const LoginPage = {
   template() {
@@ -65,15 +65,18 @@ export const LoginPage = {
         return;
       }
 
-      console.log("aqui");
-      saveToken(token);
-      window.router.navigateTo("/");
+      authService.login(token);
+      const redirectPath = authService.getRedirectAfterLogin();
+      window.router.navigateTo(redirectPath);
+
     } catch (error) {
       if (error.status == 401) {
         // TODO HERE add a function to display the error
         console.error("Pass ou user wrong");
-      } else console.error(error.message);
-      console.error("FODEU GERAL");
+      } else {
+        console.error(error.message);
+        console.error("FODEU GERAL");
+      } 
     }
     return;
   },

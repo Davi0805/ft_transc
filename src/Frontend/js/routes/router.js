@@ -1,3 +1,4 @@
+import { authService } from '../services/authService.js'
 export class Router {
     constructor(routes) {
         this.routes = routes; // store route configurations
@@ -24,8 +25,10 @@ export class Router {
     }
 
     navigateTo(url) {
+        const finalUrl = authService.handleProtectedRoute(url);
+
         // Update our browser history without reload
-        // state, title, url
+        //                state, title, url
         history.pushState(null, null, url);
         // Load the new route
         this.loadRoute();
@@ -33,13 +36,22 @@ export class Router {
 
     async loadRoute() {
         // Get current path
-        const path =  window.location.pathname;
+        let path =  window.location.pathname;
+
+        if (!authService.canAccessRoute(path)) {
+            path ='/login';
+            history.replaceState(null, null, path); // todo can we remove this by grabbing from navigateTo?
+        }
+
 
         // Find matching route or fallback to 404 not found
         // find returns undified (evaluates as false) if cant find anything 
         const route = this.routes.find(r => r.path === path) || this.routes.find(r => r.path === '/404');
 
         if (route) {
+
+            authService.updateHeaderVisibility();
+
             // Load HTML template
             document.getElementById('main').innerHTML = await route.template();
             // Update page title
