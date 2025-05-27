@@ -9,7 +9,7 @@ export async function login(userData) {
     });
    
     if (!response.ok) {
-      const errorMessage = `Login failed with status ${response.status}`; 
+      const errorMessage = `DEBUG: Login failed with status ${response.status}`; 
       const error = new Error(errorMessage);
       error.status = response.status;
       throw error; 

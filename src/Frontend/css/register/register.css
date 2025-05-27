@@ -1,0 +1,40 @@
+#register-wrapper .button {
+  width: 100%;
+  height: 45px;
+  background-color: #fff;
+
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+#register-wrapper .button:active {
+  background-color: #bdbdbd;
+}
+
+#pass-error {
+  color: #bb1515;
+  font-weight: 600;
+  text-align: center;
+  margin-top: -25px;
+  margin-bottom: 25px;
+}
+
+.registration-success {
+  width: 420px;
+  height: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.registration-success .description {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.options {
+  margin-top: 20px;
+  display: flex;
+  gap: 16px;
+}

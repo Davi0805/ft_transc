@@ -1,19 +1,25 @@
-import { togglePasswordVisibility } from "../utils/domUtils.js";
+import { togglePasswordVisibility, showError } from "../utils/domUtils.js";
+import { register } from "../api/registerAPI.js"
 
 export const RegisterPage = {
   template() {
     return `
-    <div class="loggin-wrapper">
+    <div id="register-wrapper" class="content">
       <form id="register-form">
-        <h1>Register</h1>
+        <h1 class="title">Register</h1>
 
         <div class="input-box">
-          <input id="name" type="text" placeholder="Name" name="name" required />
+          <input id="name" type="text" placeholder="Name" name="name" required 
+          pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
+          title="Name must be 2–40 characters long and can include letters and spaces" />
           <img src="../Assets/icons/id-card.svg" />
         </div>
 
         <div class="input-box">
-          <input id="username" type="text" placeholder="Username" name="username" required />
+          <input id="username" type="text" placeholder="Username" name="username" required 
+          pattern="^[a-zA-Z0-9_-]{3,15}$" 
+          title="Username must be 3-15 characters long and can include letters, numbers, '_' or '-'" />
+
           <img src="../Assets/icons/user.svg" />
         </div>
 
@@ -41,13 +47,31 @@ export const RegisterPage = {
           <img class="visibility" src="../Assets/icons/visibility-on.svg" />
         </div>
 
-        <span id="match-error" hidden>Passwords do not match!</span>
+        <div id="pass-error" aria-live="polite" hidden></div>
 
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="button">Register</button>
         </div>
       </form>
      </div>
       `;
+  },
+
+  renderSuccessHTML() {
+    const wrapper = document.getElementById('register-wrapper');
+    wrapper.innerHTML =  `
+      <div class="registration-success">
+        <h1 class="title">Success!</h1>
+        <p class="description">Congratulations, your account has been successfully created.</p>
+        <div class="options">
+          <button id="btn-h" class="button">Home Page</button>
+          <button id="btn-p" class="button">Log In</button>
+        </div>
+      </div>
+    `;
+    const buttonHome = document.getElementById('btn-h');
+    const buttonPlay = document.getElementById('btn-p');
+    buttonHome.addEventListener('click', () => window.router.navigateTo('/'));
+    buttonPlay.addEventListener('click', () => window.router.navigateTo('/play'));
   },
 
   init() {
@@ -66,43 +90,25 @@ export const RegisterPage = {
       const email = document.getElementById('email').value;
       const password_hash = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
-      const matchError = document.getElementById('match-error');
-
-      matchError.hidden = true;
+      const registerError = document.getElementById('pass-error');
 
       // check for correct characters, lenght and confirmation match
-      const rule = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*._\\-+=?])[A-Za-z\\d!@#$%^&*._\\-+=?]{8,}$";
       if (password_hash != confirmPassword) {
-
-        // || !rule.test(password))
-        matchError.hidden = false;
+        registerError.textContent = "Passwords do not match!"
+        registerError.hidden = false;
         return;
       }
-
-      const userData = {
-        name,
-        username,
-        email,
-        password_hash
-      };
 
       try {
-        await fetch('http://localhost:8080/users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(userData)
-        });
-
-        window.router.navigateTo('/');
-      }
-      catch (e) {
-        console.log("FODEU GERAL");
+        await register (name, username, email, password_hash);
+        this.renderSuccessHTML();
         return;
+      } catch (error) {
+        if (error.status == 400) {
+          registerError.textContent = "Username or email already taken!"
+          registerError.hidden = false;
+        }
       }
-
     });
-
-  },
+  }
 };

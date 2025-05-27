@@ -1,3 +1,4 @@
+import { authService } from '../services/authService.js'
 export class Router {
     constructor(routes) {
         this.routes = routes; // store route configurations
@@ -24,8 +25,10 @@ export class Router {
     }
 
     navigateTo(url) {
+        const finalUrl = authService.handleProtectedRoute(url);
+
         // Update our browser history without reload
-        // state, title, url
+        //                state, title, url
         history.pushState(null, null, url);
         // Load the new route
         this.loadRoute();
@@ -33,7 +36,13 @@ export class Router {
 
     async loadRoute() {
         // Get current path
-        const path =  window.location.pathname;
+        let path =  window.location.pathname;
+
+        if (!authService.canAccessRoute(path)) {
+            path ='/login';
+            history.replaceState(null, null, path); // todo can we remove this by grabbing from navigateTo?
+        }
+
 
         // Find matching route or fallback to 404 not found
         // find returns undified (evaluates as false) if cant find anything 
@@ -41,21 +50,8 @@ export class Router {
 
         if (route) {
 
-            console.log(`token ${localStorage.getItem('authToken')}`)
+            authService.updateHeaderVisibility();
 
-            const login = document.getElementById("login")
-            const register =document.getElementById("sign-up");
-            const profile =document.getElementById("account");
-
-            if (localStorage.getItem('authToken') === null) {
-                login.style.display = 'block';
-                register.style.display = 'block';
-                profile.style.display = 'none';
-            } else {
-                login.style.display = 'none';
-                register.style.display = 'none';
-                profile.style.display = 'block';
-            }
             // Load HTML template
             document.getElementById('main').innerHTML = await route.template();
             // Update page title
@@ -63,8 +59,6 @@ export class Router {
             // Initialize page-specific js (if any)
             if (route.script) 
                 route.script.init();
-
-            
         }
     }
 }

@@ -19,14 +19,6 @@ export function togglePasswordVisibility() {
     });
 }
 
-export function saveToken(token) {
-    localStorage.setItem('authToken', token);
-}
-
-export function deleteToken() {
-    localStorage.removeItem('authToken');
-}
-
 export function showError(message) {
     // todo mexer num hidden ou adicionar um novo div
     alert(message);

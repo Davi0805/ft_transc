@@ -1,5 +1,6 @@
 import { verifyTwoFactorCode } from "../../api/twoFactorAPI.js";
 import { showError } from "../../utils/domUtils.js";
+import { authService } from "../../services/authService.js";
 
 export const TwoFactorAuth = {
   renderHTML() {
@@ -51,8 +52,11 @@ export const TwoFactorAuth = {
       const code = Array.from(inputs).map(input => input.value).join('');
       try {
         await verifyTwoFactorCode(token, code);
-        saveToken(token);
-        window.router.navigateTo("/");
+
+        authService.login(token);
+        
+        const redirectPath = authService.getRedirectAfterLogin();
+        window.router.navigateTo(redirectPath);
       } catch (error) {
         showError("Wrong code try again"); // todo
       }
