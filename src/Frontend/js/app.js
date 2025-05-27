@@ -10,10 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.router = new Router(routes);
 
     window.authService = authService;
-    const logout = document.getElementById("logout");
+    /*const logout = document.getElementById("logout");
     logout.addEventListener('click', (e) => {
         e.preventDefault();
         authService.logout();
         window.router.navigateTo('/');
-    });
+    }); */
 });
