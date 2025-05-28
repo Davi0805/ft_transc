@@ -1,11 +1,11 @@
 export const ProfilePage = {
   template() {
     return `
-      <div>
-          <h1>Profile</h1>
-          <p>This is the Home Page</p>
-      </div>
-      `;
+          <div class="flex flex-dir-col flex-center content">
+            <h1>Profile</h1>
+            <p>This is the Home Page</p>
+          </div>
+          `;
   },
 
   init() {
