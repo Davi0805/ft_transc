@@ -29,25 +29,25 @@
 
   <div class="right flex flex-center gap-16 ">
     <nav class="flex flex-center gap-24">
-      <a href="/" data-link class="active nav-link">Home</a>
-      <a href="/about" data-link class="nav-link">About Us</a>
+      <a id="home-link" href="/" data-link class="active nav-link">Home</a>
+      <a id="about-link" href="/about" data-link class="nav-link">About Us</a>
 
-      <div class="log-reg flex gap-24">
-        <a href="/login" data-link>Login</a>
-        <a href="/register" data-link>Register</a>
+      <div id="log-reg" class="log-reg flex gap-24">
+        <a id="login-link" href="/login" data-link>Login</a>
+        <a id="register-link" href="/register" data-link>Register</a>
       </div>
 
-      <div class="user-in flex gap-16">
+      <div id="user-in" class="user-in flex gap-16">
         <div class="profile-container flex flex-center gap-8">
-          <a href="/profile" class="profile" data-link>mini</a>
+          <a id="profile-link" href="/profile" class="profile" data-link>mini</a>
           <img class="profile-avatar" src="./Assets/default/bobzao.jpg" alt="user profile picture">
         </div>
-        <div class="settings flex flex-center">
+        <a id="settings-link" href="/settings" data-link class="settings flex flex-center">
           <img src="./Assets/icons/settings.svg" alt="settings icon">
-        </div>
-        <div class="logout flex flex-center">
+        </a>
+        <button id="logout" class="logout">
           <img src="./Assets/icons/logout.svg" alt="logout icon">
-        </div>
+        </button>
       </div>
     </nav>
 
