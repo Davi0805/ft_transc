@@ -17,7 +17,7 @@ export const RegisterPage = {
 
         <div class="input-box">
           <input id="username" type="text" placeholder="Username" name="username" required 
-          pattern="^[a-zA-Z0-9_-]{3,15}$" 
+          pattern="^[a-zA-Z0-9_\\-]{3,15}$" 
           title="Username must be 3-15 characters long and can include letters, numbers, '_' or '-'" />
 
           <img src="../Assets/icons/user.svg" />
@@ -63,15 +63,15 @@ export const RegisterPage = {
         <h1 class="title">Success!</h1>
         <p class="description">Congratulations, your account has been successfully created.</p>
         <div class="options">
-          <button id="btn-h" class="button">Home Page</button>
-          <button id="btn-p" class="button">Log In</button>
+          <button id="btn-home" class="button">Home Page</button>
+          <button id="btn-login" class="button">Log In</button>
         </div>
       </div>
     `;
-    const buttonHome = document.getElementById('btn-h');
-    const buttonPlay = document.getElementById('btn-p');
+    const buttonHome = document.getElementById('btn-home');
+    const buttonLogin = document.getElementById('btn-login');
     buttonHome.addEventListener('click', () => window.router.navigateTo('/'));
-    buttonPlay.addEventListener('click', () => window.router.navigateTo('/play'));
+    buttonLogin.addEventListener('click', () => window.router.navigateTo('/home'));
   },
 
   init() {

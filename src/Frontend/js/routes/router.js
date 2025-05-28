@@ -29,7 +29,7 @@ export class Router {
 
         // Update our browser history without reload
         //                state, title, url
-        history.pushState(null, null, url);
+        history.pushState(null, null, finalUrl);
         // Load the new route
         this.loadRoute();
     }
