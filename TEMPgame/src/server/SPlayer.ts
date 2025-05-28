@@ -8,18 +8,10 @@ export default class SPlayer {
     }
 
     private _controls: TControlsState;
-    set controls(value: TControlsState) {
-        this._controls = value;
-    }
-    get controls() {
-        return this._controls;
-    }
+    set controls(controls: TControlsState) { this._controls = controls; }
+    get controls(): TControlsState { return this._controls; }
 
     private _paddle: SPaddle;
-    set paddle(value: SPaddle) {
-        this._paddle = value;
-    }
-    get paddle() {
-        return this._paddle
-    }
+    set paddle(paddle: SPaddle) { this._paddle = paddle; }
+    get paddle(): SPaddle { return this._paddle; }
 }

@@ -1,4 +1,4 @@
-import { SIDES, Rectangle} from "./types.js";
+import { SIDES } from "./types.js";
 import Point from "./Point.js";
 
 export function computeOrientation(paddleSide: SIDES): Point {
@@ -9,4 +9,8 @@ export function computeOrientation(paddleSide: SIDES): Point {
         [SIDES.TOP]: new Point(0, 1)
     }
     return sidesToOrientation[paddleSide]
+}
+
+export function getRandomInt(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min) + min);
 }

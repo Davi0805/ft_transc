@@ -3,7 +3,7 @@ import FastifyStatic from '@fastify/static' // allows fastify to send whole file
 import FastifyWebsocket from '@fastify/websocket'; // allows fastify to handle websockets
 import { WebSocket } from 'ws' // lowlevel type of the websocket to be used by the websocket plugin. Needed to be able to declare an array of those objects
 import path from 'path' // utility to work with paths
-import { DevCustoms, UserCustoms } from '../misc/gameOptions.js';
+import { applyDevCustoms, UserCustoms } from '../misc/gameOptions.js';
 import ServerGame from './ServerGame.js';
 import { CGameDTO, Adto, DTOAssignID } from '../misc/types.js';
 import { buildSGameConfigs } from '../misc/buildGameOptions.js';
@@ -15,10 +15,10 @@ const CLIENT_ENTRYPOINT = 'index.html';
 const SERVER_PORT = 3000;
 const SERVER_HOST = '0.0.0.0'; // 127.0.0.1 for local machine only, 0.0.0.0 for entire network
 
-
-const gameConfigs = buildSGameConfigs(DevCustoms, UserCustoms);
+const gameConfigs = applyDevCustoms(UserCustoms);
+const serverGameConfigs = buildSGameConfigs(gameConfigs);
 // Creates a game, waiting for players to connect
-const game = new ServerGame(gameConfigs); // TODO this should probably only be created when a game is created
+const game = new ServerGame(serverGameConfigs); // TODO this should probably only be created when a game is created
 game.startGameLoop();
 const clients: WebSocket[] = [];
 

@@ -10,27 +10,28 @@ class ServerGame {
         this._windowSize = gameOpts.window.size;
         const ballInitialState = gameOpts.gameInitialState.ball;
         this._ball = new SBall(
-            ballInitialState.pos,
-            ballInitialState.size,
+            Point.fromObj(ballInitialState.pos),
+            Point.fromObj(ballInitialState.size),
             ballInitialState.speed,
-            ballInitialState.direction
+            Point.fromObj(ballInitialState.direction)
         );
         this._paddles = [];
         for (const paddle of gameOpts.gameInitialState.paddles) {
             this.paddles.push( 
                 new SPaddle(
+                    paddle.id,
                     paddle.side,
-                    paddle.pos,
-                    paddle.size,
+                    Point.fromObj(paddle.pos),
+                    Point.fromObj(paddle.size),
                     paddle.speed
                 ),
             ) //TODO: When a score is added, a paddle class is not enough, some sort of player class (played both by a human and AI) will be needed
         }
-        this._players = [];
-        for (const player of gameOpts.players) {
-            const playerPaddle = this.paddles.find(paddle => paddle.side === player.paddleSide)
+        this._players = []; //TODO: change to humans
+        for (const player of gameOpts.humans) {
+            const playerPaddle = this.paddles.find(paddle => paddle.id === player.paddleID)
             if (!playerPaddle) {
-                throw new Error(`A player says it owns a paddle on the ${player.paddleSide}, but no paddle exists there!`)
+                throw new Error(`A player says it owns a paddle with paddleID ${player.paddleID}, but that paddleID does not exist!`)
             }
             this.players.push(
                 new SPlayer(

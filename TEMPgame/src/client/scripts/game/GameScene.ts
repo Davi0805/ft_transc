@@ -1,36 +1,66 @@
 import AScene from "../system/AScene";
 import Point from "../../../misc/Point";
-import { Assets, Sprite } from "pixi.js"
+import { Assets, Sprite, BitmapText } from "pixi.js"
 import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
 import { CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState } from "../../../misc/types";
+import CPlayer from "./CPlayer";
+import CScore from "./CScore";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         this._assets = await Assets.loadBundle("gameScene");
 
+        /* const text = new BitmapText({
+            text: '42',
+            style: {
+                fontFamily: 'scoreFont',
+                fontSize: 32,
+                fill: '#666666',
+            },
+        });
+        text.position.set(100, 100);
+        this._root.addChild(text) */
+
         const ballState = gameSceneConfigs.gameInitialState.ball;
         const ballName = "ball" + ballState.spriteID
-        const ballSprite = new Sprite(this._assets[ballName]);// TODO Fix this to accept the sprite in the configs
+        const ballSprite = new Sprite(this._assets[ballName]);
         this._root.addChild(ballSprite);
         
         this._ball = new CBall(
-            ballState.pos,
-            ballState.size,
+            Point.fromObj(ballState.pos),
+            Point.fromObj(ballState.size),
             ballSprite
         ); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
-        
-        for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) {
-            const paddleName = "paddle" + paddleConf.spriteID
-            const paddleSprite = new Sprite(this._assets[paddleName]) // TODO Fix this to accept the sprite in the configs
+
+        for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) { 
+            const paddleSpriteName = "paddle" + paddleConf.spriteID
+            const paddleSprite = new Sprite(this._assets[paddleSpriteName])
             this._root.addChild(paddleSprite);
-            this.paddles.push( new CPaddle(
-                paddleConf.side,
-                paddleConf.pos,
-                paddleConf.size,
-                paddleSprite
-            ))
+
+            const text = new BitmapText({
+                text: '42',
+                style: {
+                    fontFamily: 'scoreFont',
+                    fontSize: 32,
+                    fill: '#666666',
+                },
+            });
+            text.position.set(paddleConf.pos.x, paddleConf.pos.y);
+            this._root.addChild(text)
+
+
+
+            this.players.push( new CPlayer(
+                paddleConf.side, 
+                new CPaddle(
+                    paddleConf.side,
+                    Point.fromObj(paddleConf.pos),
+                    Point.fromObj(paddleConf.size),
+                    paddleSprite),
+                new CScore(/*playerConf.score*/0, text) //TODO IMPORTANT: CHECK HOW TO DEAL WITH SCORE!!
+                ))
         }
 
 
@@ -49,7 +79,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         try {
             this.ball.pos = Point.fromObj(gameDto.ball.pos);
             for (const i in gameDto.paddles) {
-                this.paddles[i].pos = Point.fromObj(gameDto.paddles[i].pos);
+                this.players[i].paddle.pos = Point.fromObj(gameDto.paddles[i].pos);
             }
             
         } catch (error) {console.log(error)}
@@ -117,11 +147,12 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         }
         return this._ball
     }
-    private _paddles: CPaddle[] = [];
-    get paddles() {
-        return this._paddles
-    }
-    set paddles(value: CPaddle[]) {
-        this._paddles = value
-    }
+    /* private _paddles: CPaddle[] = [];
+    get paddles() { return this._paddles }
+    set paddles(value: CPaddle[]) { this._paddles = value }*/
+
+    private _players: CPlayer[] = []
+    set players(players: CPlayer[]) { this._players = players; }
+    get players(): CPlayer[] { return this._players; }
+
 }

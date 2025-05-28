@@ -1,6 +1,6 @@
 import { App } from './scripts/system/App';
 import { buildCAppConfigs } from '../misc/buildGameOptions';
-import { DevCustoms, UserCustoms } from '../misc/gameOptions';
+import { applyDevCustoms, UserCustoms } from '../misc/gameOptions';
 import { Adto, DTOAssignID } from '../misc/types';
 
 // This websocket is the client's connection (which has been probably open way before)
@@ -22,8 +22,9 @@ async function onInitMessage(event: MessageEvent<any>) {
         const clientID = dto.id;
 
         // UserCustoms will be the object that will be generated at runtime
-        const gameConfigs = buildCAppConfigs(DevCustoms, UserCustoms, clientID, websocket)
-        await App.init(gameConfigs);
+        const gameConfigs = applyDevCustoms(UserCustoms);
+        const clientGameConfigs = buildCAppConfigs(gameConfigs, clientID, websocket)
+        await App.init(clientGameConfigs);
     }
     
 }

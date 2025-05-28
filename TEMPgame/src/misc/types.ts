@@ -1,13 +1,4 @@
 import { ApplicationOptions } from "pixi.js"
-import Point from "./Point"
-
-
-export type Rectangle = {
-    x: number,
-    y: number,
-    width: number,
-    height: number
-}
  
 export enum SIDES {
     LEFT,
@@ -16,25 +7,35 @@ export enum SIDES {
     TOP
 }
 
+export enum ROLES {
+    BACK,
+    FRONT
+}
+
+export type point = { x: number, y: number }
+
 // Common
 
+
 type TWindow = {
-    size: Point,
+    size: point,
     backgroundSprite: number
 }
 
 type TBall = {
-    size: Point
-    pos: Point,
-    direction: Point,
+    size: point
+    pos: point,
+    direction: point,
     speed: number
     spriteID: number,
 }
 
 type TPaddle = {
+    id: number
     side: SIDES,
-    size: Point,
-    pos: Point,
+    role: ROLES
+    size: point,
+    pos: point,
     speed: number,
     spriteID: number
 }
@@ -51,21 +52,71 @@ export type TControlsState = {
     }
 }
 
-export type TPlayer = {
-    keyboardState: TControlsState
-    paddleSide: SIDES 
-}
-
 export type TControls = {
     left: string,
     right: string,
     pause: string
 }
 
+
+export type TUserCustoms = {
+    field: {
+        size: point
+        backgroundSpriteID: number
+    },
+    gameLength: number,
+    ball: { spriteID: number },
+    paddles: {
+        id: number
+        side: SIDES,
+        role: ROLES,
+        spriteID: number,
+    }[],
+    // For now, there are no user customs for team. If added, an array for team should be added here
+    humans: {
+        clientID: number,
+        paddleID: number,
+        controls: TControls
+    }[]
+    bots: {
+        paddleID: number,
+        difficulty: number
+    }[]
+}
+
+export type TGameConfigs = {
+    field: {
+        size: point
+        backgroundSpriteID: number
+    },
+    gameLength: number,
+    ball: TBall,
+    teams: {
+        side: SIDES,
+        score: number
+    }[]
+    paddles: TPaddle[],
+    humans: {
+        clientID: number,
+        paddleID: number,
+        controls: TControls
+    }[]
+    bots: {
+        paddleID: number,
+        difficulty: number
+    }[],
+    startingScore: number
+}
+
+
 // Client
 
 export type CGameState = {
     ball: Pick<TBall, "size" | "pos" | "spriteID">
+    teams: {
+        side: SIDES,
+        score: number
+    }[]
     paddles: Pick<TPaddle, "side" | "size" | "pos" | "spriteID">[]
 }
 
@@ -92,12 +143,20 @@ export type SceneChangeDetail = | { sceneName: "exampleScene", configs: ExampleS
 
 export type SGameState = {
     ball: Pick<TBall, "pos" | "size" | "speed" | "direction">,
-    paddles: Pick<TPaddle, "side" | "size" | "pos" | "speed">[]
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 }
 
 export type SGameConfigs = {
     window: Pick<TWindow, "size">,
-    players: TPlayer[],
+    humans: {
+        clientID: number,
+        paddleID: number,
+        keyboardState: TControlsState
+    }[]
+    bots: {
+        paddleID: number,
+        difficulty: number
+    }[],
     gameInitialState: SGameState,
 }
 
