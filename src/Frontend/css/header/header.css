@@ -64,13 +64,6 @@ nav a.active::after {
 }
 /* ----- */
 
-.log-reg {
-  display: flex;
-}
-
-.user-in {
-  display: none;
-}
 
 .profile-avatar {
   width: 30px;
@@ -85,6 +78,14 @@ nav a.active::after {
   width: 24px;
   height: 24px;
   transition: transform 0.2s ease;
+}
+
+#logout {
+  all:unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .settings:hover img,

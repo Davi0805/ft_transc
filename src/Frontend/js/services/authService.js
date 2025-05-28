@@ -32,21 +32,18 @@ export class AuthService {
     }
 
     updateHeaderVisibility() {
-        const loginElement = document.getElementById('login');
-        const registerElement = document.getElementById('sign-up');
-        const accountElement = document.getElementById('account');
+        const loginRegister = document.getElementById('log-reg');
+        const userLoggedIn = document.getElementById('user-in');
 
         console.log(`UHV called and the user token is = ${localStorage.getItem('authToken')} and the user is authenticated? ${this.isAuthenticated}`)
 
         if (this.isAuthenticated) {
-            if (loginElement) loginElement.style.display = 'none';
-            if (registerElement) registerElement.style.display = 'none';
-            if (accountElement) accountElement.style.display = 'block';
+            loginRegister.style.display = 'none';
+            userLoggedIn.style.display = 'flex';
         }
         else {
-            if (loginElement) loginElement.style.display = 'block';
-            if (registerElement) registerElement.style.display = 'block';
-            if (accountElement) accountElement.style.display = 'none';           
+            loginRegister.style.display = 'flex';
+            userLoggedIn.style.display = 'none';
         }
     }
 
