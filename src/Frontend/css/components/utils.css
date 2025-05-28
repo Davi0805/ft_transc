@@ -20,6 +20,11 @@
 .flex {
   display: flex;
 }
+
+.flex-dir-col {
+  flex-direction: column;
+}
+
 .flex-center {
   align-items: center;
   justify-content: center;

@@ -4,6 +4,9 @@ import { LoginPage } from '../pages/login/login.js'
 import { NotFoundPage } from '../pages/404.js'
 import { ProfilePage  } from '../pages/profile.js'
 import { RegisterPage } from '../pages/register.js'
+import { AboutUsPage } from '../pages/about.js'
+import { SettingsPage } from '../pages/settings/settings.js'
+
 
 //? template is the function that returns the base html
 //? script is the page-sepecific logic
@@ -15,6 +18,13 @@ export const routes = [
         title: 'Home',
         template: HomePage.template,
         script: HomePage
+    },
+    // About Us
+    {
+        path: '/about',
+        title: 'About Us',
+        template: AboutUsPage.template,
+        script: AboutUsPage
     },
     // Play
     {
@@ -36,6 +46,13 @@ export const routes = [
         title: 'Register',
         template: RegisterPage.template,
         script: RegisterPage
+    },
+    // Settings
+    {
+        path: '/settings',
+        title: 'Settings',
+        template: SettingsPage.template,
+        script: SettingsPage
     },
     // Profile
     {

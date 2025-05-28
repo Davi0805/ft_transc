@@ -1,4 +1,5 @@
 import { authService } from '../services/authService.js'
+import { header } from '../components/header.js';
 export class Router {
     constructor(routes) {
         this.routes = routes; // store route configurations
@@ -51,6 +52,8 @@ export class Router {
         if (route) {
 
             authService.updateHeaderVisibility();
+            
+            header.updateActiveUnderline(path);
 
             // Load HTML template
             document.getElementById('main').innerHTML = await route.template();
