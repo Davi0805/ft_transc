@@ -8,6 +8,10 @@
   color: #333;
 }
 
+#register-wrapper .input-box {
+  margin: 20px 0px;
+}
+
 #register-wrapper .button:active {
   background-color: #bdbdbd;
 }

@@ -21,7 +21,8 @@ body {
 
 #main {
   /* second arg is the header height */
-  min-height: calc(100vh - 60px);
+  margin-top: 20px;
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
