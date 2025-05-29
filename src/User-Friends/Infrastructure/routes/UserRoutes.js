@@ -12,6 +12,7 @@ async function userRoutes(fastify, options) {
         handler: userController.uploadAvatar
       });
     fastify.get('/users/avatar/:id', userController.getAvatar);
+    fastify.get('/users/me', userController.getMyData);
 }
 
 module.exports = userRoutes;

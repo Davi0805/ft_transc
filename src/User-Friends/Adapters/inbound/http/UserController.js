@@ -28,6 +28,21 @@ class UserController {
         }
     }
 
+    async getMyData(req, reply)
+    {
+        try {
+            const session = await redisService.validateSession((req.headers.authorization));
+            const users = await userService.findById(session.user_id);
+            if (!users || Object.keys(users).length === 0) throw 404;
+            return reply.send({id: users[0].user_id, nickname: users[0].username});
+        } catch (error) {
+            if (typeof error === 'number')
+                return reply.code(error).send();
+
+            return reply.code(400).send();
+        }
+    }
+
 
     /* 
         Get by id endpoint
