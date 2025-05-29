@@ -139,6 +139,7 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
     }
     for (let paddle of gameGonfigs.paddles) {
       out.gameSceneConfigs.gameInitialState.paddles.push({
+        id: paddle.id,
         side: paddle.side,
         size: Point.fromObj(paddle.size),
         pos: Point.fromObj(paddle.pos),

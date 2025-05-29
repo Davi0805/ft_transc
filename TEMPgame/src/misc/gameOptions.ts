@@ -15,9 +15,9 @@ export const UserCustoms: TUserCustoms = {
     ball: { spriteID: 0 },
     paddles: [
         {
-            id: 0, //Maybe this id should be generated in the game?
+            id: 0,
             side: SIDES.LEFT,
-            role: ROLES.FRONT,
+            role: ROLES.BACK,
             spriteID: 0
         },
         {
@@ -37,6 +37,12 @@ export const UserCustoms: TUserCustoms = {
             side: SIDES.TOP,
             role: ROLES.BACK,
             spriteID: 0
+        },
+        {
+            id: 4,
+            side: SIDES.LEFT,
+            role: ROLES.FRONT,
+            spriteID: 0
         }
     ],
     humans: [
@@ -51,13 +57,13 @@ export const UserCustoms: TUserCustoms = {
         },
         {
             clientID: 1,
-            paddleID: 2,
+            paddleID: 4,
             controls: {
                 left: "ArrowLeft",
                 right: "ArrowRight",
                 pause: " "
             }
-        }
+        },
     ],
     bots: [
         {

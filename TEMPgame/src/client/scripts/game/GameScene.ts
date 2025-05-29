@@ -12,17 +12,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         this._assets = await Assets.loadBundle("gameScene");
 
-        /* const text = new BitmapText({
-            text: '42',
-            style: {
-                fontFamily: 'scoreFont',
-                fontSize: 32,
-                fill: '#666666',
-            },
-        });
-        text.position.set(100, 100);
-        this._root.addChild(text) */
-
         const ballState = gameSceneConfigs.gameInitialState.ball;
         const ballName = "ball" + ballState.spriteID
         const ballSprite = new Sprite(this._assets[ballName]);
@@ -34,33 +23,32 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             ballSprite
         ); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
 
-        for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) { 
-            const paddleSpriteName = "paddle" + paddleConf.spriteID
-            const paddleSprite = new Sprite(this._assets[paddleSpriteName])
-            this._root.addChild(paddleSprite);
-
+        for (const team of gameSceneConfigs.gameInitialState.teams) {
             const text = new BitmapText({
                 text: '42',
                 style: {
-                    fontFamily: 'scoreFont',
+                    fontFamily: 'scoreFont', // This is what is loaded in the Assets
                     fontSize: 32,
                     fill: '#666666',
                 },
             });
-            text.position.set(paddleConf.pos.x, paddleConf.pos.y);
+            text.position.set(gameSceneConfigs.gameInitialState.ball.pos.x, gameSceneConfigs.gameInitialState.ball.pos.y); //TODO calculate somehow (maybe here is not even the best place to do it?)
             this._root.addChild(text)
+        }
 
 
-
-            this.players.push( new CPlayer(
-                paddleConf.side, 
+        for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) { 
+            const paddleSpriteName = "paddle" + paddleConf.spriteID
+            const paddleSprite = new Sprite(this._assets[paddleSpriteName])
+            this._root.addChild(paddleSprite);
+            this.paddles.push(  
                 new CPaddle(
+                    paddleConf.id,
                     paddleConf.side,
                     Point.fromObj(paddleConf.pos),
                     Point.fromObj(paddleConf.size),
                     paddleSprite),
-                new CScore(/*playerConf.score*/0, text) //TODO IMPORTANT: CHECK HOW TO DEAL WITH SCORE!!
-                ))
+                )
         }
 
 
@@ -78,8 +66,12 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         const gameDto = dto as SGameDTO;
         try {
             this.ball.pos = Point.fromObj(gameDto.ball.pos);
-            for (const i in gameDto.paddles) {
-                this.players[i].paddle.pos = Point.fromObj(gameDto.paddles[i].pos);
+            for (const paddleState of gameDto.paddles) {
+                const paddle = this.paddles.find(paddle => paddle.id === paddleState.id);
+                if (paddle === undefined) {
+                    throw new Error("Client cannot find a paddle with the ID the server says exists!")
+                }
+                paddle.pos = Point.fromObj(paddleState.pos);
             }
             
         } catch (error) {console.log(error)}
@@ -147,12 +139,12 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         }
         return this._ball
     }
-    /* private _paddles: CPaddle[] = [];
+    private _paddles: CPaddle[] = [];
     get paddles() { return this._paddles }
-    set paddles(value: CPaddle[]) { this._paddles = value }*/
+    set paddles(value: CPaddle[]) { this._paddles = value }
 
-    private _players: CPlayer[] = []
+    /* private _players: CPlayer[] = []
     set players(players: CPlayer[]) { this._players = players; }
-    get players(): CPlayer[] { return this._players; }
+    get players(): CPlayer[] { return this._players; } */
 
 }

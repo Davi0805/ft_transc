@@ -117,7 +117,7 @@ export type CGameState = {
         side: SIDES,
         score: number
     }[]
-    paddles: Pick<TPaddle, "side" | "size" | "pos" | "spriteID">[]
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[]
 }
 
 export type CGameSceneConfigs = {
@@ -175,7 +175,7 @@ export type SGameDTO = {
         pos: { x: number, y: number}
     }
     paddles: {
-        side: SIDES,
+        id: number
         pos: { x: number, y: number }
     }[]
 }

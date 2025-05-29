@@ -145,7 +145,7 @@ class ServerGame {
                 pos: this.ball.pos.toObj(),
             },
             paddles: this.paddles.map(paddle => ({
-                side: paddle.side,
+                id: paddle.id,
                 pos: paddle.pos.toObj(),
             })),
             //score: this.players.map(player => player.score).join(' : ')
