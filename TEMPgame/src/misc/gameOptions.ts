@@ -8,7 +8,7 @@ const PADDLE_COMMON_VARS = {
 
 export const UserCustoms: TUserCustoms = {
     field: {
-        size: { x: 200, y: 200 },
+        size: { x: 500, y: 500 },
         backgroundSpriteID: 0 //NOT USED YET
     },
     gameLength: 0, //NOT USED YET
@@ -74,9 +74,6 @@ export const UserCustoms: TUserCustoms = {
 }
 
 
-
-
-//TODO: Use forEach()!!
 export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
 
     const out: TGameConfigs = {
@@ -87,7 +84,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
             direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
             size: { x: 4, y: 4 },
-            speed: 100
+            speed: 150
         },
         teams: [],
         paddles: [],
@@ -97,7 +94,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
     }
 
     // Apply dev customs for each individual paddle and team
-    for (const paddle of userCustoms.paddles) {
+    userCustoms.paddles.forEach(paddle => {
         let scorePos: point;
         let paddlePos: point;
         const scoreOffset = 70
@@ -124,7 +121,6 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             }
         }
 
-
         if (out.teams.find(team => team.side === paddle.side) === undefined) {
             out.teams.push({
                 side: paddle.side,
@@ -137,13 +133,13 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         out.paddles.push({
             id: paddle.id,
             side: paddle.side,
-            role: paddle.role, // Theoretically this is not necessary anymore? Since the pos is already decided, what does it matter the role of the paddle?
+            role: paddle.role,
             spriteID: paddle.spriteID,
             pos: paddlePos,
             size: { x: 16, y: 64 },
             speed: 150
         })
-    }
+    })
 
     return out;
 }

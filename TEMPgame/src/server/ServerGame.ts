@@ -88,37 +88,37 @@ class ServerGame {
                                 .multiplyScalar(delta);
         const newPos = oldPos.add(movVector);
 
-        if (newPos.x < 0 || newPos.x > this.windowSize.x) {
+        if (newPos.x - this.ball.cbox.width < 0) {
             this.ball.direction.x *= -1
-            if (newPos.x < 0) {
-                const team = this.teams.find(team => team.side == SIDES.LEFT)
-                if (team) {
-                    team.score += 1;
-                }
-            } else {
-                const team = this.teams.find(team => team.side == SIDES.RIGHT)
-                if (team) {
-                    team.score += 1;
-                }
+            console.log(newPos.x)
+            const team = this.teams.find(team => team.side == SIDES.LEFT)
+            if (team) {
+                team.score += 1;
             }
-        } else if (newPos.y < 0 || newPos.y > this.windowSize.y) { //TODO URGENT: use cboxes instead of position!!!
-            this.ball.direction.y *= -1
-            if (newPos.y < 0) {
-                const team = this.teams.find(team => team.side == SIDES.TOP)
-                if (team) {
-                    team.score += 1;
-                }
-            } else {
-                const team = this.teams.find(team => team.side == SIDES.BOTTOM)
-                if (team) {
-                    team.score += 1;
-                }
+        } else if (newPos.x + this.ball.cbox.width > this.windowSize.x) {
+            this.ball.direction.x *= -1;
+            console.log(newPos.x)
+            const team = this.teams.find(team => team.side == SIDES.RIGHT)
+            if (team) {
+                team.score += 1;
+            }
+        } else if (newPos.y - this.ball.cbox.height < 0) {
+            this.ball.direction.y *= -1;
+            const team = this.teams.find(team => team.side == SIDES.TOP)
+            if (team) {
+                team.score += 1;
+            }
+        } else if (newPos.y + this.ball.cbox.height > this.windowSize.y) {
+            this.ball.direction.y *= -1;
+            const team = this.teams.find(team => team.side == SIDES.BOTTOM)
+            if (team) {
+                team.score += 1;
             }
         } else {
             this.ball.move(movVector);
         }
 
-        for (let paddle of this.paddles) {
+        this.paddles.forEach(paddle => {
             const collision = this.ball.cbox.areColliding(paddle.cbox);
             if (collision !== null) {
                 if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
@@ -131,18 +131,16 @@ class ServerGame {
                 const movDistance = (paddle.speed + this.ball.speed) * delta; // This in theory compensates for moving-into-ball paddles
                 const movVector = this.ball.direction.clone().multiplyScalar(movDistance);
                 this.ball.move(movVector);
-                //this.ball.speed += 10;
+                this.ball.speed += 5;
                 for (let paddle of this.paddles) {
-                    paddle.speed += 2;
+                    paddle.speed += 1;
                 }
             }
-        }
-        console.log(this.teams)
+        });
     }
 
     startGameLoop() {
         let prevTime = Date.now();
-
         const loop = () => {
             const currentTime = Date.now();
             const delta = (currentTime - prevTime) / 1000;
