@@ -148,6 +148,10 @@ export type SGameState = {
 
 export type SGameConfigs = {
     window: Pick<TWindow, "size">,
+    teams: {
+        side: SIDES,
+        score: number
+    }[]
     humans: {
         clientID: number,
         paddleID: number,

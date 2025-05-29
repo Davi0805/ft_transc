@@ -3,6 +3,7 @@ import SPaddle from "./SPaddle.js"
 import SPlayer from "./SPlayer.js";
 import { SIDES, SGameConfigs, SGameDTO } from "../misc/types.js";
 import Point from "../misc/Point.js";
+import STeam from "./STeam.js";
 
 class ServerGame {
     constructor(gameOpts: SGameConfigs) {
@@ -16,6 +17,13 @@ class ServerGame {
             ballInitialState.speed,
             Point.fromObj(ballInitialState.direction)
         );
+        this._teams = [];
+        for (const team of gameOpts.teams) {
+            this.teams.push(new STeam(
+                team.side, team.score
+            ))
+        }
+
         this._paddles = [];
         for (const paddle of gameOpts.gameInitialState.paddles) {
             this.paddles.push( 
@@ -82,14 +90,30 @@ class ServerGame {
 
         if (newPos.x < 0 || newPos.x > this.windowSize.x) {
             this.ball.direction.x *= -1
-            /*if (newPos.x < 0) {
-                this.players[1].score += 1;
+            if (newPos.x < 0) {
+                const team = this.teams.find(team => team.side == SIDES.LEFT)
+                if (team) {
+                    team.score += 1;
+                }
             } else {
-                this.players[0].score += 1;
-            }*/
-        } else if (newPos.y - this.ball.cbox.height / 2 < 0
-                    || newPos.y + this.ball.cbox.height / 2 > this.windowSize.y) {
+                const team = this.teams.find(team => team.side == SIDES.RIGHT)
+                if (team) {
+                    team.score += 1;
+                }
+            }
+        } else if (newPos.y < 0 || newPos.y > this.windowSize.y) {
             this.ball.direction.y *= -1
+            if (newPos.y < 0) {
+                const team = this.teams.find(team => team.side == SIDES.TOP)
+                if (team) {
+                    team.score += 1;
+                }
+            } else {
+                const team = this.teams.find(team => team.side == SIDES.BOTTOM)
+                if (team) {
+                    team.score += 1;
+                }
+            }
         } else {
             this.ball.move(movVector);
         }
@@ -107,12 +131,13 @@ class ServerGame {
                 const movDistance = (paddle.speed + this.ball.speed) * delta; // This in theory compensates for moving-into-ball paddles
                 const movVector = this.ball.direction.clone().multiplyScalar(movDistance);
                 this.ball.move(movVector);
-                this.ball.speed += 10;
+                //this.ball.speed += 10;
                 for (let paddle of this.paddles) {
                     paddle.speed += 2;
                 }
             }
         }
+        console.log(this.teams)
     }
 
     startGameLoop() {
@@ -161,36 +186,24 @@ class ServerGame {
     }
 
     private _windowSize: { x: number, y: number };
-    set windowSize(value: { x: number, y: number }) {
-        this._windowSize = value;
-    }
-    get windowSize() {
-        return this._windowSize;
-    }
+    set windowSize(value: { x: number, y: number }) { this._windowSize = value; }
+    get windowSize() { return this._windowSize; }
 
     private _ball: SBall;
-    set ball(value: SBall) {
-        this._ball = value;
-    }
-    get ball() {
-        return this._ball;
-    }
+    set ball(value: SBall) { this._ball = value; }
+    get ball() { return this._ball; }
+
+    private _teams: STeam[]
+    set teams(teams: STeam[]) { this._teams = teams; }
+    get teams(): STeam[] { return this._teams; }
 
     private _paddles: SPaddle[];
-    set paddles(value: SPaddle[]) {
-        this._paddles = value;
-    }
-    get paddles(): SPaddle[] {
-        return this._paddles;
-    }
+    set paddles(value: SPaddle[]) { this._paddles = value; }
+    get paddles(): SPaddle[] { return this._paddles; }
 
     private _players: SPlayer[];
-    set players(value: SPlayer[]) {
-        this._players = value;
-    }
-    get players(): SPlayer[] {
-        return this._players;
-    }
+    set players(value: SPlayer[]) { this._players = value; }
+    get players(): SPlayer[] { return this._players; }
 }
 
 export default ServerGame;

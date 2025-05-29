@@ -53,6 +53,7 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
     window: {
       size: Point.fromObj(gameConfigs.field.size)
     },
+    teams: [],
     humans: [],
     bots: [],
     gameInitialState: {
@@ -64,6 +65,12 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
       },
       paddles: []
     }
+  }
+  for (let team of gameConfigs.teams) {
+    out.teams.push({
+      side: team.side,
+      score: team.score
+    })
   }
   for (let human of gameConfigs.humans) {
     out.humans.push({
