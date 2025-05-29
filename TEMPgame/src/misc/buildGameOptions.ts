@@ -32,7 +32,10 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
     for (let team of gameGonfigs.teams) {
       out.gameSceneConfigs.gameInitialState.teams.push({
         side: team.side,
-        score: team.score
+        score: {
+          score: team.score.score,
+          pos: team.score.pos
+        },
       })
     }
     for (let paddle of gameGonfigs.paddles) {
@@ -69,7 +72,7 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
   for (let team of gameConfigs.teams) {
     out.teams.push({
       side: team.side,
-      score: team.score
+      score: team.score.score
     })
   }
   for (let human of gameConfigs.humans) {

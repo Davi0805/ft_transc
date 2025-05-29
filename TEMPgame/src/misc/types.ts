@@ -93,7 +93,10 @@ export type TGameConfigs = {
     ball: TBall,
     teams: {
         side: SIDES,
-        score: number
+        score: {
+            score: number
+            pos: point
+        }
     }[]
     paddles: TPaddle[],
     humans: {
@@ -115,7 +118,10 @@ export type CGameState = {
     ball: Pick<TBall, "size" | "pos" | "spriteID">
     teams: {
         side: SIDES,
-        score: number
+        score: {
+            score: number,
+            pos: point
+        }
     }[]
     paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[]
 }

@@ -33,12 +33,13 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                     fill: '#666666',
                 },
             });
-            text.position.set(gameSceneConfigs.gameInitialState.ball.pos.x, gameSceneConfigs.gameInitialState.ball.pos.y); //TODO calculate somehow (maybe here is not even the best place to do it?)
+            text.anchor.set(0.5, 0.5);
+            text.position.set(team.score.pos.x, team.score.pos.y); //TODO calculate somehow (maybe here is not even the best place to do it?)
             this._root.addChild(text)
 
             this.teams.set(team.side, new CTeam(
                 team.side,
-                new CScore(team.score, text)
+                new CScore(team.score.score, text)
             ))
         }) 
 

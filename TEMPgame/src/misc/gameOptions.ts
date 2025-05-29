@@ -73,6 +73,10 @@ export const UserCustoms: TUserCustoms = {
     ]
 }
 
+
+
+
+//TODO: Use forEach()!!
 export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
 
     const out: TGameConfigs = {
@@ -94,32 +98,41 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
 
     // Apply dev customs for each individual paddle and team
     for (const paddle of userCustoms.paddles) {
-        if (out.teams.find(team => team.side === paddle.side) === undefined) {
-            out.teams.push({
-                side: paddle.side,
-                score: 0
-            })
-        }
-
-        const offset = (paddle.role === ROLES.BACK ? 20 : 40);
-
+        let scorePos: point;
         let paddlePos: point;
+        const scoreOffset = 70
+        const paddleOffset = (paddle.role === ROLES.BACK ? 20 : 40);
         switch (paddle.side) {
             case (SIDES.LEFT): {
-                paddlePos = { x: offset, y: userCustoms.field.size.y / 2 };
+                scorePos = { x: scoreOffset, y: userCustoms.field.size.y / 2}
+                paddlePos = { x: paddleOffset, y: userCustoms.field.size.y / 2 };
                 break;
             }
             case (SIDES.RIGHT): {
-                paddlePos = { x: userCustoms.field.size.x - offset, y: userCustoms.field.size.y / 2 }
+                scorePos = { x: userCustoms.field.size.x - scoreOffset, y: userCustoms.field.size.y / 2 }
+                paddlePos = { x: userCustoms.field.size.x - paddleOffset, y: userCustoms.field.size.y / 2 }
                 break; 
             }
             case (SIDES.TOP): {
-                paddlePos = { x: userCustoms.field.size.x / 2, y: offset };
+                scorePos = { x: userCustoms.field.size.x / 2, y: scoreOffset };
+                paddlePos = { x: userCustoms.field.size.x / 2, y: paddleOffset };
                 break;
             }
             case (SIDES.BOTTOM): {
-                paddlePos = { x: userCustoms.field.size.x / 2, y: userCustoms.field.size.y - offset}
+                scorePos = { x: userCustoms.field.size.x / 2, y: userCustoms.field.size.y - scoreOffset}
+                paddlePos = { x: userCustoms.field.size.x / 2, y: userCustoms.field.size.y - paddleOffset}
             }
+        }
+
+
+        if (out.teams.find(team => team.side === paddle.side) === undefined) {
+            out.teams.push({
+                side: paddle.side,
+                score: {
+                    score: 0,
+                    pos: scorePos
+                }
+            })
         }
         out.paddles.push({
             id: paddle.id,
