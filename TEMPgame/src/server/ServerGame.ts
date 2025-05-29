@@ -101,7 +101,7 @@ class ServerGame {
                     team.score += 1;
                 }
             }
-        } else if (newPos.y < 0 || newPos.y > this.windowSize.y) {
+        } else if (newPos.y < 0 || newPos.y > this.windowSize.y) { //TODO URGENT: use cboxes instead of position!!!
             this.ball.direction.y *= -1
             if (newPos.y < 0) {
                 const team = this.teams.find(team => team.side == SIDES.TOP)
@@ -170,11 +170,15 @@ class ServerGame {
             ball: {
                 pos: this.ball.pos.toObj(),
             },
+            teams: this.teams.map(team => ({
+                    side: team.side,
+                    score: team.score
+                })
+            ),
             paddles: this.paddles.map(paddle => ({
                 id: paddle.id,
                 pos: paddle.pos.toObj(),
             })),
-            //score: this.players.map(player => player.score).join(' : ')
         };
     }
     private _gameRunning: boolean;

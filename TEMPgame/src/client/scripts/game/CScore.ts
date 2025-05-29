@@ -6,6 +6,10 @@ export default class CScore {
         this._text = text;
     }
 
+    update(score: number) {
+        this.score = score
+    }
+
     private _score: number;
     set score(score: number) { 
         this._score = score;

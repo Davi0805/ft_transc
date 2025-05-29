@@ -4,7 +4,9 @@ import { Assets, Sprite, BitmapText } from "pixi.js"
 import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
-import { CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState } from "../../../misc/types";
+import { SIDES, CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState } from "../../../misc/types";
+import CTeam from "./CTeam";
+import CScore from "./CScore";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
@@ -22,9 +24,9 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             ballSprite
         ); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
 
-        for (const team of gameSceneConfigs.gameInitialState.teams) {
+        gameSceneConfigs.gameInitialState.teams.forEach(team => {
             const text = new BitmapText({
-                text: '42',
+                text: team.score,
                 style: {
                     fontFamily: 'scoreFont', // This is what is loaded in the Assets
                     fontSize: 32,
@@ -33,14 +35,18 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             });
             text.position.set(gameSceneConfigs.gameInitialState.ball.pos.x, gameSceneConfigs.gameInitialState.ball.pos.y); //TODO calculate somehow (maybe here is not even the best place to do it?)
             this._root.addChild(text)
-        }
 
+            this.teams.set(team.side, new CTeam(
+                team.side,
+                new CScore(team.score, text)
+            ))
+        }) 
 
-        for (const paddleConf of gameSceneConfigs.gameInitialState.paddles) { 
+        gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
             const paddleSpriteName = "paddle" + paddleConf.spriteID
             const paddleSprite = new Sprite(this._assets[paddleSpriteName])
             this._root.addChild(paddleSprite);
-            this.paddles.push(  
+            this.paddles.set(paddleConf.id,  
                 new CPaddle(
                     paddleConf.id,
                     paddleConf.side,
@@ -48,7 +54,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                     Point.fromObj(paddleConf.size),
                     paddleSprite),
                 )
-        }
+        })
 
 
         this._onKeyDown = this._getOnKeyDown(gameSceneConfigs.controls); //TODO: Probably should put some of this in the AScene?
@@ -65,14 +71,19 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         const gameDto = dto as SGameDTO;
         try {
             this.ball.pos = Point.fromObj(gameDto.ball.pos);
-            for (const paddleState of gameDto.paddles) {
-                const paddle = this.paddles.find(paddle => paddle.id === paddleState.id);
+            gameDto.paddles.forEach(paddleState =>{
+                const paddle = this.paddles.get(paddleState.id);
                 if (paddle === undefined) {
                     throw new Error("Client cannot find a paddle with the ID the server says exists!")
                 }
                 paddle.pos = Point.fromObj(paddleState.pos);
-            }
-            
+            });
+            gameDto.teams.forEach(teamState => {
+                const team = this.teams.get(teamState.side);
+                if (team) {
+                    team.score.update(teamState.score);
+                } 
+            })
         } catch (error) {console.log(error)}
     }
 
@@ -138,12 +149,11 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         }
         return this._ball
     }
-    private _paddles: CPaddle[] = [];
+
+    private _teams: Map<SIDES, CTeam> = new Map<SIDES, CTeam>;
+    get teams(): Map<SIDES, CTeam> { return this._teams; }
+
+    private _paddles: Map<number, CPaddle> = new Map<number, CPaddle>;
     get paddles() { return this._paddles }
-    set paddles(value: CPaddle[]) { this._paddles = value }
-
-    /* private _players: CPlayer[] = []
-    set players(players: CPlayer[]) { this._players = players; }
-    get players(): CPlayer[] { return this._players; } */
-
+    set paddles(value: Map<number, CPaddle>) { this._paddles = value }
 }

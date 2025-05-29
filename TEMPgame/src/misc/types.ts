@@ -178,6 +178,10 @@ export type SGameDTO = {
     ball: {
         pos: { x: number, y: number}
     }
+    teams: {
+        side: SIDES,
+        score: number
+    }[]
     paddles: {
         id: number
         pos: { x: number, y: number }
