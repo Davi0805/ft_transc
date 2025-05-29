@@ -3,8 +3,8 @@ import Point from "../misc/Point.js";
 import { Sprite } from "pixi.js";
 
 export default abstract class CObject extends AObject {
-    constructor(pos: Point, size: Point, orientation: Point, sprite: Sprite) {
-        super(pos, size, orientation);
+    constructor(id: number, pos: Point, size: Point, orientation: Point, sprite: Sprite) {
+        super(id, pos, size, orientation);
         this._sprite = sprite;
         this._sprite.anchor.set(0.5);
         this._sprite.setSize(size.x, size.y)

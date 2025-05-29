@@ -10,6 +10,7 @@ class ServerGame {
         this._windowSize = gameOpts.window.size;
         const ballInitialState = gameOpts.gameInitialState.ball;
         this._ball = new SBall(
+            0, //TODO: This will need to be generated somehow when more balls exist
             Point.fromObj(ballInitialState.pos),
             Point.fromObj(ballInitialState.size),
             ballInitialState.speed,

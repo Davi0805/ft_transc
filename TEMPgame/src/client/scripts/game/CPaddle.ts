@@ -7,14 +7,9 @@ import CObject from "../../../abstracts/CObject";
 
 export default class CPaddle extends CObject {
     constructor(id: number, side: SIDES, pos: Point, size: Point, sprite: Sprite) {
-        super(pos, size, computeOrientation(side), sprite);
-        this._id = id;
+        super(id, pos, size, computeOrientation(side), sprite);
         this._side = side;
     }
-
-    private _id: number;
-    set id(id: number) { this._id = id; }
-    get id(): number { return this._id; }
 
     private _side: SIDES;
     set side(side: SIDES) {this._side = side;}

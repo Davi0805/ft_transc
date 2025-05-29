@@ -5,8 +5,6 @@ import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
 import { CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState } from "../../../misc/types";
-import CPlayer from "./CPlayer";
-import CScore from "./CScore";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
@@ -18,6 +16,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         this._root.addChild(ballSprite);
         
         this._ball = new CBall(
+            0, //TODO: This will need to be generated somehow when more balls exist
             Point.fromObj(ballState.pos),
             Point.fromObj(ballState.size),
             ballSprite

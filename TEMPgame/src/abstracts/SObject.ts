@@ -3,8 +3,8 @@ import Point from "../misc/Point.js";
 import Rectangle from "../misc/Rectangle.js";
 
 export default abstract class SObject extends AObject {
-    constructor(pos: Point, orientation: Point, size: Point, speed: number) {
-        super(pos, size, orientation);
+    constructor(id: number, pos: Point, orientation: Point, size: Point, speed: number) {
+        super(id, pos, size, orientation);
         this._size = size;
         this._cbox = this._calculateCBox();
         this._speed = speed;
