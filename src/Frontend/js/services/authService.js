@@ -1,3 +1,5 @@
+import { getSelfData } from "../api/getSelfDataAPI.js";
+
 export class AuthService {
     constructor() {
         this.protectedRoutes = ['/play', '/profile']
@@ -31,20 +33,38 @@ export class AuthService {
         return this.isAuthenticated;
     }
 
-    updateHeaderVisibility() {
-        const loginRegister = document.getElementById('log-reg');
-        const userLoggedIn = document.getElementById('user-in');
+    async updateHeaderVisibility() {
+        const loggedOut = document.getElementById('log-reg');
+        const loggedIn = document.getElementById('user-in');
+        const headerNick = document.getElementById('profile-link');
 
-        console.log(`UHV called and the user token is = ${localStorage.getItem('authToken')} and the user is authenticated? ${this.isAuthenticated}`)
 
-        if (this.isAuthenticated) {
-            loginRegister.style.display = 'none';
-            userLoggedIn.style.display = 'flex';
+        const showLoggedOutVersion = () => {
+            loggedIn.style.display = 'none';
+            loggedOut.style.display = 'flex';
+        };
+
+        const showLoggedInVersion = (nickname) => {
+            loggedOut.style.display = 'none';
+            loggedIn.style.display = 'flex';
+            headerNick.textContent = nickname;
+        };
+
+        if (!this.isAuthenticated) {
+            showLoggedOutVersion();
+            return;
         }
-        else {
-            loginRegister.style.display = 'flex';
-            userLoggedIn.style.display = 'none';
-        }
+
+        try {
+            const userData = await getSelfData();
+            showLoggedInVersion(userData.nickname);           
+
+    
+            } catch (error) {
+                this.authToken = null;
+                this.isAuthenticated = false;
+
+            }
     }
 
     canAccessRoute(routePath) {
