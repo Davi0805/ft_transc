@@ -34,7 +34,7 @@ class UserController {
             const session = await redisService.validateSession((req.headers.authorization));
             const users = await userService.findById(session.user_id);
             if (!users || Object.keys(users).length === 0) throw 404;
-            return reply.send({id: users[0].user_id, nickname: users[0].username});
+            return reply.send({id: users[0].user_id, nickname: users[0].name});
         } catch (error) {
             if (typeof error === 'number')
                 return reply.code(error).send();
