@@ -34,50 +34,50 @@ class ServerGame {
                     Point.fromObj(paddle.size),
                     paddle.speed
                 ),
-            ) //TODO: When a score is added, a paddle class is not enough, some sort of player class (played both by a human and AI) will be needed
+            )
         }
-        this._players = []; //TODO: change to humans
-        for (const player of gameOpts.humans) {
-            const playerPaddle = this.paddles.find(paddle => paddle.id === player.paddleID)
-            if (!playerPaddle) {
-                throw new Error(`A player says it owns a paddle with paddleID ${player.paddleID}, but that paddleID does not exist!`)
+        this._humans = [];
+        for (const human of gameOpts.humans) {
+            const humanPaddle = this.paddles.find(paddle => paddle.id === human.paddleID)
+            if (!humanPaddle) {
+                throw new Error(`A human says it owns a paddle with paddleID ${human.paddleID}, but that paddleID does not exist!`)
             }
-            this.players.push(
+            this.humans.push(
                 new SPlayer(
                     {
                         left: { pressed: false},
                         right: { pressed: false},
                         pause: { pressed: false }
                     },
-                    playerPaddle
+                    humanPaddle
                 )
             )
         }
     }
 
     dealWithClientInput(playerIndex: number, delta: number) {
-        const player = this.players[playerIndex];
+        const human = this.humans[playerIndex];
         // Movement handling
-        if (player.controls.left.pressed || player.controls.right.pressed) {
-            let movVector = player.paddle.orientation.clone()
-                                    .multiplyScalar(player.paddle.speed)
+        if (human.controls.left.pressed || human.controls.right.pressed) {
+            let movVector = human.paddle.orientation.clone()
+                                    .multiplyScalar(human.paddle.speed)
                                     .multiplyScalar(delta);
-            movVector = movVector.rotate(player.controls.left.pressed ? -90 : 90);
-            player.paddle.move(movVector);
+            movVector = movVector.rotate(human.controls.left.pressed ? -90 : 90);
+            human.paddle.move(movVector);
         }
 
         // Boundary handling
-        if (player.paddle.pos.x < 0) {
-            player.paddle.pos.x = 0;
+        if (human.paddle.pos.x < 0) {
+            human.paddle.pos.x = 0;
         }
-        if (player.paddle.pos.x > this.windowSize.x) {
-            player.paddle.pos.x = this.windowSize.x;
+        if (human.paddle.pos.x > this.windowSize.x) {
+            human.paddle.pos.x = this.windowSize.x;
         }
-        if (player.paddle.cbox.y < 0) {
-            player.paddle.pos.y = player.paddle.cbox.height / 2;
+        if (human.paddle.cbox.y < 0) {
+            human.paddle.pos.y = human.paddle.cbox.height / 2;
         }
-        if (player.paddle.cbox.y + player.paddle.cbox.height > this.windowSize.y) {
-            player.paddle.pos.y = this.windowSize.y - player.paddle.cbox.height / 2;
+        if (human.paddle.cbox.y + human.paddle.cbox.height > this.windowSize.y) {
+            human.paddle.pos.y = this.windowSize.y - human.paddle.cbox.height / 2;
         }
     }
 
@@ -144,14 +144,14 @@ class ServerGame {
         const loop = () => {
             const currentTime = Date.now();
             const delta = (currentTime - prevTime) / 1000;
-            if (this.players[0].controls.pause.pressed) {
+            if (this.humans[0].controls.pause.pressed) {
                 this.gameRunning = !this.gameRunning;
             }
-            if (this.players[0].controls.pause.pressed) {
-                this.players[0].controls.pause.pressed = false;
+            if (this.humans[0].controls.pause.pressed) {
+                this.humans[0].controls.pause.pressed = false;
             }
             if (this.gameRunning) {
-                for (let i = 0; i < this.players.length; i++) {
+                for (let i = 0; i < this.humans.length; i++) {
                     this.dealWithClientInput(i, delta);
                 }
                 this.updateGameState(delta);
@@ -203,9 +203,9 @@ class ServerGame {
     set paddles(value: SPaddle[]) { this._paddles = value; }
     get paddles(): SPaddle[] { return this._paddles; }
 
-    private _players: SPlayer[];
-    set players(value: SPlayer[]) { this._players = value; }
-    get players(): SPlayer[] { return this._players; }
+    private _humans: SPlayer[];
+    set humans(value: SPlayer[]) { this._humans = value; }
+    get humans(): SPlayer[] { return this._humans; }
 }
 
 export default ServerGame;
