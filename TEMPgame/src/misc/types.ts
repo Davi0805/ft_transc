@@ -72,12 +72,16 @@ export type TUserCustoms = {
         role: ROLES,
         spriteID: number,
     }[],
-    // For now, there are no user customs for team. If added, an array for team should be added here
-    humans: {
-        clientID: number,
-        paddleID: number,
-        controls: TControls
+    clients: {
+        id: number,
+        humans: {
+            id: number,
+            paddleID: number,
+            controls: TControls
+        }[],
     }[]
+    // For now, there are no user customs for team. If added, an array for team should be added here
+    
     bots: {
         paddleID: number,
         difficulty: number
@@ -99,10 +103,13 @@ export type TGameConfigs = {
         }
     }[]
     paddles: TPaddle[],
-    humans: {
-        clientID: number,
-        paddleID: number,
-        controls: TControls
+    clients: {
+        id: number,
+        humans: {
+            id: number,
+            paddleID: number,
+            controls: TControls
+        }[],
     }[]
     bots: {
         paddleID: number,
@@ -127,7 +134,7 @@ export type CGameState = {
 }
 
 export type CGameSceneConfigs = {
-    controls: TControls
+    controls: Map<number, TControls>
     gameInitialState: CGameState
 }
 
@@ -159,9 +166,8 @@ export type SGameConfigs = {
         score: number
     }[]
     humans: {
-        clientID: number,
+        id: number,
         paddleID: number,
-        keyboardState: TControlsState
     }[]
     bots: {
         paddleID: number,
@@ -177,7 +183,8 @@ export type Adto = | { type: "AssignID", dto: DTOAssignID }
 
 // Server to Client
 export type DTOAssignID = {
-    id: number
+    clientID: number,
+    humansID: number[]
 }
 
 export type SGameDTO = {
@@ -196,5 +203,8 @@ export type SGameDTO = {
 
 // Client to server
 export type CGameDTO = {
-    controlsState: TControlsState
+    controlsState: {
+        humanID:  number,
+        controlsState: TControlsState
+    }[]
 }

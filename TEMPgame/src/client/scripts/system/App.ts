@@ -1,7 +1,7 @@
 import { Application, ApplicationOptions, Assets, AssetsManifest } from 'pixi.js'
 import { ScenesManager } from './ScenesManager';
 import { EventBus } from './EventBus';
-import { Adto, CAppConfigs} from '../../../misc/types';
+import { Adto, CAppConfigs, CGameDTO} from '../../../misc/types';
 import { assetsManifest, scenesManifest } from '../game/Manifests';
 
 class FtApplication {
@@ -19,6 +19,7 @@ class FtApplication {
         // and forward it to the socket. This avoids the scenes to hold references to higher objects in the tree
         EventBus.addEventListener("sendToServer", (event: Event) => {
             const dto = (event as CustomEvent).detail;
+            
             this._socket.send(JSON.stringify(dto))
         })
 

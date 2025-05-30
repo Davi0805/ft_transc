@@ -1,6 +1,6 @@
 import SBall from "./SBall.js";
 import SPaddle from "./SPaddle.js"
-import SPlayer from "./SPlayer.js";
+import SHuman from "./SHuman.js";
 import { SIDES, SGameConfigs, SGameDTO } from "../misc/types.js";
 import Point from "../misc/Point.js";
 import STeam from "./STeam.js";
@@ -43,7 +43,8 @@ class ServerGame {
                 throw new Error(`A human says it owns a paddle with paddleID ${human.paddleID}, but that paddleID does not exist!`)
             }
             this.humans.push(
-                new SPlayer(
+                new SHuman(
+                    human.id,
                     {
                         left: { pressed: false},
                         right: { pressed: false},
@@ -203,9 +204,9 @@ class ServerGame {
     set paddles(value: SPaddle[]) { this._paddles = value; }
     get paddles(): SPaddle[] { return this._paddles; }
 
-    private _humans: SPlayer[];
-    set humans(value: SPlayer[]) { this._humans = value; }
-    get humans(): SPlayer[] { return this._humans; }
+    private _humans: SHuman[];
+    set humans(value: SHuman[]) { this._humans = value; }
+    get humans(): SHuman[] { return this._humans; }
 }
 
 export default ServerGame;

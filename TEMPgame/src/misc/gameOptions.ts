@@ -22,47 +22,69 @@ export const UserCustoms: TUserCustoms = {
         },
         {
             id: 1,
-            side: SIDES.RIGHT,
-            role: ROLES.BACK,
-            spriteID: 1
+            side: SIDES.LEFT,
+            role: ROLES.FRONT,
+            spriteID: 0
         },
         {
             id: 2,
-            side: SIDES.BOTTOM,
+            side: SIDES.RIGHT,
             role: ROLES.BACK,
             spriteID: 0
         },
         {
             id: 3,
-            side: SIDES.TOP,
-            role: ROLES.BACK,
-            spriteID: 0
-        },
-        {
-            id: 4,
-            side: SIDES.LEFT,
+            side: SIDES.RIGHT,
             role: ROLES.FRONT,
             spriteID: 0
         }
     ],
-    humans: [
+    clients: [
         {
-            clientID: 0,
-            paddleID: 0,
-            controls: {
-                left: "a",
-                right: "z",
-                pause: " "
-            }
+            id: 0,
+            humans: [
+                {
+                    id: 0,
+                    paddleID: 0,
+                    controls: {
+                        left: "a",
+                        right: "z",
+                        pause: " "
+                    }
+                },
+                {
+                    id: 1,
+                    paddleID: 1,
+                    controls: {
+                        left: "f",
+                        right: "c",
+                        pause: " "
+                    }
+                },
+            ]
         },
         {
-            clientID: 1,
-            paddleID: 4,
-            controls: {
-                left: "ArrowLeft",
-                right: "ArrowRight",
-                pause: " "
-            }
+            id: 1,
+            humans: [
+                {
+                    id: 2,
+                    paddleID: 2,
+                    controls: {
+                        left: "m",
+                        right: "k",
+                        pause: " "
+                    }
+                },
+                {
+                    id: 3,
+                    paddleID: 3,
+                    controls: {
+                        left: "b",
+                        right: "g",
+                        pause: " "
+                    }
+                }
+            ]
         },
     ],
     bots: [
@@ -88,7 +110,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         },
         teams: [],
         paddles: [],
-        humans: userCustoms.humans,
+        clients: userCustoms.clients,
         bots: userCustoms.bots,
         startingScore: 0
     }

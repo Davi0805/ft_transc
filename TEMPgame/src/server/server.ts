@@ -56,7 +56,10 @@ fastify.register(async (fastify) => {
         
         const data: Adto = {
             type: "AssignID",
-            dto: { id: clientId }
+            dto: {
+                clientID: clientId,
+                humansID: []
+            }
         }; 
         socket.send(JSON.stringify(data));
 
@@ -64,6 +67,9 @@ fastify.register(async (fastify) => {
         console.log(`Client ${clientId} joined`);
         
         socket.on('message', (message) => {
+            const dto = JSON.parse(message.toString()) as CGameDTO;
+            const controlsMap = dto.controlsState.map(({ humanID, controlsState}) => [humanID, controlsState])
+            game.humans.find((human => human.id === controlsMap.))
             game.humans[clientId].controls = (JSON.parse(message.toString()) as CGameDTO).controlsState; //TODO This will definitely have to be done from within the game Class to check if client is 
         })
         socket.on('close', () => {

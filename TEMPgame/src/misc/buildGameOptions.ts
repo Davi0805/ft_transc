@@ -1,14 +1,17 @@
-import { TGameConfigs, CAppConfigs, SGameConfigs } from "./types.js";
+import { TGameConfigs, CAppConfigs, SGameConfigs, TControls } from "./types.js";
 import Point from "./Point.js";
 
 export function buildCAppConfigs(gameGonfigs: TGameConfigs, 
   clientID: number, websocket: WebSocket): CAppConfigs {
-
-    const playerControls = gameGonfigs.humans.find(obj => obj.clientID === clientID)?.controls
-    if (playerControls === undefined) {
+    const humansInClient = gameGonfigs.clients.find(client => client.id == clientID)?.humans;
+    if (humansInClient === undefined) {
       throw new Error(`The clientID ${clientID} has no controls saved in gameConfigs!`)
     }
-
+    const controlsMap = new Map<number, TControls>;
+    humansInClient.forEach(human => {
+      controlsMap.set(human.id, human.controls);
+    })
+    
     const out: CAppConfigs = {
       websocket: websocket,
       appConfigs: {
@@ -16,7 +19,7 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
         height: gameGonfigs.field.size.y
       },
       gameSceneConfigs: {
-        controls: playerControls,
+        controls: controlsMap,
         gameInitialState: {
           ball: {
             size: Point.fromObj(gameGonfigs.ball.size),
@@ -75,7 +78,8 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
       score: team.score.score
     })
   }
-  for (let human of gameConfigs.humans) {
+  
+  /* for (let human of gameConfigs.humans) {
     out.humans.push({
       clientID: human.clientID,
       paddleID: human.paddleID,
@@ -85,7 +89,7 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
         pause: { pressed: false }
       },
     })
-  }
+  } */
   for (let paddle of gameConfigs.paddles) {
     out.gameInitialState.paddles.push({
       id: paddle.id,

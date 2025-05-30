@@ -4,7 +4,7 @@ import { Assets, Sprite, BitmapText } from "pixi.js"
 import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
-import { SIDES, CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState } from "../../../misc/types";
+import { SIDES, CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState, CGameDTO } from "../../../misc/types";
 import CTeam from "./CTeam";
 import CScore from "./CScore";
 
@@ -58,6 +58,13 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         })
 
 
+        gameSceneConfigs.controls.forEach( (controls, humanID) => {
+            this.controlsState.set(humanID, {
+                left: { pressed: false },
+                right: { pressed: false },
+                pause: { pressed: false }
+            })
+        })
         this._onKeyDown = this._getOnKeyDown(gameSceneConfigs.controls); //TODO: Probably should put some of this in the AScene?
         this._onKeyUp = this._getOnKeyUp(gameSceneConfigs.controls);
         window.addEventListener("keydown", this._onKeyDown);
@@ -91,14 +98,14 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override tickerUpdate(): void {}
 
     private _onKeyDown!: (event: KeyboardEvent) => void;
-    private _getOnKeyDown(controls: TControls) {
+    private _getOnKeyDown(controls: Map<number, TControls>) {
         // Callbacks like these must be arrow functions and not methods!
         // This way, if it is needed to use class members (like _keys in this case),
         // the "this" keyword inherits context when passed as callback
         return (event: KeyboardEvent) => {
             
             
-            if (event.key === "c") { //TODO: TEMPORARY: THIS IS JUST AN EXAMPLE ON HOW TO CHANGE SCENES 
+            /* if (event.key === "c") { //TODO: TEMPORARY: THIS IS JUST AN EXAMPLE ON HOW TO CHANGE SCENES 
                 const detail: SceneChangeDetail =  {
                     sceneName: "exampleScene",
                     configs: {
@@ -106,39 +113,106 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 }
                 EventBus.dispatchEvent(new CustomEvent("changeScene", { detail: detail}))
                 return ;
-            }
+            } */
 
-
-            if (event.key === controls.left) {
-                this.controlsState.left.pressed = true;
-            } else if (event.key === controls.right) {
-                this.controlsState.right.pressed = true;
-            } else if (event.key === controls.pause) {
-                this.controlsState.pause.pressed = true;
+            controls.forEach((controls, id) => {
+                const specificControlsState = this.controlsState.get(id);
+                if (specificControlsState === undefined) {
+                    throw new Error(`This client cannot find the controlsState of the human with ID ${id}`)
+                }
+                if (event.key === controls.left) {
+                    specificControlsState.left.pressed = true
+                } else if (event.key === controls.right) {
+                    specificControlsState.right.pressed = true;
+                } else if (event.key === controls.pause) {
+                    specificControlsState.pause.pressed = true;
+                }
+            })
+            const dto: CGameDTO = { //TODO IMPORTANT: If I change Map to Record, serialization becomes easier!!
+                controlsState: Array.from(this.controlsState, ([humanID, controlsState]) => ({ humanID, controlsState })) 
             }
-            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: { controlsState: this.controlsState }}))
+            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
         }
     }
 
     private _onKeyUp!: (event: KeyboardEvent) => void;
-    private _getOnKeyUp = (controls: TControls) => {
+    private _getOnKeyUp = (controls: Map<number, TControls>) => {
         return (event: KeyboardEvent) => {
-            if (event.key === controls.left) {
+            controls.forEach((controls, id) => {
+                const specificControlsState = this.controlsState.get(id);
+                if (specificControlsState === undefined) {
+                    throw new Error(`This client cannot find the controlsState of the human with ID ${id}`)
+                }
+                if (event.key === controls.left) {
+                    specificControlsState.left.pressed = false
+                } else if (event.key === controls.right) {
+                    specificControlsState.right.pressed = false;
+                } else if (event.key === controls.pause) {
+                    specificControlsState.pause.pressed = false;
+                }
+            })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+            const dto: CGameDTO = { //TODO IMPORTANT: WHY THE FUCK AM I UPDATING EVERY HUMAN IN THIS CLIENT?? ONLY SEND THE ONE THAT CHANGED!!!!!
+                controlsState: Array.from(this.controlsState, ([humanID, controlsState]) => ({ humanID, controlsState })) 
+            }
+            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /* if (event.key === controls.left) {
                 this.controlsState.left.pressed = false;
             } else if (event.key === controls.right) {
                 this.controlsState.right.pressed = false;
             } else if (event.key === controls.pause) {
                 this.controlsState.pause.pressed = false;
             }
-            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: { controlsState: this.controlsState}}))
+            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: { controlsState: this.controlsState}})) */
         }
     }
 
-    private _controlsState: TControlsState = {
+    private _controlsState: Map<number, TControlsState> = new Map<number, TControlsState>
+    /*{
         left: { pressed: false },
         right: { pressed: false },
         pause: { pressed: false }
-    }
+    }*/
     get controlsState() {
         return this._controlsState;
     }
