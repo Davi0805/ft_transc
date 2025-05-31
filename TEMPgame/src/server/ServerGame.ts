@@ -56,36 +56,32 @@ class ServerGame {
     }
 
     dealWithHumanInput(human: SHuman, delta: number) {
+        const paddle = human.paddle;
         // Movement handling
         if (human.controls.left.pressed || human.controls.right.pressed) {
-            let movVector = human.paddle.orientation.clone()
-                                    .multiplyScalar(human.paddle.speed)
-                                    .multiplyScalar(delta);
-            movVector = movVector.rotate(human.controls.left.pressed ? -90 : 90);
-            human.paddle.move(movVector);
+            let movVector = paddle.orientation.multiplyScalar(paddle.speed * delta)
+                            .rotate(human.controls.left.pressed ? -90 : 90);
+            paddle.move(movVector);
         }
 
         // Boundary handling
-        if (human.paddle.cbox.x < 0) {
-            human.paddle.pos.x = human.paddle.cbox.width / 2;
+        if (paddle.cbox.x < 0) {
+            paddle.pos.x = paddle.cbox.width / 2;
         }
-        if (human.paddle.pos.x + human.paddle.cbox.width / 2 > this.windowSize.x) {
-            human.paddle.pos.x = this.windowSize.x - human.paddle.cbox.width / 2;
+        if (paddle.cbox.x + paddle.cbox.width > this.windowSize.x) {
+            paddle.pos.x = this.windowSize.x - paddle.cbox.width / 2;
         }
-        if (human.paddle.cbox.y < 0) {
-            human.paddle.pos.y = human.paddle.cbox.height / 2;
+        if (paddle.cbox.y < 0) {
+            paddle.pos.y = paddle.cbox.height / 2;
         }
-        if (human.paddle.cbox.y + human.paddle.cbox.height > this.windowSize.y) {
-            human.paddle.pos.y = this.windowSize.y - human.paddle.cbox.height / 2;
+        if (paddle.cbox.y + paddle.cbox.height > this.windowSize.y) {
+            paddle.pos.y = this.windowSize.y - paddle.cbox.height / 2;
         }
     }
 
     updateGameState(delta: number) {
-        const oldPos = this.ball.pos.clone();
-        const movVector = this.ball.direction.clone()
-                                .multiplyScalar(this.ball.speed)
-                                .multiplyScalar(delta);
-        const newPos = oldPos.add(movVector);
+        const movVector = this.ball.direction.multiplyScalar(this.ball.speed * delta);
+        const newPos = this.ball.pos.add(movVector);
 
         if (newPos.x - this.ball.cbox.width < 0) {
             this.ball.direction.x *= -1
