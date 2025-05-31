@@ -34,7 +34,7 @@ export const UserCustoms: TUserCustoms = {
         },
         {
             id: 3,
-            side: SIDES.RIGHT,
+            side: SIDES.TOP,
             role: ROLES.FRONT,
             spriteID: 0
         },

@@ -66,11 +66,11 @@ class ServerGame {
         }
 
         // Boundary handling
-        if (human.paddle.pos.x < 0) {
-            human.paddle.pos.x = 0;
+        if (human.paddle.cbox.x < 0) {
+            human.paddle.pos.x = human.paddle.cbox.width / 2;
         }
-        if (human.paddle.pos.x > this.windowSize.x) {
-            human.paddle.pos.x = this.windowSize.x;
+        if (human.paddle.pos.x + human.paddle.cbox.width / 2 > this.windowSize.x) {
+            human.paddle.pos.x = this.windowSize.x - human.paddle.cbox.width / 2;
         }
         if (human.paddle.cbox.y < 0) {
             human.paddle.pos.y = human.paddle.cbox.height / 2;
@@ -160,7 +160,7 @@ class ServerGame {
             }
             prevTime = currentTime;
 
-            setTimeout(loop, 1000 / 60);
+            setTimeout(loop, 1000 / 60); // Target rate of game update (last number in FPS)
         }
         loop();
     }
