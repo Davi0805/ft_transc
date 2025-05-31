@@ -45,91 +45,14 @@ class ServerGame {
                 new SHuman(
                     human.id,
                     {
-                        left: { pressed: false},
-                        right: { pressed: false},
+                        left: { pressed: false },
+                        right: { pressed: false },
                         pause: { pressed: false }
                     },
                     humanPaddle
                 )
             )
         }
-    }
-
-    dealWithHumanInput(human: SHuman, delta: number) {
-        const paddle = human.paddle;
-        // Movement handling
-        if (human.controls.left.pressed || human.controls.right.pressed) {
-            let movVector = paddle.orientation.multiplyScalar(paddle.speed * delta)
-                            .rotate(human.controls.left.pressed ? -90 : 90);
-            paddle.move(movVector);
-        }
-
-        // Boundary handling
-        if (paddle.cbox.x < 0) {
-            paddle.pos.x = paddle.cbox.width / 2;
-        }
-        if (paddle.cbox.x + paddle.cbox.width > this.windowSize.x) {
-            paddle.pos.x = this.windowSize.x - paddle.cbox.width / 2;
-        }
-        if (paddle.cbox.y < 0) {
-            paddle.pos.y = paddle.cbox.height / 2;
-        }
-        if (paddle.cbox.y + paddle.cbox.height > this.windowSize.y) {
-            paddle.pos.y = this.windowSize.y - paddle.cbox.height / 2;
-        }
-    }
-
-    updateGameState(delta: number) {
-        const movVector = this.ball.direction.multiplyScalar(this.ball.speed * delta);
-        const newPos = this.ball.pos.add(movVector);
-
-        if (newPos.x - this.ball.cbox.width < 0) {
-            this.ball.direction.x *= -1
-            const team = this.teams.find(team => team.side == SIDES.LEFT)
-            if (team) {
-                team.score += 1;
-            }
-        } else if (newPos.x + this.ball.cbox.width > this.windowSize.x) {
-            this.ball.direction.x *= -1;
-            const team = this.teams.find(team => team.side == SIDES.RIGHT)
-            if (team) {
-                team.score += 1;
-            }
-        } else if (newPos.y - this.ball.cbox.height < 0) {
-            this.ball.direction.y *= -1;
-            const team = this.teams.find(team => team.side == SIDES.TOP)
-            if (team) {
-                team.score += 1;
-            }
-        } else if (newPos.y + this.ball.cbox.height > this.windowSize.y) {
-            this.ball.direction.y *= -1;
-            const team = this.teams.find(team => team.side == SIDES.BOTTOM)
-            if (team) {
-                team.score += 1;
-            }
-        } else {
-            this.ball.move(movVector);
-        }
-
-        this.paddles.forEach(paddle => {
-            const collision = this.ball.cbox.areColliding(paddle.cbox);
-            if (collision !== null) {
-                if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
-                    || (collision === SIDES.RIGHT && this.ball.direction.x > 0)) {
-                    this.ball.direction.x *= -1;
-                } else if ((collision === SIDES.TOP && this.ball.direction.y > 0)
-                    || (collision === SIDES.BOTTOM && this.ball.direction.y < 0)) {
-                    this.ball.direction.y *= -1;
-                }
-                const movDistance = (paddle.speed + this.ball.speed) * delta; // This in theory compensates for moving-into-ball paddles
-                const movVector = this.ball.direction.clone().multiplyScalar(movDistance);
-                this.ball.move(movVector);
-                this.ball.speed += 5;
-                for (let paddle of this.paddles) {
-                    paddle.speed += 1;
-                }
-            }
-        });
     }
 
     startGameLoop() {
@@ -150,9 +73,9 @@ class ServerGame {
 
             if (this.gameRunning) {
                 this.humans.forEach(human => {
-                    this.dealWithHumanInput(human, delta);
+                    this._dealWithHumanInput(human, delta);
                 })
-                this.updateGameState(delta);
+                this._updateGameState(delta);
             }
             prevTime = currentTime;
 
@@ -209,6 +132,96 @@ class ServerGame {
     private _humans: SHuman[];
     set humans(value: SHuman[]) { this._humans = value; }
     get humans(): SHuman[] { return this._humans; }
+
+
+
+    
+    private _dealWithHumanInput(human: SHuman, delta: number) {
+        const paddle = human.paddle;
+        // Movement handling
+        if (human.controls.left.pressed || human.controls.right.pressed) {
+            let movVector = paddle.orientation.multiplyScalar(paddle.speed * delta)
+                            .rotate(human.controls.left.pressed ? -90 : 90);
+            paddle.move(movVector);
+        }
+        // Boundary handling
+        this._handlePaddleLimitsCollision(paddle);
+    }
+
+    private _updateGameState(delta: number) {
+        this._handleBallLimitsCollision(delta);
+        this._handleBallPaddleCollision(delta);
+    }
+
+    private _handlePaddleLimitsCollision(paddle: SPaddle) {
+        if (paddle.cbox.x < 0) {
+            paddle.pos.x = paddle.cbox.width / 2;
+        }
+        if (paddle.cbox.x + paddle.cbox.width > this.windowSize.x) {
+            paddle.pos.x = this.windowSize.x - paddle.cbox.width / 2;
+        }
+        if (paddle.cbox.y < 0) {
+            paddle.pos.y = paddle.cbox.height / 2;
+        }
+        if (paddle.cbox.y + paddle.cbox.height > this.windowSize.y) {
+            paddle.pos.y = this.windowSize.y - paddle.cbox.height / 2;
+        }
+    }
+
+    private _handleBallLimitsCollision(delta: number) {
+        const movVector = this.ball.direction.multiplyScalar(this.ball.speed * delta);
+        const newPos = this.ball.pos.add(movVector);
+
+        if (newPos.x - this.ball.cbox.width < 0) {
+            this.ball.direction.x *= -1
+            const team = this.teams.find(team => team.side == SIDES.LEFT)
+            if (team) {
+                team.score += 1;
+            }
+        } else if (newPos.x + this.ball.cbox.width > this.windowSize.x) {
+            this.ball.direction.x *= -1;
+            const team = this.teams.find(team => team.side == SIDES.RIGHT)
+            if (team) {
+                team.score += 1;
+            }
+        } else if (newPos.y - this.ball.cbox.height < 0) {
+            this.ball.direction.y *= -1;
+            const team = this.teams.find(team => team.side == SIDES.TOP)
+            if (team) {
+                team.score += 1;
+            }
+        } else if (newPos.y + this.ball.cbox.height > this.windowSize.y) {
+            this.ball.direction.y *= -1;
+            const team = this.teams.find(team => team.side == SIDES.BOTTOM)
+            if (team) {
+                team.score += 1;
+            }
+        } else {
+            this.ball.move(movVector);
+        }
+    }
+
+    private _handleBallPaddleCollision(delta: number) {
+        this.paddles.forEach(paddle => {
+            const collision = this.ball.cbox.areColliding(paddle.cbox);
+            if (collision !== null) {
+                if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
+                    || (collision === SIDES.RIGHT && this.ball.direction.x > 0)) {
+                    this.ball.direction.x *= -1;
+                } else if ((collision === SIDES.TOP && this.ball.direction.y > 0)
+                    || (collision === SIDES.BOTTOM && this.ball.direction.y < 0)) {
+                    this.ball.direction.y *= -1;
+                }
+                const movDistance = (paddle.speed + this.ball.speed) * delta; // This in theory compensates for moving-into-ball paddles
+                const movVector = this.ball.direction.multiplyScalar(movDistance);
+                this.ball.move(movVector);
+                this.ball.speed += 5;
+                for (let paddle of this.paddles) {
+                    paddle.speed += 1;
+                }
+            }
+        });
+    }
 }
 
 export default ServerGame;
