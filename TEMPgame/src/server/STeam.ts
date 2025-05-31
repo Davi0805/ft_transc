@@ -1,5 +1,6 @@
 import { SIDES } from "../misc/types";
 
+// Represents a set of players defending one of the sides of the field
 export default class STeam {
     constructor(side: SIDES, initialScore: number) {
         this._side = side;

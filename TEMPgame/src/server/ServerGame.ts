@@ -23,7 +23,6 @@ class ServerGame {
                 team.side, team.score
             ))
         }
-
         this._paddles = [];
         for (const paddle of gameOpts.gameInitialState.paddles) {
             this.paddles.push( 
@@ -56,8 +55,7 @@ class ServerGame {
         }
     }
 
-    dealWithClientInput(playerIndex: number, delta: number) {
-        const human = this.humans[playerIndex];
+    dealWithHumanInput(human: SHuman, delta: number) {
         // Movement handling
         if (human.controls.left.pressed || human.controls.right.pressed) {
             let movVector = human.paddle.orientation.clone()
@@ -143,16 +141,21 @@ class ServerGame {
         const loop = () => {
             const currentTime = Date.now();
             const delta = (currentTime - prevTime) / 1000;
+
+            // The following code is just to control the pause state, to make testing easier.
+            // Should be removed later!
             if (this.humans[0].controls.pause.pressed) {
                 this.gameRunning = !this.gameRunning;
             }
             if (this.humans[0].controls.pause.pressed) {
                 this.humans[0].controls.pause.pressed = false;
             }
+
+
             if (this.gameRunning) {
-                for (let i = 0; i < this.humans.length; i++) {
-                    this.dealWithClientInput(i, delta);
-                }
+                this.humans.forEach(human => {
+                    this.dealWithHumanInput(human, delta);
+                })
                 this.updateGameState(delta);
             }
             prevTime = currentTime;
@@ -188,12 +191,8 @@ class ServerGame {
     }
 
     private _gameRunning: boolean;
-    set gameRunning(value: boolean) {
-        this._gameRunning = value;
-    }
-    get gameRunning() {
-        return this._gameRunning;
-    }
+    set gameRunning(value: boolean) { this._gameRunning = value; }
+    get gameRunning() { return this._gameRunning; }
 
     private _windowSize: { x: number, y: number };
     set windowSize(value: { x: number, y: number }) { this._windowSize = value; }

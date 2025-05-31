@@ -52,8 +52,10 @@ fastify.register(FastifyWebsocket);
 fastify.register(async (fastify) => {
     // Behavior of the websocket
     fastify.get('/ws', {websocket: true}, (socket, _request) => {
+        // This ID identifies the socket (not necessarily the player!) This allows several players per client
         const clientId = clients.length;
-        
+
+        // Tells the client what ID it has and which humans are associated with it
         const data: Adto = {
             type: "AssignID",
             dto: {
@@ -65,6 +67,7 @@ fastify.register(async (fastify) => {
 
         clients.push(socket);
         
+        // Whenever this particular client sends a message, it is forwarded to the game to take care of it
         socket.on('message', (message) => {
             const dto = JSON.parse(message.toString()) as CGameDTO;
             game.processClientDTO(dto);

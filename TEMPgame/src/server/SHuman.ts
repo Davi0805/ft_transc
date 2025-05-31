@@ -1,6 +1,7 @@
 import { TControlsState } from "../misc/types.js"
 import SPaddle from "./SPaddle.js"
 
+// Represents a human player
 export default class SHuman {
     constructor(id: number, controls: TControlsState, paddle: SPaddle) {
         this._id = id;
