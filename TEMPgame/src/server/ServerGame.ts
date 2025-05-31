@@ -1,7 +1,7 @@
 import SBall from "./SBall.js";
 import SPaddle from "./SPaddle.js"
 import SHuman from "./SHuman.js";
-import { SIDES, SGameConfigs, SGameDTO } from "../misc/types.js";
+import { SIDES, SGameConfigs, SGameDTO, CGameDTO } from "../misc/types.js";
 import Point from "../misc/Point.js";
 import STeam from "./STeam.js";
 
@@ -178,6 +178,15 @@ class ServerGame {
             })),
         };
     }
+
+    processClientDTO(dto: CGameDTO) {
+        const human = this.humans.find((human => human.id === dto.controlsState.humanID))
+        if (human === undefined) {
+            throw new Error (`Server cannot find a human with id ${dto.controlsState.humanID}, which was requesteb by a client!`)
+        }
+        human.controls = dto.controlsState.controlsState;
+    }
+
     private _gameRunning: boolean;
     set gameRunning(value: boolean) {
         this._gameRunning = value;

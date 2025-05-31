@@ -67,11 +67,7 @@ fastify.register(async (fastify) => {
         
         socket.on('message', (message) => {
             const dto = JSON.parse(message.toString()) as CGameDTO;
-            const human = game.humans.find((human => human.id === dto.controlsState.humanID))
-            if (human === undefined) {
-                throw new Error (`Server cannot find a human with id ${dto.controlsState.humanID}, which was requesteb by a client!`)
-            }
-            human.controls = dto.controlsState.controlsState;
+            game.processClientDTO(dto);
         })
         socket.on('close', () => {
             console.log(`Client ${clientId} left`);
