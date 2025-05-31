@@ -206,5 +206,5 @@ export type CGameDTO = {
     controlsState: {
         humanID:  number,
         controlsState: TControlsState
-    }[]
+    }
 }

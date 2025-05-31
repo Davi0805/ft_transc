@@ -19,7 +19,7 @@ async function onInitMessage(event: MessageEvent<any>) {
     //This is safe because message.type will be undefined if message is not Adto. Is it good practice? Fuck if I know lol
     if (message.type === "AssignID") {
         const dto = message.dto;
-        const clientID = dto.id;
+        const clientID = dto.clientID;
 
         // UserCustoms will be the object that will be generated at runtime
         const gameConfigs = applyDevCustoms(UserCustoms);

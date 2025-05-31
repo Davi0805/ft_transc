@@ -77,28 +77,26 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
-        try {
-            this.ball.pos = Point.fromObj(gameDto.ball.pos);
-            gameDto.paddles.forEach(paddleState =>{
-                const paddle = this.paddles.get(paddleState.id);
-                if (paddle === undefined) {
-                    throw new Error("Client cannot find a paddle with the ID the server says exists!")
-                }
-                paddle.pos = Point.fromObj(paddleState.pos);
-            });
-            gameDto.teams.forEach(teamState => {
-                const team = this.teams.get(teamState.side);
-                if (team) {
-                    team.score.update(teamState.score);
-                } 
-            })
-        } catch (error) {console.log(error)}
+        this.ball.pos = Point.fromObj(gameDto.ball.pos);
+        gameDto.paddles.forEach(paddleState =>{
+            const paddle = this.paddles.get(paddleState.id);
+            if (paddle === undefined) {
+                throw new Error("Client cannot find a paddle with the ID the server says exists!")
+            }
+            paddle.pos = Point.fromObj(paddleState.pos);
+        });
+        gameDto.teams.forEach(teamState => {
+            const team = this.teams.get(teamState.side);
+            if (team) {
+                team.score.update(teamState.score);
+            } 
+        })
     }
 
     override tickerUpdate(): void {}
 
     private _onKeyDown!: (event: KeyboardEvent) => void;
-    private _getOnKeyDown(controls: Map<number, TControls>) {
+    private _getOnKeyDown(controlsMap: Map<number, TControls>) {
         // Callbacks like these must be arrow functions and not methods!
         // This way, if it is needed to use class members (like _keys in this case),
         // the "this" keyword inherits context when passed as callback
@@ -115,85 +113,68 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 return ;
             } */
 
-            controls.forEach((controls, id) => {
+            controlsMap.forEach((controls, id) => {
                 const specificControlsState = this.controlsState.get(id);
                 if (specificControlsState === undefined) {
                     throw new Error(`This client cannot find the controlsState of the human with ID ${id}`)
                 }
-                if (event.key === controls.left) {
-                    specificControlsState.left.pressed = true
-                } else if (event.key === controls.right) {
-                    specificControlsState.right.pressed = true;
-                } else if (event.key === controls.pause) {
-                    specificControlsState.pause.pressed = true;
+                let stateChanged = false;
+                switch (event.key) {
+                    case controls.left: {
+                        specificControlsState.left.pressed = true;
+                        stateChanged = true;
+                        break;
+                    } case controls.right: {
+                        specificControlsState.right.pressed = true;
+                        stateChanged = true;
+                        break;
+                    } case controls.pause: {
+                        specificControlsState.pause.pressed = true;
+                        stateChanged = true;
+                        break;
+                    }
+                }
+                if (stateChanged) {
+                    const dto: CGameDTO = {
+                        controlsState: {humanID: id, controlsState: specificControlsState}
+                    }
+                    EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
                 }
             })
-            const dto: CGameDTO = { //TODO IMPORTANT: If I change Map to Record, serialization becomes easier!!
-                controlsState: Array.from(this.controlsState, ([humanID, controlsState]) => ({ humanID, controlsState })) 
-            }
-            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
         }
     }
 
     private _onKeyUp!: (event: KeyboardEvent) => void;
-    private _getOnKeyUp = (controls: Map<number, TControls>) => {
+    private _getOnKeyUp = (controlsMap: Map<number, TControls>) => {
         return (event: KeyboardEvent) => {
-            controls.forEach((controls, id) => {
+            controlsMap.forEach((controls, id) => {
                 const specificControlsState = this.controlsState.get(id);
                 if (specificControlsState === undefined) {
                     throw new Error(`This client cannot find the controlsState of the human with ID ${id}`)
                 }
-                if (event.key === controls.left) {
-                    specificControlsState.left.pressed = false
-                } else if (event.key === controls.right) {
-                    specificControlsState.right.pressed = false;
-                } else if (event.key === controls.pause) {
-                    specificControlsState.pause.pressed = false;
+                let stateChanged = false;
+                switch (event.key) {
+                    case controls.left: {
+                        specificControlsState.left.pressed = false;
+                        stateChanged = true;
+                        break;
+                    } case controls.right: {
+                        specificControlsState.right.pressed = false;
+                        stateChanged = true;
+                        break;
+                    } case controls.pause: {
+                        specificControlsState.pause.pressed = false;
+                        stateChanged = true;
+                        break;
+                    }
+                }
+                if (stateChanged) {
+                    const dto: CGameDTO = {
+                        controlsState: {humanID: id, controlsState: specificControlsState}
+                    }
+                    EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
                 }
             })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-
-            const dto: CGameDTO = { //TODO IMPORTANT: WHY THE FUCK AM I UPDATING EVERY HUMAN IN THIS CLIENT?? ONLY SEND THE ONE THAT CHANGED!!!!!
-                controlsState: Array.from(this.controlsState, ([humanID, controlsState]) => ({ humanID, controlsState })) 
-            }
-            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             /* if (event.key === controls.left) {

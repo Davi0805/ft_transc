@@ -79,17 +79,11 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
     })
   }
   
-  /* for (let human of gameConfigs.humans) {
-    out.humans.push({
-      clientID: human.clientID,
-      paddleID: human.paddleID,
-      keyboardState: {
-        left: { pressed: false },
-        right: { pressed: false },
-        pause: { pressed: false }
-      },
-    })
-  } */
+  for (const client of gameConfigs.clients) {
+    for (const human of client.humans) {
+      out.humans.push(human)
+    }
+  }
   for (let paddle of gameConfigs.paddles) {
     out.gameInitialState.paddles.push({
       id: paddle.id,

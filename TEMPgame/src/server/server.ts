@@ -64,13 +64,14 @@ fastify.register(async (fastify) => {
         socket.send(JSON.stringify(data));
 
         clients.push(socket);
-        console.log(`Client ${clientId} joined`);
         
         socket.on('message', (message) => {
             const dto = JSON.parse(message.toString()) as CGameDTO;
-            const controlsMap = dto.controlsState.map(({ humanID, controlsState}) => [humanID, controlsState])
-            game.humans.find((human => human.id === controlsMap.))
-            game.humans[clientId].controls = (JSON.parse(message.toString()) as CGameDTO).controlsState; //TODO This will definitely have to be done from within the game Class to check if client is 
+            const human = game.humans.find((human => human.id === dto.controlsState.humanID))
+            if (human === undefined) {
+                throw new Error (`Server cannot find a human with id ${dto.controlsState.humanID}, which was requesteb by a client!`)
+            }
+            human.controls = dto.controlsState.controlsState;
         })
         socket.on('close', () => {
             console.log(`Client ${clientId} left`);

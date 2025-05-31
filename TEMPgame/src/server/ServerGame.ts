@@ -7,7 +7,7 @@ import STeam from "./STeam.js";
 
 class ServerGame {
     constructor(gameOpts: SGameConfigs) {
-        this._gameRunning = false
+        this._gameRunning = true
         this._windowSize = gameOpts.window.size;
         const ballInitialState = gameOpts.gameInitialState.ball;
         this._ball = new SBall(
@@ -91,14 +91,12 @@ class ServerGame {
 
         if (newPos.x - this.ball.cbox.width < 0) {
             this.ball.direction.x *= -1
-            console.log(newPos.x)
             const team = this.teams.find(team => team.side == SIDES.LEFT)
             if (team) {
                 team.score += 1;
             }
         } else if (newPos.x + this.ball.cbox.width > this.windowSize.x) {
             this.ball.direction.x *= -1;
-            console.log(newPos.x)
             const team = this.teams.find(team => team.side == SIDES.RIGHT)
             if (team) {
                 team.score += 1;
@@ -145,12 +143,12 @@ class ServerGame {
         const loop = () => {
             const currentTime = Date.now();
             const delta = (currentTime - prevTime) / 1000;
-            if (this.humans[0].controls.pause.pressed) {
+            /* if (this.humans[0].controls.pause.pressed) {
                 this.gameRunning = !this.gameRunning;
             }
             if (this.humans[0].controls.pause.pressed) {
                 this.humans[0].controls.pause.pressed = false;
-            }
+            } */
             if (this.gameRunning) {
                 for (let i = 0; i < this.humans.length; i++) {
                     this.dealWithClientInput(i, delta);

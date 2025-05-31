@@ -9,7 +9,5 @@ export default class ExampleScene extends AScene<ExampleSceneConfigs> {
         
         const exampleSprite = new Sprite(this._assets.example);
         this._root.addChild(exampleSprite);
-
-        console.log(configs)
     }
 }
