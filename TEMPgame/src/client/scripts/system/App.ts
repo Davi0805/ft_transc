@@ -54,33 +54,6 @@ class FtApplication {
     // This is necessary because not only it is a singleton (so the constructor is called immediately at import)
     // but also because there are asynchronous tasks running at init. 
     // Since init() is the only function exposed and nothing else does anything, this is safe
-
-    private _assetsManifest: AssetsManifest = {
-        bundles: [
-            {
-                name: "gameScene",
-                assets: [
-                    {
-                        alias: "ball",
-                        src: "sprites/ball.png"
-                    },
-                    {
-                        alias: "paddle",
-                        src: "sprites/paddle.png"
-                    }
-                ]
-            },
-            {
-                name: "exampleScene",
-                assets: [
-                    {
-                        alias: "example",
-                        src: "sprites/example.png"
-                    }
-                ]
-            }
-        ]
-    }
 }
 
 // Exports only one instance of it, effectively making it a singleton

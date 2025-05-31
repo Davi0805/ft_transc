@@ -37,6 +37,12 @@ export const UserCustoms: TUserCustoms = {
             side: SIDES.RIGHT,
             role: ROLES.FRONT,
             spriteID: 0
+        },
+        {
+            id: 4,
+            side: SIDES.BOTTOM,
+            role: ROLES.BACK,
+            spriteID: 1
         }
     ],
     clients: [

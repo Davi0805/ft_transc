@@ -175,25 +175,10 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                     EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
                 }
             })
-
-
-            /* if (event.key === controls.left) {
-                this.controlsState.left.pressed = false;
-            } else if (event.key === controls.right) {
-                this.controlsState.right.pressed = false;
-            } else if (event.key === controls.pause) {
-                this.controlsState.pause.pressed = false;
-            }
-            EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: { controlsState: this.controlsState}})) */
         }
     }
 
     private _controlsState: Map<number, TControlsState> = new Map<number, TControlsState>
-    /*{
-        left: { pressed: false },
-        right: { pressed: false },
-        pause: { pressed: false }
-    }*/
     get controlsState() {
         return this._controlsState;
     }
