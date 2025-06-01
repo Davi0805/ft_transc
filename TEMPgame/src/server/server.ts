@@ -5,7 +5,7 @@ import { WebSocket } from 'ws' // lowlevel type of the websocket to be used by t
 import path from 'path' // utility to work with paths
 import { applyDevCustoms, UserCustoms } from '../misc/gameOptions.js';
 import ServerGame from './ServerGame.js';
-import { CGameDTO, Adto, DTOAssignID } from '../misc/types.js';
+import { CGameDTO, Adto } from '../misc/types.js';
 import { buildSGameConfigs } from '../misc/buildGameOptions.js';
 
 

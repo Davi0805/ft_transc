@@ -5,7 +5,7 @@ import { SIDES, SGameConfigs, SGameDTO, CGameDTO } from "../misc/types.js";
 import Point from "../misc/Point.js";
 import STeam from "./STeam.js";
 
-class ServerGame {
+export default class ServerGame {
     constructor(gameOpts: SGameConfigs) {
         this._gameRunning = false;
         this._windowSize = gameOpts.window.size;
@@ -135,7 +135,7 @@ class ServerGame {
 
 
 
-    
+
     private _dealWithHumanInput(human: SHuman, delta: number) {
         const paddle = human.paddle;
         // Movement handling
@@ -223,5 +223,3 @@ class ServerGame {
         });
     }
 }
-
-export default ServerGame;

@@ -45,6 +45,7 @@ export const UserCustoms: TUserCustoms = {
             spriteID: 1
         }
     ],
+    // Clients are the sockets. Each one can have a different human playing. This allows for couch coop
     clients: [
         {
             id: 0,
