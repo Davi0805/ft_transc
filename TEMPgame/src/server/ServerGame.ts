@@ -90,9 +90,9 @@ export default class ServerGame {
 
                 this.bots.forEach(bot => {
                     bot.timeSinceLastUpdate += delta;
-                    if (bot.timeSinceLastUpdate > bot.difficulty) {
+                    if (bot.timeSinceLastUpdate > bot.updateRate) {
                         bot.updateGameState(this.ball);
-                        bot.timeSinceLastUpdate -= bot.difficulty;
+                        bot.timeSinceLastUpdate -= bot.updateRate;
                     }
                     bot.setupMove();
                     bot.movePaddleFromControls(delta);

@@ -3,10 +3,12 @@ import SPaddle from "./SPaddle";
 import SPlayer from "./SPlayer.js";
 import SBall from "./SBall";
 
+const EPSILON = 1
+
 export default class SBot extends SPlayer {
     constructor(windowSize: point, paddle: SPaddle, difficulty: number) {
         super(paddle);
-        this._difficulty = difficulty;
+        this._updateRate = difficulty;
         this._timeSinceLastUpdate = 0;
         this._windowSize = windowSize
         this._targetPos = 0;
@@ -18,6 +20,11 @@ export default class SBot extends SPlayer {
     }
 
     setupMove() {
+        if (this._aproxCompare(this._targetPos, this.paddle.pos.y)) {
+            this.controls.left.pressed = false;
+            this.controls.right.pressed = false;
+            return ;
+        }
         if (this._targetPos > this.paddle.pos.y) {
             this.controls.left.pressed = false;
             this.controls.right.pressed = true;
@@ -27,8 +34,8 @@ export default class SBot extends SPlayer {
         }
     }
 
-    private _difficulty: number;
-    get difficulty(): number { return this._difficulty; }
+    private _updateRate: number;
+    get updateRate(): number { return this._updateRate; }
 
     private _timeSinceLastUpdate: number;
     set timeSinceLastUpdate(timeSinceLastUpdate: number) {
@@ -41,4 +48,8 @@ export default class SBot extends SPlayer {
     private _windowSize: point;
 
     private _targetPos: number;
+
+    private _aproxCompare(n1: number, n2: number) {
+        return (Math.abs(n1 - n2) < EPSILON);
+    }
 }
