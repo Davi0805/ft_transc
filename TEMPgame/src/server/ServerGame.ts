@@ -44,11 +44,6 @@ export default class ServerGame {
             this.humans.push(
                 new SHuman(
                     human.id,
-                    {
-                        left: { pressed: false },
-                        right: { pressed: false },
-                        pause: { pressed: false }
-                    },
                     humanPaddle
                 )
             )
@@ -73,9 +68,12 @@ export default class ServerGame {
 
             if (this.gameRunning) {
                 this.humans.forEach(human => {
-                    this._dealWithHumanInput(human, delta);
-                })
-                this._updateGameState(delta);
+                    human.movePaddleFromControls(delta);
+                });
+                /* this.bots.forEach(bot => {
+                    bot.movePaddleFromControls(delta);
+                }) */
+                this._handleCollisions(delta);
             }
             prevTime = currentTime;
 
@@ -134,21 +132,10 @@ export default class ServerGame {
     get humans(): SHuman[] { return this._humans; }
 
 
-
-
-    private _dealWithHumanInput(human: SHuman, delta: number) {
-        const paddle = human.paddle;
-        // Movement handling
-        if (human.controls.left.pressed || human.controls.right.pressed) {
-            let movVector = paddle.orientation.multiplyScalar(paddle.speed * delta)
-                            .rotate(human.controls.left.pressed ? -90 : 90);
-            paddle.move(movVector);
-        }
-        // Boundary handling
-        this._handlePaddleLimitsCollision(paddle);
-    }
-
-    private _updateGameState(delta: number) {
+    private _handleCollisions(delta: number) {
+        this.paddles.forEach(paddle => {
+            this._handlePaddleLimitsCollision(paddle);
+        })
         this._handleBallLimitsCollision(delta);
         this._handleBallPaddleCollision(delta);
     }

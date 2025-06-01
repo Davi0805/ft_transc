@@ -72,19 +72,19 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
       paddles: []
     }
   }
-  for (let team of gameConfigs.teams) {
+  gameConfigs.teams.forEach(team => {
     out.teams.push({
       side: team.side,
       score: team.score.score
     })
-  }
-  
-  for (const client of gameConfigs.clients) {
-    for (const human of client.humans) {
+  })
+  gameConfigs.clients.forEach(client => {
+    client.humans.forEach(human => {
       out.humans.push(human)
-    }
-  }
-  for (let paddle of gameConfigs.paddles) {
+    })
+  })
+  out.bots = gameConfigs.bots
+  gameConfigs.paddles.forEach(paddle => {
     out.gameInitialState.paddles.push({
       id: paddle.id,
       size: paddle.size,
@@ -92,6 +92,7 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
       side: paddle.side,
       speed: paddle.speed
     })
-  }
+  })
+
   return out;
 }

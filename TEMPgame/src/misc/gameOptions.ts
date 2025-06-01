@@ -22,27 +22,9 @@ export const UserCustoms: TUserCustoms = {
         },
         {
             id: 1,
-            side: SIDES.LEFT,
-            role: ROLES.FRONT,
-            spriteID: 0
-        },
-        {
-            id: 2,
             side: SIDES.RIGHT,
             role: ROLES.BACK,
             spriteID: 0
-        },
-        {
-            id: 3,
-            side: SIDES.TOP,
-            role: ROLES.FRONT,
-            spriteID: 0
-        },
-        {
-            id: 4,
-            side: SIDES.BOTTOM,
-            role: ROLES.BACK,
-            spriteID: 1
         }
     ],
     // Clients are the sockets. Each one can have a different human playing. This allows for couch coop
@@ -52,51 +34,19 @@ export const UserCustoms: TUserCustoms = {
             humans: [
                 {
                     id: 0,
-                    paddleID: 0,
-                    controls: {
-                        left: "a",
-                        right: "z",
-                        pause: " "
-                    }
-                },
-                {
-                    id: 1,
                     paddleID: 1,
                     controls: {
-                        left: "f",
-                        right: "c",
-                        pause: " "
-                    }
-                },
-            ]
-        },
-        {
-            id: 1,
-            humans: [
-                {
-                    id: 2,
-                    paddleID: 2,
-                    controls: {
-                        left: "m",
-                        right: "k",
-                        pause: " "
-                    }
-                },
-                {
-                    id: 3,
-                    paddleID: 3,
-                    controls: {
-                        left: "b",
-                        right: "g",
+                        left: "ArrowDown",
+                        right: "ArrowUp",
                         pause: " "
                     }
                 }
             ]
-        },
+        }
     ],
     bots: [
         {
-            paddleID: 1,
+            paddleID: 0,
             difficulty: 0 //NOT USED YET
         }
     ]
