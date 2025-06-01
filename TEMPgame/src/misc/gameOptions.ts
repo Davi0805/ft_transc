@@ -16,22 +16,34 @@ export const UserCustoms: TUserCustoms = {
     paddles: [
         {
             id: 0,
-            side: SIDES.LEFT,
+            side: SIDES.TOP,
             role: ROLES.BACK,
             spriteID: 0
         },
         {
             id: 1,
-            side: SIDES.RIGHT,
+            side: SIDES.BOTTOM,
             role: ROLES.BACK,
             spriteID: 0
         },
         {
             id: 2,
-            side: SIDES.TOP,
+            side: SIDES.LEFT,
             role: ROLES.BACK,
             spriteID: 0
-        }
+        },
+        {
+            id: 3,
+            side: SIDES.RIGHT,
+            role: ROLES.BACK,
+            spriteID: 0
+        },
+        {
+            id: 4,
+            side: SIDES.RIGHT,
+            role: ROLES.FRONT,
+            spriteID: 0
+        },
     ],
     // Clients are the sockets. Each one can have a different human playing. This allows for couch coop
     clients: [
@@ -40,7 +52,7 @@ export const UserCustoms: TUserCustoms = {
             humans: [
                 {
                     id: 0,
-                    paddleID: 1,
+                    paddleID: 4,
                     controls: {
                         left: "ArrowDown",
                         right: "ArrowUp",
@@ -56,9 +68,17 @@ export const UserCustoms: TUserCustoms = {
             difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
         {
+            paddleID: 1,
+            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+        },
+        {
             paddleID: 2,
-            difficulty: 0.1
-        }
+            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+        },
+        {
+            paddleID: 3,
+            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+        },
     ]
 }
 
@@ -73,7 +93,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
             direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
             size: { x: 4, y: 4 },
-            speed: 150
+            speed: 100
         },
         teams: [],
         paddles: [],

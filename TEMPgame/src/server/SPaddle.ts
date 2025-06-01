@@ -7,5 +7,9 @@ import { computeOrientation } from "../misc/utils.js";
 export default class SPaddle extends SObject {
     constructor(id: number, side: SIDES, pos: Point, size: Point, speed: number) {
         super(id, pos, computeOrientation(side), size, speed);
+        this._side = side;
     }
+
+    private _side: SIDES;
+    get side(): SIDES { return this._side; }
 }

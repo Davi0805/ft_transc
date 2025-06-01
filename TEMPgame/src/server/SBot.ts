@@ -1,4 +1,4 @@
-import { point } from "../misc/types";
+import { point, SIDES } from "../misc/types.js";
 import SPaddle from "./SPaddle";
 import SPlayer from "./SPlayer.js";
 import SBall from "./SBall";
@@ -11,25 +11,30 @@ export default class SBot extends SPlayer {
         this._updateRate = difficulty;
         this._timeSinceLastUpdate = 0;
         
-        this._windowSize = windowSize
+        this._windowSize = windowSize;
         
-        this._movementAxis = paddle.orientation.x != 0 ? 'y' : 'x';
-        
-        const orientationAxis = paddle.orientation.x != 0 ? 'x' : 'y';
+        if (this.paddle.orientation.x !== 0) {
+            this._orientationAxis = 'x';
+            this._movementAxis = 'y';
+        } else {
+            this._orientationAxis = 'y';
+            this._movementAxis = 'x';
+        }
 
         this._targetPos = 0;
 
-        if ((orientationAxis === 'x' && this.paddle.orientation[orientationAxis] > 0)
-                || (orientationAxis === 'y' && this.paddle.orientation[orientationAxis] < 0)) {
-            this._mustMoveLeft = (() => this._targetPos > this.paddle.pos[this._movementAxis]);
-        } else {
-            this._mustMoveLeft = (() => this._targetPos < this.paddle.pos[this._movementAxis]);
-        }
+        this._mustMoveLeft = (paddle.side === SIDES.LEFT || paddle.side === SIDES.BOTTOM)
+            ? (() => this._targetPos > this.paddle.pos[this._movementAxis])
+            : (() => this._targetPos < this.paddle.pos[this._movementAxis]);
     }
 
-    updateGameState(ball: SBall) {
-        console.log("Prediction made");
-        this._targetPos = ball.pos[this._movementAxis];
+    predictTargetPos(ball: SBall) {
+        // The following line by itself is already a pretty good prediction level!
+        //this._targetPos = ball.pos[this._movementAxis];
+
+        this._targetPos = (this.paddle.pos[this._orientationAxis] - ball.pos[this._orientationAxis])
+                            * (ball.direction[this._movementAxis] / ball.direction[this._orientationAxis])
+                            + ball.pos[this._movementAxis];
     }
 
     setupMove() {
@@ -60,6 +65,7 @@ export default class SBot extends SPlayer {
 
     private _windowSize: point;
 
+    private _orientationAxis: 'x' | 'y';
     private _movementAxis: 'x' | 'y';
 
     private _targetPos: number;
