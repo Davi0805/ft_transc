@@ -25,6 +25,12 @@ export const UserCustoms: TUserCustoms = {
             side: SIDES.RIGHT,
             role: ROLES.BACK,
             spriteID: 0
+        },
+        {
+            id: 2,
+            side: SIDES.TOP,
+            role: ROLES.BACK,
+            spriteID: 0
         }
     ],
     // Clients are the sockets. Each one can have a different human playing. This allows for couch coop
@@ -47,7 +53,11 @@ export const UserCustoms: TUserCustoms = {
     bots: [
         {
             paddleID: 0,
-            difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+        },
+        {
+            paddleID: 2,
+            difficulty: 0.1
         }
     ]
 }
