@@ -6,8 +6,9 @@ import SBall from "./SBall";
 export default class SBot extends SPlayer {
     constructor(windowSize: point, paddle: SPaddle, difficulty: number) {
         super(paddle);
-        this._windowSize = windowSize
         this._difficulty = difficulty;
+        this._timeSinceLastUpdate = 0;
+        this._windowSize = windowSize
         this._targetPos = 0;
     }
 
@@ -26,10 +27,18 @@ export default class SBot extends SPlayer {
         }
     }
 
-    private _windowSize: point;
-
     private _difficulty: number;
     get difficulty(): number { return this._difficulty; }
+
+    private _timeSinceLastUpdate: number;
+    set timeSinceLastUpdate(timeSinceLastUpdate: number) {
+        this._timeSinceLastUpdate = timeSinceLastUpdate;
+    }
+    get timeSinceLastUpdate(): number {
+        return this._timeSinceLastUpdate;
+    }
+
+    private _windowSize: point;
 
     private _targetPos: number;
 }

@@ -67,7 +67,6 @@ export default class ServerGame {
 
     startGameLoop() {
         let prevTime = Date.now();
-        let timeSinceLastBotUpdate = 0;
         const loop = () => {
             const currentTime = Date.now();
             const delta = (currentTime - prevTime) / 1000;
@@ -89,16 +88,16 @@ export default class ServerGame {
                     human.movePaddleFromControls(delta);
                 });
 
-                timeSinceLastBotUpdate += delta;
                 this.bots.forEach(bot => {
-                    if (timeSinceLastBotUpdate > 1) {
+                    bot.timeSinceLastUpdate += delta;
+                    if (bot.timeSinceLastUpdate > bot.difficulty) {
                         bot.updateGameState(this.ball);
-                        timeSinceLastBotUpdate -= 1;
+                        bot.timeSinceLastUpdate -= bot.difficulty;
                     }
                     bot.setupMove();
                     bot.movePaddleFromControls(delta);
                 })
-                
+
                 this._handleCollisions(delta);
             }
             prevTime = currentTime;
