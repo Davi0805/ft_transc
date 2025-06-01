@@ -4,6 +4,7 @@ import SHuman from "./SHuman.js";
 import { SIDES, SGameConfigs, SGameDTO, CGameDTO } from "../misc/types.js";
 import Point from "../misc/Point.js";
 import STeam from "./STeam.js";
+import SBot from "./SBot.js";
 
 export default class ServerGame {
     constructor(gameOpts: SGameConfigs) {
@@ -36,7 +37,7 @@ export default class ServerGame {
             )
         }
         this._humans = [];
-        for (const human of gameOpts.humans) {
+        for (const human of gameOpts.humans) { //TODO change forEach
             const humanPaddle = this.paddles.find(paddle => paddle.id === human.paddleID)
             if (!humanPaddle) {
                 throw new Error(`A human says it owns a paddle with paddleID ${human.paddleID}, but that paddleID does not exist!`)
@@ -48,6 +49,19 @@ export default class ServerGame {
                 )
             )
         }
+        this._bots = [];
+        gameOpts.bots.forEach(bot => {
+            const botPaddle = this.paddles.find(paddle => paddle.id === bot.paddleID);
+            if (!botPaddle) {
+                throw new Error(`A bot says it owns a paddle with paddleID ${bot.paddleID}, but that paddleID does not exist!`)
+            }
+            this.bots.push(
+                new SBot(
+                    botPaddle,
+                    bot.difficulty
+                )
+            )
+        })
     }
 
     startGameLoop() {
@@ -70,9 +84,10 @@ export default class ServerGame {
                 this.humans.forEach(human => {
                     human.movePaddleFromControls(delta);
                 });
-                /* this.bots.forEach(bot => {
+                this.bots.forEach(bot => {
+                    bot.setControlsBasedOnBall(this.ball, this.windowSize);
                     bot.movePaddleFromControls(delta);
-                }) */
+                })
                 this._handleCollisions(delta);
             }
             prevTime = currentTime;
@@ -131,6 +146,9 @@ export default class ServerGame {
     set humans(value: SHuman[]) { this._humans = value; }
     get humans(): SHuman[] { return this._humans; }
 
+    private _bots: SBot[];
+    set bots(bots: SBot[]) { this._bots = bots; }
+    get bots(): SBot[] { return this._bots; }
 
     private _handleCollisions(delta: number) {
         this.paddles.forEach(paddle => {
