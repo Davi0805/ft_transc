@@ -1,7 +1,7 @@
 import SBall from "./SBall.js";
 import SPaddle from "./SPaddle.js"
 import SHuman from "./SHuman.js";
-import { SIDES, SGameConfigs, SGameDTO, CGameDTO } from "../misc/types.js";
+import { SIDES, SGameConfigs, SGameDTO, CGameDTO, point } from "../misc/types.js";
 import Point from "../misc/Point.js";
 import STeam from "./STeam.js";
 import SBot from "./SBot.js";
@@ -19,13 +19,13 @@ export default class ServerGame {
             Point.fromObj(ballInitialState.direction)
         );
         this._teams = [];
-        for (const team of gameOpts.teams) {
+        gameOpts.teams.forEach(team => {
             this.teams.push(new STeam(
                 team.side, team.score
             ))
-        }
+        })
         this._paddles = [];
-        for (const paddle of gameOpts.gameInitialState.paddles) {
+        gameOpts.gameInitialState.paddles.forEach(paddle => {
             this.paddles.push( 
                 new SPaddle(
                     paddle.id,
@@ -35,9 +35,9 @@ export default class ServerGame {
                     paddle.speed
                 ),
             )
-        }
+        })
         this._humans = [];
-        for (const human of gameOpts.humans) { //TODO change forEach
+        gameOpts.humans.forEach(human => {
             const humanPaddle = this.paddles.find(paddle => paddle.id === human.paddleID)
             if (!humanPaddle) {
                 throw new Error(`A human says it owns a paddle with paddleID ${human.paddleID}, but that paddleID does not exist!`)
@@ -48,7 +48,7 @@ export default class ServerGame {
                     humanPaddle
                 )
             )
-        }
+        })
         this._bots = [];
         gameOpts.bots.forEach(bot => {
             const botPaddle = this.paddles.find(paddle => paddle.id === bot.paddleID);
@@ -57,6 +57,7 @@ export default class ServerGame {
             }
             this.bots.push(
                 new SBot(
+                    this.windowSize,
                     botPaddle,
                     bot.difficulty
                 )
@@ -66,6 +67,7 @@ export default class ServerGame {
 
     startGameLoop() {
         let prevTime = Date.now();
+        let timeSinceLastBotUpdate = 0;
         const loop = () => {
             const currentTime = Date.now();
             const delta = (currentTime - prevTime) / 1000;
@@ -80,14 +82,23 @@ export default class ServerGame {
             }
 
 
+
+
             if (this.gameRunning) {
                 this.humans.forEach(human => {
                     human.movePaddleFromControls(delta);
                 });
+
+                timeSinceLastBotUpdate += delta;
                 this.bots.forEach(bot => {
-                    bot.setControlsBasedOnBall(this.ball, this.windowSize);
+                    if (timeSinceLastBotUpdate > 1) {
+                        bot.updateGameState(this.ball);
+                        timeSinceLastBotUpdate -= 1;
+                    }
+                    bot.setupMove();
                     bot.movePaddleFromControls(delta);
                 })
+                
                 this._handleCollisions(delta);
             }
             prevTime = currentTime;
@@ -122,12 +133,13 @@ export default class ServerGame {
         human.controls = dto.controlsState.controlsState;
     }
 
+
     private _gameRunning: boolean;
     set gameRunning(value: boolean) { this._gameRunning = value; }
     get gameRunning() { return this._gameRunning; }
 
-    private _windowSize: { x: number, y: number };
-    set windowSize(value: { x: number, y: number }) { this._windowSize = value; }
+    private _windowSize: point;
+    set windowSize(value: point) { this._windowSize = value; }
     get windowSize() { return this._windowSize; }
 
     private _ball: SBall;
@@ -149,6 +161,7 @@ export default class ServerGame {
     private _bots: SBot[];
     set bots(bots: SBot[]) { this._bots = bots; }
     get bots(): SBot[] { return this._bots; }
+
 
     private _handleCollisions(delta: number) {
         this.paddles.forEach(paddle => {

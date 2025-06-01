@@ -47,7 +47,7 @@ export const UserCustoms: TUserCustoms = {
     bots: [
         {
             paddleID: 0,
-            difficulty: 0 //NOT USED YET
+            difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         }
     ]
 }
