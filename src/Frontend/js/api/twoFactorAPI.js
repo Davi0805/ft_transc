@@ -10,7 +10,7 @@ export async function verifyTwoFactorCode(token, code) {
     });
 
     if (!response.ok) {
-      const errorMessage = `Login failed with status ${response.status}`;
+      const errorMessage = `2FA code failed with status ${response.status}`;
       const error = new Error(errorMessage);
       error.status = response.status;
       throw error;
