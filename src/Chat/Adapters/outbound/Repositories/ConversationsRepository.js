@@ -16,6 +16,13 @@ class ConversationsRepository {
                             'user2_id = ?', [user_id, user_id]
                         );
     }
+
+    async getConversationById(conversation_id)
+    {
+        return await db.raw('SELECT user1_id AS user1, user2_id AS user2 '
+                            + 'FROM conversations WHERE id = ?',
+                            [conversation_id]);
+    }
 }
 
 module.exports = new ConversationsRepository();

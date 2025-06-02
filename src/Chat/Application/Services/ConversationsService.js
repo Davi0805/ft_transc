@@ -11,6 +11,11 @@ class ConversationService {
     {
         return await conversationsRepo.getAllMyConversations(user_id);
     }
+
+    async getConversationById(conversation_id)
+    {
+        return await conversationsRepo.getConversationById(conversation_id);
+    }
 }
 
 module.exports = new ConversationService();
