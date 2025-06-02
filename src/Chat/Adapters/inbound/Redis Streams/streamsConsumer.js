@@ -32,10 +32,13 @@ async function consumeNewFriendsEvent()
               
                 try {
                   const data = JSON.parse(characters);
-                  console.log('IS IT WORKING ???? | USERID1 = ' + data.user1 + ' | USERID2 = ' + data.user2);
+                  console.log(data);
+                  const parsedData = JSON.parse(data);
+
+                  console.log('IS IT WORKING ???? | USERID1 = ' + parsedData.user1 + ' | USERID2 = ' + parsedData.user2);
                   
                   // todo: query should return the new conversation_id
-                  await conversationService.save(data.user1, data.user2);
+                  await conversationService.save(parsedData.user1, parsedData.user2);
 
                   // todo: modify the type of data that is been stored in redis, cause
                   // todo: on that you never know what type it is
