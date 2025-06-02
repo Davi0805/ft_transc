@@ -25,11 +25,12 @@ class FriendRequestRepository {
 
     async acceptRequest(request_id, user_id)
     {
-        return await db.raw('UPDATE friend_requests '+
-                            'SET status = ? '+
-                            'WHERE request_id = ? AND to_user_id = ?',
-                            ['ACCEPTED', request_id, user_id]
-        );
+        const result = await db('friend_requests')
+            .where({ request_id, to_user_id: user_id })
+            .update({ status: 'ACCEPTED' })
+            .returning(['from_user_id', 'to_user_id']);
+
+        return result[0];
     }
 
     async rejectRequest(request_id, user_id)

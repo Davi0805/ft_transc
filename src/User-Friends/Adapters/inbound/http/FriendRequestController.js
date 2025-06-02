@@ -72,15 +72,15 @@ class FriendRequestController {
         try {
             const request_id = req.params.id;
             const session = await redisService.validateSession((req.headers.authorization));
-            // todo: make a query that change and return the row 
-            await friendRequest.acceptRequest(request_id, session.user_id);
-            await redisService.postMessage('newFriendshipEvent', {user1: 13, user2: 14}); //debug
+            const data = await friendRequest.acceptRequest(request_id, session.user_id);
+
+            await redisService.postMessage('newFriendshipEvent', JSON.stringify({user1: data.from_user_id, user2: data.to_user_id})); //debug
     
             return reply.send();    
         } catch (error) {
             if (typeof error === 'number')
                 return reply.code(error).send();
-
+            console.log('DEU merda');
             return reply.code(400).send();
         }
         
