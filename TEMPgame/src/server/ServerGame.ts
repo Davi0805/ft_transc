@@ -232,7 +232,9 @@ export default class ServerGame {
                 const movDistance = (paddle.speed + this.ball.speed) * delta; // This in theory compensates for moving-into-ball paddles
                 const movVector = this.ball.direction.multiplyScalar(movDistance);
                 this.ball.move(movVector);
-                this.ball.speed += 5;
+                if (this.ball.speed < 400) { //TODO put this in ball object as speed cap and maybe put it in speed getter
+                    this.ball.speed += 5;
+                }
                 for (let paddle of this.paddles) {
                     //paddle.speed += 1;
                 }

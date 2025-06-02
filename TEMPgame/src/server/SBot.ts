@@ -3,13 +3,13 @@ import SPaddle from "./SPaddle";
 import SPlayer from "./SPlayer.js";
 import SBall from "./SBall";
 
-const EPSILON = 2
+const EPSILON = 3
 
 export default class SBot extends SPlayer {
     constructor(windowSize: point, paddle: SPaddle, difficulty: number) {
         super(paddle);
         this._updateRate = difficulty;
-        this._timeSinceLastUpdate = 0;
+        this._timeSinceLastUpdate = 1.1;
         
         this._windowSize = windowSize;
         
@@ -21,9 +21,7 @@ export default class SBot extends SPlayer {
             this._movementAxis = 'x';
         }
 
-
-
-        this._targetPos = 0;
+        this._targetPos = windowSize[this._movementAxis] / 2;
 
         this._mustMoveLeft = (paddle.side === SIDES.LEFT || paddle.side === SIDES.BOTTOM)
             ? (() => this._targetPos > this.paddle.pos[this._movementAxis])
@@ -38,7 +36,7 @@ export default class SBot extends SPlayer {
         // TODO: Must predict bouncing! 
         const startPos = { refAxis: ball.pos[this._orientationAxis] + ((ball.size[this._orientationAxis] / 2) * -this.paddle.orientation[this._orientationAxis]), targetAxis: ball.pos[this._movementAxis] };
         const direction = { refAxis: ball.direction[this._orientationAxis], targetAxis: ball.direction[this._movementAxis] };
-        const refAxisHitPos = this.paddle.pos[this._orientationAxis] + ((this.paddle.size.x / 2) * this.paddle.orientation[this._orientationAxis])
+        const refAxisHitPos = this.paddle.pos[this._orientationAxis] + ((this.paddle.size.x / 2) * this.paddle.orientation[this._orientationAxis]) // this is always the same... maybe it can be saved somewhere?
 
 
         // To know the final position in the target axis (which is the movement axis of a given paddle),
@@ -52,9 +50,10 @@ export default class SBot extends SPlayer {
                         + ((refAxisHitPos - startPos.refAxis)
                             * (direction.targetAxis / direction.refAxis));
         
-        if (this.paddle.id === 1) {
-            console.log("refAxisHitPos: ",  refAxisHitPos)
-            console.log("targetPos: ", this._targetPos)
+        
+        this._targetPos = this._calculateTargetAxisHitPos(startPos, direction, refAxisHitPos);
+        if (this.paddle.id === 0) {
+            //console.log(this._targetPos)
         }
     }
 
@@ -96,4 +95,26 @@ export default class SBot extends SPlayer {
     }
 
     private _mustMoveLeft;
+
+    private _calculateTargetAxisHitPos(startPos: { refAxis: number, targetAxis: number },
+        direction: { refAxis: number, targetAxis: number },
+        refAxisHitPos: number): number {
+        let hitPos = startPos.targetAxis
+                        + ((refAxisHitPos - startPos.refAxis)
+                            * (direction.targetAxis / direction.refAxis));
+        if (hitPos < 0 || hitPos > this._windowSize[this._movementAxis]) {
+            const newRefAxisHitpos = hitPos < 0 ? 32 : this._windowSize[this._movementAxis] - 32;
+            const newStartPos = this._calculateTargetAxisHitPos(
+                { refAxis: startPos.targetAxis, targetAxis: startPos.refAxis },
+                { refAxis: direction.targetAxis, targetAxis: direction.refAxis },
+                newRefAxisHitpos
+            )
+            hitPos = this._calculateTargetAxisHitPos(
+                { refAxis: newStartPos, targetAxis: newRefAxisHitpos },
+                { refAxis: direction.refAxis, targetAxis: - direction.targetAxis },
+                refAxisHitPos
+            )
+        }
+        return hitPos;
+    }
 }

@@ -38,12 +38,6 @@ export const UserCustoms: TUserCustoms = {
             role: ROLES.BACK,
             spriteID: 0
         },
-        /* {
-            id: 4,
-            side: SIDES.RIGHT,
-            role: ROLES.FRONT,
-            spriteID: 0
-        }, */
     ],
     // Clients are the sockets. Each one can have a different human playing. This allows for couch coop
     clients: [
@@ -52,6 +46,20 @@ export const UserCustoms: TUserCustoms = {
             humans: [
                 {
                     id: 0,
+                    paddleID: 0,
+                    controls: {
+                        left: "ArrowDown",
+                        right: "ArrowUp",
+                        pause: " "
+                    }
+                }
+            ]
+        },
+        {
+            id: 1,
+            humans: [
+                {
+                    id: 1,
                     paddleID: 0,
                     controls: {
                         left: "ArrowDown",
@@ -69,7 +77,7 @@ export const UserCustoms: TUserCustoms = {
         },
         {
             paddleID: 1,
-            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+            difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
         {
             paddleID: 2,
@@ -90,12 +98,11 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         gameLength: userCustoms.gameLength,
         ball: {
             spriteID: userCustoms.ball.spriteID,
-            //pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
+            pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
             //direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
-            pos: {x: 50, y: 450},
-            direction: { x: 1, y: 0.1},
+            direction: { x: 1, y: 0.8 }, 
             size: { x: 4, y: 4 },
-            speed: 50
+            speed: 250
         },
         teams: [],
         paddles: [],
@@ -148,7 +155,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             spriteID: paddle.spriteID,
             pos: paddlePos,
             size: { x: 16, y: 64 },
-            speed: 500
+            speed: 400
         })
     })
 

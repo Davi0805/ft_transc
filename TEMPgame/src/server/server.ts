@@ -54,6 +54,7 @@ fastify.register(async (fastify) => {
     fastify.get('/ws', {websocket: true}, (socket, _request) => {
         // This ID identifies the socket (not necessarily the player!) This allows several players per client
         const clientId = clients.length;
+        console.log(`Client ${clientId} joined`)
 
         // Tells the client what ID it has and which humans are associated with it
         const data: Adto = {
