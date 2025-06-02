@@ -90,7 +90,7 @@ export default class ServerGame {
 
                 this.bots.forEach(bot => {
                     bot.timeSinceLastUpdate += delta;
-                    if (bot.timeSinceLastUpdate > bot.updateRate) {
+                    if (bot.timeSinceLastUpdate >= bot.updateRate) {
                         bot.predictTargetPos(this.ball);
                         bot.timeSinceLastUpdate -= bot.updateRate;
                     }
