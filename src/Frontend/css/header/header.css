@@ -94,12 +94,32 @@ nav a.active::after {
 .language-selector button {
   background: none;
   border: none;
-  border-radius: 50%;
-  overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease;
 }
 
-.language-selector button:hover {
-  transform: scale(1.1);
+.language-selector button img {
+  border-radius: 15%;
+  overflow: hidden;
 }
+
+.language-selector {
+  position: relative;
+  display: inline-block; /* todo */
+}
+
+
+.lang-options {
+  position: absolute;
+  left: 0%;
+  top: 100%;
+  width: 40px;
+
+  border-radius: 6px;
+  
+  background-color: #193a61;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+  box-shadow: 0px 0px 4px #333;
+}
+
+
