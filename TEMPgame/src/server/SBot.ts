@@ -36,9 +36,10 @@ export default class SBot extends SPlayer {
 
         // The following predicts where in the movement axis the ball will hit if it is going in the direction of that axis.
         // TODO: Must predict bouncing! 
-        const startPos = { refAxis: ball.pos[this._orientationAxis], targetAxis: ball.pos[this._movementAxis] };
+        const startPos = { refAxis: ball.pos[this._orientationAxis] + ((ball.size[this._orientationAxis] / 2) * -this.paddle.orientation[this._orientationAxis]), targetAxis: ball.pos[this._movementAxis] };
         const direction = { refAxis: ball.direction[this._orientationAxis], targetAxis: ball.direction[this._movementAxis] };
-        const refAxisHitPos = this.paddle.pos[this._orientationAxis] + (this.paddle.size.x * this.paddle.orientation[this._orientationAxis])
+        const refAxisHitPos = this.paddle.pos[this._orientationAxis] + ((this.paddle.size.x / 2) * this.paddle.orientation[this._orientationAxis])
+
 
         // To know the final position in the target axis (which is the movement axis of a given paddle),
         // we start with the position in the target axis, and we have to add to it how much we move there if we move 'n' in the reference axis.
@@ -50,6 +51,11 @@ export default class SBot extends SPlayer {
         this._targetPos = startPos.targetAxis
                         + ((refAxisHitPos - startPos.refAxis)
                             * (direction.targetAxis / direction.refAxis));
+        
+        if (this.paddle.id === 1) {
+            console.log("refAxisHitPos: ",  refAxisHitPos)
+            console.log("targetPos: ", this._targetPos)
+        }
     }
 
     setupMove() {
