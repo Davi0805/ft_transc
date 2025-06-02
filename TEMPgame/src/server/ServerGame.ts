@@ -234,7 +234,7 @@ export default class ServerGame {
                 this.ball.move(movVector);
                 this.ball.speed += 5;
                 for (let paddle of this.paddles) {
-                    paddle.speed += 1;
+                    //paddle.speed += 1;
                 }
             }
         });
