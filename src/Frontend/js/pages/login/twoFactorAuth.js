@@ -19,6 +19,7 @@ export const TwoFactorAuth = {
             <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
             <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
           </div>
+          <div id="2facode-error" aria-live="polite" hidden></div>
           <button type="submit" class="button">Verify</button>
         </form>
       </div>
@@ -58,7 +59,12 @@ export const TwoFactorAuth = {
         const redirectPath = authService.getRedirectAfterLogin();
         window.router.navigateTo(redirectPath);
       } catch (error) {
-        showError("Wrong code try again"); // todo
+        if (error.status == 401) {
+          const loginError = document.getElementById('2facode-error');
+          loginError.textContent = "Verification code is incorrect!"
+          loginError.hidden = false;
+          console.error("DEBUG 2FA code wrong");
+        }
       }
     });
     return;
