@@ -13,19 +13,19 @@ export const RegisterPage = {
         pattern="^[a-zA-Z0-9_\\-]{3,15}$" 
         title="Username must be 3-15 characters long and can include letters, numbers, '_' or '-'" />
         
-        <img src="../Assets/icons/user.svg" />
+        <img src="../Assets/icons/user.svg" draggable="false" />
         </div>
 
         <div class="input-box">
           <input id="name" type="text" placeholder="Nickname" name="name" required 
           pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
           title="Name must be 2–40 characters long and can include letters and spaces" />
-          <img src="../Assets/icons/id-card.svg" />
+          <img src="../Assets/icons/id-card.svg" draggable="false" />
         </div>
 
         <div class="input-box">
           <input id="email" type="email" placeholder="Email" name="email" required />
-          <img src="../Assets/icons/atsign.svg" />
+          <img src="../Assets/icons/atsign.svg" draggable="false" />
         </div>
 
         <div class="input-box">
@@ -38,13 +38,13 @@ export const RegisterPage = {
           <input id="password" type="password" placeholder="Password" name="password" autocomplete="new-password" required 
           pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*._\\-+=?])[A-Za-z\\d!@#$%^&*._\\-+=?]{8,}$"
           title="Must contain at least one digit, one uppercase and lowercase letter and one special character (!@#$%^&*.\\-_+=?)"/> 
-          <img class="visibility" src="../Assets/icons/visibility-on.svg" />
+          <img class="visibility" src="../Assets/icons/visibility-on.svg" draggable="false" />
         </div>
 
         <div class="input-box">
           <input id="confirm-password"type="password" placeholder="Password" name="confirm-password" autocomplete="new-password" required 
           title="Must match the password above"/>
-          <img class="visibility" src="../Assets/icons/visibility-on.svg" />
+          <img class="visibility" src="../Assets/icons/visibility-on.svg" draggable="false" />
         </div>
 
         <div id="pass-error" aria-live="polite" hidden></div>
@@ -71,7 +71,7 @@ export const RegisterPage = {
     const buttonHome = document.getElementById('btn-home');
     const buttonLogin = document.getElementById('btn-login');
     buttonHome.addEventListener('click', () => window.router.navigateTo('/'));
-    buttonLogin.addEventListener('click', () => window.router.navigateTo('/home'));
+    buttonLogin.addEventListener('click', () => window.router.navigateTo('/login'));
   },
 
   init() {

@@ -15,11 +15,11 @@ export const LoginPage = {
           <h1 class="title">Login</h1>
           <div class="input-box">
             <input id="username" type="text" placeholder="Username" name="username" required/>
-            <img src="../Assets/icons/user.svg" />
+            <img src="../Assets/icons/user.svg" draggable="false"/>
           </div>
           <div class="input-box">
             <input id="password" type="password" placeholder="Password" name="password" required />
-            <img class="visibility" src="../Assets/icons/visibility-on.svg" />
+            <img class="visibility" src="../Assets/icons/visibility-on.svg" draggable="false" />
           </div>
 
           <div class="forgot">
@@ -73,14 +73,13 @@ export const LoginPage = {
 
     } catch (error) {
       if (error.status == 401) {
-        // TODO HERE add a function to display the error
         const loginError = document.getElementById('login-error');
         loginError.textContent = "Username or password incorrect!"
         loginError.hidden = false;
-        console.error("Pass ou user wrong");
+        console.error("DEBUG Pass ou user wrong");
       } else {
         console.error(error.message);
-        console.error("FODEU GERAL");
+        console.error("DEBUG FODEU GERAL");
       } 
     }
     return;
