@@ -1,5 +1,5 @@
 import { authService } from "../services/authService.js";
-
+teste
 export const header = {
     init() {
         this.logOutEventListener();
