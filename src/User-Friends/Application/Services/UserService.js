@@ -61,6 +61,11 @@ class UserService {
         return await userRepository.updateUserImagePath(path, user_id);
     }
 
+    async updateName(user)
+    {
+        return await userRepository.updateName(user);
+    }
+
 };
 
 module.exports = new UserService();

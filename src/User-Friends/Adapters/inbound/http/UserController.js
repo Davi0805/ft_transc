@@ -114,6 +114,21 @@ class UserController {
         }
     }
 
+    async updateName(req, reply)
+    {
+        try {
+            const session = await redisService.validateSession((req.headers.authorization));
+            const body = req.body;
+            await userService.updateName({name: body.name, id: session.user_id});
+            return reply.send();
+        } catch (error) {
+            if (typeof error === 'number')
+                return reply.code(error).send();
+
+            return reply.code(400).send();
+        }
+    }
+
     /* 
         Endpoint to be able to get the static avatar picture from the server
         GET - localhost:8080/users/avatar/{id}
