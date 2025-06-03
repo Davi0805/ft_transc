@@ -18,7 +18,7 @@ export const UserCustoms: TUserCustoms = {
             id: 0,
             side: SIDES.TOP,
             role: ROLES.BACK,
-            spriteID: 0
+            spriteID: 1
         },
         {
             id: 1,
@@ -60,7 +60,7 @@ export const UserCustoms: TUserCustoms = {
             humans: [
                 {
                     id: 1,
-                    paddleID: 0,
+                    paddleID: 1,
                     controls: {
                         left: "ArrowDown",
                         right: "ArrowUp",
@@ -71,7 +71,7 @@ export const UserCustoms: TUserCustoms = {
         }
     ],
     bots: [
-        {
+        /* {
             paddleID: 0,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
@@ -86,7 +86,7 @@ export const UserCustoms: TUserCustoms = {
         {
             paddleID: 3,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        },
+        }, */
     ]
 }
 

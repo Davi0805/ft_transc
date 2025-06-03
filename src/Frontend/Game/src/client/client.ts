@@ -29,4 +29,10 @@ async function onInitMessage(event: MessageEvent<any>) {
     
 }
 
+//const gameConfigs = applyDevCustoms(UserCustoms);
+//const clientGameConfigs = buildCAppConfigs(gameConfigs, 0, websocket)
+//await App.init(clientGameConfigs);
+
+
+
 //Note: Nothing should be done with App before this is called!

@@ -1,8 +1,8 @@
 import Point from "../../../misc/Point.js";
 import { SIDES } from "../../../misc/types.js";
-import { computeOrientation } from "../../../misc/utils";
+import { computeOrientation } from "../../../misc/utils.js";
 import { Sprite } from "pixi.js";
-import CObject from "../../../abstracts/CObject";
+import CObject from "../../../abstracts/CObject.js";
 
 
 export default class CPaddle extends CObject {

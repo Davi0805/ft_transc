@@ -1,7 +1,7 @@
 import { point, SIDES } from "../misc/types.js";
-import SPaddle from "./SPaddle";
+import SPaddle from "./SPaddle.js";
 import SPlayer from "./SPlayer.js";
-import SBall from "./SBall";
+import SBall from "./SBall.js";
 import { dir } from "console";
 
 const EPSILON = 3
