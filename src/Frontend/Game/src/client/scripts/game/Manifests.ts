@@ -29,23 +29,23 @@ export const assetsManifest: AssetsManifest = {
             assets: [
                 {
                     alias: "ball0",
-                    src: "./Game/public/sprites/ball0.png"
+                    src: "sprites/ball0.png"
                 },
                 {
                     alias: "ball1",
-                    src: "./Game/public/sprites/ball1.png"
+                    src: "sprites/ball1.png"
                 },
                 {
                     alias: "paddle0",
-                    src: "./Game/public/sprites/paddle0.png"
+                    src: "sprites/paddle0.png"
                 },
                 {
                     alias: "paddle1",
-                    src: "./Game/public/sprites/paddle1.png"
+                    src: "sprites/paddle1.png"
                 },
                 {
                     alias: "scoreFont",
-                    src: "./Game/public/sprites/scoreFont.ttf"
+                    src: "sprites/scoreFont.ttf"
                 }
             ]
         },
