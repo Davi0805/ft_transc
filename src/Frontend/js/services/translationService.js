@@ -38,7 +38,7 @@ class translationService {
             if (key && value) ph.setAttribute('placeholder', this.get(key));
         });
         //todo fix
-        const inputTitles = document.querySelectorAll('[data-i18n-titles]');
+        const inputTitles = document.querySelectorAll('[data-i18n-title]');
         if (!inputTitles) return;
         inputTitles.forEach(titles => {
             const key = titles.getAttribute('data-i18n-title');
