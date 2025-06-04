@@ -14,6 +14,7 @@ async function userRoutes(fastify, options) {
     fastify.get('/users/avatar/:id', userController.getAvatar);
     fastify.get('/users/me', userController.getMyData);
     fastify.put('/users/name', userController.updateName);
+    fastify.put('/user/password', userController.updatePassword);
 }
 
 module.exports = userRoutes;

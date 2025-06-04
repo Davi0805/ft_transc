@@ -66,6 +66,13 @@ class UserService {
         return await userRepository.updateName(user);
     }
 
+    async updatePassword(user)
+    {
+        // todo: implement proper error handling
+        const data = await userRepository.updatePassword(user);
+        return data;
+    }
+
 };
 
 module.exports = new UserService();
