@@ -1,5 +1,6 @@
 import { authService } from "../services/authService.js";
-teste
+import { translator } from "../services/translationService.js";
+
 export const header = {
     init() {
         this.logOutEventListener();
@@ -56,16 +57,15 @@ export const header = {
                 langOptionImg.alt = currAlt;
                 langOptionImg.dataset.lang = currData;
 
-                localStorage.setItem('language', selectedData);
+                translator.setLanguage(selectedData)
                 document.querySelector('.lang-options').style.display = 'none';
+                translator.apply();
             });
         });
     },
 
     languageInit() {
-        if (!localStorage.getItem('language'))
-            localStorage.setItem('language', 'uk');
-        const lang =document.querySelector(`.lang-option img[data-lang="${localStorage.getItem('language')}"]`);
+        const lang = document.querySelector(`.lang-option img[data-lang="${localStorage.getItem('language')}"]`);
         if (lang)
             lang.click();
     },
