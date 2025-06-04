@@ -11,6 +11,8 @@ export const header = {
 
     logOutEventListener() {
         const logout = document.getElementById("logout");
+        if (!logout) return;
+
         logout.addEventListener('click', (e) => {
             e.preventDefault();
             authService.logout();
@@ -22,37 +24,35 @@ export const header = {
     languageSelectorDisplayEventListener() {
         const dropDown = document.querySelector('.current-language');
         const langList = document.querySelector('.lang-options');
+        if (!dropDown || !langList) return ;
 
         dropDown.addEventListener('click', (e) => {
             e.preventDefault();
-
-            if (langList.style.display === "none")
-                langList.style.display = "block";
-            else
-                langList.style.display = "none";
+            
+            langList.style.display = langList.style.display === "none" ? "block" : "none";
         });
     },
 
     languageSelectorChangeEventListener() {
         const langs = document.querySelectorAll('.lang-option');
         
+
         langs.forEach((langOption) => {
             langOption.addEventListener('click', () => {
                 const langOptionImg = langOption.querySelector('img');
+                const currLang = document.querySelector('.current-language img[data-lang]');
+
+                if (!langOptionImg || ! currLang) return;
 
                 const selectedSrc = langOptionImg.src;
                 const selectedAlt = langOptionImg.alt;
                 const selectedData = langOptionImg.dataset.lang; 
-                
-                const currLang = document.querySelector('.current-language img[data-lang]');
                 const currSrc = currLang.src;
                 const currAlt = currLang.alt;
                 const currData = currLang.dataset.lang; 
-                
                 currLang.src = selectedSrc;
                 currLang.alt = selectedAlt;
                 currLang.dataset.lang = selectedData;
-
                 langOptionImg.src = currSrc;
                 langOptionImg.alt = currAlt;
                 langOptionImg.dataset.lang = currData;
