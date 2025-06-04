@@ -23,6 +23,13 @@ class UserRepository {
         return db('users').insert(user);
     }
 
+    async updatePassword(user)
+    {
+        return db.raw('UPDATE users SET password_hash = ? WHERE user_id = ? AND password_hash = ?',
+            [user.new_password, user.id, user.old_password]
+        );
+    }
+
     async updateName(user)
     {
         return db.raw('UPDATE users SET name = ? WHERE user_id = ?',
