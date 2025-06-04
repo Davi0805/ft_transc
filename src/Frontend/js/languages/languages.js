@@ -17,7 +17,9 @@ export const languages = {
         "login-place-username": "Username",
         "login-place-password": "Password",
         // TWO FACTOR
-
+        "2fa-title": "Two-Factor Authentication",
+        "2fa-text": "Enter the verification code to continue",
+        "2fa-btn": "Verify",
         // REGISTER
         "register-title": "Register",
         "register-place-username": "Username",
@@ -48,7 +50,7 @@ export const languages = {
         "header-home": "Inicio",
         "header-about": "Quem somos",
         "header-login": "Entrar",
-        "header-register": "Registar",
+        // "header-register": "Registar",
         // HOME
 
         // ABOUT US
@@ -61,7 +63,9 @@ export const languages = {
         "login-place-username": "Utilizador",
         "login-place-password": "Palavra-passe",
         // TWO FACTOR
-
+        "2fa-title": "Autenticação de dois fatores",
+        "2fa-text": "Introduza o código de verificação para continuar",
+        "2fa-btn": "Verificar",
         // REGISTER
         "register-title": "Registo",
         "register-place-username": "Utilizador",
