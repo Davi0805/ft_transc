@@ -50,7 +50,7 @@ export const languages = {
         "header-home": "Inicio",
         "header-about": "Quem somos",
         "header-login": "Entrar",
-        // "header-register": "Registar",
+        "header-register": "Registar",
         // HOME
 
         // ABOUT US
