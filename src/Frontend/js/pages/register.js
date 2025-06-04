@@ -62,14 +62,15 @@ export const RegisterPage = {
     const wrapper = document.getElementById('register-wrapper');
     wrapper.innerHTML =  `
       <div class="registration-success">
-        <h1 class="title">Success!</h1>
-        <p class="description">Congratulations, your account has been successfully created.</p>
+        <h1 class="title" data-i18n="register-success-title">Success!</h1>
+        <p class="description" data-i18n="register-success-description">Congratulations, your account has been successfully created.</p>
         <div class="options">
-          <button id="btn-home" class="button">Home Page</button>
-          <button id="btn-login" class="button">Log In</button>
+          <button id="btn-home" class="button" data-i18n="register-success-btn-home">Home Page</button>
+          <button id="btn-login" class="button" data-i18n="register-success-btn-login">Log In</button>
         </div>
       </div>
     `;
+    translator.apply();
     const buttonHome = document.getElementById('btn-home');
     const buttonLogin = document.getElementById('btn-login');
     buttonHome.addEventListener('click', () => window.router.navigateTo('/'));

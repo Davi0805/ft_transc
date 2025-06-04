@@ -30,7 +30,12 @@ export const languages = {
         "register-title-confirmpass": "Must match the password above",
         "register-btn": "Register",
         "register-pass-error": "Passwords do not match!",
-        "register-taken-error": "Username or email already taken!"
+        "register-taken-error": "Username or email already taken!",
+        // REGISTER SUCCESS
+        "register-success-title": "Success!",
+        "register-success-description": "Congratulations, your account has been successfully created.",
+        "register-success-btn-home": "Home",
+        "register-success-btn-login": "Login",
         // SETTINGS
 
         // PROFILE
@@ -69,7 +74,12 @@ export const languages = {
         "register-title-confirmpass": "Deve corresponder à palavra-passe acima",
         "register-btn": "Registar",
         "register-pass-error": "Palavras-passe diferentes!",
-        "register-taken-error": "Nome de utilizador ou email indisponíveis!"
+        "register-taken-error": "Nome de utilizador ou email indisponíveis!",
+        // REGISTER SUCCESS
+        "register-success-title": "Sucesso!",
+        "register-success-description": "Parabéns, a sua conta foi criada com sucesso.",
+        "register-success-btn-home": "Inicio",
+        "register-success-btn-login": "Entrar",
         // SETTINGS
 
         // PROFILE
