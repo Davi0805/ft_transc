@@ -16,12 +16,11 @@
   background-color: #bdbdbd;
 }
 
-#pass-error {
+.error {
   color: #bb1515;
   font-weight: 600;
   text-align: center;
-  margin-top: -25px;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
 .registration-success {

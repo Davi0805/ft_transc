@@ -35,6 +35,12 @@ class translationService {
             const key = ph.getAttribute('data-i18n-placeholder');
             ph.setAttribute('placeholder', this.get(key));
         });
+        const inputTitles = document.querySelectorAll('[data-i18n-titles]');
+        if (!placeholders) return;
+        placeholders.forEach(titles => {
+            const key = titles.getAttribute('data-i18n-title');
+            if (key) titles.setAttribute('title', this.get(key));
+        });
     }
 }
 
