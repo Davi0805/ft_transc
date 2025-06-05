@@ -1,18 +1,20 @@
-import { point, SIDES } from "../misc/types.js";
+import { point, rectangle, SIDES } from "../misc/types.js";
 import SPaddle from "./SPaddle.js";
 import SPlayer from "./SPlayer.js";
 import SBall from "./SBall.js";
 import { dir } from "console";
+import { getRelativeSide } from "../misc/utils.js";
+import Point from "../misc/Point.js";
 
-const EPSILON = 3
+const MOV_PRECISION_LVL = 3
 
 export default class SBot extends SPlayer {
-    constructor(windowSize: point, paddle: SPaddle, difficulty: number) {
+    constructor(windowLimits: rectangle, paddle: SPaddle, difficulty: number) {
         super(paddle);
         this._updateRate = difficulty;
         this._timeSinceLastUpdate = difficulty; // This allows for an update immediately after the game starts
         
-        this._windowSize = windowSize;
+        this._limits = windowLimits;
         
         if (this.paddle.orientation.x !== 0) {
             this._orientationAxis = 'x';
@@ -22,28 +24,97 @@ export default class SBot extends SPlayer {
             this._movementAxis = 'x';
         }
 
-        this._targetPos = windowSize[this._movementAxis] / 2;
+        this._targetPos = 0;
 
         this._mustMoveLeft = (paddle.side === SIDES.LEFT || paddle.side === SIDES.BOTTOM)
             ? (() => this._targetPos > this.paddle.pos[this._movementAxis])
             : (() => this._targetPos < this.paddle.pos[this._movementAxis]);
     }
 
-    predictTargetPos(ball: SBall) {
-        // The following predicts where in the movement axis the ball will hit if it is going in the direction of that axis. 
-        const startPos = { refAxis: ball.pos[this._orientationAxis] + ((ball.size[this._orientationAxis] / 2) * -this.paddle.orientation[this._orientationAxis]), targetAxis: ball.pos[this._movementAxis] };
-        const direction = { refAxis: ball.direction[this._orientationAxis], targetAxis: ball.direction[this._movementAxis] };
-        const refAxisHitPos = this.paddle.pos[this._orientationAxis] + ((this.paddle.size.x / 2) * this.paddle.orientation[this._orientationAxis]) // this is always the same... maybe it can be saved somewhere?
+    static buildLimits(paddles: SPaddle[], windowSize: point): rectangle {
+        const sideConfig: Record<SIDES, { axis: 'x' | 'y', boundary: 'min' | 'max' }> = {
+            [SIDES.LEFT]:   { axis: 'x', boundary: 'min' },
+            [SIDES.RIGHT]:  { axis: 'x', boundary: 'max' },
+            [SIDES.TOP]:    { axis: 'y', boundary: 'min' },
+            [SIDES.BOTTOM]: { axis: 'y', boundary: 'max' },
+        };
 
+        const sides = Object.values(SIDES).filter(v => typeof v === "number") as SIDES[];
+        const record: Record<SIDES, number> = {} as Record<SIDES, number>
+        sides.forEach(side => {
+            const { axis, boundary } = sideConfig[side];
+            const posValues = paddles.filter(paddle => paddle.side === side).map(paddle => paddle.pos[axis]);
+            if (posValues.length === 0) {
+                record[side] = (boundary === 'min') ? 0 : windowSize[axis]
+            } else {
+                const halfPaddlethickness = paddles[0].size.x / 2;
+                record[side] = (boundary === 'min')
+                    ? Math.max(...posValues) + halfPaddlethickness
+                    : Math.min(...posValues) - halfPaddlethickness
+            }
+        })
+        const out: rectangle = {
+            x: record[SIDES.LEFT],
+            y: record[SIDES.TOP],
+            width: record[SIDES.RIGHT] - record[SIDES.LEFT],
+            height: record[SIDES.BOTTOM] - record[SIDES.TOP]
+        }
+        return out
+    }
+
+    updateTargetPos(ball: SBall) {
+        let hitpos = this._getHitPos(ball.pos, ball.direction);
+        let hitside = this._getSideFromPos(hitpos)
+        let dir = ball.direction
         
-        this._targetPos = this._calculateTargetAxisHitPos(startPos, direction, refAxisHitPos);
-        if (this.paddle.id === 1) {
-            console.error("FINAL: ", this._targetPos)
+
+        let loopCount = 0
+        console.log("paddle in ", SIDES[this.paddle.side])
+        console.log(SIDES[hitside])
+        while (hitside !== this.paddle.side) {
+            dir = (hitside === SIDES.LEFT || hitside === SIDES.RIGHT)
+                ? Point.fromObj({ x: -dir.x, y: dir.y })
+                : Point.fromObj({ x: dir.x, y: -dir.y })
+            hitpos = this._getHitPos(hitpos, dir);
+            hitside = this._getSideFromPos(hitpos);
+            
+            // Just in case lol
+            loopCount++;
+            if (loopCount > 20) {
+                return
+            }
+        }
+        this._targetPos = hitpos[this._movementAxis];
+    }
+
+    private _getHitPos(pos: point, dir: point) {
+        const t = [
+            dir.x < 0 ? (this._limits.x - pos.x) / dir.x : Infinity, //left
+            dir.x > 0 ? (this._limits.x + this._limits.width - pos.x) / dir.x : Infinity, //right
+            dir.y < 0 ? (this._limits.y - pos.y) / dir.y : Infinity, //top
+            dir.y > 0 ? (this._limits.y + this._limits.height - pos.y) / dir.y : Infinity //bottom
+        ]
+
+        let tMin = Math.min(...t);
+
+        return { x: pos.x + dir.x * tMin, y: pos.y + dir.y * tMin }
+    }
+
+    private _getSideFromPos(pos: point) {
+        const epsilon = 1e-6
+        if (this._aproxCompare(pos.x, this._limits.x, epsilon)) {
+            return SIDES.LEFT
+        } else if (this._aproxCompare(pos.x, this._limits.x + this._limits.width, epsilon)) {
+            return SIDES.RIGHT
+        } else if (this._aproxCompare(pos.y, this._limits.y, epsilon)) {
+            return SIDES.TOP
+        } else {
+            return SIDES.BOTTOM
         }
     }
 
     setupMove() {
-        if (this._aproxCompare(this._targetPos, this.paddle.pos[this._movementAxis])) {
+        if (this._aproxCompare(this._targetPos, this.paddle.pos[this._movementAxis], MOV_PRECISION_LVL)) {
             this.controls.left.pressed = false;
             this.controls.right.pressed = false;
             return ;
@@ -68,72 +139,16 @@ export default class SBot extends SPlayer {
         return this._timeSinceLastUpdate;
     }
 
-    private _windowSize: point;
+    private _limits: rectangle;
 
     private _orientationAxis: 'x' | 'y';
     private _movementAxis: 'x' | 'y';
 
     private _targetPos: number;
 
-    private _aproxCompare(n1: number, n2: number) {
-        return (Math.abs(n1 - n2) < EPSILON);
+    private _aproxCompare(n1: number, n2: number, epsilon: number) {
+        return (Math.abs(n1 - n2) < epsilon);
     }
 
     private _mustMoveLeft;
-
-
-
-    private calls = 0;
-    private _calculateTargetAxisHitPos(startPos: { refAxis: number, targetAxis: number },
-                                        direction: { refAxis: number, targetAxis: number },
-                                        refAxisHitPos: number): number {
-        
-        console.log("id: ", this.paddle.id)
-        console.log("startPos: ", startPos)
-        console.log("direction: ", direction)
-        console.log("refAxisHitPos: ", refAxisHitPos)
-        console.log("-----------------")
-        this.calls++;
-        if (this.calls >30)
-            throw new Error()
-        
-        // To know the final position in the target axis (which is the movement axis of a given paddle),
-        // we start with the position in the target axis, and we have to add to it how much we move there if we move 'n' in the reference axis.
-        // To calculate that, we just have to know how much 'n' is and then multiplying it by the proportion between the movement in each axis.
-        // Example: if start pos is { 2, 3 }, direction is { 2, 1 } and we want to know how much y will be when x is 5,
-        // we must start with 3 and add to it how much we should move if x moves from 2 to 5.
-        // 'n' is 5-2 and proportion of movement between axis is 1/2 (y moves 1 if x moves 2), which gives us the formula
-        // 3 + ((5 - 2) * (1 / 2)) == 3 + (3 * 1/2) == 3 + 1.5 == 4.5
-        let hitPos = startPos.targetAxis
-                        + ((refAxisHitPos - startPos.refAxis)
-                            * (direction.targetAxis / direction.refAxis));
-        // If the resulting position is outside the boundaries, it means that it will hit a wall first.
-        // In that case, we must calculate a reflection angle
-        if (hitPos < 0 || hitPos > this._windowSize[this._movementAxis]) { // TODO: This is the cause of the stack overflow. When it is called recursively with the axis switched, this variable keeps the same axis!! This function has to be completely agnostic. All info must be passed to the function as arguments.
-            if (this.paddle.id === 3) {
-                console.log("Ball is going to hit a side wall. The paddle pos would have to be ", hitPos);
-            }
-            // The 32 below is: 4 (ball size) + 20 (paddle pos) + 8 (paddle half size)
-            const newRefAxisHitpos = hitPos < 0 ? 32 : this._windowSize[this._movementAxis] - 32;
-            const newStartPos = this._calculateTargetAxisHitPos(
-                { refAxis: startPos.targetAxis, targetAxis: startPos.refAxis },
-                { refAxis: direction.targetAxis, targetAxis: direction.refAxis },
-                newRefAxisHitpos
-            )
-            if (this.paddle.id === 3) {
-                console.log("The ball will theoretically hit the pos ", newStartPos);
-            }
-            
-            hitPos = this._calculateTargetAxisHitPos(
-                { refAxis: newStartPos, targetAxis: newRefAxisHitpos },
-                { refAxis: direction.refAxis, targetAxis: - direction.targetAxis },
-                refAxisHitPos
-            )
-            if (this.paddle.id === 3) {
-                console.log("The new hitpos will be ", hitPos)
-            }
-            
-        }
-        return hitPos;
-    }
 }

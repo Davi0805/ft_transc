@@ -71,7 +71,7 @@ export const UserCustoms: TUserCustoms = {
         }
     ],
     bots: [
-        /* {
+        {
             paddleID: 0,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
@@ -86,7 +86,7 @@ export const UserCustoms: TUserCustoms = {
         {
             paddleID: 3,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        }, */
+        },
     ]
 }
 
@@ -102,7 +102,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             //direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
             direction: { x: 0.3, y: 1 }, 
             size: { x: 4, y: 4 },
-            speed: 250
+            speed: 500
         },
         teams: [],
         paddles: [],

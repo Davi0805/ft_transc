@@ -36,9 +36,9 @@ export default class Rectangle {
 
         const wallDistances = [
             Math.abs(this.x - (other.x + other.width)),
+            Math.abs((this.y + this.height) - other.y),
             Math.abs((this.x + this.width) - other.x),
-            Math.abs(this.y - (other.y + other.height)),
-            Math.abs((this.y + this.height) - other.y)
+            Math.abs(this.y - (other.y + other.height))
         ]
         return wallDistances.indexOf(Math.min(...wallDistances))
     }
