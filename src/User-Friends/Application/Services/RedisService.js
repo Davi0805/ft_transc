@@ -44,6 +44,15 @@ class RedisService {
         await friendsCacheRepo.save(user_id, allFriends);
     }
 
+    // invalidate and delete the friendsCache to be replaced by the new one
+    async updateFriendsCache(user_id1, user_id2)
+    {
+        await friendsCacheRepo.delete(user_id1);
+        await friendsCacheRepo.delete(user_id2);
+        await this.cacheFriends(user_id1);
+        await this.cacheFriends(user_id2);
+    }
+
     async getCachedFriends(user_id)
     {
         return await friendsCacheRepo.get(user_id);

@@ -18,6 +18,11 @@ class FriendsCacheRepository {
         const metadata = JSON.stringify(result);
         return Object.keys(metadata).length > 2 ? metadata : null;
     }
+
+    async delete(user_id)
+    {
+        return await redis.del(`friends:${user_id}`);
+    }
 }
 
 module.exports = new FriendsCacheRepository();
