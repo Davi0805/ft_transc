@@ -76,11 +76,13 @@ class FriendRequestController {
 
             await redisService.postMessage('newFriendshipEvent', JSON.stringify({user1: data.from_user_id, user2: data.to_user_id})); //debug
     
+            await redisService.updateFriendsCache(data.from_user_id, data.to_user_id);
+
             return reply.send();    
         } catch (error) {
             if (typeof error === 'number')
                 return reply.code(error).send();
-            console.log('DEU merda');
+            console.log('DEU merda = ' + error);
             return reply.code(400).send();
         }
         

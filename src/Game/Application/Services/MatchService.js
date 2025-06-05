@@ -57,7 +57,19 @@ class MatchService {
 
     async savePlayers(players)
     {
-        return matchRepo.savePlayer(players);
+        return matchRepo.savePlayers(players);
+    }
+
+    // it receives match and players data at same time
+    async saveAllMatchData(data)
+    {
+        try {
+          await matchRepo.saveMatch(data.match);
+          await matchRepo.savePlayers(data.players);
+        } catch (error) {
+            console.log(error);
+            throw 400;
+        }
     }
 }
 
