@@ -32,7 +32,7 @@ CREATE TABLE tournament (
 
 CREATE TABLE user_customs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
+    user_id INTEGER UNIQUE NOT NULL,
     paddle_sprite INTEGER
 );
 
