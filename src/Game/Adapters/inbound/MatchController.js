@@ -46,6 +46,20 @@ class MatchController {
             return reply.code(400).send();
         }
     }
+
+    // todo: fill up the match_id of players fields automatic 
+    async saveAllMatchData(req, reply)
+    {
+        try {
+            const body = req.body;
+            await matchService.saveAllMatchData({match: body.match_data, players: body.players});
+        } catch (error) {
+            if (typeof error === 'number')
+                return reply.code(error).send();
+
+            return reply.code(400).send();
+        }
+    }
 }
 
 module.exports = new MatchController();
