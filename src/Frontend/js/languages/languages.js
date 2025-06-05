@@ -92,22 +92,52 @@ export const languages = {
     },
 
     es: {
-        // HEADER
-        "header-home": "SPAINSUCKS"
+        "header-home": "Inicio",
+        "header-about": "Quiénes somos",
+        "header-login": "Iniciar sesión",
+        "header-register": "Registrarse",
+        
         // HOME
-
+        
         // ABOUT US
-
+        
         // LOGIN
-
+        "login-title": "Iniciar sesión",
+        "login-btn": "Iniciar sesión",
+        "login-register": "¿No tienes una cuenta? ",
+        "login-register-link": "Regístrate",
+        "login-place-username": "Usuario",
+        "login-place-password": "Contraseña",
+        
         // TWO FACTOR
-
+        "2fa-title": "Autenticación en dos pasos",
+        "2fa-text": "Introduce el código de verificación para continuar",
+        "2fa-btn": "Verificar",
+        
         // REGISTER
-
+        "register-title": "Registro",
+        "register-place-username": "Usuario",
+        "register-place-nickname": "Apodo",
+        "register-place-email": "Correo electrónico",
+        "register-place-password": "Contraseña",
+        "register-title-username": "El nombre de usuario debe tener entre 3 y 15 caracteres y puede incluir letras, números, '_' o '-'",
+        "register-title-name": "El nombre debe tener entre 2 y 40 caracteres y puede incluir letras y espacios",
+        "register-title-pass": "Debe contener al menos un dígito, una letra mayúscula, una letra minúscula y un carácter especial (!@#$%^&*.\\-_+=?)",
+        "register-title-confirmpass": "Debe coincidir con la contraseña anterior",
+        "register-btn": "Registrarse",
+        "register-pass-error": "¡Las contraseñas no coinciden!",
+        "register-taken-error": "¡Nombre de usuario o correo electrónico no disponibles!",
+        
+        // REGISTER SUCCESS
+        "register-success-title": "¡Éxito!",
+        "register-success-description": "Felicidades, tu cuenta ha sido creada con éxito.",
+        "register-success-btn-home": "Inicio",
+        "register-success-btn-login": "Iniciar sesión"
+        
         // SETTINGS
-
+        
         // PROFILE
-
+        
         // PLAY
     }
 } 
