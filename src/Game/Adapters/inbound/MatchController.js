@@ -1,6 +1,10 @@
 const matchRepo = require('../outbound/MatchRepository');
 const matchService = require('../../Application/Services/MatchService'); 
 
+
+
+//TODO: AUTHENTICATION AND AUTHORIZATION
+// ! DONT FORGET
 class MatchController {
     async getAll(req, reply)
     {

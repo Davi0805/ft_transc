@@ -3,6 +3,7 @@ const sensible = require('@fastify/sensible');
 const cors = require('@fastify/cors');
 const path = require('path');
 const matchRoutes = require('./Infrastructure/routes/MatchRoutes');
+const userCustomsRoutes = require('./Infrastructure/routes/UserCustomsRoutes');
 
 const prometheus = require('fastify-metrics');
 
@@ -16,6 +17,7 @@ const setup = () => {
       });
     
     app.register(matchRoutes);
+    app.register(userCustomsRoutes);
     app.register(sensible);
 
     return app;
