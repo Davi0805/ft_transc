@@ -86,7 +86,7 @@ export default class ServerGame {
                 this.humans.forEach(human => {
                     human.movePaddleFromControls(delta);
                 });
-                this.ball.move(this.ball.direction.multiplyScalar(this.ball.speed * delta))
+                this.ball.move(delta)
                 this.bots.forEach(bot => {
                     bot.timeSinceLastUpdate += delta;
                     if (bot.timeSinceLastUpdate >= bot.updateRate) {

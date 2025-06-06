@@ -11,7 +11,6 @@ export default abstract class SPlayer {
             this._paddle = paddle;
         }
     
-    
         movePaddleFromControls(delta: number) {
             if (this.controls.left.pressed || this.controls.right.pressed) {
                 let movVector = this.paddle.orientation.multiplyScalar(this.paddle.speed * delta)

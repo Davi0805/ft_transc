@@ -10,6 +10,10 @@ export default class SPaddle extends SObject {
         this._side = side;
     }
 
+    move(movVector: Point) {
+        this.pos = this.pos.add(movVector);
+    }
+
     private _side: SIDES;
     get side(): SIDES { return this._side; }
 }

@@ -10,9 +10,7 @@ export default abstract class SObject extends AObject {
         this._speed = speed;
     }
 
-    move(movVector: Point) {
-        this.pos = this.pos.add(movVector)
-    }
+    //abstract move(delta: number): void;
 
     override set pos(pos: Point) {
         super.pos = pos;
