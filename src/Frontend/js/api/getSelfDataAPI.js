@@ -8,10 +8,7 @@ export async function getSelfData() {
             },
         });
 
-        if (response.status === 401) {
-            return null;
-        }
-        if (response.status === 404) {
+        if (response.status === 401 || 404) {
             return null;
         }
 
