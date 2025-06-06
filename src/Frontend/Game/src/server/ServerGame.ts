@@ -98,7 +98,12 @@ export default class ServerGame {
                 })
 
                 this._handleCollisions(delta);
-                console.log(this.ball.pos)
+                
+                this.teams.forEach(team => {
+                    if (team.score >= 10) {
+                        
+                    }
+                })
             }
             prevTime = currentTime;
 
@@ -247,16 +252,6 @@ export default class ServerGame {
                         }
                     }
                 }
-
-                /* if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
-                    || (collision === SIDES.RIGHT && this.ball.direction.x > 0)) {
-                    this.ball.pos = Point.fromObj({ x: paddle.pos.x + (collisionDir * ((paddle.cbox.width / 2) + (this.ball.size.x / 2))), y: this.ball.pos.y})
-                    this.ball.direction.x *= -1;
-                } else if ((collision === SIDES.TOP && this.ball.direction.y < 0)
-                    || (collision === SIDES.BOTTOM && this.ball.direction.y > 0)) {
-                    this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: paddle.pos.y + (collisionDir * ((paddle.cbox.height / 2) + 30 + (this.ball.size.y / 2))) })
-                    this.ball.direction.y *= -1;
-                } */
                 if (this.ball.speed < 600) { //TODO put this in ball object as speed cap and maybe put it in speed getter
                     this.ball.speed += 5;
                 }
