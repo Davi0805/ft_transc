@@ -73,7 +73,41 @@
 </header>
 
   <!-- Main content area (will be dynamically updated) -->
-  <main id="main"></main>
+  <div class="page-layout">
+    <main id="main">
+
+    </main>
+
+
+    <div id="chat-sidebar" class="chat-sidebar content">
+      <!-- Topbar with friend + search -->
+      <div class="chat-sidebar-topbar">
+        <button class="icon-btn">
+          <img src="./Assets/icons/person-add.svg" alt="Add Friend" />
+        </button>
+
+        <div class="search-wrapper">
+          <button class="icon-btn search-toggle">
+            <img src="./Assets/icons/search.svg" alt="Search" />
+          </button>
+          <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
+        </div>
+      </div>
+
+      <div class="chat-contacts-wrapper">
+        <div class="chat-contacts">
+          <button class="contact">
+            <img src="./Assets/default/bobzao.jpg" width="40px" height="40px">
+            <span>Artur</span>
+          </button>
+        </div>
+      </div>  
+
+    </div>
+
+  </div>
+
+  <div id="chat-windows-wrapper"></div>
 
   <!-- JavaScript -->
   <script type="module" src="js/app.js"></script>
