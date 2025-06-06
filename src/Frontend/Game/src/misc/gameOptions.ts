@@ -8,7 +8,7 @@ const PADDLE_COMMON_VARS = {
 
 export const UserCustoms: TUserCustoms = {
     field: {
-        size: { x: 800, y: 500 },
+        size: { x: 400, y: 400 },
         backgroundSpriteID: 0 //NOT USED YET
     },
     gameLength: 0, //NOT USED YET
@@ -71,7 +71,7 @@ export const UserCustoms: TUserCustoms = {
         }
     ],
     bots: [
-        /* {
+        {
             paddleID: 0,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
@@ -86,7 +86,7 @@ export const UserCustoms: TUserCustoms = {
         {
             paddleID: 3,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        }, */
+        },
     ]
 }
 
@@ -99,10 +99,10 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         ball: {
             spriteID: userCustoms.ball.spriteID,
             pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
-            //direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
-            direction: { x: 0.3, y: 1 }, 
+            direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
+            //direction: { x: 1, y: 1 }, 
             size: { x: 4, y: 4 },
-            speed: 250
+            speed: 500
         },
         teams: [],
         paddles: [],

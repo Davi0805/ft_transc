@@ -2,9 +2,9 @@ import { ApplicationOptions } from "pixi.js"
  
 export enum SIDES {
     LEFT,
+    TOP,
     RIGHT,
-    BOTTOM,
-    TOP
+    BOTTOM
 }
 
 export enum ROLES {
@@ -13,6 +13,7 @@ export enum ROLES {
 }
 
 export type point = { x: number, y: number }
+export type rectangle = { x: number, y: number, width: number, height: number }
 
 // Common
 
