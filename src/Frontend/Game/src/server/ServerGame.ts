@@ -5,19 +5,20 @@ import { SIDES, SGameConfigs, SGameDTO, CGameDTO, point } from "../misc/types.js
 import Point from "../misc/Point.js";
 import STeam from "./STeam.js";
 import SBot from "./SBot.js";
+import BallManager from "./BallManager.js";
 
 export default class ServerGame {
     constructor(gameOpts: SGameConfigs) {
         this._gameRunning = false;
         this._windowSize = gameOpts.window.size;
         const ballInitialState = gameOpts.gameInitialState.ball;
-        this._ball = new SBall(
+        this._ballManager = new BallManager(new SBall(
             0, //TODO: This will need to be generated somehow when more balls exist
             Point.fromObj(ballInitialState.pos),
             Point.fromObj(ballInitialState.size),
             ballInitialState.speed,
             Point.fromObj(ballInitialState.direction)
-        );
+        ));
         this._teams = [];
         gameOpts.teams.forEach(team => {
             this.teams.push(new STeam(
@@ -50,7 +51,7 @@ export default class ServerGame {
             )
         })
         this._bots = [];
-        const windowLimits = SBot.buildLimits(this.paddles, this.windowSize, this._ball.size);
+        const windowLimits = SBot.buildLimits(this.paddles, this.windowSize, ballInitialState.size); 
         gameOpts.bots.forEach(bot => {
             const botPaddle = this.paddles.find(paddle => paddle.id === bot.paddleID);
             if (!botPaddle) {
@@ -83,21 +84,21 @@ export default class ServerGame {
 
 
             if (this.gameRunning) {
+                this.ballManager.moveBalls(delta);
                 this.humans.forEach(human => {
                     human.movePaddleFromControls(delta);
                 });
-                this.ball.move(delta)
                 this.bots.forEach(bot => {
                     bot.timeSinceLastUpdate += delta;
                     if (bot.timeSinceLastUpdate >= bot.updateRate) {
-                        bot.updateTargetPos(this.ball);
+                        bot.updateTargetPos(this.ballManager.balls[0]); //TODO IMPORTANT: this must be updated! Probably pass the entire array?
                         bot.timeSinceLastUpdate -= bot.updateRate;
                     }
                     bot.setupMove();
                     bot.movePaddleFromControls(delta);
                 })
 
-                this._handleCollisions(delta);
+                this._handleCollisions();
                 
                 const teamWithEndScore = this.teams.find(team => team.score >= 10);
                 if (teamWithEndScore !== undefined) {
@@ -119,7 +120,7 @@ export default class ServerGame {
     getGameDTO(): SGameDTO {
         return {
             ball: {
-                pos: this.ball.pos.toObj(),
+                pos: this.ballManager.balls[0].pos.toObj(), //TODO update to include all balls
             },
             teams: this.teams.map(team => ({
                     side: team.side,
@@ -150,9 +151,9 @@ export default class ServerGame {
     set windowSize(value: point) { this._windowSize = value; }
     get windowSize() { return this._windowSize; }
 
-    private _ball: SBall;
-    set ball(value: SBall) { this._ball = value; }
-    get ball() { return this._ball; }
+    private _ballManager: BallManager;
+    set ballManager(value: BallManager) { this._ballManager = value; }
+    get ballManager() { return this._ballManager; }
 
     private _teams: STeam[]
     set teams(teams: STeam[]) { this._teams = teams; }
@@ -171,12 +172,12 @@ export default class ServerGame {
     get bots(): SBot[] { return this._bots; }
 
 
-    private _handleCollisions(delta: number) {
+    private _handleCollisions() {
+        this.ballManager.handleLimitCollision(this.windowSize, this.teams);
         this.paddles.forEach(paddle => {
+            this.ballManager.handlePaddleCollision(paddle);
             this._handlePaddleLimitsCollision(paddle);
         })
-        this._handleBallLimitsCollision(delta);
-        this._handleBallPaddleCollision(delta);
     }
 
     private _handlePaddleLimitsCollision(paddle: SPaddle) {
@@ -192,77 +193,5 @@ export default class ServerGame {
         if (paddle.cbox.y + paddle.cbox.height > this.windowSize.y) {
             paddle.pos.y = this.windowSize.y - paddle.cbox.height / 2;
         }
-    }
-
-    private _handleBallLimitsCollision(delta: number) {
-        if (this.ball.cbox.x < 0) {
-            this.ball.pos = Point.fromObj({ x: this.ball.cbox.width / 2, y: this.ball.pos.y })
-            this.ball.direction.x *= -1
-            const team = this.teams.find(team => team.side == SIDES.LEFT)
-            if (team) {
-                team.score += 1;
-            }
-        } else if (this.ball.cbox.x + this.ball.cbox.width > this.windowSize.x) {
-            this.ball.pos = Point.fromObj({ x: this.windowSize.x - this.ball.cbox.width / 2, y: this.ball.pos.y })
-            this.ball.direction.x *= -1;
-            const team = this.teams.find(team => team.side == SIDES.RIGHT)
-            if (team) {
-                team.score += 1;
-            }
-        } else if (this.ball.cbox.y < 0) {
-            this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: this.ball.cbox.height / 2 })
-            this.ball.direction.y *= -1;
-            const team = this.teams.find(team => team.side == SIDES.TOP)
-            if (team) {
-                team.score += 1;
-            }
-        } else if (this.ball.cbox.y + this.ball.cbox.height > this.windowSize.y) {
-            this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: this.windowSize.y - this.ball.cbox.height / 2 })
-            this.ball.direction.y *= -1;
-            const team = this.teams.find(team => team.side == SIDES.BOTTOM)
-            if (team) {
-                team.score += 1;
-            }
-        }
-    }
-
-    private _handleBallPaddleCollision(delta: number) {
-        this.paddles.forEach(paddle => {
-            const collision = this.ball.cbox.areColliding(paddle.cbox);
-            if (collision !== null) {
-                switch (collision) {
-                    case SIDES.LEFT: {
-                        this.ball.pos = Point.fromObj({ x: paddle.pos.x + ((paddle.cbox.width / 2) + (this.ball.size.x / 2)), y: this.ball.pos.y})
-                        if (this.ball.direction.x < 0) {
-                            this.ball.direction.x *= -1;
-                        }
-                        break;
-                    } case SIDES.RIGHT: {
-                        this.ball.pos = Point.fromObj({ x: paddle.pos.x - ((paddle.cbox.width / 2) + (this.ball.size.x / 2)), y: this.ball.pos.y})
-                        if (this.ball.direction.x > 0) {
-                            this.ball.direction.x *= -1;
-                        }
-                        break ;
-                    } case SIDES.TOP: {
-                        this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: paddle.pos.y + ((paddle.cbox.height / 2) + (this.ball.size.y / 2)) })
-                        if (this.ball.direction.y < 0) {
-                            this.ball.direction.y *= -1;
-                        }
-                        break ;
-                    } case SIDES.BOTTOM: {
-                        this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: paddle.pos.y - ((paddle.cbox.height / 2) + (this.ball.size.y / 2)) })
-                        if (this.ball.direction.y > 0) {
-                            this.ball.direction.y *= -1;
-                        }
-                    }
-                }
-                if (this.ball.speed < 600) { //TODO put this in ball object as speed cap and maybe put it in speed getter
-                    this.ball.speed += 5;
-                }
-                for (let paddle of this.paddles) {
-                    paddle.speed += 1;
-                }
-            }
-        });
     }
 }
