@@ -50,7 +50,7 @@ export default class ServerGame {
             )
         })
         this._bots = [];
-        const windowLimits = SBot.buildLimits(this.paddles, this.windowSize);
+        const windowLimits = SBot.buildLimits(this.paddles, this.windowSize, this._ball.size);
         gameOpts.bots.forEach(bot => {
             const botPaddle = this.paddles.find(paddle => paddle.id === bot.paddleID);
             if (!botPaddle) {
@@ -221,22 +221,20 @@ export default class ServerGame {
         this.paddles.forEach(paddle => {
             const collision = this.ball.cbox.areColliding(paddle.cbox);
             if (collision !== null) {
-                console.log("collision: ", collision);
                 if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
                     || (collision === SIDES.RIGHT && this.ball.direction.x > 0)) {
+                    this.ball.pos = Point.fromObj({ x: paddle.pos.x + (paddle.orientation.x * (paddle.cbox.width / 2)) + (paddle.orientation.x * (this.ball.size.x / 2)), y: this.ball.pos.y})
                     this.ball.direction.x *= -1;
                 } else if ((collision === SIDES.TOP && this.ball.direction.y > 0)
                     || (collision === SIDES.BOTTOM && this.ball.direction.y < 0)) {
+                    this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: paddle.pos.y + (paddle.orientation.y * (paddle.cbox.height / 2)) + (paddle.orientation.y * (this.ball.size.y / 2))})
                     this.ball.direction.y *= -1;
                 }
-                const movDistance = (paddle.speed + this.ball.speed) * delta; // This in theory compensates for moving-into-ball paddles
-                const movVector = this.ball.direction.multiplyScalar(movDistance);
-                this.ball.move(movVector);
-                if (this.ball.speed < 400) { //TODO put this in ball object as speed cap and maybe put it in speed getter
-                    //this.ball.speed += 5;
+                if (this.ball.speed < 600) { //TODO put this in ball object as speed cap and maybe put it in speed getter
+                    this.ball.speed += 5;
                 }
                 for (let paddle of this.paddles) {
-                    //paddle.speed += 1;
+                    paddle.speed += 1;
                 }
             }
         });

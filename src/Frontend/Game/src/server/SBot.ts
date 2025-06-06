@@ -2,10 +2,11 @@ import { point, rectangle, SIDES } from "../misc/types.js";
 import SPaddle from "./SPaddle.js";
 import SPlayer from "./SPlayer.js";
 import SBall from "./SBall.js";
-import { dir } from "console";
-import { getRelativeSide } from "../misc/utils.js";
 import Point from "../misc/Point.js";
 
+// In pixels. The smaller the value, the closer to the target position the bot will attempt to place its paddle.
+// Increases precision, but increases chance of overshooting (especially with high paddle speeds)
+// and creating a very uncomfortable trembling effect while the bot tries back and forth to readjust the paddle
 const MOV_PRECISION_LVL = 3
 
 export default class SBot extends SPlayer {
@@ -31,7 +32,7 @@ export default class SBot extends SPlayer {
             : (() => this._targetPos < this.paddle.pos[this._movementAxis]);
     }
 
-    static buildLimits(paddles: SPaddle[], windowSize: point): rectangle {
+    static buildLimits(paddles: SPaddle[], windowSize: point, ballSize: point): rectangle {
         const sideConfig: Record<SIDES, { axis: 'x' | 'y', boundary: 'min' | 'max' }> = {
             [SIDES.LEFT]:   { axis: 'x', boundary: 'min' },
             [SIDES.RIGHT]:  { axis: 'x', boundary: 'max' },
@@ -54,10 +55,10 @@ export default class SBot extends SPlayer {
             }
         })
         const out: rectangle = {
-            x: record[SIDES.LEFT],
-            y: record[SIDES.TOP],
-            width: record[SIDES.RIGHT] - record[SIDES.LEFT],
-            height: record[SIDES.BOTTOM] - record[SIDES.TOP]
+            x: record[SIDES.LEFT] + ballSize.x / 2,
+            y: record[SIDES.TOP] + ballSize.y / 2,
+            width: record[SIDES.RIGHT] - record[SIDES.LEFT] - ballSize.x,
+            height: record[SIDES.BOTTOM] - record[SIDES.TOP] - ballSize.y
         }
         return out
     }
@@ -66,11 +67,8 @@ export default class SBot extends SPlayer {
         let hitpos = this._getHitPos(ball.pos, ball.direction);
         let hitside = this._getSideFromPos(hitpos)
         let dir = ball.direction
-        
-
         let loopCount = 0
-        console.log("paddle in ", SIDES[this.paddle.side])
-        console.log(SIDES[hitside])
+        
         while (hitside !== this.paddle.side) {
             dir = (hitside === SIDES.LEFT || hitside === SIDES.RIGHT)
                 ? Point.fromObj({ x: -dir.x, y: dir.y })
@@ -84,33 +82,7 @@ export default class SBot extends SPlayer {
                 return
             }
         }
-        this._targetPos = hitpos[this._movementAxis];
-    }
-
-    private _getHitPos(pos: point, dir: point) {
-        const t = [
-            dir.x < 0 ? (this._limits.x - pos.x) / dir.x : Infinity, //left
-            dir.x > 0 ? (this._limits.x + this._limits.width - pos.x) / dir.x : Infinity, //right
-            dir.y < 0 ? (this._limits.y - pos.y) / dir.y : Infinity, //top
-            dir.y > 0 ? (this._limits.y + this._limits.height - pos.y) / dir.y : Infinity //bottom
-        ]
-
-        let tMin = Math.min(...t);
-
-        return { x: pos.x + dir.x * tMin, y: pos.y + dir.y * tMin }
-    }
-
-    private _getSideFromPos(pos: point) {
-        const epsilon = 1e-6
-        if (this._aproxCompare(pos.x, this._limits.x, epsilon)) {
-            return SIDES.LEFT
-        } else if (this._aproxCompare(pos.x, this._limits.x + this._limits.width, epsilon)) {
-            return SIDES.RIGHT
-        } else if (this._aproxCompare(pos.y, this._limits.y, epsilon)) {
-            return SIDES.TOP
-        } else {
-            return SIDES.BOTTOM
-        }
+        this._targetPos = hitpos[this._movementAxis] ;
     }
 
     setupMove() {
@@ -151,4 +123,30 @@ export default class SBot extends SPlayer {
     }
 
     private _mustMoveLeft;
+
+    private _getHitPos(pos: point, dir: point): point {
+        const t = [
+            dir.x < 0 ? (this._limits.x - pos.x) / dir.x : Infinity, //left
+            dir.x > 0 ? (this._limits.x + this._limits.width - pos.x) / dir.x : Infinity, //right
+            dir.y < 0 ? (this._limits.y - pos.y) / dir.y : Infinity, //top
+            dir.y > 0 ? (this._limits.y + this._limits.height - pos.y) / dir.y : Infinity //bottom
+        ]
+
+        let tMin = Math.min(...t);
+
+        return { x: pos.x + dir.x * tMin, y: pos.y + dir.y * tMin }
+    }
+
+    private _getSideFromPos(pos: point) {
+        const epsilon = 1e-6
+        if (this._aproxCompare(pos.x, this._limits.x, epsilon)) {
+            return SIDES.LEFT
+        } else if (this._aproxCompare(pos.x, this._limits.x + this._limits.width, epsilon)) {
+            return SIDES.RIGHT
+        } else if (this._aproxCompare(pos.y, this._limits.y, epsilon)) {
+            return SIDES.TOP
+        } else {
+            return SIDES.BOTTOM
+        }
+    }
 }
