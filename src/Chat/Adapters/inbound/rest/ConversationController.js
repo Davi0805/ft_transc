@@ -8,7 +8,12 @@ class ConversationsController {
         if (!session)
             return reply.code(400).send();
         const conversations = await conversationService.getAllMyConversations(session.user_id);
-        return reply.send(conversations);
+        const returnConversations = conversations.map(conv => ({
+            id: conv.id,
+            friend_id: session.user_id == conv.user1_id ? conv.user2_id : conv.user1_id
+        }));
+
+        return reply.send(returnConversations);
     }
 }
 
