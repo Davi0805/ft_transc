@@ -86,7 +86,7 @@ export default class ServerGame {
                 this.humans.forEach(human => {
                     human.movePaddleFromControls(delta);
                 });
-
+                //this.ball.move(this.ball.direction.multiplyScalar(this.ball.speed * delta))
                 this.bots.forEach(bot => {
                     bot.timeSinceLastUpdate += delta;
                     if (bot.timeSinceLastUpdate >= bot.updateRate) {
@@ -98,6 +98,7 @@ export default class ServerGame {
                 })
 
                 this._handleCollisions(delta);
+                console.log(this.ball.pos)
             }
             prevTime = currentTime;
 
@@ -221,15 +222,42 @@ export default class ServerGame {
         this.paddles.forEach(paddle => {
             const collision = this.ball.cbox.areColliding(paddle.cbox);
             if (collision !== null) {
-                if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
-                    || (collision === SIDES.RIGHT && this.ball.direction.x > 0)) {
-                    this.ball.pos = Point.fromObj({ x: paddle.pos.x + (paddle.orientation.x * (paddle.cbox.width / 2)) + (paddle.orientation.x * (this.ball.size.x / 2)), y: this.ball.pos.y})
-                    this.ball.direction.x *= -1;
-                } else if ((collision === SIDES.TOP && this.ball.direction.y > 0)
-                    || (collision === SIDES.BOTTOM && this.ball.direction.y < 0)) {
-                    this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: paddle.pos.y + (paddle.orientation.y * (paddle.cbox.height / 2)) + (paddle.orientation.y * (this.ball.size.y / 2))})
-                    this.ball.direction.y *= -1;
+                switch (collision) {
+                    case SIDES.LEFT: {
+                        this.ball.pos = Point.fromObj({ x: paddle.pos.x + ((paddle.cbox.width / 2) + (this.ball.size.x / 2)), y: this.ball.pos.y})
+                        if (this.ball.direction.x < 0) {
+                            this.ball.direction.x *= -1;
+                        }
+                        break;
+                    } case SIDES.RIGHT: {
+                        this.ball.pos = Point.fromObj({ x: paddle.pos.x - ((paddle.cbox.width / 2) + (this.ball.size.x / 2)), y: this.ball.pos.y})
+                        if (this.ball.direction.x > 0) {
+                            this.ball.direction.x *= -1;
+                        }
+                        break ;
+                    } case SIDES.TOP: {
+                        this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: paddle.pos.y + ((paddle.cbox.height / 2) + (this.ball.size.y / 2)) })
+                        if (this.ball.direction.y < 0) {
+                            this.ball.direction.y *= -1;
+                        }
+                        break ;
+                    } case SIDES.BOTTOM: {
+                        this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: paddle.pos.y - ((paddle.cbox.height / 2) + (this.ball.size.y / 2)) })
+                        if (this.ball.direction.y > 0) {
+                            this.ball.direction.y *= -1;
+                        }
+                    }
                 }
+
+                /* if ((collision === SIDES.LEFT && this.ball.direction.x < 0)
+                    || (collision === SIDES.RIGHT && this.ball.direction.x > 0)) {
+                    this.ball.pos = Point.fromObj({ x: paddle.pos.x + (collisionDir * ((paddle.cbox.width / 2) + (this.ball.size.x / 2))), y: this.ball.pos.y})
+                    this.ball.direction.x *= -1;
+                } else if ((collision === SIDES.TOP && this.ball.direction.y < 0)
+                    || (collision === SIDES.BOTTOM && this.ball.direction.y > 0)) {
+                    this.ball.pos = Point.fromObj({ x: this.ball.pos.x, y: paddle.pos.y + (collisionDir * ((paddle.cbox.height / 2) + 30 + (this.ball.size.y / 2))) })
+                    this.ball.direction.y *= -1;
+                } */
                 if (this.ball.speed < 600) { //TODO put this in ball object as speed cap and maybe put it in speed getter
                     this.ball.speed += 5;
                 }
