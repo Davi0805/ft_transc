@@ -3,7 +3,7 @@ const jwtService = require('../../../Application/Services/JwtService');
 const redisService = require('../../../Application/Services/RedisService');
 const twofaService = require('../../../Application/Services/TwoFactorAuthService');
 const fs = require('fs');
-const path = require('path');
+const mime = require('mime-types');
 
 class UserController {
 
@@ -47,16 +47,17 @@ class UserController {
     /* 
         Get by id endpoint
         GET - localhost:8080/users/{id}
-        @params {HTTP Header} Authorization: Bearer <JWT> 
         @params {id: (long)} - user_id that is being searched
         @returns list of users
     */
     async getById(req, reply) {
         try {
-            const session = await redisService.validateSession((req.headers.authorization));
             const user = await userService.findById(req.params.id);
             if (!user || Object.keys(user).length === 0) throw 404;
-            return reply.send(user);
+            return reply.send( { user_id: user[0].user_id,
+                                name: user[0].name,
+                                username: user[0].username,
+                                email: user[0].email });
         } catch (error) {
             if (typeof error === 'number')
                 return reply.code(error).send();
@@ -157,16 +158,15 @@ class UserController {
         try {
             const user = await userService.findById(req.params.id);
             if (!user || Object.keys(user).length === 0) throw 404;
-    
+
             const imagePath = user[0].user_image;
-            if (!imagePath) throw 404;
-    
-            // Check if file exists
-            console.log(imagePath);
-            /* if (!fs.existsSync(imagePath)) throw 404; */
-            
+            if (!imagePath) throw 204;
+
+            const mimeType = mime.lookup(imagePath);
+            if (!mimeType) throw 415;
+
             const stream = fs.createReadStream(imagePath);
-            return reply.type('image').send(stream);
+            return reply.type(mimeType).send(stream);
         } catch (error) {
             if (typeof error === 'number')
                 return reply.code(error).send();

@@ -19,58 +19,58 @@
 
 <body>
   <!-- Header (will contain navigation links) -->
-<header class="content">
-  <div class="left flex flex-center">
-    <a href="/" class="flex center gap-8 site-home" data-link>
+  <header class="content">
+    <div class="left flex flex-center">
+      <a href="/" class="flex center gap-8 site-home" data-link>
       <img class="logo" src="./Assets/42PortoLogo.png" alt="42 Porto logo" draggable="false" >
-      <span class="site-title">ft_transcendence</span>
-    </a>
-  </div> 
+        <span class="site-title">ft_transcendence</span>
+      </a>
+    </div>
 
-  <div class="right flex flex-center gap-16 ">
-    <nav class="flex flex-center gap-24">
-      <a id="home-link" href="/" data-link data-i18n="header-home" class="active nav-link">Home</a>
-      <a id="about-link" href="/about" data-link data-i18n="header-about" class="nav-link">About</a>
+    <div class="right flex flex-center gap-16 ">
+      <nav class="flex flex-center gap-24">
+        <a id="home-link" href="/" data-link data-i18n="header-home" class="active nav-link">Home</a>
+        <a id="about-link" href="/about" data-link data-i18n="header-about" class="nav-link">About</a>
 
-      <div id="log-reg" class="log-reg flex gap-24">
+        <div id="log-reg" class="log-reg flex gap-24">
         <a id="login-link" class="nav-link" href="/login" data-link data-i18n="header-login" >Login</a>
         <a id="register-link" class="nav-link" href="/register" data-link data-i18n="header-register" >Register</a>
-      </div>
-
-      <div id="user-in" class="user-in flex gap-16">
-        <div class="profile-container flex flex-center gap-8">
-          <a id="profile-link" href="/profile" class="profile nav-link" data-link></a>
-          <img class="profile-avatar" src="./Assets/default/bobzao.jpg" alt="user profile picture" draggable="false" >
         </div>
-        <a id="settings-link" href="/settings" data-link class="settings flex flex-center nav-link">
+
+        <div id="user-in" class="user-in flex gap-16">
+          <div class="profile-container flex flex-center gap-8">
+            <a id="profile-link" href="/profile" class="profile nav-link" data-link></a>
+          <img class="profile-avatar" src="./Assets/default/bobzao.jpg" alt="user profile picture" draggable="false" >
+          </div>
+          <a id="settings-link" href="/settings" data-link class="settings flex flex-center nav-link">
           <img src="./Assets/icons/settings.svg" alt="settings icon" draggable="false" >
-        </a>
-        <button id="logout" class="logout">
+          </a>
+          <button id="logout" class="logout">
           <img src="./Assets/icons/logout.svg" alt="logout icon" draggable="false" >
-        </button>
-      </div>
-    </nav>
+          </button>
+        </div>
+      </nav>
 
-    <div class="language-selector flex flex-center flex-dir-col">
+      <div class="language-selector flex flex-center flex-dir-col">
       <button class="current-language flex flex-center" >
-        <img src="https://flagcdn.com/w20/gb.png" data-lang="uk" alt="United Kingdom" flag draggable="false"> 
+          <img src="https://flagcdn.com/w20/gb.png" data-lang="uk" alt="United Kingdom" flag draggable="false">
         <img class="flex flex-dir flex-center" src="./Assets/icons/drop-down.svg" alt="drop-down icon" flag draggable="false">
-      </button>
-      
-      <div class="lang-options " style="display: none;">
-        <ul class="flex flex-dir-col flex-center">
-          <li><button class="lang-option">
-              <img src="https://flagcdn.com/w20/pt.png" data-lang="pt" alt="Portuguese flag" draggable="false">
-          </button></li>
+        </button>
 
-          <li><button class="lang-option">
-              <img src="https://flagcdn.com/w20/es.png" data-lang="es" alt="Spain flag" flag draggable="false">
-          </button></li>
-        </ul>
+        <div class="lang-options " style="display: none;">
+          <ul class="flex flex-dir-col flex-center">
+            <li><button class="lang-option">
+                <img src="https://flagcdn.com/w20/pt.png" data-lang="pt" alt="Portuguese flag" draggable="false">
+              </button></li>
+
+            <li><button class="lang-option">
+                <img src="https://flagcdn.com/w20/es.png" data-lang="es" alt="Spain flag" flag draggable="false">
+              </button></li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
-</header>
+  </header>
 
   <!-- Main content area (will be dynamically updated) -->
   <div class="page-layout">

@@ -92,7 +92,7 @@ export const RegisterPage = {
       const name = document.getElementById('name').value;
       const username = document.getElementById('username').value;
       const email = document.getElementById('email').value;
-      const password_hash = document.getElementById('password').value;
+      const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
       const passError = document.querySelector('.error[data-i18n="register-pass-error"]');
       const takenError = document.querySelector('.error[data-i18n="register-taken-error"]');
@@ -101,14 +101,14 @@ export const RegisterPage = {
       takenError.hidden = true;
 
       // check for correct characters, lenght and confirmation match
-      if (password_hash != confirmPassword) {
+      if (password != confirmPassword) {
         passError.textContent = translator.get("register-pass-error");
         passError.hidden = false;
         return;
       }
 
       try {
-        await register (name, username, email, password_hash);
+        await register (name, username, email, password);
         this.renderSuccessHTML();
         return;
       } catch (error) {
