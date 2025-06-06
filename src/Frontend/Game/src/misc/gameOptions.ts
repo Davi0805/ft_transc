@@ -98,11 +98,11 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         gameLength: userCustoms.gameLength,
         ball: {
             spriteID: userCustoms.ball.spriteID,
-            //pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
-            //direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
+            pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
+            direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
             
-            pos: { x: 4, y: 200},
-            direction: { x: 1, y: 0 }, 
+            //pos: { x: 20, y: 50},
+            //direction: { x: 0, y: 1 }, 
             size: { x: 4, y: 4 },
             speed: 100
         },
