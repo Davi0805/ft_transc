@@ -46,10 +46,10 @@ export const UserCustoms: TUserCustoms = {
             humans: [
                 {
                     id: 0,
-                    paddleID: 0,
+                    paddleID: 2,
                     controls: {
-                        left: "ArrowDown",
-                        right: "ArrowUp",
+                        left: "ArrowUp",
+                        right: "ArrowDown",
                         pause: " "
                     }
                 }
@@ -60,7 +60,7 @@ export const UserCustoms: TUserCustoms = {
             humans: [
                 {
                     id: 1,
-                    paddleID: 1,
+                    paddleID: 3,
                     controls: {
                         left: "ArrowDown",
                         right: "ArrowUp",
@@ -73,20 +73,20 @@ export const UserCustoms: TUserCustoms = {
     bots: [
         {
             paddleID: 0,
-            difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
         {
             paddleID: 1,
-            difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
-        {
+/*         {
             paddleID: 2,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
         {
             paddleID: 3,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        },
+        }, */
     ]
 }
 
@@ -100,9 +100,11 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             spriteID: userCustoms.ball.spriteID,
             pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
             direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
-            //direction: { x: 1, y: 1 }, 
+            
+            //pos: { x: 20, y: 50},
+            //direction: { x: 0, y: 1 }, 
             size: { x: 4, y: 4 },
-            speed: 500
+            speed: 100
         },
         teams: [],
         paddles: [],
@@ -155,7 +157,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             spriteID: paddle.spriteID,
             pos: paddlePos,
             size: { x: 16, y: 64 },
-            speed: 400
+            speed: 200
         })
     })
 
