@@ -3,6 +3,7 @@ const jwtService = require('../../../Application/Services/JwtService');
 const redisService = require('../../../Application/Services/RedisService');
 const twofaService = require('../../../Application/Services/TwoFactorAuthService');
 const fs = require('fs');
+const mime = require('mime-types');
 const path = require('path');
 const exception = require('../../../Infrastructure/config/CustomException');
 
