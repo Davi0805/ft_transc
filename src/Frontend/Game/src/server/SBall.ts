@@ -9,6 +9,7 @@ export default class SBall extends SObject {
         this._direction = direction.normalize();
     }
 
+
     private _direction: Point;
     get direction() { return this._direction; }
     set direction(value: Point) {

@@ -99,11 +99,15 @@ export default class ServerGame {
 
                 this._handleCollisions(delta);
                 
-                this.teams.forEach(team => {
-                    if (team.score >= 10) {
-                        
-                    }
-                })
+                const teamWithEndScore = this.teams.find(team => team.score >= 10);
+                if (teamWithEndScore !== undefined) {
+                    const finalGameState: Record<string, number> = {} as Record<SIDES, number>;
+                    this.teams.forEach(team => {
+                        finalGameState[SIDES[team.side]] = team.score;
+                    })
+                    this.gameRunning = false;
+                    console.log(finalGameState);
+                }
             }
             prevTime = currentTime;
 
