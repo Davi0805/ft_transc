@@ -1,5 +1,5 @@
 const friendRequest = require('../../../Application/Services/FriendRequestService');
-
+const exception = require('../../../Infrastructure/config/CustomException');
 const redisService = require('../../../Application/Services/RedisService');
 
 class FriendRequestController {
@@ -10,17 +10,9 @@ class FriendRequestController {
     */
     async getAll(req, reply)
     {
-        try {
-            const requests = await friendRequest.findAll();
-            return reply.send(requests);   
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+        const requests = await friendRequest.findAll();
+        return reply.send(requests);   
     }
-
 
     /* 
         Endpoint to create/start/request a new friendship
@@ -30,18 +22,9 @@ class FriendRequestController {
     */
     async create(req, reply)
     {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            if (session.user_id != req.body.sender_id) throw 401;
-            await friendRequest.newRequest(req.body.sender_id, req.body.receiver_id);
-            return reply.send();    
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
-        
+        if (req.session.user_id != req.body.sender_id) throw exception('Invalid sender id', 400);
+        await friendRequest.newRequest(req.body.sender_id, req.body.receiver_id);
+        return reply.send();        
     }
 
     /* 
@@ -50,16 +33,8 @@ class FriendRequestController {
         @params {HTTP Header} Authorization: Bearer <JWT> 
     */
     async listPendingRequests(req, reply) {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            const pendingRequests = await friendRequest.listPendingRequests(session.user_id);
-            return reply.send(pendingRequests);   
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+        const pendingRequests = await friendRequest.listPendingRequests(req.session.user_id);
+        return reply.send(pendingRequests);   
     }
 
     /* 
@@ -69,23 +44,11 @@ class FriendRequestController {
         @params request_id: (Long) - id of friend_request
     */
     async acceptRequest(req, reply) {
-        try {
-            const request_id = req.params.id;
-            const session = await redisService.validateSession((req.headers.authorization));
-            const data = await friendRequest.acceptRequest(request_id, session.user_id);
-
-            await redisService.postMessage('newFriendshipEvent', JSON.stringify({user1: data.from_user_id, user2: data.to_user_id})); //debug
-    
-            await redisService.updateFriendsCache(data.from_user_id, data.to_user_id);
-
-            return reply.send();    
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-            console.log('DEU merda = ' + error);
-            return reply.code(400).send();
-        }
-        
+        const request_id = req.params.id;
+        const data = await friendRequest.acceptRequest(request_id, req.session.user_id);
+        await redisService.postMessage('newFriendshipEvent', JSON.stringify({user1: data.from_user_id, user2: data.to_user_id})); //debug
+        await redisService.updateFriendsCache(data.from_user_id, data.to_user_id);
+        return reply.send();    
     }
     /* 
         Endpoint to reject the friendship requests that u received
@@ -94,17 +57,9 @@ class FriendRequestController {
         @params request_id: (Long) - id of friend_request
     */
     async rejectRequest(req, reply) {
-        try {
-            const request_id = req.params.id;
-            const session = await redisService.validateSession((req.headers.authorization));
-            await friendRequest.rejectRequest(request_id, session.user_id);
-            return reply.send();   
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+        const request_id = req.params.id;
+        await friendRequest.rejectRequest(request_id, req.session.user_id);
+        return reply.send();   
     }
     /*
         Endpoint to retrieve all friends of user, based on friend requests table
@@ -112,17 +67,9 @@ class FriendRequestController {
         GET -  localhost:8080/friends
     */
     async getAllFriends(req, reply) {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            // implement caching logic in getAllFriends
-            const friends = await friendRequest.getAllFriends(session.user_id);
-            return reply.send(friends);   
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+        // implement caching logic in getAllFriends
+        const friends = await friendRequest.getAllFriends(req.session.user_id);
+        return reply.send(friends);   
     }
 }
 
