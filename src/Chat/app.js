@@ -8,6 +8,18 @@ const consumeNewFriendsEvent = require('./Adapters/inbound/Redis Streams/streams
 
 const setup = () => {
     const app = Fastify({ logger: true });
+    
+    app.setErrorHandler((error, request, reply) => {
+        const statusCode = error.statusCode ?? 500;
+        console.log(error);
+
+        reply.status(statusCode).send(
+        {
+            message: error.message,
+            statusCode
+        });
+    });
+
     app.register(require('@fastify/websocket'));
 
     app.register(sensible);
