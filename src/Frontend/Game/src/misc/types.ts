@@ -1,4 +1,5 @@
 import { ApplicationOptions } from "pixi.js"
+import { BALL_TYPES } from "../server/SBall"
  
 export enum SIDES {
     LEFT,
@@ -189,9 +190,11 @@ export type DTOAssignID = {
 }
 
 export type SGameDTO = {
-    ball: {
+    balls: {
+        id: number
+        type: BALL_TYPES //This is only needed when the ball is created...
         pos: { x: number, y: number}
-    }
+    }[]
     teams: {
         side: SIDES,
         score: number
@@ -199,6 +202,7 @@ export type SGameDTO = {
     paddles: {
         id: number
         pos: { x: number, y: number }
+        size: { x: number, y: number }
     }[]
 }
 

@@ -7,6 +7,7 @@ import CPaddle from "./CPaddle";
 import { SIDES, CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState, CGameDTO } from "../../../misc/types";
 import CTeam from "./CTeam";
 import CScore from "./CScore";
+import { BALL_TYPES } from "../../../server/SBall";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
@@ -17,12 +18,14 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         const ballSprite = new Sprite(this._assets[ballName]);
         this._root.addChild(ballSprite);
         
-        this._ball = new CBall(
-            0, //TODO: This will need to be generated somehow when more balls exist
-            Point.fromObj(ballState.pos),
-            Point.fromObj(ballState.size),
-            ballSprite
-        ); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
+        this._balls.set(
+            0, new CBall(
+                0, //TODO: This will need to be generated somehow when more balls exist
+                Point.fromObj(ballState.pos),  //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
+                Point.fromObj(ballState.size),
+                ballSprite
+            )
+        )
 
         gameSceneConfigs.gameInitialState.teams.forEach(team => {
             const text = new BitmapText({
@@ -77,13 +80,47 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
-        this.ball.pos = Point.fromObj(gameDto.ball.pos);
-        gameDto.paddles.forEach(paddleState =>{
+
+        gameDto.balls.forEach(ballState => {
+            const ball = this.balls.get(ballState.id);
+            if (ball === undefined) {
+                console.log(ballState.id)
+                let ballName: string;
+                if (ballState.type === BALL_TYPES.EXPAND) {
+                    ballName = "ballExpand";
+                } else if (ballState.type === BALL_TYPES.SHRINK) {
+                    ballName = "ballShrink";
+                } else {
+                    ballName = "ball0";
+                }
+                const ballSprite = new Sprite(this._assets[ballName]);
+                console.log(ballSprite)
+                this._root.addChild(ballSprite);
+                this.balls.set(ballState.id, new CBall(
+                    ballState.id,
+                    Point.fromObj(ballState.pos),
+                    new Point(8, 8), // How the fuck will I know the size?
+                    ballSprite 
+                )) 
+            }
+        })
+        this.balls.forEach(ball => {
+            const ballState = gameDto.balls.find(ballState => ball.id === ballState.id);
+            if (ballState === undefined) {
+                this._root.removeChild(ball.sprite);
+                this.balls.delete(ball.id)
+            } else {
+                ball.pos = Point.fromObj(ballState.pos);
+            }
+        })
+        
+        gameDto.paddles.forEach(paddleState => {
             const paddle = this.paddles.get(paddleState.id);
             if (paddle === undefined) {
                 throw new Error("Client cannot find a paddle with the ID the server says exists!")
             }
             paddle.pos = Point.fromObj(paddleState.pos);
+            paddle.size = Point.fromObj(paddleState.size)
         });
         gameDto.teams.forEach(teamState => {
             const team = this.teams.get(teamState.side);
@@ -183,12 +220,9 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         return this._controlsState;
     }
 
-    private _ball: CBall | undefined;
-    get ball() {
-        if (!this._ball) {
-            throw new Error("Ball is undefined!");
-        }
-        return this._ball
+    private _balls: Map<number, CBall> = new Map<number, CBall>;
+    get balls() {
+        return this._balls
     }
 
     private _teams: Map<SIDES, CTeam> = new Map<SIDES, CTeam>;

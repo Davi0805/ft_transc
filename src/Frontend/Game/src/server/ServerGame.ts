@@ -1,4 +1,4 @@
-import SBall from "./SBall.js";
+import SBall, { BALL_TYPES } from "./SBall.js";
 import SPaddle from "./SPaddle.js"
 import SHuman from "./SHuman.js";
 import { SIDES, SGameConfigs, SGameDTO, CGameDTO, point } from "../misc/types.js";
@@ -6,13 +6,14 @@ import Point from "../misc/Point.js";
 import STeam from "./STeam.js";
 import SBot from "./SBot.js";
 import BallManager from "./BallManager.js";
+import { getRandomInt } from "../misc/utils.js";
 
 export default class ServerGame {
     constructor(gameOpts: SGameConfigs) {
         this._gameRunning = false;
         this._windowSize = gameOpts.window.size;
         const ballInitialState = gameOpts.gameInitialState.ball;
-        this._ballManager = new BallManager(new SBall(
+        this._ballManager = new BallManager(this._windowSize, new SBall(
             0, //TODO: This will need to be generated somehow when more balls exist
             Point.fromObj(ballInitialState.pos),
             Point.fromObj(ballInitialState.size),
@@ -69,10 +70,11 @@ export default class ServerGame {
 
     startGameLoop() {
         let prevTime = Date.now();
+        let inGameTime = 0;
         const loop = () => {
             const currentTime = Date.now();
             const delta = (currentTime - prevTime) / 1000;
-
+            
             // The following code is just to control the pause state, to make testing easier.
             // Should be removed later!
             if (this.humans[0].controls.pause.pressed) {
@@ -84,6 +86,10 @@ export default class ServerGame {
 
 
             if (this.gameRunning) {
+                inGameTime += 1;
+                if ((inGameTime % (60 * 2)) === 0) {
+                    this._ballManager.addBall(getRandomInt(0, BALL_TYPES.BALL_TYPE_AM))
+                }
                 this.ballManager.moveBalls(delta);
                 this.humans.forEach(human => {
                     human.movePaddleFromControls(delta);
@@ -91,7 +97,7 @@ export default class ServerGame {
                 this.bots.forEach(bot => {
                     bot.timeSinceLastUpdate += delta;
                     if (bot.timeSinceLastUpdate >= bot.updateRate) {
-                        bot.updateTargetPos(this.ballManager.balls[0]); //TODO IMPORTANT: this must be updated! Probably pass the entire array?
+                        bot.updateTargetPos(this.ballManager.balls); //TODO IMPORTANT: this must be updated! Probably pass the entire array?
                         bot.timeSinceLastUpdate -= bot.updateRate;
                     }
                     bot.setupMove();
@@ -100,7 +106,7 @@ export default class ServerGame {
 
                 this._handleCollisions();
                 
-                const teamWithEndScore = this.teams.find(team => team.score >= 10);
+                const teamWithEndScore = this.teams.find(team => team.score >= 100);
                 if (teamWithEndScore !== undefined) {
                     const finalGameState: Record<string, number> = {} as Record<SIDES, number>;
                     this.teams.forEach(team => {
@@ -111,17 +117,19 @@ export default class ServerGame {
                 }
             }
             prevTime = currentTime;
-
             setTimeout(loop, 1000 / 60); // Target rate of game update (last number in FPS)
         }
         loop();
     }
 
     getGameDTO(): SGameDTO {
-        return {
-            ball: {
-                pos: this.ballManager.balls[0].pos.toObj(), //TODO update to include all balls
-            },
+        const out: SGameDTO = {
+            balls: this.ballManager.balls.map(ball => ({
+                    id: ball.id,
+                    type: ball.type,
+                    pos: ball.pos.toObj()
+                })
+            ),
             teams: this.teams.map(team => ({
                     side: team.side,
                     score: team.score
@@ -130,8 +138,10 @@ export default class ServerGame {
             paddles: this.paddles.map(paddle => ({
                 id: paddle.id,
                 pos: paddle.pos.toObj(),
+                size: paddle.size.toObj()
             })),
-        };
+        }
+        return out
     }
 
     processClientDTO(dto: CGameDTO) {
@@ -173,7 +183,7 @@ export default class ServerGame {
 
 
     private _handleCollisions() {
-        this.ballManager.handleLimitCollision(this.windowSize, this.teams);
+        this.ballManager.handleLimitCollision(this.teams);
         this.paddles.forEach(paddle => {
             this.ballManager.handlePaddleCollision(paddle);
             this._handlePaddleLimitsCollision(paddle);

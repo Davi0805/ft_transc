@@ -25,4 +25,12 @@ export default abstract class CObject extends AObject {
     get sprite(): Sprite {
         return this._sprite;
     }
+
+    override set size(size: Point) {
+        super.size = size;
+        this._sprite.setSize(size.x, size.y);
+    }
+    override get size() {
+        return super.size;
+    }
 }

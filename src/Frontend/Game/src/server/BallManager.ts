@@ -1,12 +1,28 @@
 import { point, SIDES } from "../misc/types.js";
-import SBall from "./SBall";
+import SBall, { BALL_TYPES } from "./SBall.js";
 import SPaddle from "./SPaddle";
 import Point from "../misc/Point.js";
 import STeam from "./STeam";
+import { getRandomInt } from "../misc/utils.js";
 
 export default class BallManager {
-    constructor(firstBall: SBall) {
+    constructor(windowSize: point,  firstBall: SBall) {
+        this._windowSize = windowSize;
+        this._currentID = 0;
         this._balls.push(firstBall);
+        this._currentID++
+    }
+
+    addBall(type: BALL_TYPES) {
+        console.log("Ball added with id: ", this._currentID)
+        this.balls.push(new SBall(
+            this._currentID++,
+            Point.fromObj({ x: this._windowSize.x / 2, y: this._windowSize.y / 2 }),
+            Point.fromObj({x: 8, y: 8}), //TODO how do i get this??
+            getRandomInt(100, 200),
+            Point.fromObj({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 }),
+            type
+        ))
     }
 
     moveBalls(delta: number) {
@@ -15,17 +31,17 @@ export default class BallManager {
         })
     }
 
-    handleLimitCollision(windowSize: point, teams: STeam[]) {
+    handleLimitCollision(teams: STeam[]) {
         this.balls.forEach(ball => {
             if (ball.cbox.x < 0) {
                 ball.pos = Point.fromObj({ x: ball.cbox.width / 2, y: ball.pos.y })
                 ball.direction.x *= -1
                 const team = teams.find(team => team.side == SIDES.LEFT)
-                if (team) {
+                if (team ) {
                     team.score += 1;
                 }
-            } else if (ball.cbox.x + ball.cbox.width > windowSize.x) {
-                ball.pos = Point.fromObj({ x: windowSize.x - ball.cbox.width / 2, y: ball.pos.y })
+            } else if (ball.cbox.x + ball.cbox.width > this._windowSize.x) {
+                ball.pos = Point.fromObj({ x: this._windowSize.x - ball.cbox.width / 2, y: ball.pos.y })
                 ball.direction.x *= -1;
                 const team = teams.find(team => team.side == SIDES.RIGHT)
                 if (team) {
@@ -38,8 +54,8 @@ export default class BallManager {
                 if (team) {
                     team.score += 1;
                 }
-            } else if (ball.cbox.y + ball.cbox.height > windowSize.y) {
-                ball.pos = Point.fromObj({ x: ball.pos.x, y: windowSize.y - ball.cbox.height / 2 })
+            } else if (ball.cbox.y + ball.cbox.height > this._windowSize.y) {
+                ball.pos = Point.fromObj({ x: ball.pos.x, y: this._windowSize.y - ball.cbox.height / 2 })
                 ball.direction.y *= -1;
                 const team = teams.find(team => team.side == SIDES.BOTTOM)
                 if (team) {
@@ -50,45 +66,57 @@ export default class BallManager {
     }
 
     handlePaddleCollision(paddle: SPaddle) {
-        this.balls.forEach(ball => {
+        for (let i = this.balls.length - 1; i >= 0; i--) {
+            const ball = this.balls[i];
             const collision = ball.cbox.areColliding(paddle.cbox);
             if (collision !== null) {
-                switch (collision) {
-                    case SIDES.LEFT: {
-                        ball.pos = Point.fromObj({ x: paddle.pos.x + ((paddle.cbox.width / 2) + (ball.size.x / 2)), y: ball.pos.y})
-                        if (ball.direction.x < 0) {
-                            ball.direction.x *= -1;
-                        }
-                        break;
-                    } case SIDES.RIGHT: {
-                        ball.pos = Point.fromObj({ x: paddle.pos.x - ((paddle.cbox.width / 2) + (ball.size.x / 2)), y: ball.pos.y})
-                        if (ball.direction.x > 0) {
-                            ball.direction.x *= -1;
-                        }
-                        break ;
-                    } case SIDES.TOP: {
-                        ball.pos = Point.fromObj({ x: ball.pos.x, y: paddle.pos.y + ((paddle.cbox.height / 2) + (ball.size.y / 2)) })
-                        if (ball.direction.y < 0) {
-                            ball.direction.y *= -1;
-                        }
-                        break ;
-                    } case SIDES.BOTTOM: {
-                        ball.pos = Point.fromObj({ x: ball.pos.x, y: paddle.pos.y - ((paddle.cbox.height / 2) + (ball.size.y / 2)) })
-                        if (ball.direction.y > 0) {
-                            ball.direction.y *= -1;
+                if (ball.type === BALL_TYPES.EXPAND) {
+                    paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: 10 }))
+                    this.balls.splice(i, 1);
+                } else if (ball.type === BALL_TYPES.SHRINK) {
+                    paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: -10 }))
+                    this.balls.splice(i, 1);
+                } else {
+                    switch (collision) {
+                        case SIDES.LEFT: {
+                            ball.pos = Point.fromObj({ x: paddle.pos.x + ((paddle.cbox.width / 2) + (ball.size.x / 2)), y: ball.pos.y})
+                            if (ball.direction.x < 0) {
+                                ball.direction.x *= -1;
+                            }
+                            break;
+                        } case SIDES.RIGHT: {
+                            ball.pos = Point.fromObj({ x: paddle.pos.x - ((paddle.cbox.width / 2) + (ball.size.x / 2)), y: ball.pos.y})
+                            if (ball.direction.x > 0) {
+                                ball.direction.x *= -1;
+                            }
+                            break ;
+                        } case SIDES.TOP: {
+                            ball.pos = Point.fromObj({ x: ball.pos.x, y: paddle.pos.y + ((paddle.cbox.height / 2) + (ball.size.y / 2)) })
+                            if (ball.direction.y < 0) {
+                                ball.direction.y *= -1;
+                            }
+                            break ;
+                        } case SIDES.BOTTOM: {
+                            ball.pos = Point.fromObj({ x: ball.pos.x, y: paddle.pos.y - ((paddle.cbox.height / 2) + (ball.size.y / 2)) })
+                            if (ball.direction.y > 0) {
+                                ball.direction.y *= -1;
+                            }
                         }
                     }
+                    if (ball.speed < 600) { //TODO put this in ball object as speed cap and maybe put it in speed getter
+                        //ball.speed += 5;
+                    }
+                    paddle.speed += 1;
                 }
-                if (ball.speed < 600) { //TODO put this in ball object as speed cap and maybe put it in speed getter
-                    ball.speed += 5;
-                }
-                paddle.speed += 1;
             }
-        })
-        
+        }
     }
+
+    private _windowSize: point;
 
     private _balls: SBall[] = []
     set balls(balls: SBall[]) { this._balls = balls; }
     get balls(): SBall[] { return this._balls; }
+
+    private _currentID: number;
 }

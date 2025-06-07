@@ -36,6 +36,14 @@ export const assetsManifest: AssetsManifest = {
                     src: "sprites/ball1.png"
                 },
                 {
+                    alias: "ballExpand",
+                    src: "sprites/expand.png"
+                },
+                {
+                    alias: "ballShrink",
+                    src: "sprites/shrink.png"
+                },
+                {
                     alias: "paddle0",
                     src: "sprites/paddle0.png"
                 },

@@ -63,26 +63,35 @@ export default class SBot extends SPlayer {
         return out
     }
 
-    updateTargetPos(ball: SBall) {
-        let hitpos = this._getHitPos(ball.pos, ball.direction);
-        let hitside = this._getSideFromPos(hitpos)
-        let dir = ball.direction
-        let loopCount = 0
-        
-        while (hitside !== this.paddle.side) {
-            dir = (hitside === SIDES.LEFT || hitside === SIDES.RIGHT)
-                ? Point.fromObj({ x: -dir.x, y: dir.y })
-                : Point.fromObj({ x: dir.x, y: -dir.y })
-            hitpos = this._getHitPos(hitpos, dir);
-            hitside = this._getSideFromPos(hitpos);
+    updateTargetPos(balls: SBall[]) {
+        let smallestT = Infinity;
+
+        balls.forEach(ball => {
+            let t = this._getHitMinT(ball.pos, ball.direction);
+
+            let hitpos = this._getHitPos(ball.pos, ball.direction);
+            let hitside = this._getSideFromPos(hitpos)
+            let dir = ball.direction;
             
-            // Just in case lol
-            loopCount++;
-            if (loopCount > 20) {
-                return
+            while (hitside !== this.paddle.side) {
+                dir = (hitside === SIDES.LEFT || hitside === SIDES.RIGHT)
+                    ? Point.fromObj({ x: -dir.x, y: dir.y })
+                    : Point.fromObj({ x: dir.x, y: -dir.y })
+                t += this._getHitMinT(hitpos, dir);
+                hitpos = this._getHitPos(hitpos, dir);
+                hitside = this._getSideFromPos(hitpos);
+                
+                /* if (t > 3000) {
+                    break
+                } */
             }
-        }
-        this._targetPos = hitpos[this._movementAxis] ;
+            if (t < smallestT) {
+                smallestT = t;
+                this._targetPos = hitpos[this._movementAxis];
+            }
+        })
+        
+        
     }
 
     setupMove() {
@@ -135,6 +144,17 @@ export default class SBot extends SPlayer {
         let tMin = Math.min(...t);
 
         return { x: pos.x + dir.x * tMin, y: pos.y + dir.y * tMin }
+    }
+
+    private _getHitMinT(pos: point, dir: point) {
+        const t = [
+            dir.x < 0 ? (this._limits.x - pos.x) / dir.x : Infinity, //left
+            dir.x > 0 ? (this._limits.x + this._limits.width - pos.x) / dir.x : Infinity, //right
+            dir.y < 0 ? (this._limits.y - pos.y) / dir.y : Infinity, //top
+            dir.y > 0 ? (this._limits.y + this._limits.height - pos.y) / dir.y : Infinity //bottom
+        ]
+
+        return Math.min(...t);
     }
 
     private _getSideFromPos(pos: point) {
