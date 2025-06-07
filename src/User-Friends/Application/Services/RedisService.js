@@ -2,6 +2,7 @@ const sessionRepository = require('../../Adapters/outbound/Repositories/SessionR
 const messageRepository = require('../../Adapters/outbound/Repositories/MessageRepository');
 const friendsCacheRepo = require('../../Adapters/outbound/Repositories/FriendsCacheRepository');
 const friendsRequestRepo = require('../../Adapters/outbound/Repositories/FriendRequestRepository');
+const exception = require('../../Infrastructure/config/CustomException');
 
 class RedisService {
 
@@ -15,11 +16,11 @@ class RedisService {
 
     async validateSession(token)
     {
-        if (!token) throw 400;
+        if (!token) { throw exception('Authorization token not found!', 400) };
 
         const metadata = JSON.parse(await sessionRepository.findByJwt(token.substring(7)));
         
-        if (!metadata || metadata.twofa_verified != 1) throw 401;
+        if (!metadata || metadata.twofa_verified != 1) { throw exception('Authorization failed!', 401) };
 
         return metadata;
     }

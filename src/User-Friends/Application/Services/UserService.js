@@ -8,12 +8,16 @@ const userRepository = require('../../Adapters/outbound/Repositories/UserReposit
 class UserService {
 
     async getAll() {
-        return await userRepository.findAll();
+        const users = await userRepository.findAll();
+        if (!users || Object.keys(users).length === 0) throw exception('Users not Found!', 404);
+        return users;
     }
 
     async findById(id)
     {
-        return await userRepository.findById(id);
+        const users = await userRepository.findById(id);
+        if (!users || Object.keys(users).length === 0) throw exception('Data not found!', 404);
+        return users;
     }
 
     async createUser(User) {
