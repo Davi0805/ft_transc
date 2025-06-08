@@ -10,7 +10,7 @@ class UserController {
 
 
     /* 
-    *    Endpoint for debug purposes, thats why returns too many critical data
+    *    @brief Endpoint for debug purposes, thats why returns too many critical data
     *    GET - localhost:8080/users/{id}
     *    @returns list of users
     */
@@ -22,7 +22,7 @@ class UserController {
 
 
     /* 
-    *    Endpoint to return a few personal data of user
+    *    @brief Endpoint to return a few personal data of user
     *    GET - localhost:8080/users/me
     *    @returns id and nickname
     */
@@ -35,7 +35,7 @@ class UserController {
 
 
     /* 
-    *    Get by id endpoint
+    *    @brief Get by id endpoint
     *    GET - localhost:8080/users/{id}
     *    @params {id: (long)} - user_id that is being searched
     *    @returns list of users
@@ -48,7 +48,7 @@ class UserController {
 
 
     /* 
-    *    Endpoint to create user
+    *    @brief Endpoint to create user
     *    POST - localhost:8080/users
     *    @params name: (string)
     *    @params username: (string)
@@ -57,14 +57,13 @@ class UserController {
     */
     async createUser(req, reply)
     {
-        const result = await userService.createUser(req.body); // bad pratice but i can make a dto later
-        if (!result) throw exception('Failed to create user!', 400);
+        await userService.createUser(req.body); // bad pratice but i can make a dto later
         return reply.code(201).send();
     }
 
 
     /* 
-    *    Endpoint to upload user avatar as multipart/form-data
+    *    @brief Endpoint to upload user avatar as multipart/form-data
     *    POST - localhost:8080/users/upload-avatar
     *    @params avatar: (file) - file to be uploaded
     */
@@ -77,7 +76,7 @@ class UserController {
 
 
     /* 
-    *    Endpoint to update users name
+    *    @brief Endpoint to update users name
     *    PUT - localhost:8080/users/name
     *    @params name: (string)
     */
@@ -89,7 +88,7 @@ class UserController {
 
 
     /* 
-    *    Endpoint to update users password
+    *    @brief Endpoint to update users password
     *    PUT - localhost:8080/user/password
     *    @params name: (string)
     */
@@ -102,7 +101,7 @@ class UserController {
 
 
     /* 
-    *    Endpoint to be able to get the static avatar picture from the server
+    *    @brief Endpoint to be able to get the static avatar picture from the server
     *    GET - localhost:8080/users/avatar/{id}
     *    @params {id: (long)} - user_id that is being searched
     *    @returns {file: (file)} - base64
@@ -110,7 +109,6 @@ class UserController {
     async getAvatar(req, reply)
     {
         const user = await userService.findById(req.params.id);
-        if (!user || user.length === 0) throw exception('User not found!', 404);
         const imagePath = user[0].user_image;
         if (!imagePath) throw exception('Image not defined!', 204);
         const stream = fs.createReadStream(imagePath);
@@ -119,7 +117,7 @@ class UserController {
 
 
     /* 
-    *    Login endpoint to authenticate users and cache friendships on redis
+    *    @brief Login endpoint to authenticate users and cache friendships on redis
     *    POST - localhost:8080/login
     *    @params {username: (string), password: (string)}
     *    @returns {token: (string)} - returns the jwt token of user
@@ -142,7 +140,7 @@ class UserController {
 
 
     /* 
-    *    Endpoint to activate 2FA to user account and generate qrcode
+    *    @brief Endpoint to activate 2FA to user account and generate qrcode
     *    POST - localhost:8080/twofa/activate
     *    @returns QRCODE - to be used on google authenticator
     */
@@ -158,7 +156,7 @@ class UserController {
 
 
     /* 
-    *    Endpoint to verify the 2FA TOKEN, after login if the user is not verified
+    *    @brief Endpoint to verify the 2FA TOKEN, after login if the user is not verified
     *    will be necessary send the token from google authenticator or other to check-in
     *    POST - localhost:8080/twofa/auth
     *    @params token: (string) - temporary token from 2FA app, like google authenticator
@@ -166,7 +164,7 @@ class UserController {
     async twofa_verify(req, reply)
     {
         const user = await userService.findById(req.session.user_id);
-        if (!await twofaService.verifyToken(user[0].twofa_secret, req.body.token)) throw exception('Wrong 2FA token!', 401);
+        await twofaService.verifyToken(user[0].twofa_secret, req.body.token)
         const jwt = req.headers.authorization.substring(7);
         await redisService.saveSession(jwt, { user_id: req.session.user_id, twofa_verified: 1 });
         return reply.send();
