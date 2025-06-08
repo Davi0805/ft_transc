@@ -1,3 +1,4 @@
+import { BALL_TYPES } from "../server/SBall.js"
 import { SIDES, ROLES, point, TUserCustoms, TGameConfigs } from "./types.js"
 
 const PADDLE_COMMON_VARS = {
@@ -97,6 +98,8 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         field: userCustoms.field,
         gameLength: userCustoms.gameLength,
         ball: {
+            id: 0,
+            type: BALL_TYPES.BASIC,
             spriteID: userCustoms.ball.spriteID,
             pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
             direction: { x: Math.random() - 0.5, y: Math.random() - 0.5 },

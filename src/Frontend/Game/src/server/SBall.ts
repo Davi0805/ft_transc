@@ -1,5 +1,11 @@
 import Point from "../misc/Point.js";
 import SObject from "../abstracts/SObject.js";
+import { TBall } from "../misc/types.js";
+
+
+
+export type TSBallConfigs = Pick<TBall, "type" | "size" | "pos" |"direction" | "speed">
+export type SBallState = Pick<SBall, "id" | "pos" | "direction" | "speed">
 
 export enum BALL_TYPES {
     BASIC,
@@ -7,6 +13,8 @@ export enum BALL_TYPES {
     SHRINK,
     BALL_TYPE_AM
 }
+
+export const SBALL_DEFAULT_SIZE = { x: 8, y: 8 }
 
 // Represents the ball from the Server's perspective
 export default class SBall extends SObject {

@@ -1,27 +1,37 @@
 import { point, SIDES } from "../misc/types.js";
-import SBall, { BALL_TYPES } from "./SBall.js";
+import SBall, { BALL_TYPES, SBALL_DEFAULT_SIZE, SBallState, TSBallConfigs } from "./SBall.js";
 import SPaddle from "./SPaddle";
 import Point from "../misc/Point.js";
 import STeam from "./STeam";
 import { getRandomInt } from "../misc/utils.js";
 
 export default class BallManager {
-    constructor(windowSize: point,  firstBall: SBall) {
+    constructor(windowSize: point,  firstBallConfigs: TSBallConfigs) {
         this._windowSize = windowSize;
         this._currentID = 0;
-        this._balls.push(firstBall);
-        this._currentID++
+        this.addBall(firstBallConfigs);
     }
 
-    addBall(type: BALL_TYPES) {
+    addBallOfType(type: BALL_TYPES) {
+        const configs = {
+            type: type,
+            size: SBALL_DEFAULT_SIZE,
+            pos: { x: this._windowSize.x / 2, y: this._windowSize.y / 2 },
+            direction: { x: Math.random() * 1.8 - 0.9, y: Math.random() * 1.8 - 0.9},
+            speed: getRandomInt(50, 250)
+        };
+        this.addBall(configs);
+    }
+
+    addBall(ballConfigs: TSBallConfigs) {
         console.log("Ball added with id: ", this._currentID)
         this.balls.push(new SBall(
             this._currentID++,
-            Point.fromObj({ x: this._windowSize.x / 2, y: this._windowSize.y / 2 }),
-            Point.fromObj({x: 8, y: 8}), //TODO how do i get this??
-            getRandomInt(100, 200),
-            Point.fromObj({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 }),
-            type
+            Point.fromObj(ballConfigs.pos),
+            Point.fromObj(ballConfigs.size),
+            ballConfigs.speed,
+            Point.fromObj(ballConfigs.direction),
+            ballConfigs.type
         ))
     }
 

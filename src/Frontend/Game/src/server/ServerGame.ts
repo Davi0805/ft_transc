@@ -88,7 +88,7 @@ export default class ServerGame {
             if (this.gameRunning) {
                 inGameTime += 1;
                 if ((inGameTime % (60 * 2)) === 0) {
-                    this._ballManager.addBall(getRandomInt(0, BALL_TYPES.BALL_TYPE_AM))
+                    this._ballManager.addBallOfType(getRandomInt(0, BALL_TYPES.BALL_TYPE_AM))
                 }
                 this.ballManager.moveBalls(delta);
                 this.humans.forEach(human => {

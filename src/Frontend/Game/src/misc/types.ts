@@ -24,7 +24,9 @@ type TWindow = {
     backgroundSprite: number
 }
 
-type TBall = {
+export type TBall = {
+    id: number
+    type: BALL_TYPES
     size: point
     pos: point,
     direction: point,
