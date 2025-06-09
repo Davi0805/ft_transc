@@ -1,8 +1,9 @@
 import { getSelfData } from "../api/getSelfDataAPI.js";
-
+import { Chat } from "../components/sidebar.js";
 export class AuthService {
   constructor() {
     this.protectedRoutes = ["/play", "/profile"];
+    this.userID = null;
     this.init();
   }
 
@@ -16,6 +17,8 @@ export class AuthService {
     this.isAuthenticated = true;
     localStorage.setItem("authToken", token);
     this.updateHeaderVisibility(); // todo
+
+    const chat = new Chat()
   }
 
   logout() {
@@ -56,13 +59,12 @@ export class AuthService {
 
     try {
       const userData = await getSelfData();
+      this.userID = userData.id;
       showLoggedInVersion(userData.nickname);
-      // todo avatar
     } catch (error) {
       this.authToken = null;
       this.isAuthenticated = false;
       showLoggedOutVersion();
-      return;
     }
   }
 
