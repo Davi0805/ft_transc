@@ -2,6 +2,9 @@ import Point from "../misc/Point"
 import { SIDES } from "../misc/types.js";
 import SObject from "../abstracts/SObject.js";
 import { computeOrientation } from "../misc/utils.js";
+import { TPaddle } from "../misc/types.js";
+
+export type TSPaddleConfigs = Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 
 // Represents the paddle from the server's perspective
 export default class SPaddle extends SObject {

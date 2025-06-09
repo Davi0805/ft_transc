@@ -1,7 +1,7 @@
 import { point, rectangle, SIDES } from "../misc/types.js";
 import SPaddle from "./SPaddle.js";
 import SPlayer from "./SPlayer.js";
-import SBall from "./SBall.js";
+import SBall, { SBALL_DEFAULT_SIZE } from "./SBall.js";
 import Point from "../misc/Point.js";
 
 // In pixels. The smaller the value, the closer to the target position the bot will attempt to place its paddle.
@@ -18,10 +18,10 @@ export default class SBot extends SPlayer {
         this._limits = windowLimits;
         
         if (this.paddle.orientation.x !== 0) {
-            this._orientationAxis = 'x';
+            //this._orientationAxis = 'x';
             this._movementAxis = 'y';
         } else {
-            this._orientationAxis = 'y';
+            //this._orientationAxis = 'y';
             this._movementAxis = 'x';
         }
 
@@ -32,7 +32,7 @@ export default class SBot extends SPlayer {
             : (() => this._targetPos < this.paddle.pos[this._movementAxis]);
     }
 
-    static buildLimits(paddles: SPaddle[], windowSize: point, ballSize: point): rectangle {
+    static buildLimits(paddles: SPaddle[], windowSize: point): rectangle {
         const sideConfig: Record<SIDES, { axis: 'x' | 'y', boundary: 'min' | 'max' }> = {
             [SIDES.LEFT]:   { axis: 'x', boundary: 'min' },
             [SIDES.RIGHT]:  { axis: 'x', boundary: 'max' },
@@ -55,10 +55,10 @@ export default class SBot extends SPlayer {
             }
         })
         const out: rectangle = {
-            x: record[SIDES.LEFT] + ballSize.x / 2,
-            y: record[SIDES.TOP] + ballSize.y / 2,
-            width: record[SIDES.RIGHT] - record[SIDES.LEFT] - ballSize.x,
-            height: record[SIDES.BOTTOM] - record[SIDES.TOP] - ballSize.y
+            x: record[SIDES.LEFT] + SBALL_DEFAULT_SIZE.x / 2,
+            y: record[SIDES.TOP] + SBALL_DEFAULT_SIZE.y / 2,
+            width: record[SIDES.RIGHT] - record[SIDES.LEFT] - SBALL_DEFAULT_SIZE.x,
+            height: record[SIDES.BOTTOM] - record[SIDES.TOP] - SBALL_DEFAULT_SIZE.y
         }
         return out
     }
@@ -122,7 +122,7 @@ export default class SBot extends SPlayer {
 
     private _limits: rectangle;
 
-    private _orientationAxis: 'x' | 'y';
+    //private _orientationAxis: 'x' | 'y';
     private _movementAxis: 'x' | 'y';
 
     private _targetPos: number;

@@ -26,7 +26,7 @@ const clients: WebSocket[] = [];
 const broadcastRate = 1000 / 60; // In milliseconds
 // The following pattern is safer than using setInterval(), because it makes sure that the previous iteration is 
 // finished before trying to broadcast again.
-(function loop() {
+(function loop() { //TODO maybe put this in the game to make the call to it easier?
   setTimeout(() => {
     const message: Adto = {
         type: "SGameDTO",

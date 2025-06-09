@@ -34,7 +34,7 @@ export type TBall = {
     spriteID: number,
 }
 
-type TPaddle = {
+export type TPaddle = {
     id: number
     side: SIDES,
     role: ROLES
@@ -159,7 +159,7 @@ export type SceneChangeDetail = | { sceneName: "exampleScene", configs: ExampleS
 // Server
 
 export type SGameState = {
-    ball: Pick<TBall, "pos" | "size" | "speed" | "direction">,
+    ball: Pick<TBall,"type" | "pos" | "size" | "speed" | "direction">,
     paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 }
 

@@ -1,15 +1,24 @@
 import { point, SIDES } from "../misc/types.js";
-import SBall, { BALL_TYPES, SBALL_DEFAULT_SIZE, SBallState, TSBallConfigs } from "./SBall.js";
-import SPaddle from "./SPaddle";
+import SBall, { BALL_TYPES, SBALL_DEFAULT_SIZE, TSBallConfigs } from "./SBall.js";
+import SPaddle from "./SPaddle.js";
 import Point from "../misc/Point.js";
-import STeam from "./STeam";
 import { getRandomInt } from "../misc/utils.js";
+import STeamsManager from "./STeamsManager.js";
+import LoopController from "./LoopController.js";
 
-export default class BallManager {
+export default class SBallsManager {
     constructor(windowSize: point,  firstBallConfigs: TSBallConfigs) {
         this._windowSize = windowSize;
+        this._ballSpawnRate = 4;
         this._currentID = 0;
         this.addBall(firstBallConfigs);
+    }
+
+    update(loop: LoopController) {
+        if (loop.isEventTime(this._ballSpawnRate)) {
+            this.addBallOfType(getRandomInt(0, BALL_TYPES.BALL_TYPE_AM))
+        }
+        this.moveBalls(loop.delta);
     }
 
     addBallOfType(type: BALL_TYPES) {
@@ -24,7 +33,6 @@ export default class BallManager {
     }
 
     addBall(ballConfigs: TSBallConfigs) {
-        console.log("Ball added with id: ", this._currentID)
         this.balls.push(new SBall(
             this._currentID++,
             Point.fromObj(ballConfigs.pos),
@@ -41,36 +49,24 @@ export default class BallManager {
         })
     }
 
-    handleLimitCollision(teams: STeam[]) {
+    handleLimitCollision(teamsManager: STeamsManager) {
         this.balls.forEach(ball => {
             if (ball.cbox.x < 0) {
                 ball.pos = Point.fromObj({ x: ball.cbox.width / 2, y: ball.pos.y })
                 ball.direction.x *= -1
-                const team = teams.find(team => team.side == SIDES.LEFT)
-                if (team ) {
-                    team.score += 1;
-                }
+                teamsManager.damageTeam(SIDES.LEFT, 1);
             } else if (ball.cbox.x + ball.cbox.width > this._windowSize.x) {
                 ball.pos = Point.fromObj({ x: this._windowSize.x - ball.cbox.width / 2, y: ball.pos.y })
                 ball.direction.x *= -1;
-                const team = teams.find(team => team.side == SIDES.RIGHT)
-                if (team) {
-                    team.score += 1;
-                }
+                teamsManager.damageTeam(SIDES.RIGHT, 1);
             } else if (ball.cbox.y < 0) {
                 ball.pos = Point.fromObj({ x: ball.pos.x, y: ball.cbox.height / 2 })
                 ball.direction.y *= -1;
-                const team = teams.find(team => team.side == SIDES.TOP)
-                if (team) {
-                    team.score += 1;
-                }
+                teamsManager.damageTeam(SIDES.TOP, 1);
             } else if (ball.cbox.y + ball.cbox.height > this._windowSize.y) {
                 ball.pos = Point.fromObj({ x: ball.pos.x, y: this._windowSize.y - ball.cbox.height / 2 })
                 ball.direction.y *= -1;
-                const team = teams.find(team => team.side == SIDES.BOTTOM)
-                if (team) {
-                    team.score += 1;
-                }
+                teamsManager.damageTeam(SIDES.BOTTOM, 1);
             }
         })
     }
@@ -122,11 +118,21 @@ export default class BallManager {
         }
     }
 
+    getBallsDTO() {
+        return this._balls.map(ball => ({
+            id: ball.id,
+            type: ball.type,
+            pos: ball.pos.toObj()
+        }))
+    }
+
     private _windowSize: point;
 
     private _balls: SBall[] = []
-    set balls(balls: SBall[]) { this._balls = balls; }
     get balls(): SBall[] { return this._balls; }
+
+    private _ballSpawnRate;
+    get ballSpawnRate() { return this._ballSpawnRate; }
 
     private _currentID: number;
 }

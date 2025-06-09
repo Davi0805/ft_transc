@@ -1,4 +1,4 @@
-import { BALL_TYPES } from "../server/SBall.js"
+import { BALL_TYPES, SBALL_DEFAULT_SIZE } from "../server/SBall.js"
 import { SIDES, ROLES, point, TUserCustoms, TGameConfigs } from "./types.js"
 
 const PADDLE_COMMON_VARS = {
@@ -17,25 +17,25 @@ export const UserCustoms: TUserCustoms = {
     paddles: [
         {
             id: 0,
-            side: SIDES.TOP,
+            side: SIDES.LEFT,
             role: ROLES.BACK,
             spriteID: 1
         },
         {
             id: 1,
-            side: SIDES.BOTTOM,
+            side: SIDES.TOP,
             role: ROLES.BACK,
             spriteID: 0
         },
         {
             id: 2,
-            side: SIDES.LEFT,
+            side: SIDES.RIGHT,
             role: ROLES.BACK,
             spriteID: 0
         },
         {
             id: 3,
-            side: SIDES.RIGHT,
+            side: SIDES.BOTTOM,
             role: ROLES.BACK,
             spriteID: 0
         },
@@ -47,7 +47,7 @@ export const UserCustoms: TUserCustoms = {
             humans: [
                 {
                     id: 0,
-                    paddleID: 2,
+                    paddleID: 0,
                     controls: {
                         left: "ArrowUp",
                         right: "ArrowDown",
@@ -56,7 +56,7 @@ export const UserCustoms: TUserCustoms = {
                 }
             ]
         },
-        {
+        /* {
             id: 1,
             humans: [
                 {
@@ -69,24 +69,24 @@ export const UserCustoms: TUserCustoms = {
                     }
                 }
             ]
-        }
+        } */
     ],
     bots: [
-        {
+        /* {
             paddleID: 0,
-            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        },
+            difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+        }, */
         {
             paddleID: 1,
-            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+            difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
         {
             paddleID: 2,
-            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+            difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
         {
             paddleID: 3,
-            difficulty: 0.1 // Number of seconds between predictions (1 is hardest and also minimum!!)
+            difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
     ]
 }
@@ -106,7 +106,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             
             //pos: { x: 20, y: 50},
             //direction: { x: 0, y: 1 }, 
-            size: { x: 8, y: 8 },
+            size: SBALL_DEFAULT_SIZE,
             speed: 100
         },
         teams: [],
@@ -148,7 +148,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             out.teams.push({
                 side: paddle.side,
                 score: {
-                    score: 0,
+                    score: 100,
                     pos: scorePos
                 }
             })

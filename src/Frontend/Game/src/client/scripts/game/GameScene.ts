@@ -84,7 +84,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         gameDto.balls.forEach(ballState => {
             const ball = this.balls.get(ballState.id);
             if (ball === undefined) {
-                console.log(ballState.id)
                 let ballName: string;
                 if (ballState.type === BALL_TYPES.EXPAND) {
                     ballName = "ballExpand";
@@ -94,7 +93,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                     ballName = "ball0";
                 }
                 const ballSprite = new Sprite(this._assets[ballName]);
-                console.log(ballSprite)
                 this._root.addChild(ballSprite);
                 this.balls.set(ballState.id, new CBall(
                     ballState.id,

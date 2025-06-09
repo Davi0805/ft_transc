@@ -2,8 +2,6 @@ import Point from "../misc/Point.js";
 import SObject from "../abstracts/SObject.js";
 import { TBall } from "../misc/types.js";
 
-
-
 export type TSBallConfigs = Pick<TBall, "type" | "size" | "pos" |"direction" | "speed">
 export type SBallState = Pick<SBall, "id" | "pos" | "direction" | "speed">
 
@@ -23,7 +21,6 @@ export default class SBall extends SObject {
         this._speed = speed;
         this._direction = direction.normalize();
         this._type = type;
-        console.log(speed)
     }
 
     move(delta: number) {
