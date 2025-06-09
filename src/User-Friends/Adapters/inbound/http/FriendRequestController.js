@@ -8,6 +8,7 @@ class FriendRequestController {
     /* 
     *    Endpoint for DEBUG purposes
     *    GET - localhost:8080/friend_requests
+    *    @returns list of friend requests
     */
     async getAll(req, reply)
     {
@@ -32,6 +33,7 @@ class FriendRequestController {
     /* 
     *    Endpoint to list all friend requests pending that u can accept
     *    GET - localhost:8080/friend_requests/pending
+    *    @returns list of pending requests
     */
     async listPendingRequests(req, reply)
     {
@@ -56,9 +58,9 @@ class FriendRequestController {
 
 
     /* 
-        Endpoint to reject the friendship requests that u received
-        POST - localhost:8080/friend_requests/{request_id}/reject
-        @params request_id: (Long) - id of friend_request
+    *    Endpoint to reject the friendship requests that u received
+    *    POST - localhost:8080/friend_requests/{request_id}/reject
+    *    @params request_id: (Long) - id of friend_request
     */
     async rejectRequest(req, reply)
     {
@@ -68,8 +70,8 @@ class FriendRequestController {
 
 
     /*
-        Endpoint to retrieve all friends of user, based on friend requests table
-        GET -  localhost:8080/friends
+    *    Endpoint to retrieve all friends of user, based on friend requests table
+    *    GET -  localhost:8080/friends
     */
     async getAllFriends(req, reply)
     {

@@ -41,7 +41,9 @@ class FriendRequestService {
     async listPendingRequests(user_id)
     {
         try {
-            return await friendRequestRepo.listAllPendingRequest(user_id);
+            const pending = await friendRequestRepo.listAllPendingRequest(user_id);
+            if (!pending || pending.size === 0) throw exception('No pending requests found!', 204);
+            return pending;
         } catch (error) {
             throw exception('Failed to retrieve pending friend requests', 400); 
         }
