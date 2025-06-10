@@ -1,5 +1,5 @@
 import { getSelfData } from "../api/getSelfDataAPI.js";
-import { Chat } from "../components/sidebar.js";
+import { Chat } from "../components/sidebar.js"
 export class AuthService {
   constructor() {
     this.protectedRoutes = ["/play", "/profile"];
@@ -16,16 +16,15 @@ export class AuthService {
     this.authToken = token;
     this.isAuthenticated = true;
     localStorage.setItem("authToken", token);
-    this.updateHeaderVisibility(); // todo
-
-    const chat = new Chat()
+    this.updateHeaderVisibility();
+    const sidebar = new Chat(this.userID);
   }
 
   logout() {
     this.authToken = null;
     this.isAuthenticated = false;
     localStorage.removeItem("authToken");
-    this.updateHeaderVisibility(); // todo
+    this.updateHeaderVisibility();
   }
 
   getToken() {
