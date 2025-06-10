@@ -1,38 +1,44 @@
 import { getUserDataById } from "../api/getUserDataAPI.js";
 import { getUserAvatarById } from "../api/getUserAvatarAPI.js";
+import { getSelfConversations } from "../api/getSelfConversations.js"
 import { authService } from "../services/authService.js";
 import { webSocketService } from "../services/webSocketService.js";
+import { ChatWindow } from "./chatWindow.js";
+
 export class Chat {
     constructor(userID) {
         this.friends = [];
         this.minimized = false;
         this.openChatWindows = new Map();
         this.userID = userID;
+        this.init();
     }
 
     async init() {
         this.setToken();
+        console.log('aqui1')
 
         webSocketService.connect(this.token, this.userID);
-
+        console.log('aqui2')
         await this.getSidebarConversations();
-        this.insertContactsOnSidebar();
+        this.insertContactsOnSidebar(); 
     }
     
     async getSidebarConversations() {
-        const convs = getSelfConversations(this.token);
+        const convs = await getSelfConversations(this.token);
         if (convs.lenght == 0) return;
 
         for (const conv of convs) {
 
-            const friendData = await getUserDataById(authService.getToken(), conv.friend_id);
-            let friendAvatarURL = await getUserAvatarById(authService.getToken(), conv.friend_id);
+            const friendID = conv.user1_id === this.userID ? conv.user2_id : conv.user1_id ;
+            const friendData = await getUserDataById(friendID);
+            let friendAvatarURL = await getUserAvatarById(friendID);
 
             if (!friendAvatarURL) 
                 friendAvatarURL = "./Assets/default/bobzao.jpg"
 
             this.friends.push({ 
-                friendID: conv.friend_id,
+                friendID: friendID,
                 friendName: friendData.name,
                 friendAvatar: friendAvatarURL
             });
@@ -47,8 +53,8 @@ export class Chat {
             contactBtn.className = 'contact';
             contactBtn.innerHTML =  `
                 <button class="contact">
-                    <img src="${user.avatar}" width="40px" height="40px">
-                    ${ this.minimized ? `<span>${user.name}</span>` : "" }
+                    <img src="${user.friendAvatar}" width="40px" height="40px">
+                    ${ this.minimized  ? "" : `<span>${user.friendName}</span>` }
                 </button>
             `;
 
@@ -61,17 +67,17 @@ export class Chat {
     }
 
     openChatWindow(friend) {
-        if (this.openChatWindows.has(friend.id)) {
-            this.openChatWindows.get(friend.id).focus();
+        if (this.openChatWindows.has(friend.friendID)) {
+            this.openChatWindows.get(friend.friendID).focus();
             return ;
         }
 
-        const chatWindow = new ChatWindow(friend);
+        const chatWindow = new ChatWindow(friend.friendID);
         chatWindow.open();
 
         const originalClose = chatWindow.close.bind(chatWindow);
         chatWindow.close = () => {
-            this.openChatWindows.delete(friend.id);
+            this.openChatWindows.delete(friend.friendID);
             originalClose();
         };
     }
