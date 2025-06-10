@@ -3,7 +3,7 @@
 // Subscribers: Your chat windows, sidebar, notifications (subscribe to message types)
 // Message Broker: The messageHandlers system (routes messages to subscribers)
 class WebSocketService {
-    constructor () {
+    constructor() {
         this.ws = null;
         this.isConnected = false;
         this.reconnectAttempts = 0; // current
@@ -13,7 +13,6 @@ class WebSocketService {
         this.messageHandlers = new Map();
     }
 
-    // TODO CHECK WITH DAVI HOW WE CONNECT WITH WEBSOCKET
     /**
      * - `onopen`: Triggered when the connection is successfully established. Marks the connection as active and sends
      *   a "user_connected" message to the server.
@@ -30,35 +29,31 @@ class WebSocketService {
     connect(token, userID) {
         if (this.ws && this.ws.readyState === WebSocketService.OPEN) {
             console.log("DEBUG: WebSocket already connected");
-            return ;
+            return;
         }
 
         this.userID = userID;
-        // TODO HERE should we add token?
-        this.ws = new WebSocket();
+        // 1. Query parameter (mais comum)
+        // const wsUrl = `ws://localhost:8081/ws?token=${encodeURIComponent(token)}`;
+        // this.ws = new WebSocket(wsUrl);
+
+        // 2. Sub-protocolo
+        this.ws = new WebSocket('ws://localhost:8081/ws', [`Bearer.${token}`]);
 
         this.ws.onopen = (ev) => {
             console.log("DEBUG: WebSocket connected");
             this.isConnected = true;
-            this.reconnectAttempts = 0;
-
-            // TODO initial connection message. check with davi ASWELL
-            this.send({
-                type: 'user_connected',
-                userID: this.userID,
-                timestamp: new Date().toISOString()
-            });
         };
         this.ws.onmessage = (ev) => {
             try {
                 const data = JSON.parse(ev.data);
                 this.handleMessage(data);
             } catch (error) {
-                console.log("DEBUG: Error parsing websocket message");                
+                console.log("DEBUG: Error parsing websocket message");
             }
         };
         this.ws.onclose = (ev) => {
-            console.log('DEBUG: websocket closed:'. ev.code, ev.reason);
+            console.log('DEBUG: websocket closed:', ev.code, ev.reason);
             this.isConnected = false;
 
             if (ev.code !== 1000 && this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -66,7 +61,7 @@ class WebSocketService {
                 setTimeout(() => {
                     console.log(`Reconnection attempt ${this.reconnectAttempts}`);
                     this.connect(token, userID);
-                }, this.reconnectAttempts * this.reconnectDelay); 
+                }, this.reconnectAttempts * this.reconnectDelay);
             }
         };
         this.ws.onerror = (error) => {
