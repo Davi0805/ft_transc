@@ -3,7 +3,7 @@ const sensible = require('fastify-sensible');
 const webSocketRoutes = require('./Infrastructure/routes/WebSocketRoutes');
 const conversationRoutes = require('./Infrastructure/routes/ConversationRoutes');
 const chatMessageRoutes = require('./Infrastructure/routes/ChatMessagesRoutes');
-
+const onlineUserService = require('./Application/Services/OnlineUserService');
 const consumeNewFriendsEvent = require('./Adapters/inbound/Redis Streams/streamsConsumer');
 
 const setup = () => {
@@ -32,7 +32,8 @@ const setup = () => {
 
 const run = () => {
     const app = setup();
-
+    onlineUserService.onlineUserEventLoop();
+    /* onlineUserService.broadcastOnlineFriends(); */
     consumeNewFriendsEvent();
     
     try {
