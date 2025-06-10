@@ -1,5 +1,5 @@
 import { ApplicationOptions } from "pixi.js"
-import { BALL_TYPES } from "../server/SBall"
+import { BALL_TYPES } from "../server/Objects/SBall"
  
 export enum SIDES {
     LEFT,

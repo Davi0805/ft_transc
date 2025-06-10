@@ -7,7 +7,7 @@ import CPaddle from "./CPaddle";
 import { SIDES, CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState, CGameDTO } from "../../../misc/types";
 import CTeam from "./CTeam";
 import CScore from "./CScore";
-import { BALL_TYPES } from "../../../server/SBall";
+import { BALL_TYPES } from "../../../server/Objects/SBall";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {

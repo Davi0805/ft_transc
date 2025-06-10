@@ -1,5 +1,5 @@
 
-import SPaddle from "./SPaddle.js"
+import SPaddle from "../Objects/SPaddle"
 import SPlayer from "./SPlayer.js";
 
 // Represents a human player

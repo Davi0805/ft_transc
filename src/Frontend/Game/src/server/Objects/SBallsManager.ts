@@ -1,10 +1,10 @@
-import { point, SIDES } from "../misc/types.js";
+import { point, SIDES } from "../../misc/types.js";
 import SBall, { BALL_TYPES, SBALL_DEFAULT_SIZE, TSBallConfigs } from "./SBall.js";
-import SPaddle from "./SPaddle.js";
-import Point from "../misc/Point.js";
-import { getRandomInt } from "../misc/utils.js";
-import STeamsManager from "./STeamsManager.js";
-import LoopController from "./LoopController.js";
+import SPaddle from "../Objects/SPaddle.js";
+import Point from "../../misc/Point.js";
+import { getRandomInt } from "../../misc/utils.js";
+import STeamsManager from "../STeamsManager.js";
+import LoopController from "../LoopController.js";
 
 export default class SBallsManager {
     constructor(windowSize: point,  firstBallConfigs: TSBallConfigs) {

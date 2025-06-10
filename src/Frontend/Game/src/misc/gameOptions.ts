@@ -1,4 +1,4 @@
-import { BALL_TYPES, SBALL_DEFAULT_SIZE } from "../server/SBall.js"
+import { BALL_TYPES, SBALL_DEFAULT_SIZE } from "../server/Objects/SBall.js"
 import { SIDES, ROLES, point, TUserCustoms, TGameConfigs } from "./types.js"
 
 const PADDLE_COMMON_VARS = {

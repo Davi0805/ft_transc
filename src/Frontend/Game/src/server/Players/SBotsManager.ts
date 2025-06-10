@@ -1,10 +1,10 @@
-import { point, rectangle, SIDES } from "../misc/types.js";
+import { point, rectangle, SIDES } from "../../misc/types.js";
 import SBot from "./SBot.js";
-import SPaddle from "./SPaddle";
-import SBall, { SBALL_DEFAULT_SIZE } from "./SBall.js";
-import LoopController from "./LoopController";
+import SPaddle from "../Objects/SPaddle";
+import SBall, { SBALL_DEFAULT_SIZE } from "../Objects/SBall.js";
+import LoopController from "../LoopController";
 
-export default class BotsManager {
+export default class SBotsManager {
     constructor(botsConfigs: { paddleID: number; difficulty: number}[],
         paddles: SPaddle[], windowSize: point
     ) {

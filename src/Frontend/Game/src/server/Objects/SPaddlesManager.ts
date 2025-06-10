@@ -1,7 +1,7 @@
 import SPaddle, { TSPaddleConfigs } from "./SPaddle.js";
-import Point from "../misc/Point.js";
-import { point } from "../misc/types";
-import SBallsManager from "./SBallsManager";
+import Point from "../../misc/Point.js";
+import { point } from "../../misc/types.js";
+import SBallsManager from "./SBallsManager.js";
 
 export default class SPaddlesManager {
     constructor(paddles: TSPaddleConfigs, windowSize: point) {

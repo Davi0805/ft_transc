@@ -1,6 +1,6 @@
-import Point from "../misc/Point.js";
-import SObject from "../abstracts/SObject.js";
-import { TBall } from "../misc/types.js";
+import Point from "../../misc/Point.js";
+import SObject from "../../abstracts/SObject.js";
+import { TBall } from "../../misc/types.js";
 
 export type TSBallConfigs = Pick<TBall, "type" | "size" | "pos" |"direction" | "speed">
 export type SBallState = Pick<SBall, "id" | "pos" | "direction" | "speed">

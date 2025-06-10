@@ -1,5 +1,5 @@
-import { TControlsState } from "../misc/types.js"
-import SPaddle from "./SPaddle.js";
+import { TControlsState } from "../../misc/types.js"
+import SPaddle from "../Objects/SPaddle.js";
 
 export default abstract class SPlayer {
     constructor(paddle: SPaddle) {

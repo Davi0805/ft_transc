@@ -1,6 +1,6 @@
 import { TGameConfigs, CAppConfigs, SGameConfigs, TControls } from "./types.js";
 import Point from "./Point.js";
-import { BALL_TYPES } from "../server/SBall.js";
+import { BALL_TYPES } from "../server/Objects/SBall.js";
 
 export function buildCAppConfigs(gameGonfigs: TGameConfigs, 
   clientID: number, websocket: WebSocket): CAppConfigs {

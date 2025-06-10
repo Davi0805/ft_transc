@@ -1,6 +1,6 @@
-import { TControlsState } from "../misc/types";
+import { TControlsState } from "../../misc/types";
 import SHuman from "./SHuman.js";
-import SPaddle from "./SPaddle";
+import SPaddle from "../Objects/SPaddle";
 
 export default class SHumansManager {
     constructor(humansConfigs: { id: number; paddleID: number;}[],

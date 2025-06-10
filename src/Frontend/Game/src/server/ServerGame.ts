@@ -1,10 +1,10 @@
 import { SGameConfigs, SGameDTO, CGameDTO, point } from "../misc/types.js";
 import LoopController from "./LoopController.js";
-import SHumansManager from "./SHumansManager.js";
+import SHumansManager from "./Players/SHumansManager.js";
 import STeamsManager from "./STeamsManager.js";
-import BotsManager from "./BotsManager.js";
-import SBallsManager from "./SBallsManager.js";
-import SPaddlesManager from "./SPaddlesManager.js";
+import BotsManager from "./Players/SBotsManager.js";
+import SBallsManager from "./Objects/SBallsManager.js";
+import SPaddlesManager from "./Objects/SPaddlesManager.js";
 
 
 //TODO: if there is time, or if it starts to be too difficult to manage, there is a different way to organize this:
