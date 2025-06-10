@@ -6,17 +6,37 @@ import { TPaddle } from "../../misc/types.js";
 
 export type TSPaddleConfigs = Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 
+enum MOVEMENT {
+    NONE,
+    LEFT,
+    RIGHT,
+}
+
 // Represents the paddle from the server's perspective
 export default class SPaddle extends SObject {
     constructor(id: number, side: SIDES, pos: Point, size: Point, speed: number) {
         super(id, pos, computeOrientation(side), size, speed);
         this._side = side;
+        this._nextMovement = MOVEMENT.NONE;
     }
 
-    move(movVector: Point) {
-        this.pos = this.pos.add(movVector);
+    setNextMovement(movement: MOVEMENT) {
+        this._nextMovement = movement;
+    }
+
+    move(delta: number) {
+        if (this._nextMovement === MOVEMENT.LEFT || this._nextMovement == MOVEMENT.RIGHT) {
+            let movVector = this.orientation.multiplyScalar(this.speed * delta)
+                            .rotate((this._nextMovement === MOVEMENT.LEFT) ? -90 : 90);
+            this.pos = this.pos.add(movVector);
+        }
     }
 
     private _side: SIDES;
     get side(): SIDES { return this._side; }
+
+    private _nextMovement: MOVEMENT;
+    set nextMovement(movement: MOVEMENT) {
+        this._nextMovement = movement;
+    }
 }

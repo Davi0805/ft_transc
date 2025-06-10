@@ -7,12 +7,6 @@ import SBallsManager from "./Objects/SBallsManager.js";
 import SPaddlesManager from "./Objects/SPaddlesManager.js";
 
 
-//TODO: if there is time, or if it starts to be too difficult to manage, there is a different way to organize this:
-// Currently, each player (either human or bot) holds a reference to a paddle and manages it, including moving it.
-// This is quite counter-intuitive however, because all all managers have an update call except paddle manager, 
-// and the paddles were already moved, but paddles still need a manager because of collisions...
-// The new idea would be to have the paddles instead hold the players and have its update method to move according to the player's controls.
-// This would make all interfaces much more uniform, as all players would have a decision-based interface and objects a movement-based interface
 export default class ServerGame {
     constructor(gameOpts: SGameConfigs) {
         this._windowSize = gameOpts.window.size;
