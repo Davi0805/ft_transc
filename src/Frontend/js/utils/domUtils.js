@@ -18,8 +18,3 @@ export function togglePasswordVisibility() {
         };
     });
 }
-
-export function showError(message) {
-    // todo mexer num hidden ou adicionar um novo div
-    alert(message);
-  }

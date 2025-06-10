@@ -1,6 +1,6 @@
 import { webSocketService } from "../services/webSocketService.js";
 
-class ChatWindow {
+export class ChatWindow {
   constructor(friendID) {
     this.friendID = friendID;
     this.messages = [];
@@ -21,7 +21,6 @@ class ChatWindow {
   focus() {
     if (this.element) {
       this.element.style.zIndex = "1000";
-      // TODO REPLACE selector
       const messageInput = this.element.querySelector(".message-input");
       if (messageInput) messageInput.focus();
     }
@@ -43,6 +42,7 @@ class ChatWindow {
   createElement() {
     this.element = document.createElement("div");
     this.element.className = "chat-window";
+    //TODO fix friend
     this.element.innerHTML = `
         <div class="chat-header">
             <img src="${this.friend.avatar}" width="30" height="30" alt="${this.friend.name}">
@@ -134,5 +134,3 @@ class ChatWindow {
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }
 }
-
-export const chatWindow = new ChatWindow();

@@ -1,4 +1,4 @@
-import { togglePasswordVisibility, showError } from "../utils/domUtils.js";
+import { togglePasswordVisibility } from "../utils/domUtils.js";
 import { register } from "../api/registerAPI.js"
 import { translator } from "../services/translationService.js";
 

@@ -1,7 +1,4 @@
-import {
-  togglePasswordVisibility,
-  showError,
-} from "../../utils/domUtils.js";
+import { togglePasswordVisibility } from "../../utils/domUtils.js";
 import { TwoFactorAuth } from "./twoFactorAuth.js";
 import { login } from "../../api/loginAPI.js";
 import { authService } from "../../services/authService.js";
