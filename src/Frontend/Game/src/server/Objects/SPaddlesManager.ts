@@ -27,9 +27,9 @@ export default class SPaddlesManager {
     }
 
     handleCollisions(ballsManager: SBallsManager) {
+        this._handleLimitsCollision();
         this._paddles.forEach(paddle => {
             ballsManager.handlePaddleCollision(paddle);
-            this._handlePaddleLimitsCollision(paddle);
         })
     }
 
@@ -46,18 +46,20 @@ export default class SPaddlesManager {
 
     private _windowSize: point;
 
-    private _handlePaddleLimitsCollision(paddle: SPaddle) {
-        if (paddle.cbox.x < 0) {
-            paddle.pos.x = paddle.cbox.width / 2;
-        }
-        if (paddle.cbox.x + paddle.cbox.width > this._windowSize.x) {
-            paddle.pos.x = this._windowSize.x - paddle.cbox.width / 2;
-        }
-        if (paddle.cbox.y < 0) {
-            paddle.pos.y = paddle.cbox.height / 2;
-        }
-        if (paddle.cbox.y + paddle.cbox.height > this._windowSize.y) {
-            paddle.pos.y = this._windowSize.y - paddle.cbox.height / 2;
-        }
+    private _handleLimitsCollision() {
+        this._paddles.forEach(paddle => {
+            if (paddle.cbox.x < 0) { // LEFT
+                paddle.pos.x = paddle.cbox.width / 2;
+            }
+            if (paddle.cbox.x + paddle.cbox.width > this._windowSize.x) { // RIGHT
+                paddle.pos.x = this._windowSize.x - paddle.cbox.width / 2;
+            }
+            if (paddle.cbox.y < 0) { // TOP
+                paddle.pos.y = paddle.cbox.height / 2;
+            }
+            if (paddle.cbox.y + paddle.cbox.height > this._windowSize.y) { // BOTTOM
+                paddle.pos.y = this._windowSize.y - paddle.cbox.height / 2;
+            }
+        })
     }
 }

@@ -30,7 +30,12 @@ export default class ServerGame {
                 this._ballsManager.update(loop);
 
                 // Collision handling
-                this._handleCollisions(); //Hp of teams is updated here
+                // I do not like this very much... The collision handling is not uniform across all objects
+                // Might create a objectsManager instead of a manager for each object,
+                // but I would have to make sure that I do not decrease flexibility
+                // TODO I should definitely delagate the consequenses to each object though!
+                this._ballsManager.handleLimitCollision(this._teamsManager);
+                this._paddlesManager.handleCollisions(this._ballsManager);
                 
                 // Game state handling
                 if (this._teamsManager.teamLost() !== undefined) {
@@ -39,15 +44,6 @@ export default class ServerGame {
                     console.log(finalGameState);
                 }
             }
-
-            // The following code is just to control the pause state, to make testing easier.
-            // Should be removed later!
-            /* if (this._humansManager.humans[0].controls.pause.pressed) {
-                loop.togglePause();
-            }
-            if (this._humansManager.humans[0].controls.pause.pressed) {
-                this._humansManager.humans[0].controls.pause.pressed = false;
-            } */
         })
         
     }
@@ -81,11 +77,5 @@ export default class ServerGame {
     private _humansManager: SHumansManager;
     private _botsManager: BotsManager;
     private _paddlesManager: SPaddlesManager;
-
-
-    private _handleCollisions() {
-        this._ballsManager.handleLimitCollision(this._teamsManager);
-        this._paddlesManager.handleCollisions(this._ballsManager);
-    }
 
 }

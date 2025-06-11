@@ -28,6 +28,10 @@ export default class SPaddle extends SObject {
         }
     }
 
+    collideWith(other: SObject): void {
+        
+    }
+    
     private _nextMovement: MOVEMENT;
     set nextMovement(movement: MOVEMENT) {
         this._nextMovement = movement;
