@@ -3,23 +3,20 @@ import { getUserAvatarById } from "../api/getUserAvatarAPI.js";
 import { getSelfConversations } from "../api/getSelfConversations.js"
 import { authService } from "../services/authService.js";
 import { webSocketService } from "../services/webSocketService.js";
-import { ChatWindow } from "./chatWindow.js";
+import { chatWindowControler } from "./chatWindow.js";
 
 export class Chat {
     constructor(userID) {
         this.friends = [];
         this.minimized = false;
-        this.openChatWindows = new Map();
         this.userID = userID;
         this.init();
     }
 
     async init() {
         this.setToken();
-        console.log('aqui1')
 
         webSocketService.connect(this.token, this.userID);
-        console.log('aqui2')
         await this.getSidebarConversations();
         this.insertContactsOnSidebar(); 
     }
@@ -38,6 +35,7 @@ export class Chat {
                 friendAvatarURL = "./Assets/default/bobzao.jpg"
 
             this.friends.push({ 
+                convID: conv.id,
                 friendID: friendID,
                 friendName: friendData.name,
                 friendAvatar: friendAvatarURL
@@ -45,49 +43,30 @@ export class Chat {
         }
     }
 
+    createContactElement(friendAvatar, friendName) {
+        const newContact = document.createElement("button");
+        newContact.className = "contact";
+        newContact.innerHTML = `
+            <button class="contact">
+                <img src="${friendAvatar}" width="40px" height="40px">
+                ${ this.minimized  ? "" : `<span>${friendName}</span>` }
+            </button>
+            `
+        return newContact;
+    }
+
     insertContactsOnSidebar() {
 
         const chatContacts = document.querySelector('.chat-contacts');
-        this.friends.forEach(user => {
-            const contactBtn = document.createElement('button');
-            contactBtn.className = 'contact';
-            contactBtn.innerHTML =  `
-                <button class="contact">
-                    <img src="${user.friendAvatar}" width="40px" height="40px">
-                    ${ this.minimized  ? "" : `<span>${user.friendName}</span>` }
-                </button>
-            `;
+        this.friends.forEach(friend => {
+            const contactBtn = this.createContactElement(friend.friendAvatar, friend.friendName);
 
             contactBtn.addEventListener('click', () => {
-                this.openChatWindow(user);
+                chatWindowControler.open(friend);
             });
 
             chatContacts.appendChild(contactBtn);
         });
-    }
-
-    openChatWindow(friend) {
-        if (this.openChatWindows.has(friend.friendID)) {
-            this.openChatWindows.get(friend.friendID).focus();
-            return ;
-        }
-
-        const chatWindow = new ChatWindow(friend.friendID);
-        chatWindow.open();
-
-        const originalClose = chatWindow.close.bind(chatWindow);
-        chatWindow.close = () => {
-            this.openChatWindows.delete(friend.friendID);
-            originalClose();
-        };
-    }
-
-    setMinimized(value) {
-        this.minimized = value;
-    }
-
-    getMinimized() {
-        return this.minimized;
     }
 
     setToken() {

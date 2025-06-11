@@ -91,7 +91,7 @@ class ChatWindow {
     });
 
     closeBtn.addEventListener("click", () => {
-        this.close();
+      this.close();
     });
 
     sendBtn.addEventListener("click", this.sendMessage());
@@ -108,32 +108,32 @@ class ChatWindow {
     if (!message) return;
 
     if (webSocketService.sendChatMessage(this.convID, message)) {
-        this.addMessage({
+      this.addMessage({
         senderID: this.userID,
-            message: message,
-            timestamp: new Date().toISOString(),
+        message: message,
+        timestamp: new Date().toISOString(),
         isOwn: true,
-        });
-        messageInput.value = ""; // clear
+      });
+      messageInput.value = ""; // clear
     } else {
-        console.log("DEBUG: Could not send message. Try again");
+      console.log("DEBUG: Could not send message. Try again");
     }
   }
 
   handleIncomingMessage(data) {
     //TODO check for type of message
-        this.addMessage({
+    this.addMessage({
       senderID: this.friendID,
-            message: data.message,
+      message: data.message,
       isOwn: false,
-        });
-    }
+    });
+  }
 
   addMessage(messageData) {
     const messageContainer = this.element.querySelector(".chat-messages");
     const newMessage = document.createElement("div");
     newMessage.classList.add("message");
-    
+
     if (messageData.isOwn) {
       newMessage.style.background = "#007bff";
       newMessage.style.marginLeft = "auto";
@@ -148,7 +148,7 @@ class ChatWindow {
         <div>${messageData.message}</div>
         <small class="time">${time}</small>
     `;
-    
+
     messageContainer.appendChild(newMessage);
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }
