@@ -1,7 +1,3 @@
-// publish-subscribe pattern
-// Publishers: The WebSocket (publishes messages)
-// Subscribers: Your chat windows, sidebar, notifications (subscribe to message types)
-// Message Broker: The messageHandlers system (routes messages to subscribers)
 class WebSocketService {
     constructor() {
         this.ws = null;
@@ -10,7 +6,6 @@ class WebSocketService {
         this.maxReconnectAttempts = 5;
         this.reconnectDelay = 1000;
         this.userID = null;
-        this.messageHandlers = new Map();
     }
 
     /**
@@ -100,66 +95,31 @@ class WebSocketService {
     }
 
     /**
-     * Registers a handler function to be called when a message of the specified type is received.
+     * Handles incoming WebSocket messages
      *
-     * @param {string} type - The type of message to listen for.
-     * @param {Function} handler - The function to handle the message.
-     */
-    onMessage(type, handler) {
-        if (!this.messageHandlers.has(type)) {
-            this.messageHandlers.set(type, []);
-        }
-        this.messageHandlers.get(type).push(handler);
-    }
-
-    /**
-     * Removes a specific message handler for a given message type.
-     *
-     * @param {string} type - The type of message to remove the handler from.
-     * @param {Function} handler - The handler function to be removed.
-     */
-    offMessage(type, handler) {
-        if (this.messageHandlers.has(type)) {
-            const handlers = this.messageHandlers.get(type);
-            const index = handlers.indexOf(handler); // if not found returns -1
-            if (index > -1)
-                handlers.splice(index, 1); // remove from the array at that position
-        }
-    }
-
-    /**
-     * Handles incoming WebSocket messages by dispatching them to registered handlers based on message type.
-     *
-     * @param {Object} data - The message data received from the WebSocket.
-     * @param {string} data.type - The type of the message, used to determine which handlers to invoke.
+     * @param {Object} data - The message data received from the WebSocket server.
      */
     handleMessage(data) {
-        const { type } = data; // const type = data.type
-        if (this.messageHandlers.has(type)) {
-            this.messageHandlers.get(type).forEach(handler => {
-                try {
-                    handler(data);
-                } catch (error) {
-                    console.error(`Error in message handler for type ${type}:`, error);
-                }
-            });
-        }
+        // TODO
+        const convID = data.conv_id;
+        const message = data.message;
+        // todo const metadata = data.metadata || null;
+
+        
+
     }
 
     /**
      * Sends a chat message to a specified recipient via WebSocket.
      *
-     * @param {string|number} recipientID - The unique identifier of the message recipient.
+     * @param {string|number} conversationID - The unique identifier of the conversation.
      * @param {string} message - The content of the chat message to send.
      * @returns {boolean} 
      */
-    sendChatMessage(recipientID, message) {
+    sendChatMessage(conversationID, message) {
         return this.send({
-            type: 'chat_message',
-            senderID: this.userID,
-            recipientID: recipientID,
+            conversation_id: conversationID,
             message: message,
-            timestamp: new Date().toISOString()
         });
     }
 
