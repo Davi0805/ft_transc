@@ -34,10 +34,14 @@ class ChatWindow {
     // todo fetch messages
     // this.messages = [];
 
+    webSocketService.registerMessageHandler(this.convID, (messageData) => {
+      this.handleRecieveMessage(messageData);
+    })
+
     this.isOpen = true;
     this.createElement();
     this.attachEventListeners();
-    document.body.appendChild(this.element);
+    document.body.appendChild(this.element); // todo get the right place to insert
     this.focus();
   }
 
@@ -51,6 +55,10 @@ class ChatWindow {
 
   close() {
     if (!this.isOpen) return;
+
+    if (this.convID) {
+      webSocketService.unregisterMessageHandler(this.convID);
+    }
 
     this.isOpen = false;
 
@@ -109,9 +117,7 @@ class ChatWindow {
 
     if (webSocketService.sendChatMessage(this.convID, message)) {
       this.addMessage({
-        senderID: this.userID,
         message: message,
-        timestamp: new Date().toISOString(),
         isOwn: true,
       });
       messageInput.value = ""; // clear
@@ -120,11 +126,9 @@ class ChatWindow {
     }
   }
 
-  handleIncomingMessage(data) {
-    //TODO check for type of message
+  handleRecieveMessage(messageData) {
     this.addMessage({
-      senderID: this.friendID,
-      message: data.message,
+      message: messageData.message,
       isOwn: false,
     });
   }
@@ -142,12 +146,6 @@ class ChatWindow {
       newMessage.style.background = "white";
       newMessage.style.marginRight = "auto";
     }
-
-    const time = new Date(messageData.timestamp).toLocaleTimeString();
-    newMessage.innerHTML = `
-        <div>${messageData.message}</div>
-        <small class="time">${time}</small>
-    `;
 
     messageContainer.appendChild(newMessage);
     messageContainer.scrollTop = messageContainer.scrollHeight;
