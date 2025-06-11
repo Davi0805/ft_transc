@@ -72,10 +72,33 @@ export class Chat {
 
             contactBtn.addEventListener('click', () => {
                 chatWindowControler.open(friend);
+                this.updateContactUnreadUI(friend.convID, 0);
             });
 
             chatContacts.appendChild(contactBtn);
+
+            this.contactElements.set(friend.convID, contactBtn);
         });
+    }
+
+    updateContactUnreadUI(convID, unreadCount) {
+        const contactElement = this.contactElements.get(convID);
+        if (contactElement) {
+            const badge = contactElement.querySelector('.unread-badge');
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'inline';
+                contactElement.classList.add('has-unread');
+            } else {
+                badge.style.display = 'none';
+                contactElement.classList.remove('has-unread');
+            }
+        }
+    }
+
+    handleNotification(convID) {
+        const unreadCount = webSocketService.getUnreadCount(convID);
+        this.updateContactUnreadUI(convID, unreadCount);
     }
 
     setToken() {
