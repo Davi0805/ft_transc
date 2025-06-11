@@ -20,9 +20,9 @@ export default class SHumansManager {
         })
     }
 
-    update(delta: number) {
+    update() {
         this.humans.forEach(human => {
-            human.movePaddleFromControls(delta);
+            human.SetPaddleMovement();
         });
     }
 

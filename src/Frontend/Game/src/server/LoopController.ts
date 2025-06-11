@@ -1,7 +1,7 @@
 export default class LoopController {
     constructor(tickerRate: number) {
         this._tickerRate = tickerRate
-        this._isRunning = false;
+        this._isRunning = true;
         this._prevTime = Date.now();
         this._currentTime = this._prevTime;
         this._tickerTimer = 0;

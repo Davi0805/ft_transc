@@ -19,7 +19,7 @@ const gameConfigs = applyDevCustoms(UserCustoms);
 const serverGameConfigs = buildSGameConfigs(gameConfigs);
 // Creates a game, waiting for players to connect
 const game = new ServerGame(serverGameConfigs); // TODO this should probably only be created when a game is created
-game.startGameLoop();
+//game.startGameLoop();
 const clients: WebSocket[] = [];
 
 // Broadcasts the game state to all clients
@@ -68,6 +68,10 @@ fastify.register(async (fastify) => {
 
         clients.push(socket);
         
+        console.log(game.getHumansAmount())
+        if (clients.length >= game.getHumansAmount()) {
+            game.startGameLoop();
+        }
         // Whenever this particular client sends a message, it is forwarded to the game to take care of it
         socket.on('message', (message) => {
             const dto = JSON.parse(message.toString()) as CGameDTO;

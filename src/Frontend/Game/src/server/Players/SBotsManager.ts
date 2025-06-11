@@ -30,7 +30,7 @@ export default class SBotsManager {
                 bot.updateTargetPos(balls);
             }
             bot.setupMove();
-            bot.movePaddleFromControls(loop.delta);
+            bot.SetPaddleMovement();
         })
     }
 

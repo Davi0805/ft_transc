@@ -18,7 +18,9 @@ export default class SBallsManager {
         if (loop.isEventTime(this._ballSpawnRate)) {
             this.addBallOfType(getRandomInt(0, BALL_TYPES.BALL_TYPE_AM))
         }
-        this.moveBalls(loop.delta);
+        this.balls.forEach(ball => {
+            ball.move(loop.delta);
+        })
     }
 
     addBallOfType(type: BALL_TYPES) {
@@ -41,12 +43,6 @@ export default class SBallsManager {
             Point.fromObj(ballConfigs.direction),
             ballConfigs.type
         ))
-    }
-
-    moveBalls(delta: number) {
-        this.balls.forEach(ball => {
-            ball.move(delta);
-        })
     }
 
     handleLimitCollision(teamsManager: STeamsManager) {

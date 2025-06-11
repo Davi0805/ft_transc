@@ -21,26 +21,33 @@ export default class ServerGame {
         const loop = new LoopController(60);
         loop.start(() => {
             if (loop.isRunning) {
-                this._humansManager.update(loop.delta)
+                // Movement decision by players
+                this._humansManager.update()
                 this._botsManager.update(loop, this._ballsManager.balls)
+                
+                // Object movement
+                this._paddlesManager.update(loop);
                 this._ballsManager.update(loop);
 
+                // Collision handling
                 this._handleCollisions(); //Hp of teams is updated here
                 
+                // Game state handling
                 if (this._teamsManager.teamLost() !== undefined) {
                     loop.pause();
                     const finalGameState = this._teamsManager.getTeamsState();
                     console.log(finalGameState);
                 }
             }
+
             // The following code is just to control the pause state, to make testing easier.
             // Should be removed later!
-            if (this._humansManager.humans[0].controls.pause.pressed) {
+            /* if (this._humansManager.humans[0].controls.pause.pressed) {
                 loop.togglePause();
             }
             if (this._humansManager.humans[0].controls.pause.pressed) {
                 this._humansManager.humans[0].controls.pause.pressed = false;
-            }
+            } */
         })
         
     }
@@ -59,6 +66,10 @@ export default class ServerGame {
             dto.controlsState.humanID,
             dto.controlsState.controlsState
         );
+    }
+
+    getHumansAmount(): number {
+        return this._humansManager.humans.length
     }
 
     private _windowSize: point;

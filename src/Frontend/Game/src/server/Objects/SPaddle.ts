@@ -6,7 +6,7 @@ import { TPaddle } from "../../misc/types.js";
 
 export type TSPaddleConfigs = Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 
-enum MOVEMENT {
+export enum MOVEMENT {
     NONE,
     LEFT,
     RIGHT,
@@ -20,10 +20,6 @@ export default class SPaddle extends SObject {
         this._nextMovement = MOVEMENT.NONE;
     }
 
-    setNextMovement(movement: MOVEMENT) {
-        this._nextMovement = movement;
-    }
-
     move(delta: number) {
         if (this._nextMovement === MOVEMENT.LEFT || this._nextMovement == MOVEMENT.RIGHT) {
             let movVector = this.orientation.multiplyScalar(this.speed * delta)
@@ -32,11 +28,11 @@ export default class SPaddle extends SObject {
         }
     }
 
-    private _side: SIDES;
-    get side(): SIDES { return this._side; }
-
     private _nextMovement: MOVEMENT;
     set nextMovement(movement: MOVEMENT) {
         this._nextMovement = movement;
     }
+
+    private _side: SIDES;
+    get side(): SIDES { return this._side; }
 }
