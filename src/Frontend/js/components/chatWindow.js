@@ -143,10 +143,10 @@ class ChatWindow {
       newMessage.style.marginLeft = "auto";
       newMessage.style.textAlign = "right";
     } else {
-      newMessage.style.background = "white";
+      newMessage.style.background = "#00FF00";
       newMessage.style.marginRight = "auto";
     }
-
+    newMessage.innerText = messageData.message;
     messageContainer.appendChild(newMessage);
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }
