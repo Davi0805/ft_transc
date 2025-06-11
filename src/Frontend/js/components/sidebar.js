@@ -10,6 +10,9 @@ export class Chat {
         this.friends = [];
         this.minimized = false;
         this.userID = userID;
+
+        this.contactElements = new Map();
+
         this.init();
     }
 
@@ -17,6 +20,11 @@ export class Chat {
         this.setToken();
 
         webSocketService.connect(this.token, this.userID);
+
+        webSocketService.registerNotificationCallback((convID, messageData) => {
+            this.handleNotification(convID, messageData);
+        })
+
         await this.getSidebarConversations();
         this.insertContactsOnSidebar(); 
     }
@@ -50,6 +58,7 @@ export class Chat {
             <button class="contact">
                 <img src="${friendAvatar}" width="40px" height="40px">
                 ${ this.minimized  ? "" : `<span>${friendName}</span>` }
+                <span class="unread-badge" style="display: none;">0</span>
             </button>
             `
         return newContact;

@@ -123,7 +123,7 @@ class WebSocketService {
    * @param {Object} data - The message data received from the WebSocket server.
    */
   handleMessage(data) {
-    const convID = data.id;
+    const convID = data.conversation_id;
     const message = data.message;
 
     this.updateConversationTracker(convID, {
@@ -166,8 +166,7 @@ class WebSocketService {
     const conv = this.conversationTracker.get(convID);
     if (conv) {
       conv.unreadCount = 0;
-      //? check if needed this.conversationTracker.set(convID, conv);
-      this.notifyConversationUpdate(convID); // UI Update
+      this.triggerNotifications(convID); // UI Update
     }
   }
 
