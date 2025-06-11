@@ -45,6 +45,10 @@ export default class SBallsManager {
         ))
     }
 
+    removeBall(index: number) {
+        this.balls.splice(index, 1);
+    }
+
     handleLimitCollision(teamsManager: STeamsManager) {
         this.balls.forEach(ball => {
             if (ball.cbox.x < 0) {
@@ -74,10 +78,10 @@ export default class SBallsManager {
             if (collision !== null) {
                 if (ball.type === BALL_TYPES.EXPAND) {
                     paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: 10 }))
-                    this.balls.splice(i, 1);
+                    this.removeBall(i);
                 } else if (ball.type === BALL_TYPES.SHRINK) {
                     paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: -10 }))
-                    this.balls.splice(i, 1);
+                    this.removeBall(i);
                 } else {
                     switch (collision) {
                         case SIDES.LEFT: {

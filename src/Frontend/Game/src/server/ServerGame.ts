@@ -33,7 +33,8 @@ export default class ServerGame {
                 // I do not like this very much... The collision handling is not uniform across all objects
                 // Might create a objectsManager instead of a manager for each object,
                 // but I would have to make sure that I do not decrease flexibility
-                // TODO I should definitely delagate the consequenses to each object though!
+                // I should definitely delagate the consequenses to each object though!
+                // I can also make a collision handler a singleton and register/unregister objects there?
                 this._ballsManager.handleLimitCollision(this._teamsManager);
                 this._paddlesManager.handleCollisions(this._ballsManager);
                 
