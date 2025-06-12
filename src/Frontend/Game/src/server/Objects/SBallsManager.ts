@@ -74,45 +74,13 @@ export default class SBallsManager {
     handlePaddleCollision(paddle: SPaddle) {
         for (let i = this.balls.length - 1; i >= 0; i--) {
             const ball = this.balls[i];
-            const collision = ball.cbox.areColliding(paddle.cbox);
-            if (collision !== null) {
-                if (ball.type === BALL_TYPES.EXPAND) {
-                    paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: 10 }))
-                    this.removeBall(i);
-                } else if (ball.type === BALL_TYPES.SHRINK) {
-                    paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: -10 }))
-                    this.removeBall(i);
+            const collisionSide = ball.cbox.areColliding(paddle.cbox);
+            if (collisionSide !== null) {
+                if (ball.type === BALL_TYPES.BASIC) {
+                    this._computeCollisionResult(collisionSide, ball, paddle);
                 } else {
-                    switch (collision) {
-                        case SIDES.LEFT: {
-                            ball.pos = Point.fromObj({ x: paddle.pos.x + ((paddle.cbox.width / 2) + (ball.size.x / 2)), y: ball.pos.y})
-                            if (ball.direction.x < 0) {
-                                ball.direction.x *= -1;
-                            }
-                            break;
-                        } case SIDES.RIGHT: {
-                            ball.pos = Point.fromObj({ x: paddle.pos.x - ((paddle.cbox.width / 2) + (ball.size.x / 2)), y: ball.pos.y})
-                            if (ball.direction.x > 0) {
-                                ball.direction.x *= -1;
-                            }
-                            break ;
-                        } case SIDES.TOP: {
-                            ball.pos = Point.fromObj({ x: ball.pos.x, y: paddle.pos.y + ((paddle.cbox.height / 2) + (ball.size.y / 2)) })
-                            if (ball.direction.y < 0) {
-                                ball.direction.y *= -1;
-                            }
-                            break ;
-                        } case SIDES.BOTTOM: {
-                            ball.pos = Point.fromObj({ x: ball.pos.x, y: paddle.pos.y - ((paddle.cbox.height / 2) + (ball.size.y / 2)) })
-                            if (ball.direction.y > 0) {
-                                ball.direction.y *= -1;
-                            }
-                        }
-                    }
-                    if (ball.speed < 600) { //TODO put this in ball object as speed cap and maybe put it in speed getter
-                        //ball.speed += 5;
-                    }
-                    paddle.speed += 1;
+                    this._applyPowerupEffect(ball, paddle);
+                    this.removeBall(i)
                 }
             }
         }
@@ -135,4 +103,46 @@ export default class SBallsManager {
     get ballSpawnRate() { return this._ballSpawnRate; }
 
     private _currentID: number;
+
+    private _computeCollisionResult(collisionSide: SIDES, ball: SBall, paddle: SPaddle) {
+        switch (collisionSide) {
+            case SIDES.LEFT: {
+                ball.pos = Point.fromObj({ x: paddle.pos.x + ((paddle.cbox.width / 2) + (ball.size.x / 2)), y: ball.pos.y})
+                if (ball.direction.x < 0) {
+                    ball.direction.x *= -1;
+                }
+                break;
+            } case SIDES.RIGHT: {
+                ball.pos = Point.fromObj({ x: paddle.pos.x - ((paddle.cbox.width / 2) + (ball.size.x / 2)), y: ball.pos.y})
+                if (ball.direction.x > 0) {
+                    ball.direction.x *= -1;
+                }
+                break ;
+            } case SIDES.TOP: {
+                ball.pos = Point.fromObj({ x: ball.pos.x, y: paddle.pos.y + ((paddle.cbox.height / 2) + (ball.size.y / 2)) })
+                if (ball.direction.y < 0) {
+                    ball.direction.y *= -1;
+                }
+                break ;
+            } case SIDES.BOTTOM: {
+                ball.pos = Point.fromObj({ x: ball.pos.x, y: paddle.pos.y - ((paddle.cbox.height / 2) + (ball.size.y / 2)) })
+                if (ball.direction.y > 0) {
+                    ball.direction.y *= -1;
+                }
+            }
+        }
+    }
+
+    private _applyPowerupEffect(ball: SBall, paddle: SPaddle) {
+        switch (ball.type) {
+            case (BALL_TYPES.EXPAND): {
+                paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: 10 }))
+                break;
+            }
+            case (BALL_TYPES.SHRINK): {
+                paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: -10 }))
+                break;
+            }
+        }
+    }
 }
