@@ -1,4 +1,4 @@
-import { SGameConfigs, SGameDTO, CGameDTO, point } from "../misc/types.js";
+import { SGameConfigs, SGameDTO, CGameDTO, point, Adto } from "../misc/types.js";
 import LoopController from "./LoopController.js";
 import SHumansManager from "./Players/SHumansManager.js";
 import STeamsManager from "./STeamsManager.js";
@@ -6,6 +6,7 @@ import BotsManager from "./Players/SBotsManager.js";
 import SBallsManager from "./Objects/SBallsManager.js";
 import SPaddlesManager from "./Objects/SPaddlesManager.js";
 import { BALL_TYPES } from "./Objects/SBall.js";
+import WebSocket from "ws";
 
 
 export default class ServerGame {
@@ -53,7 +54,20 @@ export default class ServerGame {
                 }
             }
         })
-        
+    }
+
+    startBroadcast(clients: WebSocket[]) {
+        const loop = new LoopController(60);
+        loop.start(() => {
+            const message: Adto = {
+                type: "SGameDTO",
+                dto: this.getGameDTO()
+            }
+            const data = JSON.stringify(message);
+            for (var client of clients) {
+                client.send(data)
+            }
+        })
     }
 
     getGameDTO(): SGameDTO {

@@ -23,23 +23,8 @@ const game = new ServerGame(serverGameConfigs); // TODO this should probably onl
 const clients: WebSocket[] = [];
 
 // Broadcasts the game state to all clients
-const broadcastRate = 1000 / 60; // In milliseconds
-// The following pattern is safer than using setInterval(), because it makes sure that the previous iteration is 
-// finished before trying to broadcast again.
-(function loop() { //TODO maybe put this in the game to make the call to it easier?
-  setTimeout(() => {
-    const message: Adto = {
-        type: "SGameDTO",
-        dto: game.getGameDTO()
-    }
-    const data = JSON.stringify(message);
-    for (var client of clients) {
-      client.send(data)
-    }
-    loop(); // Will not cause a stack overflow because setTimeout() is asynchronous - only schedules the arrow function.
-            // By the time it is time to execute it, the previous iteration is already done
-  }, broadcastRate) // For now this is ok, but if it starts to get laggy, reduce Broadcast rate and implement client interpolation
-})();
+game.startBroadcast(clients)
+
 
 const fastify = Fastify();
 
