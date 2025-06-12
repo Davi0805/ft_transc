@@ -41,7 +41,8 @@ class ChatWindow {
     this.isOpen = true;
     this.createElement();
     this.attachEventListeners();
-    document.body.appendChild(this.element); // todo get the right place to insert
+    const chatWrapper = document.getElementById('chat-window-wrapper');
+    chatWrapper.appendChild(this.element);
     this.focus();
   }
 
@@ -102,7 +103,7 @@ class ChatWindow {
       this.close();
     });
 
-    sendBtn.addEventListener("click", this.sendMessage());
+    sendBtn.addEventListener("click", () => this.sendMessage());
 
     messageInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter") this.sendMessage();

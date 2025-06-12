@@ -9,7 +9,7 @@ export async function getSelfData() {
         });
 
         if (response.status == 401 || response.status == 404) {
-            return null;
+            throw new Error("Invalid token");
         }
 
         if (!response.ok) {

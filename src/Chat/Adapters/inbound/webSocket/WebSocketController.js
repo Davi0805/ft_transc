@@ -63,7 +63,6 @@ class WebSocketController {
             console.log('RECEIVER ID = ' + receiver_id + ' | socket = ' + receiverSocket);
             if (receiverSocket)
                 receiverSocket.send(JSON.stringify({ conversation_id: parsedMessage.conversation_id, message: parsedMessage.message }));
-            else
 
         })
 
