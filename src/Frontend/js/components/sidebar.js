@@ -25,28 +25,33 @@ export class Chat {
             this.handleNotification(convID, messageData);
         })
 
+        webSocketService.registerOnlineCallbacks((online_users) => {
+            this.handleRecieveOnlineUsers(online_users);
+        })
+
         await this.getSidebarConversations();
-        this.insertContactsOnSidebar(); 
+        this.insertContactsOnSidebar();
     }
-    
+
     async getSidebarConversations() {
         const convs = await getSelfConversations(this.token);
         if (convs.lenght == 0) return;
 
         for (const conv of convs) {
 
-            const friendID = conv.user1_id === this.userID ? conv.user2_id : conv.user1_id ;
+            const friendID = conv.user1_id === this.userID ? conv.user2_id : conv.user1_id;
             const friendData = await getUserDataById(friendID);
             let friendAvatarURL = await getUserAvatarById(friendID);
 
-            if (!friendAvatarURL) 
+            if (!friendAvatarURL)
                 friendAvatarURL = "./Assets/default/bobzao.jpg"
 
-            this.friends.push({ 
+            this.friends.push({
                 convID: conv.id,
                 friendID: friendID,
                 friendName: friendData.name,
-                friendAvatar: friendAvatarURL
+                friendAvatar: friendAvatarURL,
+                friendOn: false
             });
         }
     }
@@ -57,7 +62,7 @@ export class Chat {
         newContact.innerHTML = `
             <button class="contact">
                 <img src="${friendAvatar}" width="40px" height="40px">
-                ${ this.minimized  ? "" : `<span>${friendName}</span>` }
+                ${this.minimized ? "" : `<span>${friendName}</span>`}
                 <span class="unread-badge" style="display: none;">0</span>
             </button>
             `
@@ -99,6 +104,15 @@ export class Chat {
     handleNotification(convID) {
         const unreadCount = webSocketService.getUnreadCount(convID);
         this.updateContactUnreadUI(convID, unreadCount);
+    }
+
+    /* {online_users: [2, 4, 6]} */
+    handleRecieveOnlineUsers(onlineFriends) {
+        this.friends.forEach(f => {
+            console.log("DEBUG ANTES: Friend Name: " + f.friendName + " On: " + f.friendOn);
+            f.friendOn = onlineFriends.includes(f.friendID) ? true : false;
+            console.log("DEBUG DEPOIS: Friend Name: " + f.friendName + " On: " + f.friendOn);
+        });
     }
 
     setToken() {

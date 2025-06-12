@@ -11,6 +11,7 @@ class WebSocketService {
     this.messageHandlers = new Map();
     this.conversationTracker = new Map();
     this.notificationCallbacks = [];
+    this.onlineCallbacks = []
   }
 
   /**
@@ -117,12 +118,22 @@ class WebSocketService {
     this.notificationCallbacks.push(callback);
   }
 
+  registerOnlineCallbacks(callback) {
+    this.onlineCallbacks.push(callback);
+  }
+
   /**
    * Handles incoming WebSocket messages
    *
    * @param {Object} data - The message data received from the WebSocket server.
    */
   handleMessage(data) {
+    const { online_users } = data;
+    if (online_users) {
+      this.triggerOnlineUpdate(online_users)
+      return ;
+    }  
+
     const convID = data.conversation_id;
     const message = data.message;
 
@@ -178,6 +189,16 @@ class WebSocketService {
         console.log("DEBUG: Error in websocket notification callback:", error);
       }
     });
+  }
+
+  triggerOnlineUpdate(onlineFriends) {
+    this.onlineCallbacks.forEach((callback) => {
+      try {
+        callback(onlineFriends);
+      } catch (error) {
+        console.log("DEBUG: Error in websocket notification callback:", error);
+      }
+    })
   }
 
   /**
