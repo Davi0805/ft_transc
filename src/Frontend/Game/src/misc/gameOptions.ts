@@ -14,7 +14,7 @@ export const UserCustoms: TUserCustoms = {
             id: 0,
             side: SIDES.LEFT,
             role: ROLES.BACK,
-            spriteID: 2
+            spriteID: 0
         },
         {
             id: 1,
@@ -94,15 +94,12 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         gameLength: userCustoms.gameLength,
         ball: {
             id: 0,
-            type: BALL_TYPES.RESTORE,
+            type: BALL_TYPES.BASIC,
             spriteID: userCustoms.ball.spriteID,
             pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
             direction: { x: Math.random() - 0.5, y: Math.random() - 0.5 },
-            
-            //pos: { x: 20, y: 50},
-            //direction: { x: 0, y: 1 }, 
-            size: { x: 8, y: 8 },
-            speed: 500,
+            size: { x: 16, y: 16 },
+            speed: 425,
             damage: 1
         },
         teams: [],

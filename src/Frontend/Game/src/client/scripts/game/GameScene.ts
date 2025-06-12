@@ -14,7 +14,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         this._assets = await Assets.loadBundle("gameScene");
 
         const ballState = gameSceneConfigs.gameInitialState.ball;
-        const ballName = "ball" + ballState.spriteID
+        const ballName = "ballBasic"
         const ballSprite = new Sprite(this._assets[ballName]);
         this._root.addChild(ballSprite);
 
@@ -99,10 +99,10 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 ballName = "ballExpand";
             } else if (newBall.type === BALL_TYPES.SHRINK) {
                 ballName = "ballShrink";
-            } else if (newBall.type === BALL_TYPES.MYSTERY) {
-                ballName = "ballQuestion";
+            } else if (newBall.type === BALL_TYPES.SPEED_UP) {
+                ballName = "ballSpeedUp";
             } else {
-                ballName = "ball0";
+                ballName = "ballBasic";
             }
             const ballSprite = new Sprite(this._assets[ballName]);
             this._root.addChild(ballSprite);

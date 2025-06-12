@@ -28,7 +28,7 @@ export default class SBallsManager {
         const damage = getRandomInt(1, 5);
         const configs = {
             type: type,
-            size: { x: damage * 8, y: damage * 8 },
+            size: { x: 8 + damage * 8, y: 8 + damage * 8 },
             pos: { x: this._windowSize.x / 2, y: this._windowSize.y / 2 },
             direction: { x: Math.random() * 1.8 - 0.9, y: Math.random() * 1.8 - 0.9},
             speed: 500 - (damage * 75),
@@ -166,11 +166,11 @@ export default class SBallsManager {
                 break;
             }
             case (BALL_TYPES.SPEED_UP): {
-                paddle.speed += 50
+                paddle.speed += 100
                 break;
             }
             case (BALL_TYPES.SLOW_DOWN): {
-                paddle.speed -= 50
+                paddle.speed -= 100
                 break;
             }
             case (BALL_TYPES.EXTRA_BALL): {
