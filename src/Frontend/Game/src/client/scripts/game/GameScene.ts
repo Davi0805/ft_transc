@@ -100,6 +100,8 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 ballName = "ballExpand";
             } else if (newBall.type === BALL_TYPES.SHRINK) {
                 ballName = "ballShrink";
+            } else if (newBall.type === BALL_TYPES.MYSTERY) {
+                ballName = "ballQuestion";
             } else {
                 ballName = "ball0";
             }

@@ -9,6 +9,7 @@ export enum BALL_TYPES {
     BASIC,
     EXPAND,
     SHRINK,
+    MYSTERY,
     BALL_TYPE_AM
 }
 

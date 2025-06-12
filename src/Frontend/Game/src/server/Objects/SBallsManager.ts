@@ -28,10 +28,10 @@ export default class SBallsManager {
         const damage = getRandomInt(1, 5);
         const configs = {
             type: type,
-            size: { x: damage * 4, y: damage * 4 },
+            size: { x: damage * 8, y: damage * 8 },
             pos: { x: this._windowSize.x / 2, y: this._windowSize.y / 2 },
             direction: { x: Math.random() * 1.8 - 0.9, y: Math.random() * 1.8 - 0.9},
-            speed: 300 - (damage * 50),
+            speed: 500 - (damage * 75),
             damage: damage
         };
         this.addBall(configs);
@@ -150,15 +150,18 @@ export default class SBallsManager {
         }
     }
 
-    private _applyPowerupEffect(ball: SBall, paddle: SPaddle) {
-        switch (ball.type) {
+    private _applyPowerupEffect(ball: SBall, paddle: SPaddle, type: BALL_TYPES = ball.type) {
+        switch (type) {
             case (BALL_TYPES.EXPAND): {
-                paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: 10 }))
+                paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: 20 }))
                 break;
             }
             case (BALL_TYPES.SHRINK): {
-                paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: -10 }))
+                paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: -20 }))
                 break;
+            }
+            case (BALL_TYPES.MYSTERY): {
+                this._applyPowerupEffect(ball, paddle, getRandomInt(1, BALL_TYPES.BALL_TYPE_AM))
             }
         }
     }

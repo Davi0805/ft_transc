@@ -1,15 +1,10 @@
 import { BALL_TYPES } from "../server/Objects/SBall.js"
 import { SIDES, ROLES, point, TUserCustoms, TGameConfigs } from "./types.js"
 
-const PADDLE_COMMON_VARS = {
-    size: { x: 16, y: 64 },
-    speed: 150
-}
-
 
 export const UserCustoms: TUserCustoms = {
     field: {
-        size: { x: 400, y: 400 },
+        size: { x: 800, y: 800 },
         backgroundSpriteID: 0 //NOT USED YET
     },
     gameLength: 200, //NOT USED YET
@@ -19,7 +14,7 @@ export const UserCustoms: TUserCustoms = {
             id: 0,
             side: SIDES.LEFT,
             role: ROLES.BACK,
-            spriteID: 1
+            spriteID: 2
         },
         {
             id: 1,
@@ -56,7 +51,7 @@ export const UserCustoms: TUserCustoms = {
                 }
             ]
         },
-        /* {
+/*         {
             id: 1,
             humans: [
                 {
@@ -106,8 +101,8 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             
             //pos: { x: 20, y: 50},
             //direction: { x: 0, y: 1 }, 
-            size: { x: 4, y: 4 },
-            speed: 100,
+            size: { x: 8, y: 8 },
+            speed: 500,
             damage: 1
         },
         teams: [],
@@ -121,8 +116,8 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
     userCustoms.paddles.forEach(paddle => {
         let scorePos: point;
         let paddlePos: point;
-        const scoreOffset = 70
-        const paddleOffset = (paddle.role === ROLES.BACK ? 20 : 40);
+        const scoreOffset = 140
+        const paddleOffset = (paddle.role === ROLES.BACK ? 40 : 80);
         switch (paddle.side) {
             case (SIDES.LEFT): {
                 scorePos = { x: scoreOffset, y: userCustoms.field.size.y / 2}
@@ -160,8 +155,8 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             role: paddle.role,
             spriteID: paddle.spriteID,
             pos: paddlePos,
-            size: { x: 16, y: 64 },
-            speed: 200
+            size: { x: 32, y: 128 },
+            speed: 400
         })
     })
 
