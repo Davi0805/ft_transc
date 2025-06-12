@@ -11,6 +11,11 @@ class ChatMessageService {
     {
         await chatMessageRepo.saveMessage(conversation_id, from_user_id, message_content);
     }
+
+    async setMessagesRead(conversation_id, user_id)
+    {
+        chatMessageRepo.setMessagesRead(conversation_id, user_id);
+    }
 }
 
 module.exports = new ChatMessageService();
