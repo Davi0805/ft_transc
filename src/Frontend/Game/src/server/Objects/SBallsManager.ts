@@ -160,6 +160,18 @@ export default class SBallsManager {
                 paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: -20 }))
                 break;
             }
+            case (BALL_TYPES.SPEED_UP): {
+                paddle.speed += 50
+                break;
+            }
+            case (BALL_TYPES.SLOW_DOWN): {
+                paddle.speed -= 50
+                break;
+            }
+            case (BALL_TYPES.EXTRA_BALLS): {
+                this.addBallOfType(BALL_TYPES.BASIC)
+                break;
+            }
             case (BALL_TYPES.MYSTERY): {
                 this._applyPowerupEffect(ball, paddle, getRandomInt(1, BALL_TYPES.BALL_TYPE_AM))
             }
