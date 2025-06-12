@@ -1,5 +1,5 @@
 import { point, SIDES } from "../../misc/types.js";
-import SBall, { BALL_TYPES, SBALL_DEFAULT_SIZE, TSBallConfigs } from "./SBall.js";
+import SBall, { BALL_TYPES, TSBallConfigs } from "./SBall.js";
 import SPaddle from "../Objects/SPaddle.js";
 import Point from "../../misc/Point.js";
 import { getRandomInt } from "../../misc/utils.js";
@@ -17,7 +17,7 @@ export default class SBallsManager {
 
     update(loop: LoopController) {
         if (loop.isEventTime(this._ballSpawnRate)) {
-            this.addBallOfType(getRandomInt(0, BALL_TYPES.BALL_TYPE_AM))
+            this.addBallOfType(getRandomInt(1, BALL_TYPES.BALL_TYPE_AM)) // 0 is basic, so this way only powerups are spawned
         }
         this.balls.forEach(ball => {
             ball.move(loop.delta);
@@ -25,13 +25,14 @@ export default class SBallsManager {
     }
 
     addBallOfType(type: BALL_TYPES) {
+        const damage = getRandomInt(1, 5);
         const configs = {
             type: type,
-            size: { x: 16, y: 16 }, //SBALL_DEFAULT_SIZE,
+            size: { x: damage * 4, y: damage * 4 },
             pos: { x: this._windowSize.x / 2, y: this._windowSize.y / 2 },
             direction: { x: Math.random() * 1.8 - 0.9, y: Math.random() * 1.8 - 0.9},
-            speed: getRandomInt(50, 250),
-            damage: 4
+            speed: 300 - (damage * 50),
+            damage: damage
         };
         this.addBall(configs);
     }

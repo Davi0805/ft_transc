@@ -1,4 +1,4 @@
-import { BALL_TYPES, SBALL_DEFAULT_SIZE } from "../server/Objects/SBall.js"
+import { BALL_TYPES } from "../server/Objects/SBall.js"
 import { SIDES, ROLES, point, TUserCustoms, TGameConfigs } from "./types.js"
 
 const PADDLE_COMMON_VARS = {
@@ -106,7 +106,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             
             //pos: { x: 20, y: 50},
             //direction: { x: 0, y: 1 }, 
-            size: SBALL_DEFAULT_SIZE,
+            size: { x: 4, y: 4 },
             speed: 100,
             damage: 1
         },

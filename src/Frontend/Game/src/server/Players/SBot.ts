@@ -1,7 +1,7 @@
 import { point, rectangle, SIDES } from "../../misc/types.js";
 import SPaddle from "../Objects/SPaddle.js";
 import SPlayer from "./SPlayer.js";
-import SBall, { SBALL_DEFAULT_SIZE } from "../Objects/SBall.js";
+import SBall from "../Objects/SBall.js";
 import Point from "../../misc/Point.js";
 
 // In pixels. The smaller the value, the closer to the target position the bot will attempt to place its paddle.
@@ -18,10 +18,8 @@ export default class SBot extends SPlayer {
         this._limits = windowLimits;
         
         if (this.paddle.orientation.x !== 0) {
-            //this._orientationAxis = 'x';
             this._movementAxis = 'y';
         } else {
-            //this._orientationAxis = 'y';
             this._movementAxis = 'x';
         }
 
@@ -32,43 +30,11 @@ export default class SBot extends SPlayer {
             : (() => this._targetPos < this.paddle.pos[this._movementAxis]);
     }
 
-    static buildLimits(paddles: SPaddle[], windowSize: point): rectangle {
-        const sideConfig: Record<SIDES, { axis: 'x' | 'y', boundary: 'min' | 'max' }> = {
-            [SIDES.LEFT]:   { axis: 'x', boundary: 'min' },
-            [SIDES.RIGHT]:  { axis: 'x', boundary: 'max' },
-            [SIDES.TOP]:    { axis: 'y', boundary: 'min' },
-            [SIDES.BOTTOM]: { axis: 'y', boundary: 'max' },
-        };
-
-        const sides = Object.values(SIDES).filter(v => typeof v === "number") as SIDES[];
-        const record: Record<SIDES, number> = {} as Record<SIDES, number>
-        sides.forEach(side => {
-            const { axis, boundary } = sideConfig[side];
-            const posValues = paddles.filter(paddle => paddle.side === side).map(paddle => paddle.pos[axis]);
-            if (posValues.length === 0) {
-                record[side] = (boundary === 'min') ? 0 : windowSize[axis]
-            } else {
-                const halfPaddlethickness = paddles[0].size.x / 2;
-                record[side] = (boundary === 'min')
-                    ? Math.max(...posValues) + halfPaddlethickness
-                    : Math.min(...posValues) - halfPaddlethickness
-            }
-        })
-        const out: rectangle = {
-            x: record[SIDES.LEFT] + SBALL_DEFAULT_SIZE.x / 2,
-            y: record[SIDES.TOP] + SBALL_DEFAULT_SIZE.y / 2,
-            width: record[SIDES.RIGHT] - record[SIDES.LEFT] - SBALL_DEFAULT_SIZE.x,
-            height: record[SIDES.BOTTOM] - record[SIDES.TOP] - SBALL_DEFAULT_SIZE.y
-        }
-        return out
-    }
-
     updateTargetPos(balls: SBall[]) {
         let smallestT = Infinity;
 
-        balls.forEach(ball => {
+        balls.forEach(ball => { //TODO: For accurate prediction, should include ball size in all these calculations
             let t = this._getHitMinT(ball.pos, ball.direction);
-
             let hitpos = this._getHitPos(ball.pos, ball.direction);
             let hitside = this._getSideFromPos(hitpos)
             let dir = ball.direction;
@@ -80,10 +46,6 @@ export default class SBot extends SPlayer {
                 t += this._getHitMinT(hitpos, dir);
                 hitpos = this._getHitPos(hitpos, dir);
                 hitside = this._getSideFromPos(hitpos);
-                
-                /* if (t > 3000) {
-                    break
-                } */
             }
             if (t < smallestT) {
                 smallestT = t;
@@ -122,7 +84,6 @@ export default class SBot extends SPlayer {
 
     private _limits: rectangle;
 
-    //private _orientationAxis: 'x' | 'y';
     private _movementAxis: 'x' | 'y';
 
     private _targetPos: number;

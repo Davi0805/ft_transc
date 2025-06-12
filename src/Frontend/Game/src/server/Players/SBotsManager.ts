@@ -1,7 +1,7 @@
 import { point, rectangle, SIDES } from "../../misc/types.js";
 import SBot from "./SBot.js";
 import SPaddle from "../Objects/SPaddle";
-import SBall, { SBALL_DEFAULT_SIZE } from "../Objects/SBall.js";
+import SBall from "../Objects/SBall.js";
 import LoopController from "../LoopController";
 
 export default class SBotsManager {
@@ -60,10 +60,10 @@ export default class SBotsManager {
             }
         })
         const out: rectangle = {
-            x: record[SIDES.LEFT] + SBALL_DEFAULT_SIZE.x / 2,
-            y: record[SIDES.TOP] + SBALL_DEFAULT_SIZE.y / 2,
-            width: record[SIDES.RIGHT] - record[SIDES.LEFT] - SBALL_DEFAULT_SIZE.x,
-            height: record[SIDES.BOTTOM] - record[SIDES.TOP] - SBALL_DEFAULT_SIZE.y
+            x: record[SIDES.LEFT],
+            y: record[SIDES.TOP],
+            width: record[SIDES.RIGHT] - record[SIDES.LEFT],
+            height: record[SIDES.BOTTOM] - record[SIDES.TOP]
         }
         return out
     };
