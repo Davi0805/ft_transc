@@ -9,6 +9,20 @@ import CTeam from "./CTeam";
 import CScore from "./CScore";
 import { BALL_TYPES } from "../../../server/Objects/SBall";
 
+const typeSpriteMap: Record<BALL_TYPES, string> = {
+    [BALL_TYPES.BASIC]: "ballBasic",
+    [BALL_TYPES.EXPAND]: "ballExpand",
+    [BALL_TYPES.SHRINK]: "ballShrink",
+    [BALL_TYPES.SPEED_UP]: "ballSpeedUp",
+    [BALL_TYPES.SLOW_DOWN]: "ballSlowDown",
+    [BALL_TYPES.EXTRA_BALL]: "ballExtraBall",
+    [BALL_TYPES.RESTORE]: "ballRestore",
+    [BALL_TYPES.DESTROY]: "ballDestroy",
+    [BALL_TYPES.MASSIVE_DAMAGE]: "ballMassiveDamage",
+    [BALL_TYPES.MYSTERY]: "ballMystery",
+    [BALL_TYPES.BALL_TYPE_AM]: "ballUnknown" 
+}
+
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         this._assets = await Assets.loadBundle("gameScene");
@@ -94,16 +108,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
         gameDto.balls.newBalls.forEach(newBall => {
-            let ballName: string;
-            if (newBall.type === BALL_TYPES.EXPAND) {
-                ballName = "ballExpand";
-            } else if (newBall.type === BALL_TYPES.SHRINK) {
-                ballName = "ballShrink";
-            } else if (newBall.type === BALL_TYPES.SPEED_UP) {
-                ballName = "ballSpeedUp";
-            } else {
-                ballName = "ballBasic";
-            }
+            const ballName = typeSpriteMap[newBall.type];
             const ballSprite = new Sprite(this._assets[ballName]);
             this._root.addChild(ballSprite);
             this.balls.set(newBall.id, new CBall(
