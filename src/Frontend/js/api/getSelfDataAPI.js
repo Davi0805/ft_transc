@@ -1,10 +1,13 @@
 
 export async function getSelfData() {
     try {
+        const authToken = localStorage.getItem("authToken"); 
+        if (!authToken) throw new Error("No Token");
+
         const response = await fetch("http://localhost:8080/users/me", {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                Authorization: `Bearer ${authToken}`,
             },
         });
 

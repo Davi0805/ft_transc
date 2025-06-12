@@ -1,6 +1,7 @@
 import { authService } from "../services/authService.js";
 import { translator } from "../services/translationService.js";
 
+
 export const header = {
     init() {
         this.logOutEventListener();
@@ -10,46 +11,99 @@ export const header = {
     },
 
     logOutEventListener() {
-        const logout = document.getElementById("logout");
-        if (!logout) return;
-
-        logout.addEventListener('click', (e) => {
-            e.preventDefault();
-            authService.logout();
-            console.log("DEBUG: LOGOUT!");
-            window.router.navigateTo('/');
+        const userIn = document.getElementById('user-in');
+        if (!userIn) return;
+        userIn.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (event.target.closest('#logout')) {
+                authService.logout();
+                console.log("DEBUG: LOGOUT!");
+                window.router.navigateTo('/');
+            }
         });
     },
+
+    async updateHeaderVisibility() {
+        const loggedOut = document.getElementById("log-reg");
+        const loggedIn = document.getElementById("user-in");
+
+        const showLoggedOutVersion = () => {
+            if (loggedIn) {
+                loggedIn.innerHTML = '';
+            }
+
+            loggedOut.innerHTML = `
+              <a id="login-link" class="nav-link" href="/login" data-link data-i18n="header-login" >Login</a>
+              <a id="register-link" class="nav-link" href="/register" data-link data-i18n="header-register" >Register</a>
+            `;
+
+
+            // loggedIn.style.display = "none";
+            // loggedOut.style.display = "flex";
+
+        };
+
+        const showLoggedInVersion = (nickname, avatarURL) => {
+            if (loggedOut) {
+                loggedOut.innerHTML = '';
+            }
+
+            loggedIn.innerHTML = `
+                <div class="profile-container flex flex-center gap-8">
+                  <a id="profile-link" href="/profile" class="profile nav-link" data-link>${nickname}</a>
+                  <img class="profile-avatar" src="${avatarURL}" alt="user profile picture" draggable="false" >
+                </div>
+                <a id="settings-link" href="/settings" data-link class="settings flex flex-center nav-link">
+                  <img src="./Assets/icons/settings.svg" alt="settings icon" draggable="false" >
+                </a>
+                <button id="logout" class="logout">
+                  <img src="./Assets/icons/logout.svg" alt="logout icon" draggable="false" >
+                </button>
+            `;
+        }
+
+        // loggedOut.style.display = "none";
+        // loggedIn.style.display = "flex";
+        // headerNick.textContent = nickname;
+        // headerAvatar.src = avatarURL;
+
+        if (authService.isAuthenticated)
+            showLoggedInVersion(authService.userNick, authService.userAvatar);
+        else
+            showLoggedOutVersion();
+    },
+
+
 
     languageSelectorDisplayEventListener() {
         const dropDown = document.querySelector('.current-language');
         const langList = document.querySelector('.lang-options');
-        if (!dropDown || !langList) return ;
+        if (!dropDown || !langList) return;
 
         dropDown.addEventListener('click', (e) => {
             e.preventDefault();
-            
+
             langList.style.display = langList.style.display === "none" ? "block" : "none";
         });
     },
 
     languageSelectorChangeEventListener() {
         const langs = document.querySelectorAll('.lang-option');
-        
+
 
         langs.forEach((langOption) => {
             langOption.addEventListener('click', () => {
                 const langOptionImg = langOption.querySelector('img');
                 const currLang = document.querySelector('.current-language img[data-lang]');
 
-                if (!langOptionImg || ! currLang) return;
+                if (!langOptionImg || !currLang) return;
 
                 const selectedSrc = langOptionImg.src;
                 const selectedAlt = langOptionImg.alt;
-                const selectedData = langOptionImg.dataset.lang; 
+                const selectedData = langOptionImg.dataset.lang;
                 const currSrc = currLang.src;
                 const currAlt = currLang.alt;
-                const currData = currLang.dataset.lang; 
+                const currData = currLang.dataset.lang;
                 currLang.src = selectedSrc;
                 currLang.alt = selectedAlt;
                 currLang.dataset.lang = selectedData;

@@ -10,6 +10,7 @@ export class Chat {
         this.friends = [];
         this.minimized = false;
         this.userID = userID;
+        this.token = null;
 
         this.contactElements = new Map();
 
