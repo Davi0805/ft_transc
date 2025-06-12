@@ -17,15 +17,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         const ballName = "ball" + ballState.spriteID
         const ballSprite = new Sprite(this._assets[ballName]);
         this._root.addChild(ballSprite);
-        
-        this._balls.set(
-            0, new CBall(
-                0, //TODO: This will need to be generated somehow when more balls exist
-                Point.fromObj(ballState.pos),  //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
-                Point.fromObj(ballState.size),
-                ballSprite
-            )
-        )
 
         gameSceneConfigs.gameInitialState.teams.forEach(team => {
             const text = new BitmapText({
@@ -44,7 +35,29 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 team.side,
                 new CScore(team.score.score, text)
             ))
-        }) 
+        })
+
+        
+        this._timeLeft = new BitmapText({
+            text: gameSceneConfigs.gameInitialState.gameLength,
+            style: {
+                fontFamily: 'scoreFont', // This is what is loaded in the Assets
+                fontSize: 64,
+                fill: '#666666',
+            },
+        });
+        this._timeLeft.anchor.set(0.5, 0.5);
+        this._timeLeft.position.set(ballState.pos.x, ballState.pos.y);
+        this._root.addChild(this._timeLeft)
+
+        this._balls.set(
+            0, new CBall(
+                0, //TODO: This will need to be generated somehow when more balls exist
+                Point.fromObj(ballState.pos),  //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
+                Point.fromObj(ballState.size),
+                ballSprite
+            )
+        )
 
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
             const paddleSpriteName = "paddle" + paddleConf.spriteID
@@ -123,6 +136,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 team.score.update(teamState.score);
             } 
         })
+        this._timeLeft.text = gameDto.timeLeft
     }
 
     override tickerUpdate(): void {}
@@ -209,6 +223,8 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             })
         }
     }
+
+    private _timeLeft!: BitmapText;
 
     private _controlsState: Map<number, TControlsState> = new Map<number, TControlsState>
     get controlsState() {

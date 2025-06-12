@@ -21,6 +21,7 @@ export default class LoopController {
     unpause() { this._isRunning = true; }
     togglePause() { this._isRunning = !this._isRunning; }
 
+    // Update rate in seconds
     isEventTime(updateRate: number): boolean {
         return (this._tickerTimer % (this._tickerRate * updateRate) === 0);
     }

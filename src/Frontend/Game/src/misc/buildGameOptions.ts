@@ -28,7 +28,8 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
             spriteID: gameGonfigs.ball.spriteID
           },
           teams: [],
-          paddles: []
+          paddles: [],
+          gameLength: gameGonfigs.gameLength
         }
       }
     }
@@ -60,6 +61,7 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
     window: {
       size: Point.fromObj(gameConfigs.field.size)
     },
+    gameLength: gameConfigs.gameLength,
     teams: [],
     humans: [],
     bots: [],

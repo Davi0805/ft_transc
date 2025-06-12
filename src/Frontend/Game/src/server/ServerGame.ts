@@ -10,6 +10,7 @@ import SPaddlesManager from "./Objects/SPaddlesManager.js";
 export default class ServerGame {
     constructor(gameOpts: SGameConfigs) {
         this._windowSize = gameOpts.window.size;
+        this._timeLeft = gameOpts.gameLength;
         this._ballsManager = new SBallsManager(this._windowSize, gameOpts.gameInitialState.ball);
         this._teamsManager = new STeamsManager(gameOpts.teams)
         this._paddlesManager = new SPaddlesManager(gameOpts.gameInitialState.paddles, this.windowSize);
@@ -38,8 +39,12 @@ export default class ServerGame {
                 this._ballsManager.handleLimitCollision(this._teamsManager);
                 this._paddlesManager.handleCollisions(this._ballsManager);
                 
+                if (loop.isEventTime(1)) {
+                    this._timeLeft -= 1;
+                }
                 // Game state handling
-                if (this._teamsManager.teamLost() !== undefined) {
+                if (this._teamsManager.teamLost() !== undefined
+                    || this._timeLeft <= 0) {
                     loop.pause();
                     const finalGameState = this._teamsManager.getTeamsState();
                     console.log(finalGameState);
@@ -53,7 +58,8 @@ export default class ServerGame {
         const out: SGameDTO = {
             balls: this._ballsManager.getBallsDTO(),
             teams: this._teamsManager.getTeamsDTO(),
-            paddles: this._paddlesManager.getPaddlesDTO()
+            paddles: this._paddlesManager.getPaddlesDTO(),
+            timeLeft: this._timeLeft
         }
         return out
     }
@@ -72,6 +78,8 @@ export default class ServerGame {
     private _windowSize: point;
     set windowSize(value: point) { this._windowSize = value; }
     get windowSize() { return this._windowSize; }
+    
+    private _timeLeft: number; 
 
     private _ballsManager: SBallsManager;
     private _teamsManager: STeamsManager;

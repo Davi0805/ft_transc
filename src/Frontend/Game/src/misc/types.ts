@@ -135,7 +135,8 @@ export type CGameState = {
             pos: point
         }
     }[]
-    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[]
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[],
+    gameLength: number
 }
 
 export type CGameSceneConfigs = {
@@ -166,6 +167,7 @@ export type SGameState = {
 
 export type SGameConfigs = {
     window: Pick<TWindow, "size">,
+    gameLength: number
     teams: {
         side: SIDES,
         score: number
@@ -213,7 +215,8 @@ export type SGameDTO = {
         id: number
         pos: { x: number, y: number }
         size: { x: number, y: number }
-    }[]
+    }[],
+    timeLeft: number
 }
 
 // Client to server

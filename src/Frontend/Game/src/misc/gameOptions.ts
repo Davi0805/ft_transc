@@ -12,7 +12,7 @@ export const UserCustoms: TUserCustoms = {
         size: { x: 400, y: 400 },
         backgroundSpriteID: 0 //NOT USED YET
     },
-    gameLength: 0, //NOT USED YET
+    gameLength: 200, //NOT USED YET
     ball: { spriteID: 0 },
     paddles: [
         {
