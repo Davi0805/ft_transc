@@ -189,6 +189,10 @@ export default class SBallsManager {
                 }
                 break;
             }
+            case (BALL_TYPES.MASSIVE_DAMAGE): {
+                teamsManager.damageTeam(paddle.side, ball.damage * 10)
+                break;
+            }
             case (BALL_TYPES.MYSTERY): {
                 this._applyPowerupEffect(ball, paddle, teamsManager, getRandomInt(1, BALL_TYPES.BALL_TYPE_AM))
             }

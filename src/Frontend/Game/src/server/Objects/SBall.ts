@@ -14,6 +14,7 @@ export enum BALL_TYPES {
     EXTRA_BALL,
     RESTORE,
     DESTROY,
+    MASSIVE_DAMAGE,
     MYSTERY,
     BALL_TYPE_AM
 }
