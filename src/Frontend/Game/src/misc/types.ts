@@ -32,6 +32,7 @@ export type TBall = {
     direction: point,
     speed: number
     spriteID: number,
+    damage: number
 }
 
 export type TPaddle = {
@@ -159,7 +160,7 @@ export type SceneChangeDetail = | { sceneName: "exampleScene", configs: ExampleS
 // Server
 
 export type SGameState = {
-    ball: Pick<TBall,"type" | "pos" | "size" | "speed" | "direction">,
+    ball: Pick<TBall,"type" | "pos" | "size" | "speed" | "direction" | "damage">,
     paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 }
 

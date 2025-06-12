@@ -27,10 +27,11 @@ export default class SBallsManager {
     addBallOfType(type: BALL_TYPES) {
         const configs = {
             type: type,
-            size: SBALL_DEFAULT_SIZE,
+            size: { x: 16, y: 16 }, //SBALL_DEFAULT_SIZE,
             pos: { x: this._windowSize.x / 2, y: this._windowSize.y / 2 },
             direction: { x: Math.random() * 1.8 - 0.9, y: Math.random() * 1.8 - 0.9},
-            speed: getRandomInt(50, 250)
+            speed: getRandomInt(50, 250),
+            damage: 4
         };
         this.addBall(configs);
     }
@@ -42,7 +43,8 @@ export default class SBallsManager {
             Point.fromObj(ballConfigs.size),
             ballConfigs.speed,
             Point.fromObj(ballConfigs.direction),
-            ballConfigs.type
+            ballConfigs.type,
+            ballConfigs.damage
         )
         this.balls.push(newBall);
         this._newBalls.push(newBall);
@@ -57,19 +59,19 @@ export default class SBallsManager {
             if (ball.cbox.x < 0) {
                 ball.pos = Point.fromObj({ x: ball.cbox.width / 2, y: ball.pos.y })
                 ball.direction.x *= -1
-                teamsManager.damageTeam(SIDES.LEFT, 1);
+                teamsManager.damageTeam(SIDES.LEFT, ball.damage);
             } else if (ball.cbox.x + ball.cbox.width > this._windowSize.x) {
                 ball.pos = Point.fromObj({ x: this._windowSize.x - ball.cbox.width / 2, y: ball.pos.y })
                 ball.direction.x *= -1;
-                teamsManager.damageTeam(SIDES.RIGHT, 1);
+                teamsManager.damageTeam(SIDES.RIGHT, ball.damage);
             } else if (ball.cbox.y < 0) {
                 ball.pos = Point.fromObj({ x: ball.pos.x, y: ball.cbox.height / 2 })
                 ball.direction.y *= -1;
-                teamsManager.damageTeam(SIDES.TOP, 1);
+                teamsManager.damageTeam(SIDES.TOP, ball.damage);
             } else if (ball.cbox.y + ball.cbox.height > this._windowSize.y) {
                 ball.pos = Point.fromObj({ x: ball.pos.x, y: this._windowSize.y - ball.cbox.height / 2 })
                 ball.direction.y *= -1;
-                teamsManager.damageTeam(SIDES.BOTTOM, 1);
+                teamsManager.damageTeam(SIDES.BOTTOM, ball.damage);
             }
         })
     }

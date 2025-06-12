@@ -2,7 +2,7 @@ import Point from "../../misc/Point.js";
 import SObject from "../../abstracts/SObject.js";
 import { TBall } from "../../misc/types.js";
 
-export type TSBallConfigs = Pick<TBall, "type" | "size" | "pos" |"direction" | "speed">
+export type TSBallConfigs = Pick<TBall, "type" | "size" | "pos" |"direction" | "speed" | "damage">
 export type SBallState = Pick<SBall, "id" | "pos" | "direction" | "speed">
 
 export enum BALL_TYPES {
@@ -16,11 +16,12 @@ export const SBALL_DEFAULT_SIZE = { x: 8, y: 8 }
 
 // Represents the ball from the Server's perspective
 export default class SBall extends SObject {
-    constructor(id: number, pos: Point, size: Point, speed: number, direction: Point, type: BALL_TYPES = BALL_TYPES.BASIC) {
+    constructor(id: number, pos: Point, size: Point, speed: number, direction: Point, type: BALL_TYPES, damage: number) {
         super(id, pos, new Point(1, 0), size, speed);
         this._speed = speed;
         this._direction = direction.normalize();
         this._type = type;
+        this._damage = damage;
     }
 
     move(delta: number) {
@@ -35,4 +36,7 @@ export default class SBall extends SObject {
 
     private _type: BALL_TYPES;
     get type(): BALL_TYPES { return this._type; }
+
+    private _damage: number;
+    get damage(): number { return this._damage; }
 }

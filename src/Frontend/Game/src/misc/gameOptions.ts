@@ -107,7 +107,8 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
             //pos: { x: 20, y: 50},
             //direction: { x: 0, y: 1 }, 
             size: SBALL_DEFAULT_SIZE,
-            speed: 100
+            speed: 100,
+            damage: 1
         },
         teams: [],
         paddles: [],

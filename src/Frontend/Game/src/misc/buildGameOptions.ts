@@ -69,7 +69,8 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
         pos: Point.fromObj(gameConfigs.ball.pos),
         size: Point.fromObj(gameConfigs.ball.size),
         speed: gameConfigs.ball.speed,
-        direction: Point.fromObj(gameConfigs.ball.direction)
+        direction: Point.fromObj(gameConfigs.ball.direction),
+        damage: gameConfigs.ball.damage
       },
       paddles: []
     }
