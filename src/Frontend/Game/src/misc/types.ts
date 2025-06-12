@@ -193,10 +193,17 @@ export type DTOAssignID = {
 
 export type SGameDTO = {
     balls: {
-        id: number
-        type: BALL_TYPES //This is only needed when the ball is created...
-        pos: { x: number, y: number}
-    }[]
+        ballsState: {
+            id: number,
+            pos: point
+        }[],
+        newBalls: {
+            id: number,
+            type: BALL_TYPES,
+            size: point
+            pos: point
+        }[]
+    }
     teams: {
         side: SIDES,
         score: number

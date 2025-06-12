@@ -81,29 +81,26 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
 
-        gameDto.balls.forEach(ballState => {
-            const ball = this.balls.get(ballState.id);
-            if (ball === undefined) {
-                let ballName: string;
-                if (ballState.type === BALL_TYPES.EXPAND) {
-                    ballName = "ballExpand";
-                } else if (ballState.type === BALL_TYPES.SHRINK) {
-                    ballName = "ballShrink";
-                } else {
-                    ballName = "ball0";
-                }
-                const ballSprite = new Sprite(this._assets[ballName]);
-                this._root.addChild(ballSprite);
-                this.balls.set(ballState.id, new CBall(
-                    ballState.id,
-                    Point.fromObj(ballState.pos),
-                    new Point(8, 8), // How the fuck will I know the size?
-                    ballSprite 
-                )) 
+        gameDto.balls.newBalls.forEach(newBall => {
+            let ballName: string;
+            if (newBall.type === BALL_TYPES.EXPAND) {
+                ballName = "ballExpand";
+            } else if (newBall.type === BALL_TYPES.SHRINK) {
+                ballName = "ballShrink";
+            } else {
+                ballName = "ball0";
             }
+            const ballSprite = new Sprite(this._assets[ballName]);
+            this._root.addChild(ballSprite);
+            this.balls.set(newBall.id, new CBall(
+                newBall.id,
+                Point.fromObj(newBall.pos),
+                Point.fromObj(newBall.size),
+                ballSprite 
+            )) 
         })
         this.balls.forEach(ball => {
-            const ballState = gameDto.balls.find(ballState => ball.id === ballState.id);
+            const ballState = gameDto.balls.ballsState.find(ballState => ball.id === ballState.id);
             if (ballState === undefined) {
                 this._root.removeChild(ball.sprite);
                 this.balls.delete(ball.id)

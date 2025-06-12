@@ -6,6 +6,7 @@ import { getRandomInt } from "../../misc/utils.js";
 import STeamsManager from "../STeamsManager.js";
 import LoopController from "../LoopController.js";
 
+
 export default class SBallsManager {
     constructor(windowSize: point,  firstBallConfigs: TSBallConfigs) {
         this._windowSize = windowSize;
@@ -35,14 +36,16 @@ export default class SBallsManager {
     }
 
     addBall(ballConfigs: TSBallConfigs) {
-        this.balls.push(new SBall(
+        const newBall = new SBall(
             this._currentID++,
             Point.fromObj(ballConfigs.pos),
             Point.fromObj(ballConfigs.size),
             ballConfigs.speed,
             Point.fromObj(ballConfigs.direction),
             ballConfigs.type
-        ))
+        )
+        this.balls.push(newBall);
+        this._newBalls.push(newBall);
     }
 
     removeBall(index: number) {
@@ -87,17 +90,28 @@ export default class SBallsManager {
     }
 
     getBallsDTO() {
-        return this._balls.map(ball => ({
-            id: ball.id,
-            type: ball.type,
-            pos: ball.pos.toObj()
-        }))
+        const out = {
+            ballsState: this._balls.map(ball => ({
+                id: ball.id,
+                pos: ball.pos.toObj()
+            })),
+            newBalls: this._newBalls.map(ball => ({
+                id: ball.id,
+                type: ball.type,
+                size: ball.size.toObj(),
+                pos: ball.pos.toObj()
+            }))
+        }
+        this._newBalls.length = 0;
+        return out;
     }
 
     private _windowSize: point;
 
     private _balls: SBall[] = []
     get balls(): SBall[] { return this._balls; }
+
+    private _newBalls: SBall[] = []
 
     private _ballSpawnRate;
     get ballSpawnRate() { return this._ballSpawnRate; }
