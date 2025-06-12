@@ -33,6 +33,7 @@ const broadcastRate = 1000 / 60; // In milliseconds
         dto: game.getGameDTO()
     }
     const data = JSON.stringify(message);
+    if (message.dto.balls.newBalls.length !== 0) {console.log(data)}
     for (var client of clients) {
       client.send(data)
     }
@@ -68,7 +69,6 @@ fastify.register(async (fastify) => {
 
         clients.push(socket);
         
-        console.log(game.getHumansAmount())
         if (clients.length >= game.getHumansAmount()) {
             game.startGameLoop();
         }

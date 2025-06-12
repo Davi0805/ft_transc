@@ -47,7 +47,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             },
         });
         this._timeLeft.anchor.set(0.5, 0.5);
-        this._timeLeft.position.set(ballState.pos.x, ballState.pos.y);
+        this._timeLeft.position.set(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
         this._root.addChild(this._timeLeft)
 
         this._balls.set(
@@ -94,6 +94,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
 
+        if (gameDto.balls.newBalls.length !== 0) { console.log(gameDto.balls.newBalls) }
         gameDto.balls.newBalls.forEach(newBall => {
             let ballName: string;
             if (newBall.type === BALL_TYPES.EXPAND) {
@@ -113,6 +114,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 Point.fromObj(newBall.size),
                 ballSprite 
             )) 
+            console.log("new ball added!")
         })
         this.balls.forEach(ball => {
             const ballState = gameDto.balls.ballsState.find(ballState => ball.id === ballState.id);

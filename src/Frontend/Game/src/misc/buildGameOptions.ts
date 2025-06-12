@@ -20,6 +20,7 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
         height: gameGonfigs.field.size.y
       },
       gameSceneConfigs: {
+        fieldSize: gameGonfigs.field.size,
         controls: controlsMap,
         gameInitialState: {
           ball: {

@@ -5,6 +5,7 @@ import STeamsManager from "./STeamsManager.js";
 import BotsManager from "./Players/SBotsManager.js";
 import SBallsManager from "./Objects/SBallsManager.js";
 import SPaddlesManager from "./Objects/SPaddlesManager.js";
+import { BALL_TYPES } from "./Objects/SBall.js";
 
 
 export default class ServerGame {
@@ -20,6 +21,7 @@ export default class ServerGame {
 
     startGameLoop() {
         const loop = new LoopController(60);
+        //this._ballsManager.addBallOfType(BALL_TYPES.BASIC);
         loop.start(() => {
             if (loop.isRunning) {
                 // Movement decision by players

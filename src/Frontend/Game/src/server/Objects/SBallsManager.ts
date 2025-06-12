@@ -8,11 +8,11 @@ import LoopController from "../LoopController.js";
 
 
 export default class SBallsManager {
-    constructor(windowSize: point,  firstBallConfigs: TSBallConfigs) {
+    constructor(windowSize: point, firstBall: TSBallConfigs) {
         this._windowSize = windowSize;
         this._ballSpawnRate = 4;
         this._currentID = 0;
-        this.addBall(firstBallConfigs);
+        this.addBall(firstBall);
     }
 
     update(loop: LoopController) {
