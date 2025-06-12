@@ -4,250 +4,169 @@ const redisService = require('../../../Application/Services/RedisService');
 const twofaService = require('../../../Application/Services/TwoFactorAuthService');
 const fs = require('fs');
 const path = require('path');
+const exception = require('../../../Infrastructure/config/CustomException');
 
 class UserController {
 
 
     /* 
-        Endpoint for debug purposes, thats why returns too many critical data
-        GET - localhost:8080/users/{id}
-        @params {HTTP Header} Authorization: Bearer <JWT>
-        @returns list of users
+    *    @brief Endpoint for debug purposes, thats why returns too many critical data
+    *    GET - localhost:8080/users/{id}
+    *    @returns list of users
     */
-    async getAll(req, reply) {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            const users = await userService.getAll();
-            if (!users || Object.keys(users).length === 0) throw 404;
-            return reply.send(users);
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+    async getAll(req, reply)
+    {
+        const users = await userService.getAll();
+        return reply.send(users);
     }
 
+
+    /* 
+    *    @brief Endpoint to return a few personal data of user
+    *    GET - localhost:8080/users/me
+    *    @returns id and nickname
+    */
     async getMyData(req, reply)
     {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            const users = await userService.findById(session.user_id);
-            if (!users || Object.keys(users).length === 0) throw 404;
-            return reply.send({id: users[0].user_id, nickname: users[0].name});
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+        const users = await userService.findById(req.session.user_id);
+        return reply.send({id: users[0].user_id, nickname: users[0].name});
     }
 
 
     /* 
-        Get by id endpoint
-        GET - localhost:8080/users/{id}
-        @params {HTTP Header} Authorization: Bearer <JWT> 
-        @params {id: (long)} - user_id that is being searched
-        @returns list of users
+    *    @brief Get by id endpoint
+    *    GET - localhost:8080/users/{id}
+    *    @params {id: (long)} - user_id that is being searched
+    *    @returns list of users
     */
-    async getById(req, reply) {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            const user = await userService.findById(req.params.id);
-            if (!user || Object.keys(user).length === 0) throw 404;
-            return reply.send(user);
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+    async getById(req, reply)
+    {
+        const user = await userService.findById(req.params.id);
+        return reply.send(user);
     }
 
 
     /* 
-        Endpoint to create user
-        POST - localhost:8080/users
-        @params name: (string)
-        @params username: (string)
-        @params email: (string)
-        @params password_hash: (string) - pass that will be converted to hash
-        */
-    async createUser(req, reply) {
-        try {
-            const user = req.body;
-            const result = await userService.createUser(user);
-            if (!result) throw 400;
-            return reply.code(201).send();
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+    *    @brief Endpoint to create user
+    *    POST - localhost:8080/users
+    *    @params name: (string)
+    *    @params username: (string)
+    *    @params email: (string)
+    *    @params password_hash: (string) - pass that will be converted to hash
+    */
+    async createUser(req, reply)
+    {
+        await userService.createUser(req.body); // bad pratice but i can make a dto later
+        return reply.code(201).send();
     }
 
 
-    // todo: safer way to upload files, cause it saves the file
-    // todo: in the server, even if the user is not authenticated
-    // todo: or the request fails
     /* 
-        Endpoint to upload user avatar as multipart/form-data
-        POST - localhost:8080/users/upload-avatar
-        @params {HTTP Header} Authorization: Bearer <JWT> 
-        @params avatar: (file) - file to be uploaded
+    *    @brief Endpoint to upload user avatar as multipart/form-data
+    *    POST - localhost:8080/users/upload-avatar
+    *    @params avatar: (file) - file to be uploaded
     */
     async uploadAvatar(req, reply)
     {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            const file = req.file;
-            if (!file) throw 400;
-            await userService.uploadAvatar(file.path, session.user_id);
-            return reply.send();
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+        if (!req.file) throw exception('File not found!', 400);
+        await userService.uploadAvatar(req.file.path, req.session.user_id);
+        return reply.send();
     }
 
+
+    /* 
+    *    @brief Endpoint to update users name
+    *    PUT - localhost:8080/users/name
+    *    @params name: (string)
+    */
     async updateName(req, reply)
     {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            const body = req.body;
-            await userService.updateName({name: body.name, id: session.user_id});
-            return reply.send();
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+        await userService.updateName({name: req.body.name, id: req.session.user_id});
+        return reply.send();
     }
 
+
+    /* 
+    *    @brief Endpoint to update users password
+    *    PUT - localhost:8080/user/password
+    *    @params name: (string)
+    */
     async updatePassword(req, reply)
     {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            const body = req.body;
-            await userService.updatePassword({new_password: body.password, old_password: body.old_password, id: session.user_id});
-            return reply.send();
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-
-            return reply.code(400).send();
-        }
+        await userService.updatePassword({new_password: req.body.password,
+                        old_password: req.body.old_password, id: req.session.user_id});
+        return reply.send();
     }
 
+
     /* 
-        Endpoint to be able to get the static avatar picture from the server
-        GET - localhost:8080/users/avatar/{id}
-        @params {HTTP Header} Authorization
-        @params {id: (long)} - user_id that is being searched
-        @returns {file: (file)} - file to be downloaded
+    *    @brief Endpoint to be able to get the static avatar picture from the server
+    *    GET - localhost:8080/users/avatar/{id}
+    *    @params {id: (long)} - user_id that is being searched
+    *    @returns {file: (file)} - base64
     */
-    // todo: I will let this here for now, but in the future
-    // todo: when the frontend is ready, i finish this to be more accurate
-    async getAvatar(req, reply) {
-        try {
-            const user = await userService.findById(req.params.id);
-            if (!user || Object.keys(user).length === 0) throw 404;
-    
-            const imagePath = user[0].user_image;
-            if (!imagePath) throw 404;
-    
-            // Check if file exists
-            console.log(imagePath);
-            /* if (!fs.existsSync(imagePath)) throw 404; */
-            
-            const stream = fs.createReadStream(imagePath);
-            return reply.type('image').send(stream);
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
-            console.log(error);
-            return reply.code(400).send();
-        }
+    async getAvatar(req, reply)
+    {
+        const user = await userService.findById(req.params.id);
+        const imagePath = user[0].user_image;
+        if (!imagePath) throw exception('Image not defined!', 204);
+        const stream = fs.createReadStream(imagePath);
+        return reply.type('image').send(stream);
     }
 
-    /* 
-        Login endpoint to authenticate users and cache friendships on redis
-        POST - localhost:8080/login
-        @params {username: (string), password: (string)}
-        @returns {token: (string)} - returns the jwt token of user
-        @returns {verified: (boolean)} - returns if user is fully authenticated (true)
-        or still need  to make 2FA auth (false)
-    */
-    async Login(req, reply) {
-        try {
-            const user = req.body;
-            const { user_id, twofa_secret } = await userService.Login(user);
-            const token = await jwtService.generate(user_id);
-            await redisService.postMessage('cacheFriends', JSON.stringify({ user_id: user_id }));
-            if (twofa_secret) // if the user have 2FA activated
-            {
-                await redisService.saveSession(token, { user_id: user_id, twofa_verified: 0 });
-                return reply.send({ token: token, verified: false });
-            }
-            await redisService.saveSession(token, { user_id: user_id, twofa_verified: 1 });
-            return reply.send({ token: token, verified: true });
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
 
-            return reply.code(400).send();
+    /* 
+    *    @brief Login endpoint to authenticate users and cache friendships on redis
+    *    POST - localhost:8080/login
+    *    @params {username: (string), password: (string)}
+    *    @returns {token: (string)} - returns the jwt token of user
+    *    @returns {verified: (boolean)} - returns if user is fully authenticated (true)
+    *    or still need  to make 2FA auth (false)
+    */
+    async Login(req, reply)
+    {
+        const { user_id, twofa_secret } = await userService.Login(req.body);
+        const token = await jwtService.generate(user_id);
+        await redisService.postMessage('cacheFriends', JSON.stringify({ user_id: user_id }));
+        if (twofa_secret) // if the user have 2FA activated
+        {
+            await redisService.saveSession(token, { user_id: user_id, twofa_verified: 0 });
+            return reply.send({ token: token, verified: false });
         }
+        await redisService.saveSession(token, { user_id: user_id, twofa_verified: 1 });
+        return reply.send({ token: token, verified: true });
     }
 
-    /* 
-        Endpoint to activate 2FA to user account and generate qrcode
-        POST - localhost:8080/twofa/activate
-        @params {HTTP Header} Authorization: Bearer <JWT> 
-    */
-    async activateTwoFactorAuth(req, reply) {
-        try {
-            const session = await redisService.validateSession((req.headers.authorization));
-            // todo: optimize the query later
-            const user = await userService.findById(session.user_id);
-            if (user.twofa_enabled) throw 400;
-            const twofa = await twofaService.generateSecret();
-            await userService.activateTwoFactorAuth(session.user_id, twofa.secret);
-            return reply.send({qrcode: twofa.qrCodeUrl});
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
 
-            return reply.code(400).send();
-        }
+    /* 
+    *    @brief Endpoint to activate 2FA to user account and generate qrcode
+    *    POST - localhost:8080/twofa/activate
+    *    @returns QRCODE - to be used on google authenticator
+    */
+    async activateTwoFactorAuth(req, reply)
+    {
+        // todo: optimize the query later
+        const user = await userService.findById(req.session.user_id);
+        if (user.twofa_enabled) throw exception('2FA already activated', 400);
+        const twofa = await twofaService.generateSecret();
+        await userService.activateTwoFactorAuth(req.session.user_id, twofa.secret);
+        return reply.send({qrcode: twofa.qrCodeUrl});
     }
 
-    /* 
-        Endpoint to verify the 2FA TOKEN, after login if the user is not verified
-        will be necessary send the token from google authenticator or other to check-in
-        POST - localhost:8080/twofa/auth
-        @params {HTTP Header} Authorization: Bearer <JWT> 
-        @params token: (string) - temporary token from 2FA app, like google authenticator
-    */
-    async twofa_verify(req, reply) {
-        try {
-            const body = req.body;
-            const session = JSON.parse(await redisService.getSession((req.headers.authorization)));
-            const user = await userService.findById(session.user_id);
-            if (!await twofaService.verifyToken(user[0].twofa_secret, body.token)) throw 401;
-            const jwt = req.headers.authorization.substring(7);
-            await redisService.saveSession(jwt, { user_id: session.user_id, twofa_verified: 1 });
-            return reply.send();
-        } catch (error) {
-            if (typeof error === 'number')
-                return reply.code(error).send();
 
-            return reply.code(400).send();
-        }
+    /* 
+    *    @brief Endpoint to verify the 2FA TOKEN, after login if the user is not verified
+    *    will be necessary send the token from google authenticator or other to check-in
+    *    POST - localhost:8080/twofa/auth
+    *    @params token: (string) - temporary token from 2FA app, like google authenticator
+    */
+    async twofa_verify(req, reply)
+    {
+        const user = await userService.findById(req.session.user_id);
+        await twofaService.verifyToken(user[0].twofa_secret, req.body.token)
+        const jwt = req.headers.authorization.substring(7);
+        await redisService.saveSession(jwt, { user_id: req.session.user_id, twofa_verified: 1 });
+        return reply.send();
     }
 }
 

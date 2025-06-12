@@ -3,11 +3,10 @@ const connectionsService = require('../../../Application/Services/ConnectionsSer
 const chatMessageService = require('../../../Application/Services/ChatMessageService');
 const ConversationService = require('../../../Application/Services/ConversationsService');
 class WebSocketController {
-    async helloWorld(socket, req) // the infamous hello world
+    async chat(socket, req) // the infamous hello world
     {
-        /* console.log(req.headers); */
 
-        const session = JSON.parse(await redisService.getSession(req.headers.authorization));
+        const session = await redisService.validateSession(req.headers.authorization);
             if (!session)
                 socket.close();
         await connectionsService.addUser(session.user_id, socket);

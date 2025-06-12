@@ -3,11 +3,23 @@ const sensible = require('fastify-sensible');
 const webSocketRoutes = require('./Infrastructure/routes/WebSocketRoutes');
 const conversationRoutes = require('./Infrastructure/routes/ConversationRoutes');
 const chatMessageRoutes = require('./Infrastructure/routes/ChatMessagesRoutes');
-
+const onlineUserService = require('./Application/Services/OnlineUserService');
 const consumeNewFriendsEvent = require('./Adapters/inbound/Redis Streams/streamsConsumer');
 
 const setup = () => {
     const app = Fastify({ logger: true });
+    
+    app.setErrorHandler((error, request, reply) => {
+        const statusCode = error.statusCode ?? 500;
+        console.log(error);
+
+        reply.status(statusCode).send(
+        {
+            message: error.message,
+            statusCode
+        });
+    });
+
     app.register(require('@fastify/websocket'));
 
     app.register(sensible);
@@ -20,7 +32,8 @@ const setup = () => {
 
 const run = () => {
     const app = setup();
-
+    onlineUserService.onlineUserEventLoop();
+    /* onlineUserService.broadcastOnlineFriends(); */
     consumeNewFriendsEvent();
     
     try {
