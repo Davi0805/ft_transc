@@ -68,7 +68,7 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
     bots: [],
     gameInitialState: {
       ball: {
-        type: BALL_TYPES.BASIC,
+        type: gameConfigs.ball.type,
         pos: Point.fromObj(gameConfigs.ball.pos),
         size: Point.fromObj(gameConfigs.ball.size),
         speed: gameConfigs.ball.speed,

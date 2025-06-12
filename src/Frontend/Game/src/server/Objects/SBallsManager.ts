@@ -47,6 +47,7 @@ export default class SBallsManager {
             ballConfigs.type,
             ballConfigs.damage
         )
+        console.log(BALL_TYPES[ballConfigs.type])
         this.balls.push(newBall);
         this._newBalls.push(newBall);
     }
@@ -57,27 +58,31 @@ export default class SBallsManager {
 
     handleLimitCollision(teamsManager: STeamsManager) {
         this.balls.forEach(ball => {
+            let team: SIDES | null = null;
             if (ball.cbox.x < 0) {
                 ball.pos = Point.fromObj({ x: ball.cbox.width / 2, y: ball.pos.y })
                 ball.direction.x *= -1
-                teamsManager.damageTeam(SIDES.LEFT, ball.damage);
+                team = SIDES.LEFT;                
             } else if (ball.cbox.x + ball.cbox.width > this._windowSize.x) {
                 ball.pos = Point.fromObj({ x: this._windowSize.x - ball.cbox.width / 2, y: ball.pos.y })
-                ball.direction.x *= -1;
-                teamsManager.damageTeam(SIDES.RIGHT, ball.damage);
+                ball.direction.x *= -1
+                team = SIDES.RIGHT
             } else if (ball.cbox.y < 0) {
                 ball.pos = Point.fromObj({ x: ball.pos.x, y: ball.cbox.height / 2 })
-                ball.direction.y *= -1;
-                teamsManager.damageTeam(SIDES.TOP, ball.damage);
+                ball.direction.y *= -1
+                team = SIDES.TOP
             } else if (ball.cbox.y + ball.cbox.height > this._windowSize.y) {
                 ball.pos = Point.fromObj({ x: ball.pos.x, y: this._windowSize.y - ball.cbox.height / 2 })
                 ball.direction.y *= -1;
-                teamsManager.damageTeam(SIDES.BOTTOM, ball.damage);
+                team = SIDES.BOTTOM
             }
+            if (team != null) {
+                teamsManager.damageTeam(team, ball.damage);
+            }            
         })
     }
 
-    handlePaddleCollision(paddle: SPaddle) {
+    handlePaddleCollision(paddle: SPaddle, teamsManager: STeamsManager) {
         for (let i = this.balls.length - 1; i >= 0; i--) {
             const ball = this.balls[i];
             const collisionSide = ball.cbox.areColliding(paddle.cbox);
@@ -85,7 +90,7 @@ export default class SBallsManager {
                 if (ball.type === BALL_TYPES.BASIC) {
                     this._computeCollisionResult(collisionSide, ball, paddle);
                 } else {
-                    this._applyPowerupEffect(ball, paddle);
+                    this._applyPowerupEffect(ball, paddle, teamsManager);
                     this.removeBall(i)
                 }
             }
@@ -150,7 +155,7 @@ export default class SBallsManager {
         }
     }
 
-    private _applyPowerupEffect(ball: SBall, paddle: SPaddle, type: BALL_TYPES = ball.type) {
+    private _applyPowerupEffect(ball: SBall, paddle: SPaddle, teamsManager: STeamsManager, type: BALL_TYPES = ball.type) {
         switch (type) {
             case (BALL_TYPES.EXPAND): {
                 paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: 20 }))
@@ -168,12 +173,24 @@ export default class SBallsManager {
                 paddle.speed -= 50
                 break;
             }
-            case (BALL_TYPES.EXTRA_BALLS): {
+            case (BALL_TYPES.EXTRA_BALL): {
                 this.addBallOfType(BALL_TYPES.BASIC)
                 break;
             }
+            case (BALL_TYPES.RESTORE): {
+                teamsManager.damageTeam(paddle.side, -ball.damage)
+                break;
+            }
+            case (BALL_TYPES.DESTROY): {
+                for (const team of Object.values(SIDES)) {
+                    if (typeof team === "number" && team !== paddle.side) {
+                        teamsManager.damageTeam(team, ball.damage);
+                    }
+                }
+                break;
+            }
             case (BALL_TYPES.MYSTERY): {
-                this._applyPowerupEffect(ball, paddle, getRandomInt(1, BALL_TYPES.BALL_TYPE_AM))
+                this._applyPowerupEffect(ball, paddle, teamsManager, getRandomInt(1, BALL_TYPES.BALL_TYPE_AM))
             }
         }
     }

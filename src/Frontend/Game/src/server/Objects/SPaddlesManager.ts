@@ -2,7 +2,8 @@ import SPaddle, { TSPaddleConfigs } from "./SPaddle.js";
 import Point from "../../misc/Point.js";
 import { point } from "../../misc/types.js";
 import SBallsManager from "./SBallsManager.js";
-import LoopController from "../LoopController.js";;
+import LoopController from "../LoopController.js";import STeamsManager from "../STeamsManager.js";
+;
 
 export default class SPaddlesManager {
     constructor(paddles: TSPaddleConfigs, windowSize: point) {
@@ -26,10 +27,10 @@ export default class SPaddlesManager {
         })
     }
 
-    handleCollisions(ballsManager: SBallsManager) {
+    handleCollisions(ballsManager: SBallsManager, teamsManager: STeamsManager) {
         this._handleLimitsCollision();
         this._paddles.forEach(paddle => {
-            ballsManager.handlePaddleCollision(paddle);
+            ballsManager.handlePaddleCollision(paddle, teamsManager);
         })
     }
 

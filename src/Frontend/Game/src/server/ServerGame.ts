@@ -5,7 +5,6 @@ import STeamsManager from "./STeamsManager.js";
 import BotsManager from "./Players/SBotsManager.js";
 import SBallsManager from "./Objects/SBallsManager.js";
 import SPaddlesManager from "./Objects/SPaddlesManager.js";
-import { BALL_TYPES } from "./Objects/SBall.js";
 import WebSocket from "ws";
 
 
@@ -22,7 +21,6 @@ export default class ServerGame {
 
     startGameLoop() {
         const loop = new LoopController(60);
-        //this._ballsManager.addBallOfType(BALL_TYPES.BASIC);
         loop.start(() => {
             if (loop.isRunning) {
                 // Movement decision by players
@@ -40,7 +38,7 @@ export default class ServerGame {
                 // I should definitely delagate the consequenses to each object though!
                 // I can also make a collision handler a singleton and register/unregister objects there?
                 this._ballsManager.handleLimitCollision(this._teamsManager);
-                this._paddlesManager.handleCollisions(this._ballsManager);
+                this._paddlesManager.handleCollisions(this._ballsManager, this._teamsManager);
                 
                 if (loop.isEventTime(1)) {
                     this._timeLeft -= 1;

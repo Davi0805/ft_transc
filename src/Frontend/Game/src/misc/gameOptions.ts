@@ -94,7 +94,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         gameLength: userCustoms.gameLength,
         ball: {
             id: 0,
-            type: BALL_TYPES.BASIC,
+            type: BALL_TYPES.RESTORE,
             spriteID: userCustoms.ball.spriteID,
             pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
             direction: { x: Math.random() - 0.5, y: Math.random() - 0.5 },

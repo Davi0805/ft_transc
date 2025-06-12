@@ -11,12 +11,12 @@ export enum BALL_TYPES {
     SHRINK,
     SPEED_UP,
     SLOW_DOWN,
-    EXTRA_BALLS,
+    EXTRA_BALL,
+    RESTORE,
+    DESTROY,
     MYSTERY,
     BALL_TYPE_AM
 }
-
-//export const SBALL_DEFAULT_SIZE = { x: 8, y: 8 }
 
 // Represents the ball from the Server's perspective
 export default class SBall extends SObject {
