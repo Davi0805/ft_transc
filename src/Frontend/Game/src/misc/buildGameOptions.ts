@@ -1,10 +1,8 @@
 import { TGameConfigs, CAppConfigs, SGameConfigs, TControls } from "./types.js";
-import Point from "./Point.js";
-import { BALL_TYPES } from "../server/Objects/SBall.js";
 
-export function buildCAppConfigs(gameGonfigs: TGameConfigs, 
+export function buildCAppConfigs(gameConfigs: TGameConfigs, 
   clientID: number, websocket: WebSocket): CAppConfigs {
-    const humansInClient = gameGonfigs.clients.find(client => client.id == clientID)?.humans;
+    const humansInClient = gameConfigs.clients.find(client => client.id == clientID)?.humans;
     if (humansInClient === undefined) {
       throw new Error(`The clientID ${clientID} has no controls saved in gameConfigs!`)
     }
@@ -16,26 +14,27 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
     const out: CAppConfigs = {
       websocket: websocket,
       appConfigs: {
-        width: gameGonfigs.field.size.x,
-        height: gameGonfigs.field.size.y
+        width: gameConfigs.field.size.x,
+        height: gameConfigs.field.size.y
       },
       gameSceneConfigs: {
-        fieldSize: gameGonfigs.field.size,
+        fieldSize: gameConfigs.field.size,
         controls: controlsMap,
         gameInitialState: {
           ball: {
             id: 0,
-            size: gameGonfigs.ball.size,
-            pos: gameGonfigs.ball.pos,
+            size: gameConfigs.ball.size,
+            pos: gameConfigs.ball.pos,
+            type: gameConfigs.ball.type
           },
           teams: [],
           paddles: [],
-          gameLength: gameGonfigs.gameLength
+          gameLength: gameConfigs.gameLength
         }
       }
     }
 
-    for (let team of gameGonfigs.teams) {
+    for (let team of gameConfigs.teams) {
       out.gameSceneConfigs.gameInitialState.teams.push({
         side: team.side,
         score: {
@@ -44,7 +43,7 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
         },
       })
     }
-    for (let paddle of gameGonfigs.paddles) {
+    for (let paddle of gameConfigs.paddles) {
       out.gameSceneConfigs.gameInitialState.paddles.push({
         id: paddle.id,
         side: paddle.side,

@@ -1,27 +1,15 @@
 import AScene from "../system/AScene";
 import Point from "../../../misc/Point";
-import { Assets, Sprite, BitmapText } from "pixi.js"
+import { Assets } from "pixi.js"
 import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
-import { SIDES, CGameSceneConfigs, SGameDTO, TControls, TControlsState, CGameDTO, point } from "../../../misc/types";
+import { SIDES, CGameSceneConfigs, SGameDTO, TControls, TControlsState, CGameDTO } from "../../../misc/types";
 import CTeam from "./CTeam";
 import CNumbersText from "./CNumbersText";
 import { BALL_TYPES } from "../../../server/Objects/SBall";
 
-const typeSpriteMap: Record<BALL_TYPES, string> = {
-    [BALL_TYPES.BASIC]: "ballBasic",
-    [BALL_TYPES.EXPAND]: "ballExpand",
-    [BALL_TYPES.SHRINK]: "ballShrink",
-    [BALL_TYPES.SPEED_UP]: "ballSpeedUp",
-    [BALL_TYPES.SLOW_DOWN]: "ballSlowDown",
-    [BALL_TYPES.EXTRA_BALL]: "ballExtraBall",
-    [BALL_TYPES.RESTORE]: "ballRestore",
-    [BALL_TYPES.DESTROY]: "ballDestroy",
-    [BALL_TYPES.MASSIVE_DAMAGE]: "ballMassiveDamage",
-    [BALL_TYPES.MYSTERY]: "ballMystery",
-    [BALL_TYPES.BALL_TYPE_AM]: "ballUnknown" 
-}
+
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
@@ -47,30 +35,19 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             ))
         })
 
-        const ballState = gameSceneConfigs.gameInitialState.ball;
         this._balls.set(
-            ballState.id, new CBall(
-                ballState.id,
-                Point.fromObj(ballState.pos),
-                Point.fromObj(ballState.size),
-                "ballBasic",
+            gameSceneConfigs.gameInitialState.ball.id, new CBall(
+                gameSceneConfigs.gameInitialState.ball,
                 this._root
             )
         )
 
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
-            const paddleSpriteName = "paddle" + paddleConf.spriteID
-            this.paddles.set(paddleConf.id,  
-                new CPaddle(
-                    paddleConf.id,
-                    paddleConf.side,
-                    Point.fromObj(paddleConf.pos),
-                    Point.fromObj(paddleConf.size),
-                    paddleSpriteName,
-                    this._root),
-                )
+            this.paddles.set(
+                paddleConf.id,  
+                new CPaddle(paddleConf, this._root),
+            )
         })
-
 
         gameSceneConfigs.controls.forEach( (controls, humanID) => {
             this.controlsState.set(humanID, {
@@ -91,15 +68,11 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
-        gameDto.balls.newBalls.forEach(newBall => {
-            const ballName = typeSpriteMap[newBall.type];
-            this.balls.set(newBall.id, new CBall(
-                newBall.id,
-                Point.fromObj(newBall.pos),
-                Point.fromObj(newBall.size),
-                ballName,
+        gameDto.balls.newBalls.forEach(newBallConfigs => {
+            this.balls.set(newBallConfigs.id, new CBall(
+                newBallConfigs,
                 this._root 
-            )) 
+            ))
         })
         this.balls.forEach(ball => {
             const ballState = gameDto.balls.ballsState.find(ballState => ball.id === ballState.id);
