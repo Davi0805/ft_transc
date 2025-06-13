@@ -28,20 +28,48 @@ export const assetsManifest: AssetsManifest = {
             name: "gameScene",
             assets: [
                 {
-                    alias: "ball0",
-                    src: "sprites/ball0.png"
+                    alias: "ballBasic",
+                    src: "sprites/ballBasic.png"
                 },
                 {
-                    alias: "ball1",
-                    src: "sprites/ball1.png"
+                    alias: "ballExpand",
+                    src: "sprites/ballExpand.png"
+                },
+                {
+                    alias: "ballShrink",
+                    src: "sprites/ballShrink.png"
+                },
+                {
+                    alias: "ballSlowDown",
+                    src: "sprites/ballSlowDown.png"
+                },
+                {
+                    alias: "ballSpeedUp",
+                    src: "sprites/ballSpeedUp.png"
+                },
+                {
+                    alias: "ballDestroy",
+                    src: "sprites/ballDestroy.png"
+                },
+                {
+                    alias: "ballExtraBall",
+                    src: "sprites/ballExtraBall.png"
+                },
+                {
+                    alias: "ballMassiveDamage",
+                    src: "sprites/ballMassiveDamage.png"
+                },
+                {
+                    alias: "ballMystery",
+                    src: "sprites/ballMystery.png"
+                },
+                {
+                    alias: "ballRestore",
+                    src: "sprites/ballRestore.png"
                 },
                 {
                     alias: "paddle0",
                     src: "sprites/paddle0.png"
-                },
-                {
-                    alias: "paddle1",
-                    src: "sprites/paddle1.png"
                 },
                 {
                     alias: "scoreFont",

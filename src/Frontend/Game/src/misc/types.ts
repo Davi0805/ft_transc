@@ -1,4 +1,5 @@
 import { ApplicationOptions } from "pixi.js"
+import { BALL_TYPES } from "../server/Objects/SBall"
  
 export enum SIDES {
     LEFT,
@@ -23,15 +24,18 @@ type TWindow = {
     backgroundSprite: number
 }
 
-type TBall = {
+export type TBall = {
+    id: number
+    type: BALL_TYPES
     size: point
     pos: point,
     direction: point,
     speed: number
     spriteID: number,
+    damage: number
 }
 
-type TPaddle = {
+export type TPaddle = {
     id: number
     side: SIDES,
     role: ROLES
@@ -131,10 +135,12 @@ export type CGameState = {
             pos: point
         }
     }[]
-    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[]
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[],
+    gameLength: number
 }
 
 export type CGameSceneConfigs = {
+    fieldSize: point
     controls: Map<number, TControls>
     gameInitialState: CGameState
 }
@@ -156,12 +162,13 @@ export type SceneChangeDetail = | { sceneName: "exampleScene", configs: ExampleS
 // Server
 
 export type SGameState = {
-    ball: Pick<TBall, "pos" | "size" | "speed" | "direction">,
+    ball: Pick<TBall,"type" | "pos" | "size" | "speed" | "direction" | "damage">,
     paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 }
 
 export type SGameConfigs = {
     window: Pick<TWindow, "size">,
+    gameLength: number
     teams: {
         side: SIDES,
         score: number
@@ -189,8 +196,17 @@ export type DTOAssignID = {
 }
 
 export type SGameDTO = {
-    ball: {
-        pos: { x: number, y: number}
+    balls: {
+        ballsState: {
+            id: number,
+            pos: point
+        }[],
+        newBalls: {
+            id: number,
+            type: BALL_TYPES,
+            size: point
+            pos: point
+        }[]
     }
     teams: {
         side: SIDES,
@@ -199,7 +215,9 @@ export type SGameDTO = {
     paddles: {
         id: number
         pos: { x: number, y: number }
-    }[]
+        size: { x: number, y: number }
+    }[],
+    timeLeft: number
 }
 
 // Client to server

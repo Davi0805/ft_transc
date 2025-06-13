@@ -1,5 +1,5 @@
-import { TControlsState } from "../misc/types.js"
-import SPaddle from "./SPaddle.js";
+import { TControlsState } from "../../misc/types.js"
+import SPaddle, { MOVEMENT } from "../Objects/SPaddle.js";
 
 export default abstract class SPlayer {
     constructor(paddle: SPaddle) {
@@ -11,12 +11,13 @@ export default abstract class SPlayer {
             this._paddle = paddle;
         }
     
-    
-        movePaddleFromControls(delta: number) {
-            if (this.controls.left.pressed || this.controls.right.pressed) {
-                let movVector = this.paddle.orientation.multiplyScalar(this.paddle.speed * delta)
-                                .rotate(this.controls.left.pressed ? -90 : 90);
-                this.paddle.move(movVector);
+        SetPaddleMovement() {
+            if (this.controls.left.pressed && !this.controls.right.pressed) {
+                this.paddle.nextMovement = MOVEMENT.LEFT;
+            } else if (this.controls.right.pressed && !this.controls.left.pressed) {
+                this.paddle.nextMovement = MOVEMENT.RIGHT;
+            } else {
+                this.paddle.nextMovement = MOVEMENT.NONE
             }
         }
     

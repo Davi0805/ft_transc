@@ -10,9 +10,7 @@ export default abstract class SObject extends AObject {
         this._speed = speed;
     }
 
-    move(movVector: Point) {
-        this.pos = this.pos.add(movVector)
-    }
+    abstract move(delta: number): void;
 
     override set pos(pos: Point) {
         super.pos = pos;
@@ -39,20 +37,20 @@ export default abstract class SObject extends AObject {
     get speed(): number { return this._speed;}
 
     _calculateCBox(): Rectangle {
-            let collisionBox: Rectangle;
-            if (this._orientation.x != 0) { // If it is oriented to the right or left
-                collisionBox = new Rectangle( 
-                    this._pos.x - this._size.x / 2,
-                    this._pos.y - this._size.y / 2,
-                    this._size.x,
-                    this._size.y);
-            } else {
-                collisionBox = new Rectangle( 
-                    this._pos.x - this._size.y / 2,
-                    this._pos.y - this._size.x / 2,
-                    this._size.y,
-                    this._size.x);
-            }
-            return collisionBox;
+        let collisionBox: Rectangle;
+        if (this._orientation.x != 0) { // If it is oriented to the right or left
+            collisionBox = new Rectangle( 
+                this._pos.x - this._size.x / 2,
+                this._pos.y - this._size.y / 2,
+                this._size.x,
+                this._size.y);
+        } else {
+            collisionBox = new Rectangle( 
+                this._pos.x - this._size.y / 2,
+                this._pos.y - this._size.x / 2,
+                this._size.y,
+                this._size.x);
         }
+        return collisionBox;
+    }
 }

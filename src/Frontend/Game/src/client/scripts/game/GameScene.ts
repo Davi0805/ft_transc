@@ -7,22 +7,30 @@ import CPaddle from "./CPaddle";
 import { SIDES, CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState, CGameDTO } from "../../../misc/types";
 import CTeam from "./CTeam";
 import CScore from "./CScore";
+import { BALL_TYPES } from "../../../server/Objects/SBall";
+
+const typeSpriteMap: Record<BALL_TYPES, string> = {
+    [BALL_TYPES.BASIC]: "ballBasic",
+    [BALL_TYPES.EXPAND]: "ballExpand",
+    [BALL_TYPES.SHRINK]: "ballShrink",
+    [BALL_TYPES.SPEED_UP]: "ballSpeedUp",
+    [BALL_TYPES.SLOW_DOWN]: "ballSlowDown",
+    [BALL_TYPES.EXTRA_BALL]: "ballExtraBall",
+    [BALL_TYPES.RESTORE]: "ballRestore",
+    [BALL_TYPES.DESTROY]: "ballDestroy",
+    [BALL_TYPES.MASSIVE_DAMAGE]: "ballMassiveDamage",
+    [BALL_TYPES.MYSTERY]: "ballMystery",
+    [BALL_TYPES.BALL_TYPE_AM]: "ballUnknown" 
+}
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         this._assets = await Assets.loadBundle("gameScene");
 
         const ballState = gameSceneConfigs.gameInitialState.ball;
-        const ballName = "ball" + ballState.spriteID
+        const ballName = "ballBasic"
         const ballSprite = new Sprite(this._assets[ballName]);
         this._root.addChild(ballSprite);
-        
-        this._ball = new CBall(
-            0, //TODO: This will need to be generated somehow when more balls exist
-            Point.fromObj(ballState.pos),
-            Point.fromObj(ballState.size),
-            ballSprite
-        ); //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
 
         gameSceneConfigs.gameInitialState.teams.forEach(team => {
             const text = new BitmapText({
@@ -41,7 +49,29 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 team.side,
                 new CScore(team.score.score, text)
             ))
-        }) 
+        })
+
+        
+        this._timeLeft = new BitmapText({
+            text: gameSceneConfigs.gameInitialState.gameLength,
+            style: {
+                fontFamily: 'scoreFont', // This is what is loaded in the Assets
+                fontSize: 64,
+                fill: '#666666',
+            },
+        });
+        this._timeLeft.anchor.set(0.5, 0.5);
+        this._timeLeft.position.set(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
+        this._root.addChild(this._timeLeft)
+
+        this._balls.set(
+            0, new CBall(
+                0, //TODO: This will need to be generated somehow when more balls exist
+                Point.fromObj(ballState.pos),  //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
+                Point.fromObj(ballState.size),
+                ballSprite
+            )
+        )
 
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
             const paddleSpriteName = "paddle" + paddleConf.spriteID
@@ -77,13 +107,34 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
-        this.ball.pos = Point.fromObj(gameDto.ball.pos);
-        gameDto.paddles.forEach(paddleState =>{
+        gameDto.balls.newBalls.forEach(newBall => {
+            const ballName = typeSpriteMap[newBall.type];
+            const ballSprite = new Sprite(this._assets[ballName]);
+            this._root.addChild(ballSprite);
+            this.balls.set(newBall.id, new CBall(
+                newBall.id,
+                Point.fromObj(newBall.pos),
+                Point.fromObj(newBall.size),
+                ballSprite 
+            )) 
+        })
+        this.balls.forEach(ball => {
+            const ballState = gameDto.balls.ballsState.find(ballState => ball.id === ballState.id);
+            if (ballState === undefined) {
+                this._root.removeChild(ball.sprite);
+                this.balls.delete(ball.id)
+            } else {
+                ball.pos = Point.fromObj(ballState.pos);
+            }
+        })
+        
+        gameDto.paddles.forEach(paddleState => {
             const paddle = this.paddles.get(paddleState.id);
             if (paddle === undefined) {
                 throw new Error("Client cannot find a paddle with the ID the server says exists!")
             }
             paddle.pos = Point.fromObj(paddleState.pos);
+            paddle.size = Point.fromObj(paddleState.size)
         });
         gameDto.teams.forEach(teamState => {
             const team = this.teams.get(teamState.side);
@@ -91,6 +142,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 team.score.update(teamState.score);
             } 
         })
+        this._timeLeft.text = gameDto.timeLeft
     }
 
     override tickerUpdate(): void {}
@@ -178,17 +230,16 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         }
     }
 
+    private _timeLeft!: BitmapText;
+
     private _controlsState: Map<number, TControlsState> = new Map<number, TControlsState>
     get controlsState() {
         return this._controlsState;
     }
 
-    private _ball: CBall | undefined;
-    get ball() {
-        if (!this._ball) {
-            throw new Error("Ball is undefined!");
-        }
-        return this._ball
+    private _balls: Map<number, CBall> = new Map<number, CBall>;
+    get balls() {
+        return this._balls
     }
 
     private _teams: Map<SIDES, CTeam> = new Map<SIDES, CTeam>;

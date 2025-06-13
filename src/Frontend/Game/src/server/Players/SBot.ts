@@ -1,8 +1,8 @@
-import { point, rectangle, SIDES } from "../misc/types.js";
-import SPaddle from "./SPaddle.js";
+import { point, rectangle, SIDES } from "../../misc/types.js";
+import SPaddle from "../Objects/SPaddle.js";
 import SPlayer from "./SPlayer.js";
-import SBall from "./SBall.js";
-import Point from "../misc/Point.js";
+import SBall from "../Objects/SBall.js";
+import Point from "../../misc/Point.js";
 
 // In pixels. The smaller the value, the closer to the target position the bot will attempt to place its paddle.
 // Increases precision, but increases chance of overshooting (especially with high paddle speeds)
@@ -18,10 +18,8 @@ export default class SBot extends SPlayer {
         this._limits = windowLimits;
         
         if (this.paddle.orientation.x !== 0) {
-            this._orientationAxis = 'x';
             this._movementAxis = 'y';
         } else {
-            this._orientationAxis = 'y';
             this._movementAxis = 'x';
         }
 
@@ -32,57 +30,30 @@ export default class SBot extends SPlayer {
             : (() => this._targetPos < this.paddle.pos[this._movementAxis]);
     }
 
-    static buildLimits(paddles: SPaddle[], windowSize: point, ballSize: point): rectangle {
-        const sideConfig: Record<SIDES, { axis: 'x' | 'y', boundary: 'min' | 'max' }> = {
-            [SIDES.LEFT]:   { axis: 'x', boundary: 'min' },
-            [SIDES.RIGHT]:  { axis: 'x', boundary: 'max' },
-            [SIDES.TOP]:    { axis: 'y', boundary: 'min' },
-            [SIDES.BOTTOM]: { axis: 'y', boundary: 'max' },
-        };
+    updateTargetPos(balls: SBall[]) {
+        let smallestT = Infinity;
 
-        const sides = Object.values(SIDES).filter(v => typeof v === "number") as SIDES[];
-        const record: Record<SIDES, number> = {} as Record<SIDES, number>
-        sides.forEach(side => {
-            const { axis, boundary } = sideConfig[side];
-            const posValues = paddles.filter(paddle => paddle.side === side).map(paddle => paddle.pos[axis]);
-            if (posValues.length === 0) {
-                record[side] = (boundary === 'min') ? 0 : windowSize[axis]
-            } else {
-                const halfPaddlethickness = paddles[0].size.x / 2;
-                record[side] = (boundary === 'min')
-                    ? Math.max(...posValues) + halfPaddlethickness
-                    : Math.min(...posValues) - halfPaddlethickness
+        balls.forEach(ball => { //TODO: For accurate prediction, should include ball size in all these calculations
+            let t = this._getHitMinT(ball.pos, ball.direction);
+            let hitpos = this._getHitPos(ball.pos, ball.direction);
+            let hitside = this._getSideFromPos(hitpos)
+            let dir = ball.direction;
+            
+            while (hitside !== this.paddle.side) {
+                dir = (hitside === SIDES.LEFT || hitside === SIDES.RIGHT)
+                    ? Point.fromObj({ x: -dir.x, y: dir.y })
+                    : Point.fromObj({ x: dir.x, y: -dir.y })
+                t += this._getHitMinT(hitpos, dir);
+                hitpos = this._getHitPos(hitpos, dir);
+                hitside = this._getSideFromPos(hitpos);
+            }
+            if (t < smallestT) {
+                smallestT = t;
+                this._targetPos = hitpos[this._movementAxis];
             }
         })
-        const out: rectangle = {
-            x: record[SIDES.LEFT] + ballSize.x / 2,
-            y: record[SIDES.TOP] + ballSize.y / 2,
-            width: record[SIDES.RIGHT] - record[SIDES.LEFT] - ballSize.x,
-            height: record[SIDES.BOTTOM] - record[SIDES.TOP] - ballSize.y
-        }
-        return out
-    }
-
-    updateTargetPos(ball: SBall) {
-        let hitpos = this._getHitPos(ball.pos, ball.direction);
-        let hitside = this._getSideFromPos(hitpos)
-        let dir = ball.direction
-        let loopCount = 0
         
-        while (hitside !== this.paddle.side) {
-            dir = (hitside === SIDES.LEFT || hitside === SIDES.RIGHT)
-                ? Point.fromObj({ x: -dir.x, y: dir.y })
-                : Point.fromObj({ x: dir.x, y: -dir.y })
-            hitpos = this._getHitPos(hitpos, dir);
-            hitside = this._getSideFromPos(hitpos);
-            
-            // Just in case lol
-            loopCount++;
-            if (loopCount > 20) {
-                return
-            }
-        }
-        this._targetPos = hitpos[this._movementAxis] ;
+        
     }
 
     setupMove() {
@@ -113,7 +84,6 @@ export default class SBot extends SPlayer {
 
     private _limits: rectangle;
 
-    private _orientationAxis: 'x' | 'y';
     private _movementAxis: 'x' | 'y';
 
     private _targetPos: number;
@@ -135,6 +105,17 @@ export default class SBot extends SPlayer {
         let tMin = Math.min(...t);
 
         return { x: pos.x + dir.x * tMin, y: pos.y + dir.y * tMin }
+    }
+
+    private _getHitMinT(pos: point, dir: point) {
+        const t = [
+            dir.x < 0 ? (this._limits.x - pos.x) / dir.x : Infinity, //left
+            dir.x > 0 ? (this._limits.x + this._limits.width - pos.x) / dir.x : Infinity, //right
+            dir.y < 0 ? (this._limits.y - pos.y) / dir.y : Infinity, //top
+            dir.y > 0 ? (this._limits.y + this._limits.height - pos.y) / dir.y : Infinity //bottom
+        ]
+
+        return Math.min(...t);
     }
 
     private _getSideFromPos(pos: point) {

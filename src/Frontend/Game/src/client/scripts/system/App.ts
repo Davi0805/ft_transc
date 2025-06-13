@@ -8,13 +8,7 @@ class FtApplication {
     async init(gameConfigs: CAppConfigs) {
         // Socket setup
         this._socket = gameConfigs.websocket;
-        // When a message is received from server, it is forward to the handler of the current scene
-        this._socket.addEventListener("message", (event) => {
-            const message = JSON.parse(event.data) as Adto;
-            if (message.type === "SGameDTO") {
-                this._scenesManager.currentScene?.serverUpdate(message.dto);
-            }
-        })
+        
         // And when a message needs to be sent, the scene will send it as a signal, and the App will catch it
         // and forward it to the socket. This avoids the scenes to hold references to higher objects in the tree
         EventBus.addEventListener("sendToServer", (event: Event) => {
@@ -37,6 +31,14 @@ class FtApplication {
         this.app.stage.addChild(this._scenesManager.container);
         // Starts the first scene
         await this._scenesManager.goToScene("gameScene", gameConfigs.gameSceneConfigs); //TODO change to the correct first scene
+
+        // When a message is received from server, it is forward to the handler of the current scene
+        this._socket.addEventListener("message", (event) => {
+            const message = JSON.parse(event.data) as Adto;
+            if (message.type === "SGameDTO") {
+                this._scenesManager.currentScene?.serverUpdate(message.dto);
+            }
+        })
     }
 
     private _app!: Application;

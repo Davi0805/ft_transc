@@ -1,5 +1,6 @@
 import { TGameConfigs, CAppConfigs, SGameConfigs, TControls } from "./types.js";
 import Point from "./Point.js";
+import { BALL_TYPES } from "../server/Objects/SBall.js";
 
 export function buildCAppConfigs(gameGonfigs: TGameConfigs, 
   clientID: number, websocket: WebSocket): CAppConfigs {
@@ -19,6 +20,7 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
         height: gameGonfigs.field.size.y
       },
       gameSceneConfigs: {
+        fieldSize: gameGonfigs.field.size,
         controls: controlsMap,
         gameInitialState: {
           ball: {
@@ -27,7 +29,8 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
             spriteID: gameGonfigs.ball.spriteID
           },
           teams: [],
-          paddles: []
+          paddles: [],
+          gameLength: gameGonfigs.gameLength
         }
       }
     }
@@ -59,15 +62,18 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
     window: {
       size: Point.fromObj(gameConfigs.field.size)
     },
+    gameLength: gameConfigs.gameLength,
     teams: [],
     humans: [],
     bots: [],
     gameInitialState: {
       ball: {
+        type: gameConfigs.ball.type,
         pos: Point.fromObj(gameConfigs.ball.pos),
         size: Point.fromObj(gameConfigs.ball.size),
         speed: gameConfigs.ball.speed,
-        direction: Point.fromObj(gameConfigs.ball.direction)
+        direction: Point.fromObj(gameConfigs.ball.direction),
+        damage: gameConfigs.ball.damage
       },
       paddles: []
     }
