@@ -19,7 +19,7 @@ export class Chat {
   }
 
   async init() {
-    this.sidebar.innerHTML = this.renderHTML;
+    this.sidebar.innerHTML = this.renderHTML();
     this.setToken();
 
     webSocketService.connect(this.token, this.userID);
@@ -59,6 +59,13 @@ export class Chat {
         </div>  
       </div>
         `;
+  }
+
+  // this ensures there is no memory leaks and is considered better than just empty out the html
+  // eventlisteners might cause some leaks if cleared that way
+  destroySideBar() {
+    const newSidebar = this.sidebar.cloneNode(false); // false for a shallow copy
+    this.sidebar.replaceWith(newSidebar);
   }
 
   async getSidebarConversations() {

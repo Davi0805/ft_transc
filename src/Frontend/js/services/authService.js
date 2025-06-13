@@ -51,6 +51,8 @@ export class AuthService {
     this.isAuthenticated = false;
     localStorage.removeItem("authToken");
     await header.updateHeaderVisibility();
+    this.sidebar.destroySideBar();
+    this.sidebar = null;
   }
 
   getToken() {
