@@ -1,4 +1,4 @@
-import { header } from '../components/header.js'
+import { header } from "../components/header.js";
 import { Chat } from "../components/sidebar.js";
 import { getSelfData } from "../api/getSelfDataAPI.js";
 import { getUserAvatarById } from "../api/getUserAvatarAPI.js";
@@ -11,7 +11,6 @@ export class AuthService {
     this.userAvatar = null;
     this.authToken = null;
     this.isAuthenticated = false;
-    this.init();
   }
 
   async init() {
@@ -20,7 +19,7 @@ export class AuthService {
     if (!!this.authToken)
         this.getMyData();
   }
-  
+
   async getMyData() {
     try {
       const userData = await getSelfData();
@@ -29,9 +28,9 @@ export class AuthService {
 
       this.userAvatar = await getUserAvatarById(this.userID);
       if (!this.userAvatar) this.userAvatar = "./Assets/default/bobzao.jpg";
-      
     } catch (error) {
       this.authToken = null;
+      this.authToken = localStorage.removeItem("authToken");
       this.isAuthenticated = false;
     }
   }
@@ -39,8 +38,8 @@ export class AuthService {
   async login(token) {
     this.authToken = token;
     this.isAuthenticated = true;
-    localStorage.setItem('authToken', token);
-    this.getMyData();
+    localStorage.setItem("authToken", token);
+    await this.getMyData();
     await header.updateHeaderVisibility();
     const sidebar = new Chat(this.userID);
   }

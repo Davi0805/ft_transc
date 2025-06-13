@@ -3,10 +3,11 @@ import { routes } from "./routes/routes.js";
 import { authService } from "./services/authService.js";
 import { header } from "./components/header.js"
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     
     window.router = new Router(routes);
     window.authService = authService;
+    await window.authService.init();
 
     header.init();
 });
