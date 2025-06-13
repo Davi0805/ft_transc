@@ -50,29 +50,26 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
 
 
         const ballState = gameSceneConfigs.gameInitialState.ball;
-        const ballName = "ballBasic"
-        const ballSprite = Sprite.from(ballName);
-        this._root.addChild(ballSprite);
         this._balls.set(
             0, new CBall(
                 0, //TODO: This will need to be generated somehow when more balls exist
                 Point.fromObj(ballState.pos),  //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
                 Point.fromObj(ballState.size),
-                ballSprite
+                "ballBasic",
+                this._root
             )
         )
 
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
             const paddleSpriteName = "paddle" + paddleConf.spriteID
-            const paddleSprite = Sprite.from(paddleSpriteName)
-            this._root.addChild(paddleSprite);
             this.paddles.set(paddleConf.id,  
                 new CPaddle(
                     paddleConf.id,
                     paddleConf.side,
                     Point.fromObj(paddleConf.pos),
                     Point.fromObj(paddleConf.size),
-                    paddleSprite),
+                    paddleSpriteName,
+                    this._root),
                 )
         })
 
@@ -98,13 +95,12 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         const gameDto = dto as SGameDTO;
         gameDto.balls.newBalls.forEach(newBall => {
             const ballName = typeSpriteMap[newBall.type];
-            const ballSprite = Sprite.from(ballName);
-            this._root.addChild(ballSprite);
             this.balls.set(newBall.id, new CBall(
                 newBall.id,
                 Point.fromObj(newBall.pos),
                 Point.fromObj(newBall.size),
-                ballSprite 
+                ballName,
+                this._root 
             )) 
         })
         this.balls.forEach(ball => {

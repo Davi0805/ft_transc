@@ -1,15 +1,16 @@
 import AObject from "./AObject.js";
 import Point from "../misc/Point.js";
-import { Sprite } from "pixi.js";
+import { Container, Sprite } from "pixi.js";
 
 export default abstract class CObject extends AObject {
-    constructor(id: number, pos: Point, size: Point, orientation: Point, sprite: Sprite) {
+    constructor(id: number, pos: Point, size: Point, orientation: Point, spriteName: string, canvas: Container) {
         super(id, pos, size, orientation);
-        this._sprite = sprite;
+        this._sprite = Sprite.from(spriteName);
         this._sprite.anchor.set(0.5);
         this._sprite.setSize(size.x, size.y)
         this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
         this._sprite.position.set(pos.x, pos.y);
+        canvas.addChild(this._sprite);
     }
 
     override set pos(pos: Point) {
