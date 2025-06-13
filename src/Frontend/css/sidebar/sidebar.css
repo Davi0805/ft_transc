@@ -1,0 +1,205 @@
+.chat-sidebar.content {
+  background: rgba(20, 20, 20, 0.7);
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.chat-sidebar {
+  position: fixed;
+  top: 60px; 
+  right: 0;  
+  width: 200px;
+  height: calc(100vh - 60px);
+  background: rgba(20, 20, 20, 0.7);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 10;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+
+
+
+
+.chat-sidebar-topbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgbA(12, 22, 34, 0.7);
+  border-bottom-left-radius: 4px;
+}
+
+
+
+
+
+
+.icon-btn {
+  background: none;
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(80%);
+  transition: filter 0.1s ease;
+}
+
+.icon-btn img:hover {
+  filter: brightness(100%);
+}
+
+.toggle-sidebar-btn {
+  position: fixed;
+  right: 198px; /* same as sidebar width */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(50px);
+  border-right: none;
+  
+  width: 20px;
+  height: 48px;
+}
+
+.toggle-sidebar-btn img {
+  width: 26px;
+  height: 26px;
+}
+
+
+
+
+
+
+
+
+
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.search-input {
+  width: 100%;
+  opacity: 1;
+  padding: 4px 8px;
+  margin-left: 4px;
+  border: none;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #eee;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+.search-wrapper.active .search-input {
+  width: 100%;
+  opacity: 1;
+}
+
+
+
+
+
+
+
+.chat-contacts-wrapper {
+  position: relative;
+  flex: 1;
+  overflow: hidden; /* prevents scrollbars here */
+}
+
+.chat-contacts {
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 5px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.chat-contacts::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fade Overlays */
+.chat-contacts-wrapper::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 20px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.chat-contacts-wrapper::before {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(20, 20, 20, 0.8), transparent);
+}
+
+.chat-contacts-wrapper::after {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(20, 20, 20, 0.8), transparent);
+}
+
+.chat-sidebar .contact img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border: 1.4px solid #6e8ed7;
+  box-shadow: 0px 0px 4px #eee;
+}
+
+.contact {
+  all: unset;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.contact * {
+  pointer-events: none;
+}
+
+/* Hover effect */
+.contact:hover {
+  background: rgba(0, 123, 255, 0.2);
+  transform: scale(1.02);
+}
+
+/* Click effect */
+.contact:active {
+  transform: scale(0.95);
+}
+

@@ -38,8 +38,13 @@ export class Chat {
   
   renderHTML() {
     return `
+      <button id="toggle-sidebar" class="toggle-sidebar-btn icon-btn">
+        <img src="./Assets/icons/arrow-right.svg" alt="Toggle" />
+      </button>
+
       <div id="chat-sidebar" class="chat-sidebar content">
         <!-- Topbar with friend + search -->
+
         <div class="chat-sidebar-topbar">
           <button class="icon-btn">
             <img src="./Assets/icons/person-add.svg" alt="Add Friend" />
