@@ -1,8 +1,8 @@
 import { SIDES } from "../../../misc/types";
-import CScore from "./CScore";
+import CNumbersText from "./CNumbersText";
 
 export default class CTeam {
-    constructor(side: SIDES, score: CScore) {
+    constructor(side: SIDES, score: CNumbersText) {
         this._side = side;
         this._score = score;
     }
@@ -10,7 +10,7 @@ export default class CTeam {
     private _side: SIDES
     get side(): SIDES { return this._side; }
 
-    private _score: CScore
-    set score(score: CScore ) {this._score = score;}
-    get score(): CScore { return this._score; }
+    private _score: CNumbersText
+    set score(score: CNumbersText) {this._score = score;}
+    get score(): CNumbersText { return this._score; }
 }

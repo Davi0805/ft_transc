@@ -4,9 +4,9 @@ import { Assets, Sprite, BitmapText } from "pixi.js"
 import { EventBus } from "../system/EventBus";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
-import { SIDES, CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState, CGameDTO } from "../../../misc/types";
+import { SIDES, CGameSceneConfigs, SGameDTO, TControls, TControlsState, CGameDTO, point } from "../../../misc/types";
 import CTeam from "./CTeam";
-import CScore from "./CScore";
+import CNumbersText from "./CNumbersText";
 import { BALL_TYPES } from "../../../server/Objects/SBall";
 
 const typeSpriteMap: Record<BALL_TYPES, string> = {
@@ -27,43 +27,32 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         this._assets = await Assets.loadBundle("gameScene");
 
+        this._timeLeft = new CNumbersText(
+            gameSceneConfigs.gameInitialState.gameLength,
+            { size: 64, position: {
+                x: gameSceneConfigs.fieldSize.x / 2,
+                y: gameSceneConfigs.fieldSize.y / 2
+            }},
+            this._root
+        );
+
+        gameSceneConfigs.gameInitialState.teams.forEach(team => {
+            this.teams.set(team.side, new CTeam(
+                team.side,
+                new CNumbersText(
+                    team.score.score,
+                    { size: 32, position: team.score.pos },
+                    this._root
+                )
+            ))
+        })
+
+
+
         const ballState = gameSceneConfigs.gameInitialState.ball;
         const ballName = "ballBasic"
         const ballSprite = new Sprite(this._assets[ballName]);
         this._root.addChild(ballSprite);
-
-        gameSceneConfigs.gameInitialState.teams.forEach(team => {
-            const text = new BitmapText({
-                text: team.score,
-                style: {
-                    fontFamily: 'scoreFont', // This is what is loaded in the Assets
-                    fontSize: 32,
-                    fill: '#666666',
-                },
-            });
-            text.anchor.set(0.5, 0.5);
-            text.position.set(team.score.pos.x, team.score.pos.y); //TODO calculate somehow (maybe here is not even the best place to do it?)
-            this._root.addChild(text)
-
-            this.teams.set(team.side, new CTeam(
-                team.side,
-                new CScore(team.score.score, text)
-            ))
-        })
-
-        
-        this._timeLeft = new BitmapText({
-            text: gameSceneConfigs.gameInitialState.gameLength,
-            style: {
-                fontFamily: 'scoreFont', // This is what is loaded in the Assets
-                fontSize: 64,
-                fill: '#666666',
-            },
-        });
-        this._timeLeft.anchor.set(0.5, 0.5);
-        this._timeLeft.position.set(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
-        this._root.addChild(this._timeLeft)
-
         this._balls.set(
             0, new CBall(
                 0, //TODO: This will need to be generated somehow when more balls exist
@@ -142,7 +131,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 team.score.update(teamState.score);
             } 
         })
-        this._timeLeft.text = gameDto.timeLeft
+        this._timeLeft.update(gameDto.timeLeft); 
     }
 
     override tickerUpdate(): void {}
@@ -230,7 +219,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         }
     }
 
-    private _timeLeft!: BitmapText;
+    private _timeLeft!: CNumbersText;
 
     private _controlsState: Map<number, TControlsState> = new Map<number, TControlsState>
     get controlsState() {

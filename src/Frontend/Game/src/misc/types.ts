@@ -127,7 +127,7 @@ export type TGameConfigs = {
 // Client
 
 export type CGameState = {
-    ball: Pick<TBall, "size" | "pos" | "spriteID">
+    ball: Pick<TBall, "id" | "size" | "pos" | "spriteID">
     teams: {
         side: SIDES,
         score: {
