@@ -22,7 +22,7 @@ export default class ServerGame {
     startGameLoop() {
         const loop = new LoopController(60);
         loop.start(() => {
-            if (loop.isRunning) {
+            if (loop.isRunning) { //TODO: Only spawn first ball after countdown!!
                 // Movement decision by players
                 this._humansManager.update()
                 this._botsManager.update(loop, this._ballsManager.balls)
@@ -93,6 +93,8 @@ export default class ServerGame {
     set windowSize(value: point) { this._windowSize = value; }
     get windowSize() { return this._windowSize; }
     
+
+
     private _timeLeft: number; 
 
     private _ballsManager: SBallsManager;

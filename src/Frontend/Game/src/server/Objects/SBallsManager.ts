@@ -26,11 +26,15 @@ export default class SBallsManager {
 
     addBallOfType(type: BALL_TYPES) {
         const damage = getRandomInt(1, 5);
+        const direction = {
+            x: Math.random() + 0.3 * (Math.floor(Math.random() * 2) === 1 ? 1 : -1),
+            y: Math.random() + 0.3 * (Math.floor(Math.random() * 2) === 1 ? 1 : -1)
+        }
         const configs = {
             type: type,
             size: { x: 8 + damage * 8, y: 8 + damage * 8 },
             pos: { x: this._windowSize.x / 2, y: this._windowSize.y / 2 },
-            direction: { x: Math.random() * 1.8 - 0.9, y: Math.random() * 1.8 - 0.9},
+            direction: direction,
             speed: 500 - (damage * 75),
             damage: damage
         };
