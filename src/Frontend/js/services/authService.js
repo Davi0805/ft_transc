@@ -16,8 +16,9 @@ export class AuthService {
   async init() {
     this.authToken = localStorage.getItem("authToken");
     this.isAuthenticated = !!this.authToken;
-    if (!!this.authToken)
-        this.getMyData();
+    if (this.isAuthenticated)
+      await this.getMyData();
+    header.updateHeaderVisibility();
   }
 
   async getMyData() {

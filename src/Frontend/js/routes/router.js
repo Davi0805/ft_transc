@@ -53,7 +53,6 @@ export class Router {
 
         if (route) {
 
-            await header.updateHeaderVisibility();
             header.updateActiveUnderline(path);
 
             // Load HTML template

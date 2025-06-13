@@ -5,9 +5,11 @@ import { header } from "./components/header.js"
 
 document.addEventListener('DOMContentLoaded', async () => {
     
-    window.router = new Router(routes);
+    header.init();
     window.authService = authService;
     await window.authService.init();
 
-    header.init();
+    
+    window.router = new Router(routes);
+
 });
