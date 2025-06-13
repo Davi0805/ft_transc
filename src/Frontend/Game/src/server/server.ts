@@ -53,7 +53,7 @@ fastify.register(async (fastify) => {
 
         clients.push(socket);
         
-        if (clients.length >= game.getHumansAmount()) {
+        if (clients.length >= gameConfigs.clients.length) { // TODO: CHANGE FOR CLIENTS AMOUNT!
             game.startGameLoop();
         }
         // Whenever this particular client sends a message, it is forwarded to the game to take care of it

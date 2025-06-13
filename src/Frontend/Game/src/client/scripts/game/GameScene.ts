@@ -7,7 +7,7 @@ import CPaddle from "./CPaddle";
 import { SIDES, CGameSceneConfigs, SGameDTO, TControls, TControlsState, CGameDTO } from "../../../misc/types";
 import CTeam from "./CTeam";
 import CNumbersText from "./CNumbersText";
-import { BALL_TYPES } from "../../../server/Objects/SBall";
+import CPaddleControls from "./CPaddleControls";
 
 
 
@@ -15,7 +15,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         await Assets.loadBundle("gameScene");
 
-        this._timeLeft = new CNumbersText(
+        this._timer = new CNumbersText(
             gameSceneConfigs.gameInitialState.gameLength,
             { size: 64, position: {
                 x: gameSceneConfigs.fieldSize.x / 2,
@@ -50,21 +50,14 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         })
 
         gameSceneConfigs.controls.forEach( (controls, humanID) => {
-            this.controlsState.set(humanID, {
-                left: { pressed: false },
-                right: { pressed: false },
-                pause: { pressed: false }
-            })
+            this._controls.set(humanID, new CPaddleControls(humanID, controls))
         })
-        this._onKeyDown = this._getOnKeyDown(gameSceneConfigs.controls); //TODO: Probably should put some of this in the AScene?
-        this._onKeyUp = this._getOnKeyUp(gameSceneConfigs.controls);
-        window.addEventListener("keydown", this._onKeyDown);
-        window.addEventListener("keyup", this._onKeyUp);
     }
     override async destroy(): Promise<void> {
         this.root.destroy();
-        window.removeEventListener("keydown", this._onKeyDown);
-        window.removeEventListener("keyup", this._onKeyUp);
+        this._controls.forEach((controls) => {
+            controls.destroy();
+        })
     }
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
@@ -97,100 +90,15 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 team.score.update(teamState.score);
             } 
         })
-        this._timeLeft.update(gameDto.timeLeft); 
+        this.timer?.update(gameDto.timeLeft); 
     }
 
     override tickerUpdate(): void {}
 
-    private _onKeyDown!: (event: KeyboardEvent) => void;
-    private _getOnKeyDown(controlsMap: Map<number, TControls>) {
-        // Callbacks like these must be arrow functions and not methods!
-        // This way, if it is needed to use class members (like _keys in this case),
-        // the "this" keyword inherits context when passed as callback
-        return (event: KeyboardEvent) => {
-            
-            
-            /* if (event.key === "c") { //TODO: TEMPORARY: THIS IS JUST AN EXAMPLE ON HOW TO CHANGE SCENES 
-                const detail: SceneChangeDetail =  {
-                    sceneName: "exampleScene",
-                    configs: {
-                    }
-                }
-                EventBus.dispatchEvent(new CustomEvent("changeScene", { detail: detail}))
-                return ;
-            } */
+    private _timer: CNumbersText | null = null;
+    get timer() { return this._timer; }
 
-            controlsMap.forEach((controls, id) => {
-                const specificControlsState = this.controlsState.get(id);
-                if (specificControlsState === undefined) {
-                    throw new Error(`This client cannot find the controlsState of the human with ID ${id}`)
-                }
-                let stateChanged = false;
-                switch (event.key) {
-                    case controls.left: {
-                        specificControlsState.left.pressed = true;
-                        stateChanged = true;
-                        break;
-                    } case controls.right: {
-                        specificControlsState.right.pressed = true;
-                        stateChanged = true;
-                        break;
-                    } case controls.pause: {
-                        specificControlsState.pause.pressed = true;
-                        stateChanged = true;
-                        break;
-                    }
-                }
-                if (stateChanged) {
-                    const dto: CGameDTO = {
-                        controlsState: {humanID: id, controlsState: specificControlsState}
-                    }
-                    EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
-                }
-            })
-        }
-    }
-
-    private _onKeyUp!: (event: KeyboardEvent) => void;
-    private _getOnKeyUp = (controlsMap: Map<number, TControls>) => {
-        return (event: KeyboardEvent) => {
-            controlsMap.forEach((controls, id) => {
-                const specificControlsState = this.controlsState.get(id);
-                if (specificControlsState === undefined) {
-                    throw new Error(`This client cannot find the controlsState of the human with ID ${id}`)
-                }
-                let stateChanged = false;
-                switch (event.key) {
-                    case controls.left: {
-                        specificControlsState.left.pressed = false;
-                        stateChanged = true;
-                        break;
-                    } case controls.right: {
-                        specificControlsState.right.pressed = false;
-                        stateChanged = true;
-                        break;
-                    } case controls.pause: {
-                        specificControlsState.pause.pressed = false;
-                        stateChanged = true;
-                        break;
-                    }
-                }
-                if (stateChanged) {
-                    const dto: CGameDTO = {
-                        controlsState: {humanID: id, controlsState: specificControlsState}
-                    }
-                    EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
-                }
-            })
-        }
-    }
-
-    private _timeLeft!: CNumbersText;
-
-    private _controlsState: Map<number, TControlsState> = new Map<number, TControlsState>
-    get controlsState() {
-        return this._controlsState;
-    }
+    private _controls: Map<number, CPaddleControls> = new Map<number, CPaddleControls>;
 
     private _balls: Map<number, CBall> = new Map<number, CBall>;
     get balls() {
