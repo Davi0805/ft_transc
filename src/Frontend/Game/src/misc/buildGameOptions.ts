@@ -25,8 +25,8 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
         gameInitialState: {
           ball: {
             id: 0,
-            size: Point.fromObj(gameGonfigs.ball.size),
-            pos: Point.fromObj(gameGonfigs.ball.pos),
+            size: gameGonfigs.ball.size,
+            pos: gameGonfigs.ball.pos,
           },
           teams: [],
           paddles: [],
@@ -48,8 +48,8 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
       out.gameSceneConfigs.gameInitialState.paddles.push({
         id: paddle.id,
         side: paddle.side,
-        size: Point.fromObj(paddle.size),
-        pos: Point.fromObj(paddle.pos),
+        size: paddle.size,
+        pos: paddle.pos,
         spriteID: paddle.spriteID
       })
     }
@@ -60,7 +60,7 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
 export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
   const out: SGameConfigs = {
     window: {
-      size: Point.fromObj(gameConfigs.field.size)
+      size: gameConfigs.field.size
     },
     gameLength: gameConfigs.gameLength,
     teams: [],
@@ -69,10 +69,10 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
     gameInitialState: {
       ball: {
         type: gameConfigs.ball.type,
-        pos: Point.fromObj(gameConfigs.ball.pos),
-        size: Point.fromObj(gameConfigs.ball.size),
+        pos: gameConfigs.ball.pos,
+        size: gameConfigs.ball.size,
         speed: gameConfigs.ball.speed,
-        direction: Point.fromObj(gameConfigs.ball.direction),
+        direction: gameConfigs.ball.direction,
         damage: gameConfigs.ball.damage
       },
       paddles: []
@@ -94,7 +94,7 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
     out.gameInitialState.paddles.push({
       id: paddle.id,
       size: paddle.size,
-      pos: Point.fromObj(paddle.pos),
+      pos: paddle.pos,
       side: paddle.side,
       speed: paddle.speed
     })
