@@ -23,7 +23,4 @@ export default abstract class AScene<T> {
     get root() {
         return this._root;
     }
-
-    // This is where the assets of each scene will be loaded into
-    _assets!: any; // Assets.loadBundle() returns any
 }

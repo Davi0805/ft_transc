@@ -25,7 +25,7 @@ const typeSpriteMap: Record<BALL_TYPES, string> = {
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
-        this._assets = await Assets.loadBundle("gameScene");
+        await Assets.loadBundle("gameScene");
 
         this._timeLeft = new CNumbersText(
             gameSceneConfigs.gameInitialState.gameLength,
@@ -51,7 +51,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
 
         const ballState = gameSceneConfigs.gameInitialState.ball;
         const ballName = "ballBasic"
-        const ballSprite = new Sprite(this._assets[ballName]);
+        const ballSprite = Sprite.from(ballName);
         this._root.addChild(ballSprite);
         this._balls.set(
             0, new CBall(
@@ -64,7 +64,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
 
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
             const paddleSpriteName = "paddle" + paddleConf.spriteID
-            const paddleSprite = new Sprite(this._assets[paddleSpriteName])
+            const paddleSprite = Sprite.from(paddleSpriteName)
             this._root.addChild(paddleSprite);
             this.paddles.set(paddleConf.id,  
                 new CPaddle(
@@ -98,7 +98,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         const gameDto = dto as SGameDTO;
         gameDto.balls.newBalls.forEach(newBall => {
             const ballName = typeSpriteMap[newBall.type];
-            const ballSprite = new Sprite(this._assets[ballName]);
+            const ballSprite = Sprite.from(ballName);
             this._root.addChild(ballSprite);
             this.balls.set(newBall.id, new CBall(
                 newBall.id,

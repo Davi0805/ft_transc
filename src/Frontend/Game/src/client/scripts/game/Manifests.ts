@@ -73,7 +73,7 @@ export const assetsManifest: AssetsManifest = {
                 },
                 {
                     alias: "gameFont",
-                    src: "sprites/scoreFont.ttf"
+                    src: "sprites/gameFont.ttf"
                 }
             ]
         },

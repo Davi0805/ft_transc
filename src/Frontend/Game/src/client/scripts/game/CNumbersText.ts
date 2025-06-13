@@ -12,7 +12,7 @@ export default class CNumbersText {
         this._text = new BitmapText({
             text: value,
             style: {
-                fontFamily: 'scoreFont',
+                fontFamily: 'gameFont',
                 fontSize: textOptions.size,
                 fill: '#444444'
             }
