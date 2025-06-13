@@ -1,4 +1,4 @@
-import { Container, Sprite } from "pixi.js";
+import { Container } from "pixi.js";
 import Point from "../../../misc/Point";
 import CObject from "../../../abstracts/CObject";
 import { point } from "../../../misc/types";

@@ -1,15 +1,12 @@
 import AScene from "../system/AScene";
 import Point from "../../../misc/Point";
 import { Assets } from "pixi.js"
-import { EventBus } from "../system/EventBus";
+import { SIDES, CGameSceneConfigs, SGameDTO } from "../../../misc/types";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
-import { SIDES, CGameSceneConfigs, SGameDTO, TControls, TControlsState, CGameDTO } from "../../../misc/types";
 import CTeam from "./CTeam";
 import CNumbersText from "./CNumbersText";
 import CPaddleControls from "./CPaddleControls";
-
-
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
@@ -23,7 +20,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             }},
             this._root
         );
-
         gameSceneConfigs.gameInitialState.teams.forEach(team => {
             this.teams.set(team.side, new CTeam(
                 team.side,
@@ -34,31 +30,30 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 )
             ))
         })
-
         this._balls.set(
             gameSceneConfigs.gameInitialState.ball.id, new CBall(
                 gameSceneConfigs.gameInitialState.ball,
                 this._root
             )
         )
-
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
             this.paddles.set(
                 paddleConf.id,  
                 new CPaddle(paddleConf, this._root),
             )
         })
-
         gameSceneConfigs.controls.forEach( (controls, humanID) => {
             this._controls.set(humanID, new CPaddleControls(humanID, controls))
         })
     }
+
     override async destroy(): Promise<void> {
         this.root.destroy();
         this._controls.forEach((controls) => {
             controls.destroy();
         })
     }
+
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
         gameDto.balls.newBalls.forEach(newBallConfigs => {
