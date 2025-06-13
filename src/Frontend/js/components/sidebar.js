@@ -36,10 +36,6 @@ export class Chat {
     this.insertContactsOnSidebar();
   }
   
-  createSidebar() {
-    const sidebar = document.createElement('aside');
-    sidebar.classList = ""
-  }
   renderHTML() {
     return `
       <div id="chat-sidebar" class="chat-sidebar content">

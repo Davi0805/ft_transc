@@ -11,14 +11,15 @@ export class AuthService {
     this.userAvatar = null;
     this.authToken = null;
     this.isAuthenticated = false;
+    this.sidebar = null;
   }
 
   async init() {
     this.authToken = localStorage.getItem("authToken");
     this.isAuthenticated = !!this.authToken;
-    if (this.isAuthenticated)
-      await this.getMyData();
+    if (this.isAuthenticated) await this.getMyData();
     header.updateHeaderVisibility();
+    if (this.isAuthenticated) this.sidebar = new Chat(this.userID);
   }
 
   async getMyData() {
@@ -42,7 +43,7 @@ export class AuthService {
     localStorage.setItem("authToken", token);
     await this.getMyData();
     await header.updateHeaderVisibility();
-    const sidebar = new Chat(this.userID);
+    if (!this.sidebar) this.sidebar = new Chat(this.userID);
   }
 
   async logout() {
