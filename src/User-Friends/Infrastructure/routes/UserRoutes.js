@@ -1,5 +1,6 @@
 const userController = require('../../Adapters/inbound/http/UserController');
 const authMiddleware = require('../config/AuthMiddleware');
+const { schema } = require('../config/Sqlite');
 
 async function userRoutes(fastify, options) {
     fastify.get('/users', {
@@ -11,9 +12,17 @@ async function userRoutes(fastify, options) {
       handler: userController.getById
     });
 
-    fastify.post('/users', userController.createUser);
+    fastify.post('/users', {
+      schema: {
+        body: { $ref: 'createUser#' }
+      }
+    } ,userController.createUser);
     
-    fastify.post('/login', userController.Login);
+    fastify.post('/login', {
+      schema: {
+        body: { $ref: 'login#' }
+      }
+    } ,userController.Login);
     
     fastify.post('/twofa/activate', {
       preHandler: authMiddleware,
@@ -21,6 +30,9 @@ async function userRoutes(fastify, options) {
     });
     
     fastify.post('/twofa/auth', {
+      schema: {
+        body: { $ref: 'verifytwofa#' }
+      },
       preHandler: authMiddleware,
       handler: userController.twofa_verify
     });
@@ -38,11 +50,17 @@ async function userRoutes(fastify, options) {
     });
     
     fastify.put('/users/name', {
+      schema: {
+        body: { $ref: 'updateName#' }
+      },
       preHandler: authMiddleware,
       handler: userController.updateName
     });
     
     fastify.put('/user/password', {
+      schema: {
+        body: { $ref: 'updatePass#' }
+      },
       preHandler: authMiddleware,
       handler: userController.updatePassword
     });

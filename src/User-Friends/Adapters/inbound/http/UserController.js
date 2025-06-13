@@ -145,7 +145,6 @@ class UserController {
     */
     async activateTwoFactorAuth(req, reply)
     {
-        // todo: optimize the query later
         const user = await userService.findById(req.session.user_id);
         if (user.twofa_enabled) throw exception('2FA already activated', 400);
         const twofa = await twofaService.generateSecret();

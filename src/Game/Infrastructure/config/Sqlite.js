@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Sqlite.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: davi <davi@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dmelo-ca <dmelo-ca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 22:52:12 by davi              #+#    #+#             */
-/*   Updated: 2025/04/09 22:58:34 by davi             ###   ########.fr       */
+/*   Updated: 2025/06/13 12:54:57 by dmelo-ca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // to understand better the lib
 // doc of knex - https://knexjs.org/guide/#browser
 
-// todo: learn how to implement connection pools here
 
 const knex = require('knex');
 
