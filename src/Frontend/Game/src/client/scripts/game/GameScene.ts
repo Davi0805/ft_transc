@@ -47,13 +47,11 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             ))
         })
 
-
-
         const ballState = gameSceneConfigs.gameInitialState.ball;
         this._balls.set(
-            0, new CBall(
-                0, //TODO: This will need to be generated somehow when more balls exist
-                Point.fromObj(ballState.pos),  //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
+            ballState.id, new CBall(
+                ballState.id,
+                Point.fromObj(ballState.pos),
                 Point.fromObj(ballState.size),
                 "ballBasic",
                 this._root
@@ -112,7 +110,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 ball.pos = Point.fromObj(ballState.pos);
             }
         })
-        
         gameDto.paddles.forEach(paddleState => {
             const paddle = this.paddles.get(paddleState.id);
             if (paddle === undefined) {

@@ -30,8 +30,7 @@ export type TBall = {
     size: point
     pos: point,
     direction: point,
-    speed: number
-    spriteID: number,
+    speed: number,
     damage: number
 }
 
@@ -70,7 +69,6 @@ export type TUserCustoms = {
         backgroundSpriteID: number
     },
     gameLength: number,
-    ball: { spriteID: number },
     paddles: {
         id: number
         side: SIDES,
@@ -127,7 +125,7 @@ export type TGameConfigs = {
 // Client
 
 export type CGameState = {
-    ball: Pick<TBall, "id" | "size" | "pos" | "spriteID">
+    ball: Pick<TBall, "id" | "size" | "pos">
     teams: {
         side: SIDES,
         score: {

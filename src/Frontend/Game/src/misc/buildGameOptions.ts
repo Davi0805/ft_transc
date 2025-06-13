@@ -27,7 +27,6 @@ export function buildCAppConfigs(gameGonfigs: TGameConfigs,
             id: 0,
             size: Point.fromObj(gameGonfigs.ball.size),
             pos: Point.fromObj(gameGonfigs.ball.pos),
-            spriteID: gameGonfigs.ball.spriteID
           },
           teams: [],
           paddles: [],

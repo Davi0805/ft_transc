@@ -8,7 +8,6 @@ export const UserCustoms: TUserCustoms = {
         backgroundSpriteID: 0 //NOT USED YET
     },
     gameLength: 200, //NOT USED YET
-    ball: { spriteID: 0 },
     paddles: [
         {
             id: 0,
@@ -95,7 +94,6 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         ball: {
             id: 0,
             type: BALL_TYPES.BASIC,
-            spriteID: userCustoms.ball.spriteID,
             pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
             direction: { x: Math.random() * 1.8 - 0.9, y: Math.random() * 1.8 - 0.9 },
             size: { x: 16, y: 16 },
