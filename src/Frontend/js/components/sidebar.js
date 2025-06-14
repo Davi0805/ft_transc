@@ -7,7 +7,7 @@ import { chatWindowControler } from "./chatWindow.js";
 
 export class Chat {
   constructor(userID) {
-    this.sidebar = document.querySelector('aside');
+    this.sidebar = document.querySelector("aside");
     this.friends = [];
     this.minimized = false;
     this.userID = userID;
@@ -35,7 +35,7 @@ export class Chat {
     await this.getSidebarConversations();
     this.insertContactsOnSidebar();
   }
-  
+
   renderHTML() {
     return `
       <button id="toggle-sidebar" class="toggle-sidebar-btn icon-btn">
@@ -68,7 +68,7 @@ export class Chat {
 
   // this ensures there is no memory leaks and is considered better than just empty out the html
   // eventlisteners might cause some leaks if cleared that way
-  destroySideBar() {
+  deleteSideBar() {
     const newSidebar = this.sidebar.cloneNode(false); // false for a shallow copy
     this.sidebar.replaceWith(newSidebar);
   }
@@ -95,37 +95,52 @@ export class Chat {
     }
   }
 
-  createContactElement(friendAvatar, friendName) {
-    const newContact = document.createElement("button");
-    newContact.className = "contact";
-    newContact.innerHTML = `
-            <button class="contact">
-                <img src="${friendAvatar}" width="40px" height="40px">
-                ${this.minimized ? "" : `<span>${friendName}</span>`}
-                <span class="unread-badge" style="display: none;">0</span>
-            </button>
-            `;
-    return newContact;
-  }
+    createContactElement(friendAvatar, friendName) {
+      const newContact = document.createElement("button");
+      newContact.className = "contact";
+      newContact.innerHTML = `
+              <button class="contact f-${friendName}">
+                  <img src="${friendAvatar}" width="40px" height="40px">
+                  ${this.minimized ? "" : `<span>${friendName}</span>`}
+                  <span class="unread-badge" style="display: none;">0</span>
+              </button>
+              `;
+      return newContact;
+    }
 
-  insertContactsOnSidebar() {
-    const chatContacts = document.querySelector(".chat-contacts");
-    this.friends.forEach((friend) => {
-      const contactBtn = this.createContactElement(
-        friend.friendAvatar,
-        friend.friendName
-      );
+    deleteContact(convID) {
+      const entry = this.contactElements.get(convID);
+      if (!entry) return ;
 
-      contactBtn.addEventListener("click", () => {
-        chatWindowControler.open(friend);
-        this.updateContactUnreadUI(friend.convID, 0);
+      entry.element.removeEventListener("click", clickHandler);
+      entry.element.remove();
+      this.contactElements.delete(convID); // remove from element map
+      this.friends.filter(f => f.convID !== convID); // remove from friend array
+    }
+
+    insertContactsOnSidebar() {
+      const chatContacts = document.querySelector(".chat-contacts");
+      this.friends.forEach((friend) => {
+        const contactBtn = this.createContactElement(
+          friend.friendAvatar,
+          friend.friendName
+        );
+
+        const clickHandler = () => {
+          chatWindowControler.open(friend);
+          this.updateContactUnreadUI(friend.convID, 0);
+        };
+
+        contactBtn.addEventListener("click", clickHandler);
+
+        chatContacts.appendChild(contactBtn);
+
+        this.contactElements.set(friend.convID, {
+          element: contactBtn,
+          handler: clickHandler,
+        });
       });
-
-      chatContacts.appendChild(contactBtn);
-
-      this.contactElements.set(friend.convID, contactBtn);
-    });
-  }
+    }
 
   updateContactUnreadUI(convID, unreadCount) {
     const contactElement = this.contactElements.get(convID);
