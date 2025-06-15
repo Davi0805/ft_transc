@@ -27,6 +27,7 @@ export default class CNumbersText {
         this.value = value;
         if (activateAnimation) {
             this._animations.push(new CAnimation(this._text, ANIMATION_TYPES.BAD))
+            this._animations.push(new CAnimation(this._text, ANIMATION_TYPES.SHAKE))
         }
     }
 
