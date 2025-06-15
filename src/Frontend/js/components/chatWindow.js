@@ -1,10 +1,12 @@
 import { webSocketService } from "../services/webSocketService.js";
+import { getMessagesByConvID } from "../api/getConversationMessages.js";
 import { Chat } from "./sidebar.js";
 
 class ChatWindow {
   constructor() {
     this.userID = webSocketService.userID;
     this.element = null;
+
     this.friendAvatar = null;
     this.friendName = null;
     this.friendID = null;
@@ -21,7 +23,7 @@ class ChatWindow {
       friendAvatar: friendAvatarURL 
     }*/
   // todo make it so only one is active at a time
-  open(friend) {
+  async open(friend) {
     if (this.isOpen) {
       this.focus();
       return;
@@ -31,18 +33,22 @@ class ChatWindow {
     this.friendName = friend.friendName;
     this.friendID = friend.friendID;
     this.convID = friend.convID;
-    // todo fetch messages
-    // this.messages = [];
 
+    this.messages = await getMessagesByConvID(this.convID);
+    
     webSocketService.registerMessageHandler(this.convID, (messageData) => {
       this.handleRecieveMessage(messageData);
-    })
+    });
 
     this.isOpen = true;
     this.createElement();
     this.attachEventListeners();
-    const chatWrapper = document.getElementById('chat-window-wrapper');
+    this.attachLastMessages();
+
+    const chatWrapper = document.getElementById("chat-window-wrapper");
     chatWrapper.appendChild(this.element);
+    const messageContainer = this.element.querySelector(".chat-messages");
+    messageContainer.scrollTop = messageContainer.scrollHeight;;
     this.focus();
   }
 
@@ -107,6 +113,22 @@ class ChatWindow {
 
     messageInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter") this.sendMessage();
+    });
+  }
+
+  // {
+  // "id":1,
+  //  "conversation_id":1,
+  //  "from_user_id":1,
+  //  "message_content":"Olá Maria!",
+  //  "metadata":null
+  // }
+  attachLastMessages() {
+    this.messages.forEach((message) => {
+      this.addMessage({
+        message: message.message_content,
+        isOwn: message.from_user_id === this.userID ? true : false,
+      });
     });
   }
 

@@ -149,7 +149,7 @@ class WebSocketService {
       handler({ convID, message, isOwn: false });
       this.markConversationAsRead(convID, message);
     } else {
-      this.triggerNotifications(convID, message);
+      this.triggerNotifications(convID);
     }
   }
 
@@ -181,11 +181,11 @@ class WebSocketService {
     }
   }
 
-  triggerNotifications(convID, message) {
+  triggerNotifications(convID) {
     this.notificationCallbacks.forEach((callback) => {
       try {
-        callback(convID, message);
-      } catch {
+        callback(convID);
+      } catch (error) {
         console.log("DEBUG: Error in websocket notification callback:", error);
       }
     });
@@ -196,7 +196,7 @@ class WebSocketService {
       try {
         callback(onlineFriends);
       } catch (error) {
-        console.log("DEBUG: Error in websocket notification callback:", error);
+        console.log("DEBUG: Error in websocket OnlineUpdate callback:", error);
       }
     })
   }

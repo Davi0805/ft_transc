@@ -24,8 +24,8 @@ export class Chat {
 
     webSocketService.connect(this.token, this.userID);
 
-    webSocketService.registerNotificationCallback((convID, messageData) => {
-      this.handleNotification(convID, messageData);
+    webSocketService.registerNotificationCallback((convID) => {
+      this.handleNotification(convID);
     });
 
     webSocketService.registerOnlineCallbacks((online_users) => {
@@ -95,55 +95,55 @@ export class Chat {
     }
   }
 
-    createContactElement(friendAvatar, friendName) {
-      const newContact = document.createElement("button");
-      newContact.className = "contact";
-      newContact.innerHTML = `
+  createContactElement(friendAvatar, friendName) {
+    const newContact = document.createElement("button");
+    newContact.className = "contact";
+    newContact.innerHTML = `
               <button class="contact f-${friendName}">
                   <img src="${friendAvatar}" width="40px" height="40px">
                   ${this.minimized ? "" : `<span>${friendName}</span>`}
                   <span class="unread-badge" style="display: none;">0</span>
               </button>
               `;
-      return newContact;
-    }
+    return newContact;
+  }
 
-    deleteContact(convID) {
-      const entry = this.contactElements.get(convID);
-      if (!entry) return ;
+  deleteContact(convID) {
+    const entry = this.contactElements.get(convID);
+    if (!entry) return;
 
-      entry.element.removeEventListener("click", clickHandler);
-      entry.element.remove();
-      this.contactElements.delete(convID); // remove from element map
-      this.friends.filter(f => f.convID !== convID); // remove from friend array
-    }
+    entry.element.removeEventListener("click", clickHandler);
+    entry.element.remove();
+    this.contactElements.delete(convID); // remove from element map
+    this.friends.filter((f) => f.convID !== convID); // remove from friend array
+  }
 
-    insertContactsOnSidebar() {
-      const chatContacts = document.querySelector(".chat-contacts");
-      this.friends.forEach((friend) => {
-        const contactBtn = this.createContactElement(
-          friend.friendAvatar,
-          friend.friendName
-        );
+  insertContactsOnSidebar() {
+    const chatContacts = document.querySelector(".chat-contacts");
+    this.friends.forEach((friend) => {
+      const contactBtn = this.createContactElement(
+        friend.friendAvatar,
+        friend.friendName
+      );
 
-        const clickHandler = () => {
-          chatWindowControler.open(friend);
-          this.updateContactUnreadUI(friend.convID, 0);
-        };
+      const clickHandler = () => {
+        chatWindowControler.open(friend);
+        this.updateContactUnreadUI(friend.convID, 0);
+      };
 
-        contactBtn.addEventListener("click", clickHandler);
+      contactBtn.addEventListener("click", clickHandler);
 
-        chatContacts.appendChild(contactBtn);
+      chatContacts.appendChild(contactBtn);
 
-        this.contactElements.set(friend.convID, {
-          element: contactBtn,
-          handler: clickHandler,
-        });
+      this.contactElements.set(friend.convID, {
+        element: contactBtn,
+        handler: clickHandler,
       });
-    }
+    });
+  }
 
   updateContactUnreadUI(convID, unreadCount) {
-    const contactElement = this.contactElements.get(convID);
+    const contactElement = this.contactElements.get(convID).element;
     if (contactElement) {
       const badge = contactElement.querySelector(".unread-badge");
       if (unreadCount > 0) {
