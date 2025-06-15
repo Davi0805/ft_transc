@@ -1,122 +1,60 @@
 import AScene from "../system/AScene";
 import Point from "../../../misc/Point";
-import { Assets, Sprite, BitmapText } from "pixi.js"
-import { EventBus } from "../system/EventBus";
+import { Assets } from "pixi.js"
+import { SIDES, CGameSceneConfigs, SGameDTO } from "../../../misc/types";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
-import { SIDES, CGameSceneConfigs, SceneChangeDetail, SGameDTO, TControls, TControlsState, CGameDTO } from "../../../misc/types";
 import CTeam from "./CTeam";
-import CScore from "./CScore";
-import { BALL_TYPES } from "../../../server/Objects/SBall";
-
-const typeSpriteMap: Record<BALL_TYPES, string> = {
-    [BALL_TYPES.BASIC]: "ballBasic",
-    [BALL_TYPES.EXPAND]: "ballExpand",
-    [BALL_TYPES.SHRINK]: "ballShrink",
-    [BALL_TYPES.SPEED_UP]: "ballSpeedUp",
-    [BALL_TYPES.SLOW_DOWN]: "ballSlowDown",
-    [BALL_TYPES.EXTRA_BALL]: "ballExtraBall",
-    [BALL_TYPES.RESTORE]: "ballRestore",
-    [BALL_TYPES.DESTROY]: "ballDestroy",
-    [BALL_TYPES.MASSIVE_DAMAGE]: "ballMassiveDamage",
-    [BALL_TYPES.MYSTERY]: "ballMystery",
-    [BALL_TYPES.BALL_TYPE_AM]: "ballUnknown" 
-}
+import CNumbersText from "./CNumbersText";
+import CPaddleControls from "./CPaddleControls";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
-        this._assets = await Assets.loadBundle("gameScene");
+        await Assets.loadBundle("gameScene");
 
-        const ballState = gameSceneConfigs.gameInitialState.ball;
-        const ballName = "ballBasic"
-        const ballSprite = new Sprite(this._assets[ballName]);
-        this._root.addChild(ballSprite);
-
+        this._timer = new CNumbersText(
+            gameSceneConfigs.gameInitialState.gameLength,
+            { size: 64, position: {
+                x: gameSceneConfigs.fieldSize.x / 2,
+                y: gameSceneConfigs.fieldSize.y / 2
+            }},
+            this._root
+        );
         gameSceneConfigs.gameInitialState.teams.forEach(team => {
-            const text = new BitmapText({
-                text: team.score,
-                style: {
-                    fontFamily: 'scoreFont', // This is what is loaded in the Assets
-                    fontSize: 32,
-                    fill: '#666666',
-                },
-            });
-            text.anchor.set(0.5, 0.5);
-            text.position.set(team.score.pos.x, team.score.pos.y); //TODO calculate somehow (maybe here is not even the best place to do it?)
-            this._root.addChild(text)
-
             this.teams.set(team.side, new CTeam(
                 team.side,
-                new CScore(team.score.score, text)
+                new CNumbersText(
+                    team.score.score,
+                    { size: 32, position: team.score.pos },
+                    this._root
+                )
             ))
         })
-
-        
-        this._timeLeft = new BitmapText({
-            text: gameSceneConfigs.gameInitialState.gameLength,
-            style: {
-                fontFamily: 'scoreFont', // This is what is loaded in the Assets
-                fontSize: 64,
-                fill: '#666666',
-            },
-        });
-        this._timeLeft.anchor.set(0.5, 0.5);
-        this._timeLeft.position.set(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
-        this._root.addChild(this._timeLeft)
-
-        this._balls.set(
-            0, new CBall(
-                0, //TODO: This will need to be generated somehow when more balls exist
-                Point.fromObj(ballState.pos),  //TODO Check if setting the pos like this works. Visual coordinates are different than game coordinates
-                Point.fromObj(ballState.size),
-                ballSprite
-            )
-        )
-
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
-            const paddleSpriteName = "paddle" + paddleConf.spriteID
-            const paddleSprite = new Sprite(this._assets[paddleSpriteName])
-            this._root.addChild(paddleSprite);
-            this.paddles.set(paddleConf.id,  
-                new CPaddle(
-                    paddleConf.id,
-                    paddleConf.side,
-                    Point.fromObj(paddleConf.pos),
-                    Point.fromObj(paddleConf.size),
-                    paddleSprite),
-                )
+            this.paddles.set(
+                paddleConf.id,  
+                new CPaddle(paddleConf, this._root),
+            )
         })
-
-
         gameSceneConfigs.controls.forEach( (controls, humanID) => {
-            this.controlsState.set(humanID, {
-                left: { pressed: false },
-                right: { pressed: false },
-                pause: { pressed: false }
-            })
+            this._controls.set(humanID, new CPaddleControls(humanID, controls))
         })
-        this._onKeyDown = this._getOnKeyDown(gameSceneConfigs.controls); //TODO: Probably should put some of this in the AScene?
-        this._onKeyUp = this._getOnKeyUp(gameSceneConfigs.controls);
-        window.addEventListener("keydown", this._onKeyDown);
-        window.addEventListener("keyup", this._onKeyUp);
     }
+
     override async destroy(): Promise<void> {
         this.root.destroy();
-        window.removeEventListener("keydown", this._onKeyDown);
-        window.removeEventListener("keyup", this._onKeyUp);
+        this._controls.forEach((controls) => {
+            controls.destroy();
+        })
     }
+
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
-        gameDto.balls.newBalls.forEach(newBall => {
-            const ballName = typeSpriteMap[newBall.type];
-            const ballSprite = new Sprite(this._assets[ballName]);
-            this._root.addChild(ballSprite);
-            this.balls.set(newBall.id, new CBall(
-                newBall.id,
-                Point.fromObj(newBall.pos),
-                Point.fromObj(newBall.size),
-                ballSprite 
-            )) 
+        gameDto.balls.newBalls.forEach(newBallConfigs => {
+            this.balls.set(newBallConfigs.id, new CBall(
+                newBallConfigs,
+                this._root 
+            ))
         })
         this.balls.forEach(ball => {
             const ballState = gameDto.balls.ballsState.find(ballState => ball.id === ballState.id);
@@ -125,117 +63,40 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 this.balls.delete(ball.id)
             } else {
                 ball.pos = Point.fromObj(ballState.pos);
+                ball.speed = ballState.speed
             }
         })
-        
         gameDto.paddles.forEach(paddleState => {
             const paddle = this.paddles.get(paddleState.id);
             if (paddle === undefined) {
                 throw new Error("Client cannot find a paddle with the ID the server says exists!")
             }
             paddle.pos = Point.fromObj(paddleState.pos);
-            paddle.size = Point.fromObj(paddleState.size)
+            paddle.size = Point.fromObj(paddleState.size);
+            paddle.speed = paddleState.speed;
         });
         gameDto.teams.forEach(teamState => {
             const team = this.teams.get(teamState.side);
             if (team) {
-                team.score.update(teamState.score);
+                team.updateHP(teamState.score);
             } 
         })
-        this._timeLeft.text = gameDto.timeLeft
+        this.timer?.update(gameDto.timeLeft, false); 
     }
 
-    override tickerUpdate(): void {}
-
-    private _onKeyDown!: (event: KeyboardEvent) => void;
-    private _getOnKeyDown(controlsMap: Map<number, TControls>) {
-        // Callbacks like these must be arrow functions and not methods!
-        // This way, if it is needed to use class members (like _keys in this case),
-        // the "this" keyword inherits context when passed as callback
-        return (event: KeyboardEvent) => {
-            
-            
-            /* if (event.key === "c") { //TODO: TEMPORARY: THIS IS JUST AN EXAMPLE ON HOW TO CHANGE SCENES 
-                const detail: SceneChangeDetail =  {
-                    sceneName: "exampleScene",
-                    configs: {
-                    }
-                }
-                EventBus.dispatchEvent(new CustomEvent("changeScene", { detail: detail}))
-                return ;
-            } */
-
-            controlsMap.forEach((controls, id) => {
-                const specificControlsState = this.controlsState.get(id);
-                if (specificControlsState === undefined) {
-                    throw new Error(`This client cannot find the controlsState of the human with ID ${id}`)
-                }
-                let stateChanged = false;
-                switch (event.key) {
-                    case controls.left: {
-                        specificControlsState.left.pressed = true;
-                        stateChanged = true;
-                        break;
-                    } case controls.right: {
-                        specificControlsState.right.pressed = true;
-                        stateChanged = true;
-                        break;
-                    } case controls.pause: {
-                        specificControlsState.pause.pressed = true;
-                        stateChanged = true;
-                        break;
-                    }
-                }
-                if (stateChanged) {
-                    const dto: CGameDTO = {
-                        controlsState: {humanID: id, controlsState: specificControlsState}
-                    }
-                    EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
-                }
-            })
-        }
+    override tickerUpdate(delta: number): void {
+        this.teams.forEach(team => {
+            team.hp.updateAnimations();
+        })
+        this._paddles.forEach(paddle => {
+            paddle.updateAnimations();
+        })
     }
 
-    private _onKeyUp!: (event: KeyboardEvent) => void;
-    private _getOnKeyUp = (controlsMap: Map<number, TControls>) => {
-        return (event: KeyboardEvent) => {
-            controlsMap.forEach((controls, id) => {
-                const specificControlsState = this.controlsState.get(id);
-                if (specificControlsState === undefined) {
-                    throw new Error(`This client cannot find the controlsState of the human with ID ${id}`)
-                }
-                let stateChanged = false;
-                switch (event.key) {
-                    case controls.left: {
-                        specificControlsState.left.pressed = false;
-                        stateChanged = true;
-                        break;
-                    } case controls.right: {
-                        specificControlsState.right.pressed = false;
-                        stateChanged = true;
-                        break;
-                    } case controls.pause: {
-                        specificControlsState.pause.pressed = false;
-                        stateChanged = true;
-                        break;
-                    }
-                }
-                if (stateChanged) {
-                    const dto: CGameDTO = {
-                        controlsState: {humanID: id, controlsState: specificControlsState}
-                    }
-                    EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
-                }
-            })
-        }
-    }
+    private _timer: CNumbersText | null = null;
+    get timer() { return this._timer; }
 
-    private _timeLeft!: BitmapText;
-
-    private _controlsState: Map<number, TControlsState> = new Map<number, TControlsState>
-    get controlsState() {
-        return this._controlsState;
-    }
+    private _controls: Map<number, CPaddleControls> = new Map<number, CPaddleControls>;
 
     private _balls: Map<number, CBall> = new Map<number, CBall>;
     get balls() {

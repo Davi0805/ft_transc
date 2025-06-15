@@ -30,8 +30,7 @@ export type TBall = {
     size: point
     pos: point,
     direction: point,
-    speed: number
-    spriteID: number,
+    speed: number,
     damage: number
 }
 
@@ -69,8 +68,7 @@ export type TUserCustoms = {
         size: point
         backgroundSpriteID: number
     },
-    gameLength: number,
-    ball: { spriteID: number },
+    matchLength: number,
     paddles: {
         id: number
         side: SIDES,
@@ -98,8 +96,7 @@ export type TGameConfigs = {
         size: point
         backgroundSpriteID: number
     },
-    gameLength: number,
-    ball: TBall,
+    matchLength: number,
     teams: {
         side: SIDES,
         score: {
@@ -127,7 +124,6 @@ export type TGameConfigs = {
 // Client
 
 export type CGameState = {
-    ball: Pick<TBall, "size" | "pos" | "spriteID">
     teams: {
         side: SIDES,
         score: {
@@ -135,7 +131,7 @@ export type CGameState = {
             pos: point
         }
     }[]
-    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[],
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "speed" | "pos" | "spriteID">[],
     gameLength: number
 }
 
@@ -161,14 +157,9 @@ export type SceneChangeDetail = | { sceneName: "exampleScene", configs: ExampleS
 
 // Server
 
-export type SGameState = {
-    ball: Pick<TBall,"type" | "pos" | "size" | "speed" | "direction" | "damage">,
-    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
-}
-
 export type SGameConfigs = {
     window: Pick<TWindow, "size">,
-    gameLength: number
+    matchLength: number
     teams: {
         side: SIDES,
         score: number
@@ -181,7 +172,7 @@ export type SGameConfigs = {
         paddleID: number,
         difficulty: number
     }[],
-    gameInitialState: SGameState,
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 }
 
 // DTO type
@@ -199,12 +190,14 @@ export type SGameDTO = {
     balls: {
         ballsState: {
             id: number,
-            pos: point
+            pos: point,
+            speed: number
         }[],
         newBalls: {
             id: number,
             type: BALL_TYPES,
-            size: point
+            size: point,
+            speed: number,
             pos: point
         }[]
     }
@@ -216,6 +209,7 @@ export type SGameDTO = {
         id: number
         pos: { x: number, y: number }
         size: { x: number, y: number }
+        speed: number
     }[],
     timeLeft: number
 }

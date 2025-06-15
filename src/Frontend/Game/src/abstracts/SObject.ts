@@ -4,10 +4,9 @@ import Rectangle from "../misc/Rectangle.js";
 
 export default abstract class SObject extends AObject {
     constructor(id: number, pos: Point, orientation: Point, size: Point, speed: number) {
-        super(id, pos, size, orientation);
+        super(id, pos, size, speed, orientation);
         this._size = size;
         this._cbox = this._calculateCBox();
-        this._speed = speed;
     }
 
     abstract move(delta: number): void;
@@ -31,10 +30,6 @@ export default abstract class SObject extends AObject {
     get cbox(): Rectangle {
         return this._cbox;
     }
-
-    protected _speed: number;
-    set speed(speed: number) {this._speed = speed;}
-    get speed(): number { return this._speed;}
 
     _calculateCBox(): Rectangle {
         let collisionBox: Rectangle;

@@ -8,11 +8,10 @@ import LoopController from "../LoopController.js";
 
 
 export default class SBallsManager {
-    constructor(windowSize: point, firstBall: TSBallConfigs) {
+    constructor(windowSize: point) {
         this._windowSize = windowSize;
         this._ballSpawnRate = 4;
         this._currentID = 0;
-        this.addBall(firstBall);
     }
 
     update(loop: LoopController) {
@@ -26,11 +25,15 @@ export default class SBallsManager {
 
     addBallOfType(type: BALL_TYPES) {
         const damage = getRandomInt(1, 5);
+        const direction = {
+            x: (Math.random() + 0.3) * (Math.floor(Math.random() * 2) === 1 ? 1 : -1),
+            y: (Math.random() + 0.3) * (Math.floor(Math.random() * 2) === 1 ? 1 : -1)
+        }
         const configs = {
             type: type,
             size: { x: 8 + damage * 8, y: 8 + damage * 8 },
             pos: { x: this._windowSize.x / 2, y: this._windowSize.y / 2 },
-            direction: { x: Math.random() * 1.8 - 0.9, y: Math.random() * 1.8 - 0.9},
+            direction: direction,
             speed: 500 - (damage * 75),
             damage: damage
         };
@@ -101,12 +104,14 @@ export default class SBallsManager {
         const out = {
             ballsState: this._balls.map(ball => ({
                 id: ball.id,
-                pos: ball.pos.toObj()
+                pos: ball.pos.toObj(),
+                speed: ball.speed
             })),
             newBalls: this._newBalls.map(ball => ({
                 id: ball.id,
                 type: ball.type,
                 size: ball.size.toObj(),
+                speed: ball.speed,
                 pos: ball.pos.toObj()
             }))
         }

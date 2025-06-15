@@ -6,56 +6,36 @@ import BotsManager from "./Players/SBotsManager.js";
 import SBallsManager from "./Objects/SBallsManager.js";
 import SPaddlesManager from "./Objects/SPaddlesManager.js";
 import WebSocket from "ws";
+import { BALL_TYPES } from "./Objects/SBall.js";
 
 
 export default class ServerGame {
     constructor(gameOpts: SGameConfigs) {
         this._windowSize = gameOpts.window.size;
-        this._timeLeft = gameOpts.gameLength;
-        this._ballsManager = new SBallsManager(this._windowSize, gameOpts.gameInitialState.ball);
+        this._matchLength = gameOpts.matchLength;
+        this._timeLeft = 3; // the initial countdown before the match starts
+        this._ballsManager = new SBallsManager(this._windowSize);
         this._teamsManager = new STeamsManager(gameOpts.teams)
-        this._paddlesManager = new SPaddlesManager(gameOpts.gameInitialState.paddles, this.windowSize);
+        this._paddlesManager = new SPaddlesManager(gameOpts.paddles, this.windowSize);
         this._humansManager = new SHumansManager(gameOpts.humans, this._paddlesManager.paddles);
         this._botsManager = new BotsManager(gameOpts.bots, this._paddlesManager.paddles, this.windowSize)
     }
 
     startGameLoop() {
-        const loop = new LoopController(60);
+        const loop = new LoopController(90);
         loop.start(() => {
             if (loop.isRunning) {
-                // Movement decision by players
-                this._humansManager.update()
-                this._botsManager.update(loop, this._ballsManager.balls)
-                
-                // Object movement
-                this._paddlesManager.update(loop);
-                this._ballsManager.update(loop);
-
-                // Collision handling
-                // I do not like this very much... The collision handling is not uniform across all objects
-                // Might create a objectsManager instead of a manager for each object,
-                // but I would have to make sure that I do not decrease flexibility
-                // I should definitely delagate the consequenses to each object though!
-                // I can also make a collision handler a singleton and register/unregister objects there?
-                this._ballsManager.handleLimitCollision(this._teamsManager);
-                this._paddlesManager.handleCollisions(this._ballsManager, this._teamsManager);
-                
-                if (loop.isEventTime(1)) {
-                    this._timeLeft -= 1;
-                }
-                // Game state handling
-                if (this._teamsManager.teamLost() !== undefined
-                    || this._timeLeft <= 0) {
-                    loop.pause();
-                    const finalGameState = this._teamsManager.getTeamsState();
-                    console.log(finalGameState);
+                if (!this._matchHasStarted) {
+                    this._countdownLoop(loop);
+                } else {
+                    this._matchLoop(loop);
                 }
             }
         })
     }
 
     startBroadcast(clients: WebSocket[]) {
-        const loop = new LoopController(60);
+        const loop = new LoopController(90);
         loop.start(() => {
             const message: Adto = {
                 type: "SGameDTO",
@@ -93,6 +73,9 @@ export default class ServerGame {
     set windowSize(value: point) { this._windowSize = value; }
     get windowSize() { return this._windowSize; }
     
+    private _matchHasStarted: boolean = false;
+
+    private _matchLength: number;
     private _timeLeft: number; 
 
     private _ballsManager: SBallsManager;
@@ -100,5 +83,46 @@ export default class ServerGame {
     private _humansManager: SHumansManager;
     private _botsManager: BotsManager;
     private _paddlesManager: SPaddlesManager;
+
+    private _countdownLoop(loop: LoopController) {
+        if (loop.isEventTime(1)) {
+            this._timeLeft -= 1;
+            if (this._timeLeft <= 0) {
+                this._ballsManager.addBallOfType(BALL_TYPES.BASIC);
+                this._timeLeft = this._matchLength;
+                this._matchHasStarted = true;
+            }
+        }
+    }
+
+    private _matchLoop(loop: LoopController) {
+        // Movement decision by players
+        this._humansManager.update()
+        this._botsManager.update(loop, this._ballsManager.balls)
+        
+        // Object movement
+        this._paddlesManager.update(loop);
+        this._ballsManager.update(loop);
+
+        // Collision handling
+        // I do not like this very much... The collision handling is not uniform across all objects
+        // Might create a objectsManager instead of a manager for each object,
+        // but I would have to make sure that I do not decrease flexibility
+        // I should definitely delagate the consequenses to each object though!
+        // I can also make a collision handler a singleton and register/unregister objects there?
+        this._ballsManager.handleLimitCollision(this._teamsManager);
+        this._paddlesManager.handleCollisions(this._ballsManager, this._teamsManager);
+        
+        if (loop.isEventTime(1)) {
+            this._timeLeft -= 1;
+        }
+        // Game state handling
+        if (this._teamsManager.teamLost() !== undefined
+            || this._timeLeft <= 0) {
+            loop.pause();
+            const finalGameState = this._teamsManager.getTeamsState();
+            console.log(finalGameState);
+        }
+    }
 
 }

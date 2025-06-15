@@ -72,8 +72,8 @@ export const assetsManifest: AssetsManifest = {
                     src: "sprites/paddle0.png"
                 },
                 {
-                    alias: "scoreFont",
-                    src: "sprites/scoreFont.ttf"
+                    alias: "gameFont",
+                    src: "sprites/gameFont.ttf"
                 }
             ]
         },
