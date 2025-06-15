@@ -4,6 +4,7 @@ import AnimationBad from "./Animations/AnimationBad";
 import AnimationGood from "./Animations/AnimationGood";
 import AnimationShake from "./Animations/AnimationShake";
 import AAnimation from "./Animations/AAnimation";
+import AnimationScaleUp from "./Animations/AnimationScaleUp";
 
 type TextOptions = {
     size: number,
@@ -30,6 +31,7 @@ export default class CNumbersText {
         if (activateAnimation) {
             this._animations.push((value < this.value) ? new AnimationBad(this.text) : new AnimationGood(this.text))
             this._animations.push(new AnimationShake(this.text))
+            this._animations.push(new AnimationScaleUp(this._text))
         }
         this.value = value;
     }
