@@ -15,7 +15,7 @@ export default class CNumbersText {
             style: {
                 fontFamily: 'gameFont',
                 fontSize: textOptions.size,
-                fill: '#444444'
+                fill: '#666666'
             }
         });
         this._text.anchor.set(0.5, 0.5);

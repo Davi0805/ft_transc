@@ -26,8 +26,8 @@ export default class SBallsManager {
     addBallOfType(type: BALL_TYPES) {
         const damage = getRandomInt(1, 5);
         const direction = {
-            x: Math.random() + 0.3 * (Math.floor(Math.random() * 2) === 1 ? 1 : -1),
-            y: Math.random() + 0.3 * (Math.floor(Math.random() * 2) === 1 ? 1 : -1)
+            x: (Math.random() + 0.3) * (Math.floor(Math.random() * 2) === 1 ? 1 : -1),
+            y: (Math.random() + 0.3) * (Math.floor(Math.random() * 2) === 1 ? 1 : -1)
         }
         const configs = {
             type: type,
