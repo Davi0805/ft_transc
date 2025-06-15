@@ -17,7 +17,6 @@ export default abstract class CObject extends AObject {
         super.pos = pos;
         this._sprite.position.set(pos.x, pos.y);
     }
-    override get pos(): Point { return super.pos;}
 
     protected _sprite: Sprite;
     set sprite(sprite: Sprite) {
@@ -34,4 +33,6 @@ export default abstract class CObject extends AObject {
     override get size() {
         return super.size;
     }
+
+    
 }

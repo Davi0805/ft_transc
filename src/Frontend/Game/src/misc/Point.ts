@@ -39,6 +39,10 @@ export default class Point {
         return new Point(x, y);
     }
 
+    isEqual(other: Point) {
+        return (this._x === other._x && this._y == other._y)
+    }
+
 
     private _x: number;
     set x(x: number) { this._x = x; }

@@ -22,7 +22,7 @@ export default class ServerGame {
     }
 
     startGameLoop() {
-        const loop = new LoopController(60);
+        const loop = new LoopController(90);
         loop.start(() => {
             if (loop.isRunning) {
                 if (!this._matchHasStarted) {
@@ -35,7 +35,7 @@ export default class ServerGame {
     }
 
     startBroadcast(clients: WebSocket[]) {
-        const loop = new LoopController(60);
+        const loop = new LoopController(90);
         loop.start(() => {
             const message: Adto = {
                 type: "SGameDTO",

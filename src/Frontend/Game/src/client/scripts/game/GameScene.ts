@@ -76,13 +76,17 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         gameDto.teams.forEach(teamState => {
             const team = this.teams.get(teamState.side);
             if (team) {
-                team.score.update(teamState.score);
+                team.updateHP(teamState.score);
             } 
         })
-        this.timer?.update(gameDto.timeLeft); 
+        this.timer?.update(gameDto.timeLeft, false); 
     }
 
-    override tickerUpdate(): void {}
+    override tickerUpdate(delta: number): void {
+        this.teams.forEach(team => {
+            team.hp.updateAnimations();
+        })
+    }
 
     private _timer: CNumbersText | null = null;
     get timer() { return this._timer; }
