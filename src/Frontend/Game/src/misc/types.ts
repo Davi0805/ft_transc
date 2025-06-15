@@ -131,7 +131,7 @@ export type CGameState = {
             pos: point
         }
     }[]
-    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[],
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "speed" | "pos" | "spriteID">[],
     gameLength: number
 }
 
@@ -190,12 +190,14 @@ export type SGameDTO = {
     balls: {
         ballsState: {
             id: number,
-            pos: point
+            pos: point,
+            speed: number
         }[],
         newBalls: {
             id: number,
             type: BALL_TYPES,
-            size: point
+            size: point,
+            speed: number,
             pos: point
         }[]
     }
@@ -207,6 +209,7 @@ export type SGameDTO = {
         id: number
         pos: { x: number, y: number }
         size: { x: number, y: number }
+        speed: number
     }[],
     timeLeft: number
 }

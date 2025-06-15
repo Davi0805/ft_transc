@@ -23,14 +23,13 @@ export enum BALL_TYPES {
 export default class SBall extends SObject {
     constructor(id: number, pos: Point, size: Point, speed: number, direction: Point, type: BALL_TYPES, damage: number) {
         super(id, pos, new Point(1, 0), size, speed);
-        this._speed = speed;
         this._direction = direction.normalize();
         this._type = type;
         this._damage = damage;
     }
 
     move(delta: number) {
-        this.pos = this.pos.add(this.direction.multiplyScalar(this.speed * delta));
+        this.pos = this.pos.add(this.direction.multiplyScalar(this._speed * delta));
     }
 
     private _direction: Point;

@@ -42,6 +42,7 @@ export function buildCAppConfigs(gameConfigs: TGameConfigs,
         id: paddle.id,
         side: paddle.side,
         size: paddle.size,
+        speed: paddle.speed,
         pos: paddle.pos,
         spriteID: paddle.spriteID
       })

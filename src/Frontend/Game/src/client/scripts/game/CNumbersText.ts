@@ -36,7 +36,6 @@ export default class CNumbersText {
 
     updateAnimations() { 
         for (let i = this._animations.length - 1; i >= 0; i--) {
-            console.log(i)
             const animation = this._animations[i];
             animation.update();
             if (animation.isDone) {

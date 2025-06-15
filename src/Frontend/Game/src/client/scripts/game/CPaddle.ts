@@ -9,6 +9,7 @@ type CPaddleConfigs = {
     side: SIDES,
     pos: point,
     size: point,
+    speed: number,
     spriteID: number
 }
 
@@ -20,6 +21,7 @@ export default class CPaddle extends CObject {
             Point.fromObj(configs.pos),
             Point.fromObj(configs.size),
             computeOrientation(configs.side),
+            configs.speed,
             spriteName,
             canvas
         );

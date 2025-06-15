@@ -104,12 +104,14 @@ export default class SBallsManager {
         const out = {
             ballsState: this._balls.map(ball => ({
                 id: ball.id,
-                pos: ball.pos.toObj()
+                pos: ball.pos.toObj(),
+                speed: ball.speed
             })),
             newBalls: this._newBalls.map(ball => ({
                 id: ball.id,
                 type: ball.type,
                 size: ball.size.toObj(),
+                speed: ball.speed,
                 pos: ball.pos.toObj()
             }))
         }

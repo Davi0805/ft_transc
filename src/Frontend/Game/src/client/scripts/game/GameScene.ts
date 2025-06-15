@@ -63,6 +63,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 this.balls.delete(ball.id)
             } else {
                 ball.pos = Point.fromObj(ballState.pos);
+                ball.speed = ballState.speed
             }
         })
         gameDto.paddles.forEach(paddleState => {
@@ -71,7 +72,8 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 throw new Error("Client cannot find a paddle with the ID the server says exists!")
             }
             paddle.pos = Point.fromObj(paddleState.pos);
-            paddle.size = Point.fromObj(paddleState.size)
+            paddle.size = Point.fromObj(paddleState.size);
+            paddle.speed = paddleState.speed;
         });
         gameDto.teams.forEach(teamState => {
             const team = this.teams.get(teamState.side);
@@ -85,6 +87,9 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override tickerUpdate(delta: number): void {
         this.teams.forEach(team => {
             team.hp.updateAnimations();
+        })
+        this._paddles.forEach(paddle => {
+            paddle.updateAnimations();
         })
     }
 

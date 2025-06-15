@@ -22,6 +22,7 @@ type CBallConfigs = {
     id: number,
     pos: point,
     size: point,
+    speed: number,
     type: BALL_TYPES
 }
 
@@ -32,6 +33,7 @@ export default class CBall extends CObject {
             Point.fromObj(configs.pos),
             Point.fromObj(configs.size), 
             new Point(1, 0),
+            configs.speed,
             TypeSpriteMap[configs.type],
             canvas
         );

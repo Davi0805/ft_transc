@@ -38,7 +38,8 @@ export default class SPaddlesManager {
         return this._paddles.map(paddle => ({
             id: paddle.id,
             pos: paddle.pos.toObj(),
-            size: paddle.size.toObj()
+            size: paddle.size.toObj(),
+            speed: paddle.speed
         }))
     }
 
