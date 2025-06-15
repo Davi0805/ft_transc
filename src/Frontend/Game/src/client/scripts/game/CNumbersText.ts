@@ -1,6 +1,9 @@
 import { BitmapText, Container } from "pixi.js";
 import { point } from "../../../misc/types";
-import CAnimation, { ANIMATION_TYPES } from "./CAnimation";
+import AnimationBad from "./Animations/AnimationBad";
+import AnimationGood from "./Animations/AnimationGood";
+import AnimationShake from "./Animations/AnimationShake";
+import AAnimation from "./Animations/AAnimation";
 
 type TextOptions = {
     size: number,
@@ -24,11 +27,11 @@ export default class CNumbersText {
     }
 
     update(value: number, activateAnimation: boolean) {
-        this.value = value;
         if (activateAnimation) {
-            this._animations.push(new CAnimation(this._text, ANIMATION_TYPES.BAD))
-            this._animations.push(new CAnimation(this._text, ANIMATION_TYPES.SHAKE))
+            this._animations.push((value < this.value) ? new AnimationBad(this.text) : new AnimationGood(this.text))
+            this._animations.push(new AnimationShake(this.text))
         }
+        this.value = value;
     }
 
     updateAnimations() { 
@@ -36,7 +39,7 @@ export default class CNumbersText {
             console.log(i)
             const animation = this._animations[i];
             animation.update();
-            if (animation.animationDone) {
+            if (animation.isDone) {
                 this._animations.splice(i, 1);
             }
         }
@@ -52,5 +55,5 @@ export default class CNumbersText {
     private _text: BitmapText;
     get text(): BitmapText { return this._text; }
 
-    private _animations: CAnimation[] = []; // TODO: Probably should change this to an Animation manager?
+    private _animations: AAnimation[] = [];
 }

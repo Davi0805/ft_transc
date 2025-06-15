@@ -1,12 +1,25 @@
 import { BitmapText, Sprite } from "pixi.js";
 
-export enum ANIMATION_TYPES {
-    SHAKE,
-    BAD,
-    GOOD
+export default abstract class AAnimation {
+    constructor(image: Sprite | BitmapText, timer: number) {
+        this._image = image;
+        this._timer = timer;
+    }
+
+    update() {
+        this._timer--;
+        if (this._timer <= 0) {
+            this._isDone = true;
+        }
+    };
+
+    protected _image: Sprite | BitmapText;
+    protected _timer: number;
+    private _isDone: boolean = false;
+    get isDone() { return this._isDone; }
 }
 
-export default class CAnimation {
+/* export default class CAnimation {
     constructor(image: Sprite | BitmapText, type: ANIMATION_TYPES) {
         this._image = image;
         this._type = type;
@@ -20,6 +33,10 @@ export default class CAnimation {
         switch (this._type) {
             case (ANIMATION_TYPES.BAD): {
                 this._performBad();
+                break;
+            }
+            case (ANIMATION_TYPES.GOOD): {
+                this._performGood();
                 break;
             }
             case (ANIMATION_TYPES.SHAKE): {
@@ -42,6 +59,18 @@ export default class CAnimation {
         switch (this._timer) {
             case (30): {
                 this._image.tint = 0xFF0000
+                break;
+            }
+            case (1): {
+                this._image.tint = 0xFFFFFF;
+            }
+        }
+    }
+
+    private _performGood() {
+        switch (this._timer) {
+            case (30): {
+                this._image.tint = 0x00FF00
                 break;
             }
             case (1): {
@@ -75,4 +104,4 @@ export default class CAnimation {
     }
 
     private _originalPos;
-}
+} */

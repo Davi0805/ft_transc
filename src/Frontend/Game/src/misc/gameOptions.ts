@@ -1,10 +1,9 @@
-import { BALL_TYPES } from "../server/Objects/SBall.js"
 import { SIDES, ROLES, point, TUserCustoms, TGameConfigs } from "./types.js"
 
 
 export const UserCustoms: TUserCustoms = {
     field: {
-        size: { x: 800, y: 800 },
+        size: { x: 800, y: 600 },
         backgroundSpriteID: 0 //NOT USED YET
     },
     matchLength: 200,
@@ -59,7 +58,7 @@ export const UserCustoms: TUserCustoms = {
                 } */
             ]
         },
-        {
+        /* {
             id: 1,
             humans: [
                 {
@@ -72,7 +71,7 @@ export const UserCustoms: TUserCustoms = {
                     }
                 }
             ]
-        }
+        } */
     ],
     bots: [
         /* {
@@ -82,12 +81,12 @@ export const UserCustoms: TUserCustoms = {
         /* {
             paddleID: 1,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        },
+        }, */
         {
             paddleID: 2,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
-        {
+        /* {
             paddleID: 3,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         }, */
