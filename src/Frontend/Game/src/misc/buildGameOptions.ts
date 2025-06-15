@@ -21,15 +21,9 @@ export function buildCAppConfigs(gameConfigs: TGameConfigs,
         fieldSize: gameConfigs.field.size,
         controls: controlsMap,
         gameInitialState: {
-          ball: {
-            id: 0,
-            size: gameConfigs.ball.size,
-            pos: gameConfigs.ball.pos,
-            type: gameConfigs.ball.type
-          },
           teams: [],
           paddles: [],
-          gameLength: gameConfigs.gameLength
+          gameLength: gameConfigs.matchLength
         }
       }
     }
@@ -61,21 +55,11 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
     window: {
       size: gameConfigs.field.size
     },
-    gameLength: gameConfigs.gameLength,
+    matchLength: gameConfigs.matchLength,
     teams: [],
     humans: [],
     bots: [],
-    gameInitialState: {
-      ball: {
-        type: gameConfigs.ball.type,
-        pos: gameConfigs.ball.pos,
-        size: gameConfigs.ball.size,
-        speed: gameConfigs.ball.speed,
-        direction: gameConfigs.ball.direction,
-        damage: gameConfigs.ball.damage
-      },
-      paddles: []
-    }
+    paddles: []
   }
   gameConfigs.teams.forEach(team => {
     out.teams.push({
@@ -90,7 +74,7 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
   })
   out.bots = gameConfigs.bots
   gameConfigs.paddles.forEach(paddle => {
-    out.gameInitialState.paddles.push({
+    out.paddles.push({
       id: paddle.id,
       size: paddle.size,
       pos: paddle.pos,

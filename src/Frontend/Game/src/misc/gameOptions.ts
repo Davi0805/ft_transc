@@ -7,7 +7,7 @@ export const UserCustoms: TUserCustoms = {
         size: { x: 800, y: 800 },
         backgroundSpriteID: 0 //NOT USED YET
     },
-    gameLength: 200,
+    matchLength: 200,
     paddles: [
         {
             id: 0,
@@ -99,16 +99,7 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
 
     const out: TGameConfigs = {
         field: userCustoms.field,
-        gameLength: userCustoms.gameLength,
-        ball: {
-            id: 0,
-            type: BALL_TYPES.BASIC,
-            pos: { x: UserCustoms.field.size.x / 2, y: UserCustoms.field.size.y / 2 },
-            direction: { x: Math.random() * 1.8 - 0.9, y: Math.random() * 1.8 - 0.9 },
-            size: { x: 16, y: 16 },
-            speed: 425,
-            damage: 1
-        },
+        matchLength: userCustoms.matchLength,
         teams: [],
         paddles: [],
         clients: userCustoms.clients,

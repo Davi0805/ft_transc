@@ -30,12 +30,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 )
             ))
         })
-        this._balls.set(
-            gameSceneConfigs.gameInitialState.ball.id, new CBall(
-                gameSceneConfigs.gameInitialState.ball,
-                this._root
-            )
-        )
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
             this.paddles.set(
                 paddleConf.id,  

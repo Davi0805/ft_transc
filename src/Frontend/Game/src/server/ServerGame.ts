@@ -12,11 +12,11 @@ import { BALL_TYPES } from "./Objects/SBall.js";
 export default class ServerGame {
     constructor(gameOpts: SGameConfigs) {
         this._windowSize = gameOpts.window.size;
-        this._matchLength = gameOpts.gameLength;
+        this._matchLength = gameOpts.matchLength;
         this._timeLeft = 3; // the initial countdown before the match starts
-        this._ballsManager = new SBallsManager(this._windowSize, gameOpts.gameInitialState.ball);
+        this._ballsManager = new SBallsManager(this._windowSize);
         this._teamsManager = new STeamsManager(gameOpts.teams)
-        this._paddlesManager = new SPaddlesManager(gameOpts.gameInitialState.paddles, this.windowSize);
+        this._paddlesManager = new SPaddlesManager(gameOpts.paddles, this.windowSize);
         this._humansManager = new SHumansManager(gameOpts.humans, this._paddlesManager.paddles);
         this._botsManager = new BotsManager(gameOpts.bots, this._paddlesManager.paddles, this.windowSize)
     }

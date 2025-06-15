@@ -68,7 +68,7 @@ export type TUserCustoms = {
         size: point
         backgroundSpriteID: number
     },
-    gameLength: number,
+    matchLength: number,
     paddles: {
         id: number
         side: SIDES,
@@ -96,8 +96,7 @@ export type TGameConfigs = {
         size: point
         backgroundSpriteID: number
     },
-    gameLength: number,
-    ball: TBall,
+    matchLength: number,
     teams: {
         side: SIDES,
         score: {
@@ -125,7 +124,6 @@ export type TGameConfigs = {
 // Client
 
 export type CGameState = {
-    ball: Pick<TBall, "id" | "size" | "pos" | "type">
     teams: {
         side: SIDES,
         score: {
@@ -159,14 +157,9 @@ export type SceneChangeDetail = | { sceneName: "exampleScene", configs: ExampleS
 
 // Server
 
-export type SGameState = {
-    ball: Pick<TBall,"type" | "pos" | "size" | "speed" | "direction" | "damage">,
-    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
-}
-
 export type SGameConfigs = {
     window: Pick<TWindow, "size">,
-    gameLength: number
+    matchLength: number
     teams: {
         side: SIDES,
         score: number
@@ -179,7 +172,7 @@ export type SGameConfigs = {
         paddleID: number,
         difficulty: number
     }[],
-    gameInitialState: SGameState,
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 }
 
 // DTO type
