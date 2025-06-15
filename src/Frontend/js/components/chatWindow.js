@@ -4,7 +4,7 @@ import { Chat } from "./sidebar.js";
 
 class ChatWindow {
   constructor() {
-    this.userID = webSocketService.userID;
+    this.userID = null;
     this.element = null;
 
     this.friendAvatar = null;
@@ -29,6 +29,7 @@ class ChatWindow {
       return;
     }
 
+    this.userID = webSocketService.userID;
     this.friendAvatar = friend.friendAvatar;
     this.friendName = friend.friendName;
     this.friendID = friend.friendID;
@@ -102,7 +103,8 @@ class ChatWindow {
 
     minimizeBtn.addEventListener("click", () => {
       this.element.style.height =
-        this.element.style.height === "40px" ? "400px" : "40px";
+        this.element.style.height === "50px" ? "400px" : "50px";
+      this.element.classList.toggle('minimized');
     });
 
     closeBtn.addEventListener("click", () => {
@@ -125,9 +127,10 @@ class ChatWindow {
   // }
   attachLastMessages() {
     this.messages.forEach((message) => {
+      console.log(this.userID, message)
       this.addMessage({
         message: message.message_content,
-        isOwn: message.from_user_id === this.userID ? true : false,
+        isOwn: message.from_user_id == this.userID ? true : false,
       });
     });
   }
@@ -162,13 +165,11 @@ class ChatWindow {
     newMessage.classList.add("message");
 
     if (messageData.isOwn) {
-      newMessage.style.background = "#007bff";
-      newMessage.style.marginLeft = "auto";
-      newMessage.style.textAlign = "right";
+      newMessage.classList.add('isOwn');
     } else {
-      newMessage.style.background = "#00FF00";
-      newMessage.style.marginRight = "auto";
+      newMessage.classList.add('notOwn');
     }
+
     newMessage.innerText = messageData.message;
     messageContainer.appendChild(newMessage);
     messageContainer.scrollTop = messageContainer.scrollHeight;
