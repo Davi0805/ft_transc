@@ -12,7 +12,7 @@ export default class SBallsManager {
         this._windowSize = windowSize;
         this._ballSpawnRate = 4;
         this._currentID = 0;
-        this.addBall(firstBall);
+        //this.addBall(firstBall);
     }
 
     update(loop: LoopController) {

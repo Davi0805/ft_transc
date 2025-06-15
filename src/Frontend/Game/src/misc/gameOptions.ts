@@ -7,7 +7,7 @@ export const UserCustoms: TUserCustoms = {
         size: { x: 800, y: 800 },
         backgroundSpriteID: 0 //NOT USED YET
     },
-    gameLength: 200, //NOT USED YET
+    gameLength: 200,
     paddles: [
         {
             id: 0,
@@ -32,14 +32,14 @@ export const UserCustoms: TUserCustoms = {
             side: SIDES.BOTTOM,
             role: ROLES.BACK,
             spriteID: 0
-        }
+        },
     ],
     // Clients are the sockets. Each one can have a different human playing. This allows for couch coop
     clients: [
         {
             id: 0,
             humans: [
-                {
+                /* {
                     id: 0,
                     paddleID: 0,
                     controls: {
@@ -47,7 +47,7 @@ export const UserCustoms: TUserCustoms = {
                         right: "ArrowDown",
                         pause: " "
                     }
-                },
+                }, */
                 /* {
                     id: 2,
                     paddleID: 4,
@@ -75,10 +75,10 @@ export const UserCustoms: TUserCustoms = {
         } */
     ],
     bots: [
-        /* {
+        {
             paddleID: 0,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        }, */
+        },
         {
             paddleID: 1,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
