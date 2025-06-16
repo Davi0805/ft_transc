@@ -50,7 +50,6 @@ export default class SBallsManager {
             ballConfigs.type,
             ballConfigs.damage
         )
-        console.log(BALL_TYPES[ballConfigs.type])
         this.balls.push(newBall);
         this._newBalls.push(newBall);
     }
