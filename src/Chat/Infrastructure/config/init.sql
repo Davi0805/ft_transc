@@ -1,12 +1,8 @@
-
 PRAGMA foreign_keys = ON;
-
 CREATE TABLE conversations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user1_id INTEGER NOT NULL,
-    user2_id INTEGER NOT NULL,
-
-    UNIQUE(user1_id, user2_id),
+    user2_id INTEGER NOT NULL,    UNIQUE(user1_id, user2_id),
     CHECK (user1_id != user2_id)
 );
 
@@ -15,11 +11,11 @@ CREATE TABLE messages (
     conversation_id INTEGER NOT NULL,
     from_user_id INTEGER NOT NULL,
     message_content TEXT NOT NULL,
-    metadata TEXT, -- maybe i can use to save match urls or tokens for match invites
-    
+    unread BOOLEAN DEFAULT 1,
+    metadata TEXT, -- maybe i can use to save match urls or tokens for match invites    
+  
     FOREIGN KEY (conversation_id) REFERENCES conversations(id)
 );
-
 
 -- TODO MOCK DATA CONVERSATIONS 
 INSERT INTO conversations (user1_id, user2_id) VALUES
@@ -41,6 +37,7 @@ INSERT INTO messages (conversation_id, from_user_id, message_content, metadata) 
 
 
 CREATE INDEX idx_conversation_id ON conversations(id);
+
 CREATE INDEX idx_messages_from_user_id ON messages(from_user_id);
  -- idk if necessary
 CREATE INDEX idx_messages_conversation_id ON messages(conversation_id);

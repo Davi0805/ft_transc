@@ -8,12 +8,21 @@ const multerConfig = require('./Infrastructure/config/MulterConfig');
 const cors = require('@fastify/cors');
 const fastifyStatic = require('@fastify/static');
 const path = require('path');
+const inputValid = require('./Infrastructure/config/InputValidator');
 
 const prometheus = require('fastify-metrics');
 
 const setup = () => {
     const app = Fastify({ logger: true,
-        bodyLimit: 10 * 1024 * 1024
+        bodyLimit: 10 * 1024 * 1024,
+        ajv: {
+            customOptions: {
+            allErrors: true,
+            coerceTypes: false,
+            useDefaults: true,
+            removeAdditional: 'failing'
+            }
+        }
      });
 
      app.setErrorHandler((error, request, reply) => {
@@ -27,6 +36,7 @@ const setup = () => {
         });
     });
 
+    inputValid.setup(app);
 
     app.register(prometheus, {endpoint: '/metrics'});
     app.register(multer.contentParser);

@@ -1,7 +1,7 @@
 const sessionRepository = require('../../Adapters/outbound/Repositories/SessionRepository');
 const exception = require('../../Infrastructure/config/CustomException');
-/* const messageRepository = require('../../Adapters/outbound/Repositories/MessageRepository');
 const friendsCacheRepo = require('../../Adapters/outbound/Repositories/FriendsCacheRepository');
+/* const messageRepository = require('../../Adapters/outbound/Repositories/MessageRepository');
 const friendsRequestRepo = require('../../Adapters/outbound/Repositories/FriendRequestRepository');
  */
 
@@ -31,6 +31,15 @@ class RedisService {
         const metadata = await sessionRepository.findByJwt(token.substring(7));
         if (!metadata) throw 401;
         return metadata;
+    }
+
+    /* 
+    *   @brief Method to retrieve user friends
+    *   @params user_id (integer)
+    */
+    async getCachedFriends(user_id)
+    {
+        return await friendsCacheRepo.get(user_id);
     }
 
     /* // Friends - cache to be used by other microservices, like game

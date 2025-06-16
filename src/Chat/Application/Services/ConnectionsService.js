@@ -16,6 +16,11 @@ class ConnectionsService {
         return await connectionRepo.getUser(userId);
     }
 
+    async getAll()
+    {
+        return await connectionRepo.getAllValues();
+    }
+
     async countUsers()
     {
         return await connectionRepo.countUsers();

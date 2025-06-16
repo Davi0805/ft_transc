@@ -2,7 +2,7 @@ const webSocketController = require('../../Adapters/inbound/webSocket/WebSocketC
 
 async function webSocketRoutes(fastify, options) {
 
-    fastify.get('/ws', { websocket: true }, webSocketController.helloWorld);
+    fastify.get('/ws', { websocket: true }, webSocketController.chat);
     
 }
 

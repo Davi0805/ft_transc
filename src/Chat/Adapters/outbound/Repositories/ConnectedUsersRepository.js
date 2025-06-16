@@ -14,7 +14,7 @@ class ConnectedUsersRepository {
 
     async getAllValues()
     {
-        return this.users.values()
+        return this.users.entries();
     }
 
     async addUser(userId, socket)
