@@ -53,8 +53,6 @@ export class Router {
 
         if (route) {
 
-            authService.updateHeaderVisibility();
-            
             header.updateActiveUnderline(path);
 
             // Load HTML template

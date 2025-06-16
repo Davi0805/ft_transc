@@ -6,9 +6,39 @@ class WebSocketController {
     async chat(socket, req) // the infamous hello world
     {
 
-        const session = await redisService.validateSession(req.headers.authorization);
-            if (!session)
-                socket.close();
+        // console.log("RONALDOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOooo");
+        // const session = JSON.parse(await redisService.getSession(req.headers.authorization));
+        // if (!session) {
+        //     console.log("OOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOoOOoOOOOOOOOOOOOOOo");
+        //     socket.close();
+        // }
+        // else {
+        //     console.log('BORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAABORAAAAAA')
+        // }
+
+        // Extract token from subprotocol
+        let token = null;
+        const protocols = req.headers['sec-websocket-protocol'];
+        if (protocols) {
+            // protocols is a comma-separated string
+            const protocolArr = protocols.split(',').map(p => p.trim());
+            const bearerProtocol = protocolArr.find(p => p.startsWith('Bearer.'));
+            if (bearerProtocol) {
+                token = bearerProtocol.split('Bearer.')[1];
+            }
+        }
+        if (!token) {
+            socket.close();
+            return;
+        }
+        const session = JSON.parse(await redisService.getSession('Bearer ' + token));
+        if (!session) {
+            socket.close();
+            return;
+        }
+        //const session = await redisService.validateSession(req.headers.authorization);
+        //    if (!session)
+        //        socket.close();
         await connectionsService.addUser(session.user_id, socket);
 
 
@@ -16,23 +46,24 @@ class WebSocketController {
         })
 
         socket.on('message', async message => {
-            /* console.log('User '+ session.user_id + ' send message = '+String(message)); */
             const parsedMessage = JSON.parse(message);
             const conversation_data = await ConversationService
-                                        .getConversationById(parsedMessage.conversation_id);
+                .getConversationById(parsedMessage.conversation_id);
 
             if (session.user_id != conversation_data[0].user1 && session.user_id != conversation_data[0].user2)
-                return ;
+                return;
 
-            const receiver_id = conversation_data[0].user1 != session.user_id ? conversation_data[0].user1 : conversation_data[0].user2;                            
+            const receiver_id = conversation_data[0].user1 != session.user_id ? conversation_data[0].user1 : conversation_data[0].user2;
+
+
             await chatMessageService.saveMessage(parsedMessage.conversation_id, session.user_id, parsedMessage.message);
-            
+
             //todo: PENSAR EM LOGICA OTIMIZADA PARA BROADCAST DE MENSAGENS
             //todo: POIS PRECISO DO ID DO USER QUE VAI RECEBER
             const receiverSocket = await connectionsService.getUser(String(receiver_id));
-            /* console.log('RECEIVER ID = '+receiver_id + ' | socket = '+receiverSocket); */
             if (receiverSocket)
-                receiverSocket.send(JSON.stringify({conversation_id: parsedMessage.conversation_id, message: parsedMessage.message}));
+                receiverSocket.send(JSON.stringify({ conversation_id: parsedMessage.conversation_id, message: parsedMessage.message }));
+
         })
 
         socket.on('close', async () => {

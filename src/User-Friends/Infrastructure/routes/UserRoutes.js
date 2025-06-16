@@ -1,6 +1,5 @@
 const userController = require('../../Adapters/inbound/http/UserController');
 const authMiddleware = require('../config/AuthMiddleware');
-const { schema } = require('../config/Sqlite');
 
 async function userRoutes(fastify, options) {
     fastify.get('/users', {
@@ -11,6 +10,7 @@ async function userRoutes(fastify, options) {
     fastify.get('/users/:id', {
       handler: userController.getById
     });
+
 
     fastify.post('/users', {
       schema: {

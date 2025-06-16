@@ -1,18 +1,18 @@
 
 export async function getSelfData() {
     try {
+        const authToken = localStorage.getItem("authToken"); 
+        if (!authToken) throw new Error("No Token");
+
         const response = await fetch("http://localhost:8080/users/me", {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                Authorization: `Bearer ${authToken}`,
             },
         });
 
-        if (response.status === 401) {
-            return null;
-        }
-        if (response.status === 404) {
-            return null;
+        if (response.status == 401 || response.status == 404) {
+            throw new Error("Invalid token");
         }
 
         if (!response.ok) {

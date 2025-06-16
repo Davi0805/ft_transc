@@ -3,6 +3,7 @@ const jwtService = require('../../../Application/Services/JwtService');
 const redisService = require('../../../Application/Services/RedisService');
 const twofaService = require('../../../Application/Services/TwoFactorAuthService');
 const fs = require('fs');
+const mime = require('mime-types');
 const path = require('path');
 const exception = require('../../../Infrastructure/config/CustomException');
 
@@ -33,6 +34,7 @@ class UserController {
     }
 
 
+
     /* 
     *    @brief Get by id endpoint
     *    GET - localhost:8080/users/{id}
@@ -42,7 +44,10 @@ class UserController {
     async getById(req, reply)
     {
         const user = await userService.findById(req.params.id);
-        return reply.send(user);
+        return reply.send({ user_id: user[0].user_id,
+                            name: user[0].name,
+                            username: user[0].username,
+                            email: user[0].email });
     }
 
 
@@ -110,8 +115,11 @@ class UserController {
         const user = await userService.findById(req.params.id);
         const imagePath = user[0].user_image;
         if (!imagePath) throw exception('Image not defined!', 204);
+        const mimeType = mime.lookup(imagePath);
+        if (!mimeType) throw exception("Unsupported mime type", 415);
+
         const stream = fs.createReadStream(imagePath);
-        return reply.type('image').send(stream);
+        return reply.type(mimeType).send(stream);
     }
 
 

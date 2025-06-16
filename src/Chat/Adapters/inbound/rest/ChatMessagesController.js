@@ -12,6 +12,7 @@ class ChatMessageController {
     */
     async getMessagesByConversationId(req, reply)
     {
+        // todo: check if the conversation_id have this user on it
         const conversation_id = req.params.conversation_id;
         const conv = await conversationService.getConversationById(conversation_id);
         if (!conv[0] || conv[0].user1 != req.session.user_id && conv[0].user2 != req.session.user_id)

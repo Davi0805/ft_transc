@@ -1,28 +1,59 @@
+import { header } from "../components/header.js";
+import { Chat } from "../components/sidebar.js";
 import { getSelfData } from "../api/getSelfDataAPI.js";
+import { getUserAvatarById } from "../api/getUserAvatarAPI.js";
 
 export class AuthService {
   constructor() {
     this.protectedRoutes = ["/play", "/profile"];
-    this.init();
+    this.userID = null;
+    this.userNick = null;
+    this.userAvatar = null;
+    this.authToken = null;
+    this.isAuthenticated = false;
+    this.sidebar = null;
   }
 
-  init() {
+  async init() {
     this.authToken = localStorage.getItem("authToken");
     this.isAuthenticated = !!this.authToken;
+    if (this.isAuthenticated) await this.getMyData();
+    header.updateHeaderVisibility();
+    if (this.isAuthenticated) this.sidebar = new Chat(this.userID);
   }
 
-  login(token) {
+  async getMyData() {
+    try {
+      const userData = await getSelfData();
+      this.userID = userData.id;
+      this.userNick = userData.nickname;
+
+      this.userAvatar = await getUserAvatarById(this.userID);
+      if (!this.userAvatar) this.userAvatar = "./Assets/default/bobzao.jpg";
+    } catch (error) {
+      this.authToken = null;
+      this.authToken = localStorage.removeItem("authToken");
+      this.isAuthenticated = false;
+    }
+  }
+
+  async login(token) {
     this.authToken = token;
     this.isAuthenticated = true;
     localStorage.setItem("authToken", token);
-    this.updateHeaderVisibility(); // todo
+    await this.getMyData();
+    await header.updateHeaderVisibility();
+    if (!this.sidebar) this.sidebar = new Chat(this.userID);
   }
 
-  logout() {
+  async logout() {
     this.authToken = null;
     this.isAuthenticated = false;
     localStorage.removeItem("authToken");
-    this.updateHeaderVisibility(); // todo
+    await header.updateHeaderVisibility();
+    this.sidebar.deleteSideBar();
+    //TODO WEBSOCKET CHATWINDOW
+    this.sidebar = null;
   }
 
   getToken() {
@@ -31,39 +62,6 @@ export class AuthService {
 
   isUserAuthenticated() {
     return this.isAuthenticated;
-  }
-
-  async updateHeaderVisibility() {
-    const loggedOut = document.getElementById("log-reg");
-    const loggedIn = document.getElementById("user-in");
-    const headerNick = document.getElementById("profile-link");
-
-    const showLoggedOutVersion = () => {
-      loggedIn.style.display = "none";
-      loggedOut.style.display = "flex";
-    };
-
-    const showLoggedInVersion = (nickname) => {
-      loggedOut.style.display = "none";
-      loggedIn.style.display = "flex";
-      headerNick.textContent = nickname;
-    };
-
-    if (!this.isAuthenticated) {
-      showLoggedOutVersion();
-      return;
-    }
-
-    try {
-      const userData = await getSelfData();
-      showLoggedInVersion(userData.nickname);
-      // todo avatar
-    } catch (error) {
-      this.authToken = null;
-      this.isAuthenticated = false;
-      showLoggedOutVersion();
-      return;
-    }
   }
 
   canAccessRoute(routePath) {
