@@ -14,6 +14,7 @@ class ChatWindow {
     this.messages = [];
 
     this.isOpen = false;
+    this.isMinimized = false;
   }
 
   /*friend {
@@ -25,6 +26,9 @@ class ChatWindow {
   // todo make it so only one is active at a time
   async open(friend) {
     if (this.isOpen) {
+      if (this.isMinimized) {
+        this.toggleMinimize();
+      }
       this.focus();
       return;
     }
@@ -95,17 +99,19 @@ class ChatWindow {
         `;
   }
 
+  toggleMinimize() {
+    this.element.style.height = (this.element.style.height === "50px") ? "400px" : "50px";
+    this.element.classList.toggle('minimized');
+    this.isMinimized = !this.isMinimized;
+  }
+
   attachEventListeners() {
     const minimizeBtn = this.element.querySelector(".minimize-btn");
     const closeBtn = this.element.querySelector(".close-btn");
     const sendBtn = this.element.querySelector(".send-btn");
     const messageInput = this.element.querySelector(".message-input");
 
-    minimizeBtn.addEventListener("click", () => {
-      this.element.style.height =
-        this.element.style.height === "50px" ? "400px" : "50px";
-      this.element.classList.toggle('minimized');
-    });
+    minimizeBtn.addEventListener("click", () => { this.toggleMinimize() });
 
     closeBtn.addEventListener("click", () => {
       this.close();

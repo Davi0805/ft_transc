@@ -52,6 +52,7 @@ export class AuthService {
     localStorage.removeItem("authToken");
     await header.updateHeaderVisibility();
     this.sidebar.deleteSideBar();
+    //TODO WEBSOCKET CHATWINDOW
     this.sidebar = null;
   }
 
