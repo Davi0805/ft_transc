@@ -22,6 +22,7 @@ export class Chat {
     this.sidebar.innerHTML = this.renderHTML();
     this.setToken();
 
+    await this.getSidebarConversations();
     webSocketService.connect(this.token, this.userID);
 
     webSocketService.registerNotificationCallback((convID) => {
@@ -32,7 +33,7 @@ export class Chat {
       this.handleRecieveOnlineUsers(online_users);
     });
 
-    await this.getSidebarConversations();
+    
     this.insertContactsOnSidebar();
   }
 
