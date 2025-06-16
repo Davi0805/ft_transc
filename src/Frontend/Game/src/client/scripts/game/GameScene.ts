@@ -78,7 +78,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         gameDto.teams.forEach(teamState => {
             const team = this.teams.get(teamState.side);
             if (team) {
-                team.updateHP(teamState.score);
+                team.update(teamState.score);
             } 
         })
         this.timer?.update(gameDto.timeLeft, false); 

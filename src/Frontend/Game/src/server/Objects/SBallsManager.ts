@@ -16,7 +16,7 @@ export default class SBallsManager {
 
     update(loop: LoopController) {
         if (loop.isEventTime(this._ballSpawnRate)) {
-            this.addBallOfType(getRandomInt(1, BALL_TYPES.BALL_TYPE_AM)) // 0 is basic, so this way only powerups are spawned
+            this.addBallOfType(BALL_TYPES.SPEED_UP/* getRandomInt(1, BALL_TYPES.BALL_TYPE_AM) */) // 0 is basic, so this way only powerups are spawned
         }
         this.balls.forEach(ball => {
             ball.move(loop.delta);

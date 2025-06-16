@@ -5,6 +5,7 @@ import AnimationGood from "./Animations/AnimationGood";
 import AnimationShake from "./Animations/AnimationShake";
 import AAnimation from "./Animations/AAnimation";
 import AnimationScaleUp from "./Animations/AnimationScaleUp";
+import Point from "../../../misc/Point";
 
 type TextOptions = {
     size: number,
@@ -14,7 +15,7 @@ type TextOptions = {
 export default class CNumbersText {
     constructor(value: number, textOptions: TextOptions, canvas: Container) {
         this._value = value;
-        this._text = new BitmapText({
+        this._sprite = new BitmapText({
             text: value,
             style: {
                 fontFamily: 'gameFont',
@@ -22,16 +23,18 @@ export default class CNumbersText {
                 fill: '#666666'
             }
         });
-        this._text.anchor.set(0.5, 0.5);
-        this._text.position.set(textOptions.position.x, textOptions.position.y);
-        canvas.addChild(this._text);
+        this._sprite.anchor.set(0.5, 0.5);
+        this._sprite.position.set(textOptions.position.x, textOptions.position.y);
+        canvas.addChild(this._sprite);
+        this._pos = Point.fromObj(textOptions.position)
+        this._spriteOffset = new Point(0, 0);
     }
 
     update(value: number, activateAnimation: boolean) {
         if (activateAnimation) {
-            this._animations.push((value < this.value) ? new AnimationBad(this.text) : new AnimationGood(this.text))
-            this._animations.push(new AnimationShake(this.text))
-            this._animations.push(new AnimationScaleUp(this._text))
+            this._animations.push((value < this.value) ? new AnimationBad(this) : new AnimationGood(this))
+            this._animations.push(new AnimationShake(this))
+            this._animations.push(new AnimationScaleUp(this))
         }
         this.value = value;
     }
@@ -44,17 +47,27 @@ export default class CNumbersText {
                 this._animations.splice(i, 1);
             }
         }
+        this._updatePos();
     }
 
     private _value: number;
     set value(value: number) { 
         this._value = value;
-        this.text.text = value.toString();
+        this._sprite.text = value.toString();
     }
     get value(): number { return this._value; }
 
-    private _text: BitmapText;
-    get text(): BitmapText { return this._text; }
+    private _sprite: BitmapText;
+    get sprite(): BitmapText { return this._sprite; }
+    private _pos: Point;
+    private _spriteOffset: Point;
+    get spriteOffset(): Point { return this._spriteOffset; }
+    set spriteOffset(spriteOffset: Point) { this._spriteOffset = spriteOffset}
 
     private _animations: AAnimation[] = [];
+
+    _updatePos() {
+        const newPos = Point.fromObj(this._pos).add(this._spriteOffset);
+        this._sprite.position.set(newPos.x, newPos.y);
+    }
 }
