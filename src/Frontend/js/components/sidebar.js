@@ -165,13 +165,17 @@ export class Chat {
   /* {online_users: [2, 4, 6]} */
   handleRecieveOnlineUsers(onlineFriends) {
     this.friends.forEach((f) => {
-      console.log(
-        "DEBUG ANTES: Friend Name: " + f.friendName + " On: " + f.friendOn
-      );
       f.friendOn = onlineFriends.includes(f.friendID) ? true : false;
-      console.log(
-        "DEBUG DEPOIS: Friend Name: " + f.friendName + " On: " + f.friendOn
-      );
+      console.log(f);
+
+      if (f.friendOn) {
+        const query = this.contactElements.get(f.convID);
+        if (!query) return;
+        const img = query.element.querySelector('img');
+        if (!img) return;
+        img.style.border = '2.3px solid #31be06';
+        img.style.boxShadow = '0px 0px 4px #31be06';
+      }
     });
   }
 
