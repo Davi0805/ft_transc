@@ -90,19 +90,20 @@ export class Chat {
         friendID: friendID,
         friendName: friendData.name,
         friendAvatar: friendAvatarURL,
+        unreadMsg: conv.unread_count,
         friendOn: false,
       });
     }
   }
 
-  createContactElement(friendAvatar, friendName) {
+  createContactElement(friendAvatar, friendName, unreadMsg) {
     const newContact = document.createElement("button");
     newContact.className = "contact";
     newContact.innerHTML = `
               <button class="contact f-${friendName}">
                   <img src="${friendAvatar}" width="40px" height="40px">
                   ${this.minimized ? "" : `<span>${friendName}</span>`}
-                  <span class="unread-badge" style="display: none;">0</span>
+                  <span class="unread-badge" style="display: none;">${unreadMsg}</span>
               </button>
               `;
     return newContact;
