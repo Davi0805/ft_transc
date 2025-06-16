@@ -166,7 +166,6 @@ export class Chat {
   handleRecieveOnlineUsers(onlineFriends) {
     this.friends.forEach((f) => {
       f.friendOn = onlineFriends.includes(f.friendID) ? true : false;
-      console.log(f);
 
       if (f.friendOn) {
         const query = this.contactElements.get(f.convID);

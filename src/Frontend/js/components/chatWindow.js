@@ -133,7 +133,6 @@ class ChatWindow {
   // }
   attachLastMessages() {
     this.messages.forEach((message) => {
-      console.log(this.userID, message)
       this.addMessage({
         message: message.message_content,
         isOwn: message.from_user_id == this.userID ? true : false,

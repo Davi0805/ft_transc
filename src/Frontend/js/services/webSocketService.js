@@ -1,3 +1,5 @@
+import { chatWindowControler } from "../components/chatWindow.js";
+
 class WebSocketService {
   constructor() {
     this.ws = null;
@@ -147,7 +149,12 @@ class WebSocketService {
     const handler = this.messageHandlers.get(convID);
     if (handler) {
       handler({ convID, message, isOwn: false });
-      this.markConversationAsRead(convID, message);
+      if (!chatWindowControler.isMinimized) {
+        this.markConversationAsRead(convID, message);
+      }
+      else {
+        this.triggerNotifications(convID);
+      }
     } else {
       this.triggerNotifications(convID);
     }

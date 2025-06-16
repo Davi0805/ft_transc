@@ -69,7 +69,7 @@ export const languages = {
         // REGISTER
         "register-title": "Registo",
         "register-place-username": "Utilizador",
-        "register-place-nickname": "Alcunha",
+        "register-place-nickname": "Nome",
         "register-place-email": "Email",
         "register-place-password": "Palavra-passe",
         "register-title-username": "O nome de utilizador deve ter entre 3 e 15 caracteres e pode incluir letras, números, '_' ou '-'",
@@ -117,7 +117,7 @@ export const languages = {
         // REGISTER
         "register-title": "Registro",
         "register-place-username": "Usuario",
-        "register-place-nickname": "Apodo",
+        "register-place-nickname": "Nombre",
         "register-place-email": "Correo electrónico",
         "register-place-password": "Contraseña",
         "register-title-username": "El nombre de usuario debe tener entre 3 y 15 caracteres y puede incluir letras, números, '_' o '-'",
