@@ -15,7 +15,6 @@ CREATE TABLE messages (
     metadata TEXT -- maybe i can use to save match urls or tokens for match invites    FOREIGN KEY (conversation_id) REFERENCES conversations(id)
 );
 
--- TODO MOCK DATA CONVERSATIONS
 INSERT INTO conversations (user1_id, user2_id) VALUES
 (1, 2), -- Artur <-> Maria
 (1, 3); -- Artur <-> João-- MOCK DATA MESSAGES

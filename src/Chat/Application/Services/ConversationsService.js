@@ -9,7 +9,7 @@ class ConversationService {
 
     async getAllMyConversations(user_id)
     {
-        return await conversationsRepo.getAllMyConversations(user_id);
+        return await conversationsRepo.getAllConversationsAndUnread(user_id);
     }
 
     async getConversationById(conversation_id)

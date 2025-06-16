@@ -4,6 +4,9 @@ const authMiddleware = require('../config/AuthMiddleware');
 async function FriendRequestRoutes(fastify, options) {
     fastify.get('/friend_requests', friendRequestController.getAll); //debug
     fastify.post('/friend_requests', {
+        schema: {
+          body: { $ref: 'createFriendReq#' }
+        },
         preHandler: authMiddleware,
         handler: friendRequestController.create
       });
