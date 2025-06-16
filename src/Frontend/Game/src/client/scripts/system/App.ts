@@ -18,6 +18,7 @@ class FtApplication {
         })
 
         this._app = new Application();
+        
         await this._app.init(gameConfigs.appConfigs);
         document.body.appendChild(this._app.canvas); // This makes the canvas of the Pixi app show up on the browser
 
