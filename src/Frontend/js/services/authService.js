@@ -2,7 +2,8 @@ import { header } from "../components/header.js";
 import { Chat } from "../components/sidebar.js";
 import { getSelfData } from "../api/getSelfDataAPI.js";
 import { getUserAvatarById } from "../api/getUserAvatarAPI.js";
-
+import { webSocketService } from "./webSocketService.js";
+import { chatWindowControler } from "../components/chatWindow.js";
 export class AuthService {
   constructor() {
     this.protectedRoutes = ["/play", "/profile"];
@@ -52,7 +53,9 @@ export class AuthService {
     localStorage.removeItem("authToken");
     await header.updateHeaderVisibility();
     this.sidebar.deleteSideBar();
-    //TODO WEBSOCKET CHATWINDOW
+    webSocketService.disconnect();
+    chatWindowControler.close();
+    
     this.sidebar = null;
   }
 

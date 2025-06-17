@@ -23,6 +23,7 @@ export class Chat {
     this.setToken();
 
     await this.getSidebarConversations();
+
     webSocketService.connect(this.token, this.userID);
 
     webSocketService.registerNotificationCallback((convID) => {
@@ -104,7 +105,7 @@ export class Chat {
               <button class="contact f-${friendName}">
                   <img src="${friendAvatar}" width="40px" height="40px">
                   ${this.minimized ? "" : `<span>${friendName}</span>`}
-                  <span class="unread-badge" style="display: none;">${unreadMsg}</span>
+                  <span class="unread-badge" style="display: ${unreadMsg ? 'inline' : 'none'};">${unreadMsg}</span>
               </button>
               `;
     return newContact;
@@ -125,7 +126,8 @@ export class Chat {
     this.friends.forEach((friend) => {
       const contactBtn = this.createContactElement(
         friend.friendAvatar,
-        friend.friendName
+        friend.friendName,
+        friend.unreadMsg
       );
 
       const clickHandler = () => {
