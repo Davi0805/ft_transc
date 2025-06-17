@@ -171,13 +171,18 @@ export class Chat {
     this.friends.forEach((f) => {
       f.friendOn = onlineFriends.includes(f.friendID) ? true : false;
 
+      const query = this.contactElements.get(f.convID);
+      if (!query) return;
+      const img = query.element.querySelector('img');
+      if (!img) return;
+
       if (f.friendOn) {
-        const query = this.contactElements.get(f.convID);
-        if (!query) return;
-        const img = query.element.querySelector('img');
-        if (!img) return;
         img.style.border = '2.3px solid #31be06';
         img.style.boxShadow = '0px 0px 4px #31be06';
+      }
+      else {
+        img.style.border = '2.3px solid #676768';
+        img.style.boxShadow = '0px 0px 4px #676768';
       }
     });
   }
