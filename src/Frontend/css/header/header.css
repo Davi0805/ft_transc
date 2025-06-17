@@ -5,6 +5,9 @@ header.content {
   position: fixed;
   z-index: 1000;
   background: rgba(20, 20, 20, 0.6);
+  border-top: none;
+  border-left: 0;
+  border-right: 0;
   display: flex;
   border-radius: 0%;
 }

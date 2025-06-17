@@ -5,6 +5,7 @@ import { authService } from "../services/authService.js";
 import { webSocketService } from "../services/webSocketService.js";
 import { chatWindowControler } from "./chatWindow.js";
 
+// TODO ADICIONAR BUTTON COM FRIEND REQUEST E QUANTIDADE, EVENTHOOKS, OPEN, CLOSE, SHOW E O CARALHO 
 export class Chat {
   constructor(userID) {
     this.sidebar = document.querySelector("aside");
@@ -19,8 +20,10 @@ export class Chat {
   }
 
   async init() {
-    this.sidebar.innerHTML = this.renderHTML();
     this.setToken();
+
+    this.sidebar.innerHTML = this.renderHTML();
+    this.attachHeaderEventListeners();
 
     await this.getSidebarConversations();
 
@@ -34,7 +37,8 @@ export class Chat {
       this.handleRecieveOnlineUsers(online_users);
     });
 
-    
+
+
     this.insertContactsOnSidebar();
   }
 
@@ -48,7 +52,7 @@ export class Chat {
         <!-- Topbar with friend + search -->
 
         <div class="chat-sidebar-topbar">
-          <button class="icon-btn">
+          <button class="icon-btn add-friend">
             <img src="./Assets/icons/person-add.svg" alt="Add Friend" />
           </button>
           
@@ -66,6 +70,62 @@ export class Chat {
         </div>  
       </div>
         `;
+  }
+
+  renderAddFriendHTML() {
+    return `
+      <dialog class="friend-requests-wrapper" id="friendRequestsDialog" >
+        <button class="close-dialog-btn">&times;</button> <!-- onclick="closeDialog()" -->
+
+        <h1 class="title friend-request-header">Friend Requests</h1>
+
+        <div class="requests-container">
+
+          
+          <div class="request-wrapper">
+            <div class="user-info">
+              <img src="../../Assets/default/bobzao.jpg" alt="user-avatar" />
+
+              <span>Artur</span>
+            </div>
+
+            <div class="request-options">
+              <button class="request-btn" id="friend-accept" title="Accept">
+                <img src="../../Assets/icons/check-circle.svg" />
+              </button>
+
+              <button class="request-btn" id="friend-reject" title="Reject">
+                <img src="../../Assets/icons/cancel-circle.svg" />
+              </button>
+
+              <button class="request-btn" id="friend-block" title="Block">
+                <img src="../../Assets/icons/block-circle.svg" />
+              </button>
+            </div>
+          </div>
+
+          
+        </div>
+      </dialog>
+    `
+  }
+
+
+
+  attachHeaderEventListeners() {
+    const addBtn = document.querySelector('.chat-sidebar-topbar .add-friend');
+    const searchInput = document.querySelector('.search-wrapper input');
+    const searchBtn = document.querySelector('.search-wrapper button');
+
+    if (addBtn) {
+      addBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        this.renderAddFriendHTML();
+
+      });
+    }
+
   }
 
   // this ensures there is no memory leaks and is considered better than just empty out the html
