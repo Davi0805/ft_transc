@@ -52,6 +52,19 @@ class UserController {
 
 
     /* 
+    *    @brief Get by username endpoint
+    *    GET - localhost:8080/users/username/{username}
+    *    @params {username: (string)} - username that is being searched
+    *    @returns list of users
+    */
+    async getByUsername(req, reply)
+    {
+        const user = await userService.findByUsername(req.params.username);
+        return reply.send(user);
+    }
+
+
+    /* 
     *    @brief Endpoint to create user
     *    POST - localhost:8080/users
     *    @params name: (string)

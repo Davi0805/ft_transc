@@ -29,6 +29,10 @@ async function userRoutes(fastify, options) {
       handler: userController.activateTwoFactorAuth
     });
     
+    fastify.get('/users/username/:username', {
+      handler: userController.getByUsername
+    });
+    
     fastify.post('/twofa/auth', {
       schema: {
         body: { $ref: 'verifytwofa#' }

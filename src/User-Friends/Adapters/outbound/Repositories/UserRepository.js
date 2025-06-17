@@ -16,7 +16,7 @@ class UserRepository {
 
     async findByUsername(username)
     {
-        return db.raw('SELECT user_id, username, password_hash, twofa_secret FROM users WHERE username = ?', [username]);
+        return db.raw('SELECT user_id, username, user_image FROM users WHERE username = ?', [username]);
     }
 
     async save(user) {
