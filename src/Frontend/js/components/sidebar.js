@@ -64,10 +64,18 @@ export class Chat {
             <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
           </div>
         </div>
-          
+
+        <div class="friend-requests-btn-wrapper">
+          <button class="friend-requests-btn icon-btn" id="friend-requests-btn">
+            <span class="friend-requests-text">Friend Requests</span>
+            <span class="friend-requests-count">3</span>
+          </button>
+        </div>
+
         <div class="chat-contacts-wrapper">
           <div class="chat-contacts"></div>
         </div>  
+
       </div>
         `;
   }
@@ -114,6 +122,7 @@ export class Chat {
 
   attachHeaderEventListeners() {
     const addBtn = document.querySelector('.chat-sidebar-topbar .add-friend');
+    // const friendRequestBtn = document.querySelector(''); //todo
     const searchInput = document.querySelector('.search-wrapper input');
     const searchBtn = document.querySelector('.search-wrapper button');
 
