@@ -1,5 +1,5 @@
 import { webSocketService } from "../services/webSocketService.js";
-import { getMessagesByConvID } from "../api/getConversationMessages.js";
+import { getMessagesByConvID } from "../api/getConversationMessagesAPI.js";
 import { Chat } from "./sidebar.js";
 
 class ChatWindow {

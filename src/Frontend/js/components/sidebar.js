@@ -1,11 +1,12 @@
 import { getUserDataById } from "../api/getUserDataAPI.js";
 import { getUserAvatarById } from "../api/getUserAvatarAPI.js";
-import { getSelfConversations } from "../api/getSelfConversations.js";
+import { getSelfConversations } from "../api/getSelfConversationsAPI.js";
+import { getFriendRequests } from "../api/getFriendRequestsAPI.js";
 import { authService } from "../services/authService.js";
 import { webSocketService } from "../services/webSocketService.js";
 import { chatWindowControler } from "./chatWindow.js";
 
-// TODO ADICIONAR BUTTON COM FRIEND REQUEST E QUANTIDADE, EVENTHOOKS, OPEN, CLOSE, SHOW E O CARALHO 
+// TODO ADICIONAR BUTTON COM FRIEND REQUEST E QUANTIDADE, EVENTHOOKS, OPEN, CLOSE, SHOW E O CARALHO
 export class Chat {
   constructor(userID) {
     this.sidebar = document.querySelector("aside");
@@ -15,6 +16,7 @@ export class Chat {
     this.token = null;
 
     this.contactElements = new Map();
+    this.friendRequests = [];
 
     this.init();
   }
@@ -24,6 +26,9 @@ export class Chat {
 
     this.sidebar.innerHTML = this.renderHTML();
     this.attachHeaderEventListeners();
+
+    this.friendRequests = await getFriendRequests();
+    this.attachFriendRequestsButton();
 
     await this.getSidebarConversations();
 
@@ -36,8 +41,6 @@ export class Chat {
     webSocketService.registerOnlineCallbacks((online_users) => {
       this.handleRecieveOnlineUsers(online_users);
     });
-
-
 
     this.insertContactsOnSidebar();
   }
@@ -63,13 +66,6 @@ export class Chat {
             
             <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
           </div>
-        </div>
-
-        <div class="friend-requests-btn-wrapper">
-          <button class="friend-requests-btn icon-btn" id="friend-requests-btn">
-            <span class="friend-requests-text">Friend Requests</span>
-            <span class="friend-requests-count">3</span>
-          </button>
         </div>
 
         <div class="chat-contacts-wrapper">
@@ -115,26 +111,31 @@ export class Chat {
           
         </div>
       </dialog>
-    `
+    `;
   }
 
+  friendRequestEventListener() {}
 
+  attachFriendRequestsButton() {
+    if (this.friendRequests.length == 0) return;
+    this.createFriendRequestsElement(this.friendRequests.length);
+    const friendRequestBtn = document.getElementById("friend-requests-btn");
+    if (!friendRequestBtn) return;
+  }
 
   attachHeaderEventListeners() {
-    const addBtn = document.querySelector('.chat-sidebar-topbar .add-friend');
+    const addBtn = document.querySelector(".chat-sidebar-topbar .add-friend");
     // const friendRequestBtn = document.querySelector(''); //todo
-    const searchInput = document.querySelector('.search-wrapper input');
-    const searchBtn = document.querySelector('.search-wrapper button');
+    const searchInput = document.querySelector(".search-wrapper input");
+    const searchBtn = document.querySelector(".search-wrapper button");
 
     if (addBtn) {
-      addBtn.addEventListener('click', (e) => {
+      addBtn.addEventListener("click", (e) => {
         e.preventDefault();
 
         this.renderAddFriendHTML();
-
       });
     }
-
   }
 
   // this ensures there is no memory leaks and is considered better than just empty out the html
@@ -174,10 +175,65 @@ export class Chat {
               <button class="contact f-${friendName}">
                   <img src="${friendAvatar}" width="40px" height="40px">
                   ${this.minimized ? "" : `<span>${friendName}</span>`}
-                  <span class="unread-badge" style="display: ${unreadMsg ? 'inline' : 'none'};">${unreadMsg}</span>
+                  <span class="unread-badge" style="display: ${
+                    unreadMsg ? "inline" : "none"
+                  };">${unreadMsg}</span>
               </button>
               `;
     return newContact;
+  }
+
+  createFriendRequestsElement(numfriendRequests) {
+    const sidebar = document.getElementById('chat-sidebar');
+    const contactsElement = document.querySelector('.chat-contacts-wrapper');
+    if (!contactsElement) return;
+    const friendRequestElement = document.createElement("div");
+    friendRequestElement.className = "friend-requests-btn-wrapper";
+    friendRequestElement.innerHTML = `
+        <div class="friend-requests-btn-wrapper">
+          <button class="friend-requests-btn icon-btn" id="friend-requests-btn">
+            <span class="friend-requests-text">Friend Requests</span>
+            <span class="friend-requests-count">${numfriendRequests}</span>
+          </button>
+        </div>
+    `;
+    const friendRequestBtn = friendRequestElement.querySelector("button");
+    if (!friendRequestBtn) return;
+    friendRequestBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.openFriendRequetsDialog();
+    });
+    sidebar.insertBefore(friendRequestBtn, contactsElement);
+  }
+
+  openFriendRequetsDialog() {
+    if (document.getElementById("friendRequestsDialog")) return; // prevent doubling
+
+    const dialogHTML = this.renderAddFriendHTML();
+    document.body.insertAdjacentHTML("beforeend", dialogHTML);
+
+    const dialog = document.getElementById("friendRequestsDialog");
+    this.attachFriendRequetsDialogEventListeners(dialog);
+    dialog.showModal();
+  }
+
+  attachFriendRequetsDialogEventListeners(dialog) {
+    const closeBtn = dialog.querySelector(".close-dialog-btn");
+
+    // Close dialog handler
+    const closeHandler = () => {
+      dialog.close();
+      dialog.remove(); // Clean up from DOM
+    };
+
+    closeBtn.addEventListener("click", closeHandler);
+
+    // Close on backdrop click
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) {
+        closeHandler();
+      }
+    });
   }
 
   deleteContact(convID) {
@@ -242,16 +298,15 @@ export class Chat {
 
       const query = this.contactElements.get(f.convID);
       if (!query) return;
-      const img = query.element.querySelector('img');
+      const img = query.element.querySelector("img");
       if (!img) return;
 
       if (f.friendOn) {
-        img.style.border = '2.3px solid #31be06';
-        img.style.boxShadow = '0px 0px 4px #31be06';
-      }
-      else {
-        img.style.border = '2.3px solid #676768';
-        img.style.boxShadow = '0px 0px 4px #676768';
+        img.style.border = "2.3px solid #31be06";
+        img.style.boxShadow = "0px 0px 4px #31be06";
+      } else {
+        img.style.border = "2.3px solid #676768";
+        img.style.boxShadow = "0px 0px 4px #676768";
       }
     });
   }
