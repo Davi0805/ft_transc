@@ -1,4 +1,5 @@
 const db = require('../../../Infrastructure/config/Sqlite');
+const exception = require('../../../Infrastructure/config/CustomException');
 
 class FriendRequestRepository {
 
@@ -19,18 +20,21 @@ class FriendRequestRepository {
                             'u.username AS sender_username, u.user_image AS sender_image '+
                             'FROM friend_requests fr '+
                             'JOIN users u '+
-                            'ON fr.to_user_id = u.user_id '+
+                            'ON fr.from_user_id = u.user_id '+
                             'WHERE fr.to_user_id = ? AND fr.status = ?', [user_id, 'PENDING']);
     }
 
     async acceptRequest(request_id, user_id)
     {
-        const result = await db('friend_requests')
+        try {
+            const result = await db('friend_requests')
             .where({ request_id, to_user_id: user_id })
             .update({ status: 'ACCEPTED' })
             .returning(['from_user_id', 'to_user_id']);
-
-        return result[0];
+            return result[0];
+        } catch (error) {
+            throw exception('Failed to accept request', 400);     
+        }
     }
 
     async rejectRequest(request_id, user_id)
@@ -40,6 +44,25 @@ class FriendRequestRepository {
                             'WHERE request_id = ? AND to_user_id = ?',
                             ['REJECTED', request_id, user_id]
         );
+    }
+
+    async blockFriend(request_id, user_id)
+    {
+        return await db.raw('UPDATE friend_requests ' +
+                            'SET status = ?, blocked_by = ? ' +
+                            'WHERE request_id = ? AND status = ? ' +
+                            'AND (from_user_id = ? OR to_user_id = ?)'
+                            , ['BLOCKED', user_id, request_id, 'ACCEPTED', user_id, user_id]);
+    }
+
+    async unblockFriend(request_id, user_id)
+    {
+        return await db.raw('UPDATE friend_requests ' +
+                            'SET status = ?, blocked_by = ? '+
+                            'WHERE request_id = ? AND status = ? '+
+                            'AND blocked_by = ?',
+                            ['ACCEPTED', null, request_id, 'BLOCKED', user_id]
+                            );
     }
 
     async getAllFriends(user_id)
@@ -55,6 +78,8 @@ class FriendRequestRepository {
                             ')', 
                             ['ACCEPTED', user_id, user_id]);
     }
+
+
 }
 
 module.exports = new FriendRequestRepository();

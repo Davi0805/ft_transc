@@ -14,14 +14,17 @@ CREATE TABLE users (
     twofa_secret TEXT,
     twofa_enabled BOOLEAN DEFAULT FALSE
 );
+
 CREATE TABLE friend_requests (
     request_id INTEGER PRIMARY KEY AUTOINCREMENT,
     from_user_id INTEGER NOT NULL,
     to_user_id INTEGER NOT NULL,
-    status VARCHAR(10) NOT NULL CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED')),
+    status VARCHAR(10) NOT NULL CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED', 'BLOCKED')),
+    blocked_by INTEGER,
 
     FOREIGN KEY (from_user_id) REFERENCES users(user_id),
     FOREIGN KEY (to_user_id) REFERENCES users(user_id),
+    FOREIGN KEY (blocked_by) REFERENCES users(user_id)
 
     UNIQUE(from_user_id, to_user_id),
     CHECK (from_user_id != to_user_id)
