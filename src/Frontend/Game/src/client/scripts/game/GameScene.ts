@@ -1,6 +1,6 @@
 import AScene from "../system/AScene";
 import Point from "../../../misc/Point";
-import { Assets } from "pixi.js"
+import Assets from "../system/framework/Assets";
 import { SIDES, CGameSceneConfigs, SGameDTO } from "../../../misc/types";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
@@ -11,6 +11,9 @@ import CPaddleControls from "./CPaddleControls";
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         await Assets.loadBundle("gameScene");
+
+        this._root.pivot.set(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
+        this._root.position.set(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
 
         this._timer = new CNumbersText(
             gameSceneConfigs.gameInitialState.gameLength,
@@ -91,6 +94,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         this._paddles.forEach(paddle => {
             paddle.updateAnimations();
         })
+        //this._root.rotation += 0.001 * delta;
     }
 
     private _timer: CNumbersText | null = null;

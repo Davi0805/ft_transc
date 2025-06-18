@@ -1,7 +1,7 @@
 import { App } from './scripts/system/App';
 import { buildCAppConfigs } from '../misc/buildGameOptions';
 import { applyDevCustoms, UserCustoms } from '../misc/gameOptions';
-import { Adto, DTOAssignID } from '../misc/types';
+import { Adto } from '../misc/types';
 
 // This websocket is the client's connection (which has been probably open way before)
 const websocket = new WebSocket(`ws://${window.location.hostname}:3000/ws`);

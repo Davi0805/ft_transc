@@ -1,7 +1,8 @@
-import { Application, ApplicationOptions, Assets, AssetsManifest } from 'pixi.js'
+import Application from './framework/Application';
+import Assets from './framework/Assets';
 import { ScenesManager } from './ScenesManager';
 import { EventBus } from './EventBus';
-import { Adto, CAppConfigs, CGameDTO} from '../../../misc/types';
+import { Adto, CAppConfigs } from '../../../misc/types';
 import { assetsManifest, scenesManifest } from '../game/Manifests';
 
 class FtApplication {
@@ -17,14 +18,14 @@ class FtApplication {
             this._socket.send(JSON.stringify(dto))
         })
 
-        this._app = new Application();
+        this._app = new Application(gameConfigs.appConfigs);
         
-        await this._app.init(gameConfigs.appConfigs);
+        //await this._app.init(gameConfigs.appConfigs);
         document.body.appendChild(this._app.canvas); // This makes the canvas of the Pixi app show up on the browser
 
         // assetsManifest has the assets bundles, which include all paths to all sprites and their alias
         // This makes the bundles available directly in Assets, which is globally accessible
-        Assets.init({manifest: assetsManifest})
+        Assets.init(assetsManifest)
         
         // Creates the scenes manager and feeds to it all the scenes of the game through the manifest
         this._scenesManager = new ScenesManager(scenesManifest);

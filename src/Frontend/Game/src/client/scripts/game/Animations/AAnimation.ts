@@ -1,4 +1,3 @@
-import { BitmapText, Sprite } from "pixi.js";
 import Point from "../../../../misc/Point";
 
 export interface ObjectAnimationView {

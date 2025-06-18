@@ -1,4 +1,4 @@
-import { AssetsManifest } from "pixi.js"
+import { AssetsManifest } from "../system/framework/Assets"
 import { ExampleSceneConfigs, CGameSceneConfigs } from "../../../misc/types"
 
 import AScene from "../system/AScene"

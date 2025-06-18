@@ -1,5 +1,5 @@
-import { Container } from "pixi.js";
 import Point from "../../../misc/Point";
+import Container from "../system/framework/Container";
 import CObject from "../../../abstracts/CObject";
 import { point } from "../../../misc/types";
 import { BALL_TYPES } from "../../../server/Objects/SBall";

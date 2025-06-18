@@ -84,18 +84,18 @@ export const UserCustoms: TUserCustoms = {
             paddleID: 0,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         }, */
-        {
+        /* {
             paddleID: 1,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        },
-        {
+        }, */
+        /* {
             paddleID: 2,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        },
-        {
+        }, */
+        /* {
             paddleID: 3,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        },
+        }, */
     ]
 }
 

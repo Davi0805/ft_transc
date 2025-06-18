@@ -1,4 +1,4 @@
-import { Container} from "pixi.js";
+import Container from "./framework/Container";
 import { App } from "./App"
 
 export default abstract class AScene<T> {

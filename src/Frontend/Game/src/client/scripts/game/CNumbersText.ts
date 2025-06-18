@@ -1,5 +1,6 @@
-import { BitmapText, Container } from "pixi.js";
 import { point } from "../../../misc/types";
+import Container from "../system/framework/Container";
+import BitmapText from "../system/framework/BitmapText";
 import AnimationBad from "./Animations/AnimationBad";
 import AnimationGood from "./Animations/AnimationGood";
 import AnimationShake from "./Animations/AnimationShake";
