@@ -22,13 +22,20 @@ export default class Renderer {
 
     private _draw(container: Container) {
         if (container instanceof Sprite) {
+            this._ctx.save();
+            this._ctx.translate(
+                container.position.x,
+                container.position.y,
+            )
+            this._ctx.rotate(container.rotation);
             this._ctx.drawImage(
                 container.image,
-                container.position.x - (container.size.x * container.anchor.x), //TODO take anchor for this math
-                container.position.y - (container.size.y * container.anchor.y),
+                -(container.size.x * container.anchor.x),
+                -(container.size.y * container.anchor.y),
                 container.size.x,
                 container.size.y
             )
+            this._ctx.restore();
         }
         container.children.forEach( child => {
             this._draw(child);

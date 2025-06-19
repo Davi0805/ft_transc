@@ -94,7 +94,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         this._paddles.forEach(paddle => {
             paddle.updateAnimations();
         })
-        //this._root.rotation += 0.001 * delta;
+        this._paddles.forEach(paddle => {paddle.sprite.rotation += 1 * delta});
     }
 
     private _timer: CNumbersText | null = null;
