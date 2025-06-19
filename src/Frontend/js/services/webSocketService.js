@@ -13,7 +13,7 @@ class WebSocketService {
     this.messageHandlers = new Map();
     this.conversationTracker = new Map();
     this.notificationCallbacks = [];
-    this.onlineCallbacks = []
+    this.onlineCallbacks = [];
   }
 
   /**
@@ -140,7 +140,6 @@ class WebSocketService {
     const message = data.message;
 
     this.updateConversationTracker(convID, {
-      lastMessage: message,
       unreadCount: this.getUnreadCount(convID) + 1,
     });
 
@@ -152,18 +151,13 @@ class WebSocketService {
       if (!chatWindowControler.isMinimized) {
         this.markConversationAsRead(convID, message);
       }
-      else {
-        this.triggerNotifications(convID);
-      }
-    } else {
-      this.triggerNotifications(convID);
-    }
+    } 
+    this.triggerNotifications(convID);
   }
 
   updateConversationTracker(convID, data) {
     const existing = this.conversationTracker.get(convID) || {
       unreadCount: 0,
-      lastMessage: null,
     };
 
     // this ... is a spread copy (shallow) and this makes so the

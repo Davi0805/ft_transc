@@ -1,10 +1,12 @@
 import { getUserDataById } from "../api/getUserDataAPI.js";
 import { getUserAvatarById } from "../api/getUserAvatarAPI.js";
-import { getSelfConversations } from "../api/getSelfConversations.js";
+import { getSelfConversations } from "../api/getSelfConversationsAPI.js";
+import { getFriendRequests } from "../api/getFriendRequestsAPI.js";
 import { authService } from "../services/authService.js";
 import { webSocketService } from "../services/webSocketService.js";
 import { chatWindowControler } from "./chatWindow.js";
 
+// TODO ADICIONAR BUTTON COM FRIEND REQUEST E QUANTIDADE, EVENTHOOKS, OPEN, CLOSE, SHOW E O CARALHO
 export class Chat {
   constructor(userID) {
     this.sidebar = document.querySelector("aside");
@@ -13,16 +15,26 @@ export class Chat {
     this.userID = userID;
     this.token = null;
 
+    this.friendRequests = [];
+    this.friendRequestCount = 0;
+
     this.contactElements = new Map();
 
     this.init();
   }
 
   async init() {
-    this.sidebar.innerHTML = this.renderHTML();
     this.setToken();
 
+    this.sidebar.innerHTML = this.renderHTML();
+    await this.attachHeaderEventListeners();
+
+    this.friendRequests = await getFriendRequests();
+    this.friendRequestCount = this.friendRequests.length;
+    this.updateFriendRequestsNumber(this.friendRequestCount);
+
     await this.getSidebarConversations();
+
     webSocketService.connect(this.token, this.userID);
 
     webSocketService.registerNotificationCallback((convID) => {
@@ -33,7 +45,6 @@ export class Chat {
       this.handleRecieveOnlineUsers(online_users);
     });
 
-    
     this.insertContactsOnSidebar();
   }
 
@@ -47,7 +58,7 @@ export class Chat {
         <!-- Topbar with friend + search -->
 
         <div class="chat-sidebar-topbar">
-          <button class="icon-btn">
+          <button class="icon-btn add-friend">
             <img src="./Assets/icons/person-add.svg" alt="Add Friend" />
           </button>
           
@@ -59,19 +70,62 @@ export class Chat {
             <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
           </div>
         </div>
-          
+
+        <div class="friend-requests-btn-wrapper"> 
+          <div class="friend-requests-btn-wrapper">
+            <button class="friend-requests-btn icon-btn" id="friend-requests-btn">
+              <span class="friend-requests-text">Friend Requests</span>
+              <span class="friend-requests-count">${this.friendRequestCount}</span>
+            </button>
+          </div>
+        </div>
+
         <div class="chat-contacts-wrapper">
           <div class="chat-contacts"></div>
         </div>  
+
       </div>
         `;
+  }
+
+  //Todo pegar no request wrapper e adiconar dinamicament no container com a info correcta
+  renderAddFriendHTML() {
+    return `
+      <dialog class="friend-requests-wrapper" id="friendRequestsDialog" >
+        <button class="close-dialog-btn">&times;</button> <!-- onclick="closeDialog()" -->
+
+        <h1 class="title friend-request-header">Friend Requests</h1>
+
+        <div class="requests-container"></div>
+      </dialog>
+    `;
+  }
+
+  async attachHeaderEventListeners() {
+    const addBtn = document.querySelector(".chat-sidebar-topbar .add-friend");
+    if (addBtn) {
+      addBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+      });
+    }
+
+    const searchInput = document.querySelector(".search-wrapper input");
+    const searchBtn = document.querySelector(".search-wrapper button");
+
+    const friendRequestBtn = document.getElementById("friend-requests-btn");
+    if (friendRequestBtn) {
+      friendRequestBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        await this.openFriendRequetsDialog();
+      });
+    }
   }
 
   // this ensures there is no memory leaks and is considered better than just empty out the html
   // eventlisteners might cause some leaks if cleared that way
   deleteSideBar() {
-    const newSidebar = this.sidebar.cloneNode(false); // false for a shallow copy
-    this.sidebar.replaceWith(newSidebar);
+    this.sidebar.replaceWith(this.sidebar.cloneNode(false));
+    this.sidebar.remove();
   }
 
   async getSidebarConversations() {
@@ -91,22 +145,102 @@ export class Chat {
         friendID: friendID,
         friendName: friendData.name,
         friendAvatar: friendAvatarURL,
+        unreadMsg: conv.unread_count,
         friendOn: false,
       });
     }
   }
 
-  createContactElement(friendAvatar, friendName) {
+  createContactElement(friendAvatar, friendName, unreadMsg) {
     const newContact = document.createElement("button");
     newContact.className = "contact";
     newContact.innerHTML = `
               <button class="contact f-${friendName}">
                   <img src="${friendAvatar}" width="40px" height="40px">
                   ${this.minimized ? "" : `<span>${friendName}</span>`}
-                  <span class="unread-badge" style="display: none;">0</span>
+                  <span class="unread-badge" style="display: ${
+                    unreadMsg ? "inline" : "none"
+                  };">${unreadMsg}</span>
               </button>
               `;
     return newContact;
+  }
+
+  updateFriendRequestsNumber(number) {
+    console.log(number);
+    const count = this.sidebar.querySelector(".friend-requests-count");
+    if (!count) return;
+    count.textContent = `${number}`;
+  }
+
+  async createFriendRequestElement(friendRequest) {
+    const newRequest = document.createElement("div");
+    newRequest.classList = `request-wrapper ${friendRequest.sender_username}`;
+    const requestAvatar = await getUserAvatarById(friendRequest.request_id);
+    newRequest.innerHTML = `
+        <div class="user-info">
+          <img src="${requestAvatar}" alt="user-avatar" />
+
+          <span>${friendRequest.sender_name}</span>
+        </div>
+
+        <div class="request-options">
+          <button class="request-btn" id="friend-accept" title="Accept">
+            <img src="../../Assets/icons/check-circle.svg" />
+          </button>
+
+          <button class="request-btn" id="friend-reject" title="Reject">
+            <img src="../../Assets/icons/cancel-circle.svg" />
+          </button>
+
+          <button class="request-btn" id="friend-block" title="Block">
+            <img src="../../Assets/icons/block-circle.svg" />
+          </button>
+        </div>
+    `;
+    return newRequest;
+  }
+
+  async insertFriendRequests() {
+    const requestsContainer = document.querySelector(".requests-container");
+    if (!requestsContainer) return;
+
+    for (const request of this.friendRequests) {
+      const element = await this.createFriendRequestElement(request);
+      requestsContainer.appendChild(element);
+    }
+  }
+  async openFriendRequetsDialog() {
+    if (document.getElementById("friendRequestsDialog")) return; // prevent doubling
+
+    const dialogHTML = this.renderAddFriendHTML();
+    document.body.insertAdjacentHTML("beforeend", dialogHTML);
+
+    await this.insertFriendRequests();
+
+    const dialog = document.getElementById("friendRequestsDialog");
+    this.attachFriendRequetsDialogEventListeners(dialog);
+    dialog.showModal();
+  }
+
+  attachFriendRequetsDialogEventListeners(dialog) {
+    const closeBtn = dialog.querySelector(".close-dialog-btn");
+
+    // Close dialog handler
+    const closeHandler = () => {
+      dialog.close();
+      dialog.remove(); // Clean up from DOM
+    };
+
+    closeBtn.addEventListener("click", closeHandler);
+
+    // Close on backdrop click
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) {
+        // if i click on something that is a child its not the dialog(backdrop is tho!)
+        closeHandler();
+      }
+    });
   }
 
   deleteContact(convID) {
@@ -124,7 +258,8 @@ export class Chat {
     this.friends.forEach((friend) => {
       const contactBtn = this.createContactElement(
         friend.friendAvatar,
-        friend.friendName
+        friend.friendName,
+        friend.unreadMsg
       );
 
       const clickHandler = () => {
@@ -168,13 +303,17 @@ export class Chat {
     this.friends.forEach((f) => {
       f.friendOn = onlineFriends.includes(f.friendID) ? true : false;
 
+      const query = this.contactElements.get(f.convID);
+      if (!query) return;
+      const img = query.element.querySelector("img");
+      if (!img) return;
+
       if (f.friendOn) {
-        const query = this.contactElements.get(f.convID);
-        if (!query) return;
-        const img = query.element.querySelector('img');
-        if (!img) return;
-        img.style.border = '2.3px solid #31be06';
-        img.style.boxShadow = '0px 0px 4px #31be06';
+        img.style.border = "2.3px solid #31be06";
+        img.style.boxShadow = "0px 0px 4px #31be06";
+      } else {
+        img.style.border = "2.3px solid #676768";
+        img.style.boxShadow = "0px 0px 4px #676768";
       }
     });
   }
