@@ -15,8 +15,10 @@ export class Chat {
     this.userID = userID;
     this.token = null;
 
-    this.contactElements = new Map();
     this.friendRequests = [];
+    this.friendRequestCount = 0;
+
+    this.contactElements = new Map();
 
     this.init();
   }
@@ -25,10 +27,11 @@ export class Chat {
     this.setToken();
 
     this.sidebar.innerHTML = this.renderHTML();
-    this.attachHeaderEventListeners();
+    await this.attachHeaderEventListeners();
 
     this.friendRequests = await getFriendRequests();
-    this.attachFriendRequestsButton();
+    this.friendRequestCount = this.friendRequests.length;
+    this.updateFriendRequestsNumber(this.friendRequestCount);
 
     await this.getSidebarConversations();
 
@@ -68,6 +71,15 @@ export class Chat {
           </div>
         </div>
 
+        <div class="friend-requests-btn-wrapper"> 
+          <div class="friend-requests-btn-wrapper">
+            <button class="friend-requests-btn icon-btn" id="friend-requests-btn">
+              <span class="friend-requests-text">Friend Requests</span>
+              <span class="friend-requests-count">${this.friendRequestCount}</span>
+            </button>
+          </div>
+        </div>
+
         <div class="chat-contacts-wrapper">
           <div class="chat-contacts"></div>
         </div>  
@@ -76,6 +88,7 @@ export class Chat {
         `;
   }
 
+  //Todo pegar no request wrapper e adiconar dinamicament no container com a info correcta
   renderAddFriendHTML() {
     return `
       <dialog class="friend-requests-wrapper" id="friendRequestsDialog" >
@@ -83,57 +96,27 @@ export class Chat {
 
         <h1 class="title friend-request-header">Friend Requests</h1>
 
-        <div class="requests-container">
-
-          
-          <div class="request-wrapper">
-            <div class="user-info">
-              <img src="../../Assets/default/bobzao.jpg" alt="user-avatar" />
-
-              <span>Artur</span>
-            </div>
-
-            <div class="request-options">
-              <button class="request-btn" id="friend-accept" title="Accept">
-                <img src="../../Assets/icons/check-circle.svg" />
-              </button>
-
-              <button class="request-btn" id="friend-reject" title="Reject">
-                <img src="../../Assets/icons/cancel-circle.svg" />
-              </button>
-
-              <button class="request-btn" id="friend-block" title="Block">
-                <img src="../../Assets/icons/block-circle.svg" />
-              </button>
-            </div>
-          </div>
-
-          
-        </div>
+        <div class="requests-container"></div>
       </dialog>
     `;
   }
 
-  friendRequestEventListener() {}
-
-  attachFriendRequestsButton() {
-    if (this.friendRequests.length == 0) return;
-    this.createFriendRequestsElement(this.friendRequests.length);
-    const friendRequestBtn = document.getElementById("friend-requests-btn");
-    if (!friendRequestBtn) return;
-  }
-
-  attachHeaderEventListeners() {
+  async attachHeaderEventListeners() {
     const addBtn = document.querySelector(".chat-sidebar-topbar .add-friend");
-    // const friendRequestBtn = document.querySelector(''); //todo
-    const searchInput = document.querySelector(".search-wrapper input");
-    const searchBtn = document.querySelector(".search-wrapper button");
-
     if (addBtn) {
       addBtn.addEventListener("click", (e) => {
         e.preventDefault();
+      });
+    }
 
-        this.renderAddFriendHTML();
+    const searchInput = document.querySelector(".search-wrapper input");
+    const searchBtn = document.querySelector(".search-wrapper button");
+
+    const friendRequestBtn = document.getElementById("friend-requests-btn");
+    if (friendRequestBtn) {
+      friendRequestBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        await this.openFriendRequetsDialog();
       });
     }
   }
@@ -141,8 +124,8 @@ export class Chat {
   // this ensures there is no memory leaks and is considered better than just empty out the html
   // eventlisteners might cause some leaks if cleared that way
   deleteSideBar() {
-    const newSidebar = this.sidebar.cloneNode(false); // false for a shallow copy
-    this.sidebar.replaceWith(newSidebar);
+    this.sidebar.replaceWith(this.sidebar.cloneNode(false));
+    this.sidebar.remove();
   }
 
   async getSidebarConversations() {
@@ -183,34 +166,57 @@ export class Chat {
     return newContact;
   }
 
-  createFriendRequestsElement(numfriendRequests) {
-    const sidebar = document.getElementById('chat-sidebar');
-    const contactsElement = document.querySelector('.chat-contacts-wrapper');
-    if (!contactsElement) return;
-    const friendRequestElement = document.createElement("div");
-    friendRequestElement.className = "friend-requests-btn-wrapper";
-    friendRequestElement.innerHTML = `
-        <div class="friend-requests-btn-wrapper">
-          <button class="friend-requests-btn icon-btn" id="friend-requests-btn">
-            <span class="friend-requests-text">Friend Requests</span>
-            <span class="friend-requests-count">${numfriendRequests}</span>
+  updateFriendRequestsNumber(number) {
+    console.log(number);
+    const count = this.sidebar.querySelector(".friend-requests-count");
+    if (!count) return;
+    count.textContent = `${number}`;
+  }
+
+  async createFriendRequestElement(friendRequest) {
+    const newRequest = document.createElement("div");
+    newRequest.classList = `request-wrapper ${friendRequest.sender_username}`;
+    const requestAvatar = await getUserAvatarById(friendRequest.request_id);
+    newRequest.innerHTML = `
+        <div class="user-info">
+          <img src="${requestAvatar}" alt="user-avatar" />
+
+          <span>${friendRequest.sender_name}</span>
+        </div>
+
+        <div class="request-options">
+          <button class="request-btn" id="friend-accept" title="Accept">
+            <img src="../../Assets/icons/check-circle.svg" />
+          </button>
+
+          <button class="request-btn" id="friend-reject" title="Reject">
+            <img src="../../Assets/icons/cancel-circle.svg" />
+          </button>
+
+          <button class="request-btn" id="friend-block" title="Block">
+            <img src="../../Assets/icons/block-circle.svg" />
           </button>
         </div>
     `;
-    const friendRequestBtn = friendRequestElement.querySelector("button");
-    if (!friendRequestBtn) return;
-    friendRequestBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.openFriendRequetsDialog();
-    });
-    sidebar.insertBefore(friendRequestBtn, contactsElement);
+    return newRequest;
   }
 
-  openFriendRequetsDialog() {
+  async insertFriendRequests() {
+    const requestsContainer = document.querySelector(".requests-container");
+    if (!requestsContainer) return;
+
+    for (const request of this.friendRequests) {
+      const element = await this.createFriendRequestElement(request);
+      requestsContainer.appendChild(element);
+    }
+  }
+  async openFriendRequetsDialog() {
     if (document.getElementById("friendRequestsDialog")) return; // prevent doubling
 
     const dialogHTML = this.renderAddFriendHTML();
     document.body.insertAdjacentHTML("beforeend", dialogHTML);
+
+    await this.insertFriendRequests();
 
     const dialog = document.getElementById("friendRequestsDialog");
     this.attachFriendRequetsDialogEventListeners(dialog);
@@ -231,6 +237,7 @@ export class Chat {
     // Close on backdrop click
     dialog.addEventListener("click", (e) => {
       if (e.target === dialog) {
+        // if i click on something that is a child its not the dialog(backdrop is tho!)
         closeHandler();
       }
     });
