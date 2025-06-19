@@ -1,4 +1,4 @@
-type TickerCallback = (delta: number, counter: number) => void;
+type LogicCallback = (delta: number, counter: number) => void;
 
 export default class Ticker {
     constructor(tickerRate: number) {
@@ -13,9 +13,7 @@ export default class Ticker {
     start() {
         const loop = () => {
             this._updateVars();
-            this._callbacks.forEach(callback => {
-                callback(this._delta, this._tickerTimer);
-            })
+            this._callCallbacks();
             setTimeout(loop, 1000 / this._tickerRate);
         }
         loop();
@@ -25,11 +23,11 @@ export default class Ticker {
     unpause() { this._isRunning = true; }
     togglePause() { this._isRunning = !this._isRunning; }
 
-    add(callback: TickerCallback) {
+    add(callback: LogicCallback) {
         this._callbacks.push(callback);
     }
     
-    remove(callback: TickerCallback) {
+    remove(callback: LogicCallback) {
         for (let i = this._callbacks.length; i >= 0; i--) {
             if (this._callbacks[i] === callback) {
                 this._callbacks.splice(i, 1);
@@ -38,9 +36,17 @@ export default class Ticker {
         }
     }
 
+    
+
     // Update rate in seconds
     isEventTime(updateRate: number): boolean {
         return (this._tickerTimer % (this._tickerRate * updateRate) === 0);
+    }
+
+    protected _callCallbacks() {
+        this._callbacks.forEach(callback => {
+            callback(this._delta, this._tickerTimer);
+        })
     }
 
     private _updateVars() {
@@ -59,5 +65,5 @@ export default class Ticker {
     private _delta: number;
     get delta(): number { return this._delta }
 
-    private _callbacks: TickerCallback[] = [];
+    private _callbacks: LogicCallback[] = [];
 }

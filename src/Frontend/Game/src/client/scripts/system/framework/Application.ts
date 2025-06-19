@@ -1,5 +1,6 @@
 import Container from "./Container";
 import Renderer from "./Renderer";
+import RendererTicker from "./RendererTicker";
 import Ticker from "./Ticker";
 
 export type AppConfigs = {
@@ -9,8 +10,7 @@ export type AppConfigs = {
 
 export default class Application {
     constructor(configs: AppConfigs) {
-        this._renderer = new Renderer();
-        this._ticker = new Ticker(90);
+        this._ticker = new RendererTicker(60);
 
         this._canvas = document.createElement('canvas');
         this._canvas.width = configs.width;
@@ -25,8 +25,7 @@ export default class Application {
         this._ticker.start();
     }
 
-    private _renderer: Renderer;
-    private _ticker: Ticker;
+    private _ticker: RendererTicker;
     get ticker(): Ticker { return this._ticker; }
 
     private _canvas: HTMLCanvasElement;
