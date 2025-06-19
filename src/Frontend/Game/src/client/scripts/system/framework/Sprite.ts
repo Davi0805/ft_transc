@@ -22,5 +22,7 @@ export default class Sprite extends Container {
     set anchor(anchor: Point) { this._anchor = anchor}
     get anchor(): Point { return this._anchor; }
 
-    private _image: HTMLImageElement | undefined;
+    private _image: HTMLImageElement;
+    get image(): HTMLImageElement { return this._image; }
+
 }

@@ -10,8 +10,6 @@ export type AppConfigs = {
 
 export default class Application {
     constructor(configs: AppConfigs) {
-        this._ticker = new RendererTicker(60);
-
         this._canvas = document.createElement('canvas');
         this._canvas.width = configs.width;
         this._canvas.height = configs.height;
@@ -21,7 +19,9 @@ export default class Application {
         }
 
         this._stage = new Container();
-
+        this._ticker = new RendererTicker(60,
+            new Renderer(this._canvas, this._stage)
+        );
         this._ticker.start();
     }
 

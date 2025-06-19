@@ -1,23 +1,36 @@
 import Container from "./Container";
+import Sprite from "./Sprite";
 
 export default class Renderer {
-    constructor(canvas: HTMLCanvasElement, rootContainer: Container) {
+    constructor(canvas: HTMLCanvasElement, rootContainer: Container,
+        backgroundColor: string = 'black'
+    ) {
         this._canvas = canvas;
         const ctx = canvas.getContext('2d');
         if (!ctx) { throw new Error("Error retrieving context from canvas"); }
         this._ctx = ctx;
         this._rootContainer = rootContainer;
+        this._backgroundColor = backgroundColor;
     }
 
     render() {
-        this._clear();
-        this._draw()
+        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        this._ctx.fillStyle = this._backgroundColor;
+        this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+        this._draw(this._rootContainer)
     }
 
-    private _draw() {
-            //WRONG ctx.clearRect(0, 0, canvas.width, canvas.height);
-            /* ctx.drawImage(
-            ) */
+    private _draw(container: Container) {
+        if (container instanceof Sprite) {
+            this._ctx.drawImage(
+                container.image,
+                container.position.x,
+                container.position.y,
+            )
+        }
+        container.children.forEach( child => {
+            this._draw(child);
+        })
     }
 
 
@@ -25,4 +38,5 @@ export default class Renderer {
     private _canvas: HTMLCanvasElement;
     private _ctx: CanvasRenderingContext2D;
     private _rootContainer: Container;
+    private _backgroundColor: string;
 }

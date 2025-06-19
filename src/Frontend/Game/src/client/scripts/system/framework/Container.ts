@@ -37,6 +37,7 @@ export default class Container {
     }
 
     private _children: Container[] = [];
+    get children(): Container[] { return this._children; }
 
     private _position: Point;
     get position(): Point { return this._position; }
