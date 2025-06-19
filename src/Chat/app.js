@@ -6,6 +6,7 @@ const chatMessageRoutes = require('./Infrastructure/routes/ChatMessagesRoutes');
 const cors = require('@fastify/cors');
 const onlineUserService = require('./Application/Services/OnlineUserService');
 const consumeNewFriendsEvent = require('./Adapters/inbound/Redis Streams/streamsConsumer');
+const eventBroadcast = require('./Adapters/inbound/Redis pub-sub/EventBroadcast');
 
 const setup = () => {
     const app = Fastify({ logger: true });
@@ -22,6 +23,8 @@ const setup = () => {
     });
 
     app.register(require('@fastify/websocket'));
+
+    eventBroadcast.subscribe('realTimeNotif', eventBroadcast.handleRealTimeNotif);
 
     app.register(sensible);
     app.register(webSocketRoutes);

@@ -1,5 +1,6 @@
 const friendRequestRepo = require('../../Adapters/outbound/Repositories/FriendRequestRepository');
 const exception = require('../../Infrastructure/config/CustomException');
+const eventBroadcast = require('../../Adapters/inbound/Redis pub-sub/EventBroadcast');
 
 
 class FriendRequestService {
@@ -23,10 +24,12 @@ class FriendRequestService {
     *    @brief Method that create a friend request
     *    @throws 400 - Bad request
     */
+    // TODO: refac of consumers to expect a number as user_id
     async newRequest(sender_id, receiver_id)
     {
         try {
-            return await friendRequestRepo.newRequest(sender_id, receiver_id);            
+            await friendRequestRepo.newRequest(sender_id, receiver_id);
+            await eventBroadcast.publish('realTimeNotif', {user_id: String(receiver_id), event: 'new_friend_request'});
         } catch (error) {
             throw exception('Failed to create friend request', 400); 
         }

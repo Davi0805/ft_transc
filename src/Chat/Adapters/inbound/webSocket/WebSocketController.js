@@ -39,6 +39,7 @@ class WebSocketController {
         //const session = await redisService.validateSession(req.headers.authorization);
         //    if (!session)
         //        socket.close();
+        //TODO: FIX KEY OF MAP AS STRING - NEED TO CHANGE TO INT
         await connectionsService.addUser(session.user_id, socket);
 
         const friends = await redisService.getCachedFriends(session.user_id);
