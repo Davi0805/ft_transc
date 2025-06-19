@@ -36,6 +36,21 @@ class UserService {
 
 
     /* 
+    *    @brief Method to get user by username
+    *    @params username (string) - username 
+    *    @throws 404 - Not found
+    */
+    async findByUsername(username)
+    {
+        const users = await userRepository.findByUsername(username);
+        if (!users || users.length === 0) throw exception('Data not found!, 404');
+        return {user_id: users[0].user_id,
+                username: users[0].username,
+                user_image: users[0].user_image};
+    }
+
+
+    /* 
     *    @brief Method to get all users (more for debug)
     *    name, username, email, password
     *    @throws 400 - Bad request

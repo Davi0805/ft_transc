@@ -77,6 +77,24 @@ class FriendRequestService {
         }
     }
 
+    async blockFriend(request_id, user_id)
+    {
+        try {
+            return await friendRequestRepo.blockFriend(request_id, user_id);
+        } catch (error) {
+            throw exception('Failed to block friend request', 400); 
+        }
+    }
+
+    async unblockFriend(request_id, user_id)
+    {
+        try {
+            return await friendRequestRepo.unblockFriend(request_id, user_id);
+        } catch (error) {
+            throw exception('Failed to unblock friend request', 400);
+        }
+    }
+
 
     /* 
     *    @brief Method to get all friends

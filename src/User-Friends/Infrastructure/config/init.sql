@@ -14,14 +14,17 @@ CREATE TABLE users (
     twofa_secret TEXT,
     twofa_enabled BOOLEAN DEFAULT FALSE
 );
+
 CREATE TABLE friend_requests (
     request_id INTEGER PRIMARY KEY AUTOINCREMENT,
     from_user_id INTEGER NOT NULL,
     to_user_id INTEGER NOT NULL,
-    status VARCHAR(10) NOT NULL CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED')),
+    status VARCHAR(10) NOT NULL CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED', 'BLOCKED')),
+    blocked_by INTEGER,
 
     FOREIGN KEY (from_user_id) REFERENCES users(user_id),
     FOREIGN KEY (to_user_id) REFERENCES users(user_id),
+    FOREIGN KEY (blocked_by) REFERENCES users(user_id)
 
     UNIQUE(from_user_id, to_user_id),
     CHECK (from_user_id != to_user_id)
@@ -34,7 +37,6 @@ CREATE INDEX idx_username ON users (username);
 CREATE INDEX idx_friend_requests_from_user ON friend_requests(from_user_id);
 CREATE INDEX idx_friend_requests_to_user ON friend_requests(to_user_id);
 CREATE INDEX idx_friend_requests_status ON friend_requests(status);
-
 
 
 -- TODO MOCK DATA USERS
@@ -51,3 +53,4 @@ INSERT INTO friend_requests (from_user_id, to_user_id, status) VALUES
 (1, 3, 'ACCEPTED'), -- Artur e João são amigos
 (2, 4, 'PENDING'),  -- Maria enviou pedido para Ana
 (3, 4, 'REJECTED');
+

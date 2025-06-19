@@ -59,13 +59,37 @@ class FriendRequestController {
 
     /* 
     *    Endpoint to reject the friendship requests that u received
-    *    POST - localhost:8080/friend_requests/{request_id}/reject
-    *    @params request_id: (Long) - id of friend_request
+    *    POST - localhost:8080/friend_requests/{id}/reject
+    *    @params id: (Long) - id of friend_request
     */
     async rejectRequest(req, reply)
     {
         await friendRequest.rejectRequest(req.params.id, req.session.user_id);
         return reply.send();   
+    }
+
+
+    /* 
+    *    Endpoint to block friendship
+    *    POST - localhost:8080/friend_requests/{id}/block
+    *    @params id: (Long) - id of friend_request
+    */
+    async blockFriend(req, reply)
+    {
+        await friendRequest.blockFriend(req.params.id, req.session.user_id);
+        return reply.send();
+    }
+
+
+    /* 
+    *    Endpoint to unblock friendship
+    *    POST - localhost:8080/friend_requests/{id}/unblock
+    *    @params id: (Long) - id of friend_request
+    */
+    async unblockFriend(req, reply)
+    {
+        await friendRequest.unblockFriend(req.params.id, req.session.user_id);
+        return reply.send();
     }
 
 
