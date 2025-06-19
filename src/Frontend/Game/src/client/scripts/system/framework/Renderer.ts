@@ -24,8 +24,10 @@ export default class Renderer {
         if (container instanceof Sprite) {
             this._ctx.drawImage(
                 container.image,
-                container.position.x,
-                container.position.y,
+                container.position.x - (container.size.x * container.anchor.x), //TODO take anchor for this math
+                container.position.y - (container.size.y * container.anchor.y),
+                container.size.x,
+                container.size.y
             )
         }
         container.children.forEach( child => {

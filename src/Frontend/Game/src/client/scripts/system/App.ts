@@ -33,6 +33,7 @@ class FtApplication {
         this.app.stage.addChild(this._scenesManager.container);
         // Starts the first scene
         await this._scenesManager.goToScene("gameScene", gameConfigs.gameSceneConfigs); //TODO change to the correct first scene
+        //await this._scenesManager.goToScene("exampleScene", {});
 
         // When a message is received from server, it is forward to the handler of the current scene
         this._socket.addEventListener("message", (event) => {

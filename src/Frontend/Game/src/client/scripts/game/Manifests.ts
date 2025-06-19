@@ -82,7 +82,7 @@ export const assetsManifest: AssetsManifest = {
             assets: [
                 {
                     alias: "example",
-                    src: "./Game/public/sprites/example.png"
+                    src: "sprites/paddle0.png"
                 }
             ]
         }
