@@ -16,6 +16,16 @@ export default class Point {
         return new Point(this.x, this.y);
     }
 
+    setPoint(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+    }
+
+    setValue(n: number) {
+        this.x = n;
+        this.y = n;
+    }
+
     add(other: Point): Point {
         return new Point(this.x + other.x, this.y + other.y);
     }

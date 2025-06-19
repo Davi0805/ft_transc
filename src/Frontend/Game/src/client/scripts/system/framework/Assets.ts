@@ -9,9 +9,11 @@ export type AssetsManifest = {
 }
 
 export default class Assets {
-    private constructor() {}
+    private constructor() {
+    }
 
     static init(assetsManifest: AssetsManifest) {
+        this._aliasImageMap = new Map<string, HTMLImageElement>();
         this._manifest = assetsManifest;
     }
 
@@ -19,7 +21,7 @@ export default class Assets {
         const bundleToLoad = this._manifest.bundles.find(bundle => bundle.name === bundleName);
         if (bundleToLoad) {
             const promises = bundleToLoad.assets.map(async asset => {
-                const image = await this.loadImage(asset.src);
+                const image = await this.loadImage(asset.src); //TODO: Not all are images!! Check how to read fonts
                 this._aliasImageMap.set(asset.alias, image);
             })
             await Promise.all(promises);

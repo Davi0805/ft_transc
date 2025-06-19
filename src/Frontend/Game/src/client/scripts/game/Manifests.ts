@@ -70,11 +70,11 @@ export const assetsManifest: AssetsManifest = {
                 {
                     alias: "paddle0",
                     src: "sprites/paddle0.png"
-                },
+                }/* ,
                 {
                     alias: "gameFont",
                     src: "sprites/gameFont.ttf"
-                }
+                } */
             ]
         },
         {

@@ -24,8 +24,8 @@ export default class CNumbersText {
                 fill: '#666666'
             }
         });
-        this._sprite.anchor.set(0.5, 0.5);
-        this._sprite.position.set(textOptions.position.x, textOptions.position.y);
+        this._sprite.anchor.setPoint(0.5, 0.5);
+        this._sprite.position.setPoint(textOptions.position.x, textOptions.position.y);
         canvas.addChild(this._sprite);
         this._pos = Point.fromObj(textOptions.position)
         this._spriteOffset = new Point(0, 0);
@@ -69,6 +69,6 @@ export default class CNumbersText {
 
     _updatePos() {
         const newPos = Point.fromObj(this._pos).add(this._spriteOffset);
-        this._sprite.position.set(newPos.x, newPos.y);
+        this._sprite.position.setPoint(newPos.x, newPos.y);
     }
 }

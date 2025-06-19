@@ -1,6 +1,7 @@
 import AObject from "./AObject.js";
 import Point from "../misc/Point.js";
-import { Container, Sprite } from "pixi.js";
+import Container from "../client/scripts/system/framework/Container.js";
+import Sprite from "../client/scripts/system/framework/Sprite.js";
 import AAnimation from "../client/scripts/game/Animations/AAnimation.js";
 import AnimationBad from "../client/scripts/game/Animations/AnimationBad.js";
 import AnimationGood from "../client/scripts/game/Animations/AnimationGood.js";
@@ -11,10 +12,10 @@ export default abstract class CObject extends AObject {
         speed: number, spriteName: string, canvas: Container) {
         super(id, pos, size, speed, orientation);
         this._sprite = Sprite.from(spriteName);
-        this._sprite.anchor.set(0.5);
-        this._sprite.setSize(size.x, size.y)
+        this._sprite.anchor.setValue(0.5);
+        this._sprite.size.setPoint(size.x, size.y)
         this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
-        this._sprite.position.set(pos.x, pos.y);
+        this._sprite.position.setPoint(pos.x, pos.y);
         canvas.addChild(this._sprite);
         this._spriteOffset = new Point(0, 0);
     }
@@ -32,7 +33,7 @@ export default abstract class CObject extends AObject {
     override set pos(pos: Point) {
         super.pos = pos;
         const newSpritePos = pos.add(this._spriteOffset);
-        this._sprite.position.set(newSpritePos.x, newSpritePos.y);
+        this._sprite.position.setPoint(newSpritePos.x, newSpritePos.y);
     }
 
     protected _sprite: Sprite;
@@ -51,7 +52,7 @@ export default abstract class CObject extends AObject {
                 ? new AnimationBad(this)
                 : new AnimationGood(this));
             super.size = size;
-            this._sprite.setSize(size.x, size.y);
+            this._sprite.size.setPoint(size.x, size.y);
         }
     }
     override get size() {

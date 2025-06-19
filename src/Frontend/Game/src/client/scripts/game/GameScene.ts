@@ -12,8 +12,8 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         await Assets.loadBundle("gameScene");
 
-        this._root.pivot.set(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
-        this._root.position.set(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
+        this._root.pivot.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
+        this._root.position.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
 
         this._timer = new CNumbersText(
             gameSceneConfigs.gameInitialState.gameLength,
@@ -88,6 +88,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
 
     override tickerUpdate(delta: number): void {
+        console.log("lololol")
         this.teams.forEach(team => {
             team.hp.updateAnimations();
         })

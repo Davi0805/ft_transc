@@ -1,4 +1,6 @@
 import Point from "../../../../misc/Point";
+import Sprite from "../../system/framework/Sprite";
+import BitmapText from "../../system/framework/BitmapText";
 
 export interface ObjectAnimationView {
     sprite: Sprite | BitmapText,

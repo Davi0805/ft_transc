@@ -23,7 +23,7 @@ export default class SBot extends SPlayer {
             this._movementAxis = 'x';
         }
 
-        this._targetPos = 0;
+        this._targetPos = windowLimits[this._movementAxis] + ((this._movementAxis === 'x' ? windowLimits.width : windowLimits.height) / 2);
 
         this._mustMoveLeft = (paddle.side === SIDES.LEFT || paddle.side === SIDES.BOTTOM)
             ? (() => this._targetPos > this.paddle.pos[this._movementAxis])
