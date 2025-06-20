@@ -160,11 +160,18 @@ class ChatWindow {
     }
   }
 
+  /* 
+    messageData { convID: 1,
+                  message: "oi",
+                  isOwn: false }
+  */
   handleRecieveMessage(messageData) {
     this.addMessage({
       message: messageData.message,
       isOwn: false,
     });
+    webSocketService.send({ type: "read_event",
+                            conversation_id: messageData.convID }); // read trigger event
   }
 
   addMessage(messageData) {
