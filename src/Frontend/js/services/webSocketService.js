@@ -14,6 +14,7 @@ class WebSocketService {
     this.conversationTracker = new Map();
     this.notificationCallbacks = [];
     this.onlineCallbacks = [];
+    this.friendsUpdateCallbacks = [];
   }
 
   /**
@@ -106,6 +107,15 @@ class WebSocketService {
     return false;
   }
 
+  initializeConversationTracker(conversations) {
+    conversations.forEach(conv => {
+      this.conversationTracker.set(conv.convID, {
+        unreadCount: conv.unreadMsg || 0,
+        lastMessage: null,
+      });
+    });
+  }
+
   // When the window opens it registers and therefore should be read
   registerMessageHandler(convID, handler) {
     this.messageHandlers.set(convID, handler);
@@ -124,6 +134,10 @@ class WebSocketService {
     this.onlineCallbacks.push(callback);
   }
 
+  registerFriendsUpdateCallbacks(callback) {
+    this.friendsUpdateCallbacks.push(callback);
+  }
+
   /**
    * Handles incoming WebSocket messages
    *
@@ -135,6 +149,12 @@ class WebSocketService {
       this.triggerOnlineUpdate(online_users)
       return ;
     }  
+
+    const { metadata } = data;
+    if (metadata === "newConversation") {
+      this.triggerFriendsUpdate(data);
+      return;
+    }
 
     const convID = data.conversation_id;
     const message = data.message;
@@ -198,6 +218,16 @@ class WebSocketService {
         callback(onlineFriends);
       } catch (error) {
         console.log("DEBUG: Error in websocket OnlineUpdate callback:", error);
+      }
+    })
+  }
+
+  triggerFriendsUpdate(data) {
+    this.friendsUpdateCallbacks.forEach((callback) => {
+      try {
+        callback(data);
+      } catch (error) {
+        console.log("DEBUG: Error in websocket friendsUpdateCallbacks callback:", error);
       }
     })
   }

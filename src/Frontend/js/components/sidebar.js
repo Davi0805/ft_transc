@@ -30,15 +30,18 @@ export class Chat {
     this.sidebar.innerHTML = this.renderHTML();
     await this.attachHeaderEventListeners();
 
+    
     {
       const reqArray = await getFriendRequests();
       this.friendRequestCount = reqArray.length;
       this.friendRequests = new Map(reqArray.map(req => [req.sender_username, req]));
     }
-
+    
     this.updateFriendRequestsNumber(this.friendRequestCount);
-
+    
     await this.getSidebarConversations();
+    
+    webSocketService.initializeConversationTracker(this.friends);
 
     webSocketService.connect(this.token, this.userID);
 
@@ -48,6 +51,10 @@ export class Chat {
 
     webSocketService.registerOnlineCallbacks((online_users) => {
       this.handleRecieveOnlineUsers(online_users);
+    });
+
+    webSocketService.registerFriendsUpdateCallbacks((data) => {
+      this.handleUpdateFriends(data);
     });
 
     this.insertContactsOnSidebar();
@@ -177,7 +184,7 @@ export class Chat {
   async createFriendRequestElement(friendRequest) {
     const newRequest = document.createElement("div");
     newRequest.classList = `request-wrapper ${friendRequest.sender_username}`;
-    const requestAvatar = await getUserAvatarById(friendRequest.request_id);
+    const requestAvatar = await getUserAvatarById(friendRequest.sender_id);
     newRequest.innerHTML = `
         <div class="user-info">
           <img src="${requestAvatar}" alt="user-avatar" />
@@ -281,7 +288,6 @@ export class Chat {
     });
   }
 
-  // todo clickhandler 
   deleteContact(convID) {
     const entry = this.contactElements.get(convID);
     if (!entry) return;
@@ -315,6 +321,52 @@ export class Chat {
         handler: clickHandler,
       });
     });
+  }
+
+  // { conversation_id: conv_id,
+  //   message: 'You now can talk with user ' + data.user1, metadata: 'newConversation'})); 
+  async handleUpdateFriends(data) {
+    const type = data.metadata;
+    if (type === "newConversation") {
+      const friendID = Number(data.message);
+      const friendData = await getUserDataById(friendID);
+      let friendAvatarURL = await getUserAvatarById(friendID);
+
+      this.friends.push({
+        convID: data.conversation_id,
+        friendID: friendID,
+        friendName: friendData.name,
+        friendAvatar: friendAvatarURL,
+        unreadMsg: 0,
+        friendOn: false,
+      });
+
+
+      const friend = this.friends[this.friends.length - 1];
+      const contactBtn = this.createContactElement(
+        friend.friendAvatar,
+        friend.friendName,
+        friend.unreadMsg
+      );
+
+
+      const clickHandler = () => {
+        chatWindowControler.open(friend);
+        this.updateContactUnreadUI(friend.convID, 0);
+      };
+
+      contactBtn.addEventListener("click", clickHandler);
+
+      const chatContacts = document.querySelector(".chat-contacts");
+      chatContacts.appendChild(contactBtn);
+
+      this.contactElements.set(friend.convID, {
+        element: contactBtn,
+        handler: clickHandler,
+      });
+
+    }
+    else if (type === "remove") { } // todo remover amizade
   }
 
   updateContactUnreadUI(convID, unreadCount) {
