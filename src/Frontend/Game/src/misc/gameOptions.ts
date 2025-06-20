@@ -20,9 +20,9 @@ export const UserCustoms: TUserCustoms = {
             role: ROLES.BACK,
             spriteID: 0
         },
-/*         {
+        {
             id: 2,
-            side: SIDES.RIGHT,
+            side: SIDES.TOP,
             role: ROLES.BACK,
             spriteID: 0
         },
@@ -32,7 +32,7 @@ export const UserCustoms: TUserCustoms = {
             role: ROLES.BACK,
             spriteID: 0
         },
-        {
+        /* {
             id: 4,
             side: SIDES.LEFT,
             role: ROLES.FRONT,
@@ -53,7 +53,7 @@ export const UserCustoms: TUserCustoms = {
                         pause: " "
                     }
                 },
-                {
+                /* {
                     id: 2,
                     paddleID: 1,
                     controls: {
@@ -61,7 +61,7 @@ export const UserCustoms: TUserCustoms = {
                         right: "k",
                         pause: " "
                     }
-                }
+                } */
             ]
         },
         /* {
@@ -84,18 +84,18 @@ export const UserCustoms: TUserCustoms = {
             paddleID: 0,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         }, */
-        /* {
+        {
             paddleID: 1,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        }, */
-        /* {
+        },
+        {
             paddleID: 2,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        }, */
-        /* {
+        },
+        {
             paddleID: 3,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        }, */
+        },
     ]
 }
 

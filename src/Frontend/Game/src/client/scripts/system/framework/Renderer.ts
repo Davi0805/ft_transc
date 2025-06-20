@@ -30,15 +30,10 @@ export default class Renderer {
         this._ctx.scale(container.scale, container.scale)
         this._ctx.translate(-container.pivot.x, -container.pivot.y)
 
-        
-
         if (container instanceof VisualContainer) {
-            
-            let finalImage: HTMLImageElement | OffscreenCanvas;
             if (container instanceof Sprite) {
-                finalImage = container.image//(container.tint === 0xFFFFFF) ? container.image : this._getTintedImage(container);
                 this._ctx.drawImage(
-                    finalImage,
+                    container.image,
                     -(container.size.x * container.anchor.x),
                     -(container.size.y * container.anchor.y),
                     container.size.x,
@@ -55,33 +50,13 @@ export default class Renderer {
                 this._ctx.font = container.style.fontSize.toString() + "px " + container.style.fontFamily;
 
                 const r = this._getRed(container.style.fill) * this._getRed(container.tint) * 255;
-                console.log(r.toString(16).padStart(2, "0"))
                 const g = this._getGreen(container.style.fill) * this._getGreen(container.tint) * 255;
                 const b = this._getBlue(container.style.fill) * this._getBlue(container.tint) * 255;
-                this._ctx.fillStyle = `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`
-
-                //console.log(container.style.fill.toString(16))
-                //console.log(container.tint.toString(16))
-                console.log(this._ctx.fillStyle)
-                const metrics = this._ctx.measureText(container.text.toString());
-                const width = Math.ceil(metrics.width);
-                const ascent = Math.ceil(metrics.actualBoundingBoxAscent || container.style.fontSize);
-                const descent = Math.ceil(metrics.actualBoundingBoxDescent || 0);
-                const height = ascent + descent;
-
-
+                this._ctx.fillStyle = this._rgbToFillStyle(r, g, b);
+                const width = this._ctx.measureText(container.text.toString()).width;
+                const height = container.style.fontSize
                 this._ctx.fillText(container.text.toString(),
                     -(width * container.anchor.x), height * container.anchor.y);
-                /* 
-                container.size.x = width;
-                container.size.y = height
-                const totalSize = { x: width, y: height };
-                finalImage = this._getTintedText(container, totalSize, ascent);
-                this._ctx.drawImage(
-                    finalImage,
-                    -(width * container.anchor.x),
-                    -(height * container.anchor.y),
-                ) */
             }
         }
 
@@ -100,70 +75,13 @@ export default class Renderer {
     private _getBlue(hex: number) {
         return (hex & 0xFF) / 255
     }
+    private _rgbToFillStyle(r: number, g: number, b: number) {
+        return `#${[r,g,b].map(color => color.toString(16).padStart(2, "0")).join("")}`
+    }
 
     private _canvas: HTMLCanvasElement;
     private _ctx: CanvasRenderingContext2D;
     private _rootContainer: Container;
     private _backgroundColor: string;
-
-    /* private _getTintedImage(sprite: Sprite) {
-        const imageSize = { x: sprite.image.naturalWidth, y: sprite.image.naturalHeight }
-        const offscreen = new OffscreenCanvas(imageSize.x, imageSize.y);
-        const ctx = offscreen.getContext("2d");
-        if (!ctx) { throw new Error("Error retrieving context from canvas"); }
-        
-        const r = ((sprite.tint >> 16) & 0xFF) / 255;
-        const g = ((sprite.tint >> 8) & 0xFF) / 255;
-        const b = (sprite.tint & 0xFF) / 255;
-
-        
-        
-        ctx.drawImage(sprite.image, 0, 0);
-        
-        const imageData = ctx.getImageData(0, 0, imageSize.x, imageSize.y);
-        for (let i = 0; i < imageData.data.length; i += 4) {
-            imageData.data[i + 0] *= r;
-            imageData.data[i + 1] *= g;
-            imageData.data[i + 2] *= b;
-            //imageData.data[i + 3] *= sprite.alpha;
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-
-        return offscreen
-    } */
-
-    
-
-
-    /* private _getTintedText(bitmapText: BitmapText, canvasSize: point, ascent: number) {
-        //console.log(canvasSize)
-        const offscreen = new OffscreenCanvas(canvasSize.x, canvasSize.y);
-        const ctx = offscreen.getContext("2d");
-        if (!ctx) { throw new Error("Error retrieving context from canvas"); }
-        
-        ctx.font = bitmapText.style.fontSize.toString() + "px " + bitmapText.style.fontFamily;
-        ctx.fillStyle = bitmapText.style.fill;
-
-        const r = ((bitmapText.tint >> 16) & 0xFF) / 255;
-        const g = ((bitmapText.tint >> 8) & 0xFF) / 255;
-        const b = (bitmapText.tint & 0xFF) / 255;
-
-        ctx.fillText(bitmapText.text.toString(), 0, ascent)
-
-        //console.log(bitmapText.tint)
-        
-        const imageData = ctx.getImageData(0, 0, canvasSize.x, canvasSize.y);
-        for (let i = 0; i < imageData.data.length; i += 4) {
-            imageData.data[i + 0] *= r;
-            imageData.data[i + 1] *= g;
-            imageData.data[i + 2] *= b;
-            //imageData.data[i + 3] *= bitmapText.alpha;
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-
-        return offscreen
-    } */
 }
 

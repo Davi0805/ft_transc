@@ -1,8 +1,7 @@
 type LogicCallback = (delta: number, counter: number) => void;
 
 export default class Ticker {
-    constructor(tickerRate: number) {
-        this._tickerRate = tickerRate
+    constructor() {
         this._isRunning = true;
         this._tickerTimer = 0;
         this._delta = 0;
@@ -10,16 +9,13 @@ export default class Ticker {
 
     start() {
         let prevTime = performance.now();
-        const interval = 1000 / this._tickerRate; //optimal MILLISSECONDS between each frame
         const loop = () => {
             const now = performance.now();
             this._delta = (now - prevTime) / 1000; //SECONDS between each frame
-            if (now - prevTime >= interval) {
-                prevTime = now;
-                if (this._isRunning) {this._callCallbacks();}
-                this._tickerTimer += 1;
-            }
-            setTimeout(loop, 1);
+            prevTime = now;
+            if (this._isRunning) {this._callCallbacks();}
+            this._tickerTimer += 1;
+            requestAnimationFrame(loop); //Updates with the refresh rate of the browser (60Hz)
         }
         loop();
     }
@@ -41,11 +37,9 @@ export default class Ticker {
         }
     }
 
-    
-
     // Update rate in seconds
     isEventTime(updateRate: number): boolean {
-        return (this._tickerTimer % (this._tickerRate * updateRate) === 0);
+        return (this._tickerTimer % (60 * updateRate) === 0);
     }
 
     protected _callCallbacks() {
@@ -55,7 +49,6 @@ export default class Ticker {
         })
     }
 
-    private _tickerRate: number; //in ticks per Second
     private _isRunning: boolean;
     get isRunning(): boolean { return this._isRunning; }
     private _tickerTimer: number;
