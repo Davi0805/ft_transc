@@ -4,9 +4,13 @@ class ConversationsRepository {
 
     async save(user1, user2)
     {
-        return await db.raw('INSERT INTO conversations '+
+        /* return await db.raw('INSERT INTO conversations '+
                             '(user1_id, user2_id) VALUES (?, ?)',
-                            [user1, user2]);
+                            [user1, user2]); */
+                            const result = await db('conversations')
+                                    .insert({user1_id: user1, user2_id: user2})
+                                    .returning(['id']);
+                            return result[0];
     }
 
     async getAllMyConversations(user_id)

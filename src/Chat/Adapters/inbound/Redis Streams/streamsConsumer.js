@@ -38,19 +38,19 @@ async function consumeNewFriendsEvent()
                   console.log('IS IT WORKING ???? | USERID1 = ' + parsedData.user1 + ' | USERID2 = ' + parsedData.user2);
                   
                   // todo: query should return the new conversation_id
-                  await conversationService.save(parsedData.user1, parsedData.user2);
+                  const conv_id = await conversationService.save(parsedData.user1, parsedData.user2);
 
                   // todo: modify the type of data that is been stored in redis, cause
                   // todo: on that you never know what type it is
                   const user1Socket = await connectedUsersService.getUser(String(data.user1));
                   if (user1Socket) {
-                    await user1Socket.send(JSON.stringify({ conversation_id: '<ID DA CONVERSA>',
+                    await user1Socket.send(JSON.stringify({ conversation_id: conv_id,
                       message: 'You now can talk with user ' + data.user2, metadata: 'newConversation'})); 
                   }
 
                   const user2Socket = await connectedUsersService.getUser(String(data.user2));
                   if (user2Socket) {
-                    await user2Socket.send(JSON.stringify({ conversation_id: '<ID DA CONVERSA>',
+                    await user2Socket.send(JSON.stringify({ conversation_id: conv_id,
                       message: 'You now can talk with user ' + data.user1, metadata: 'newConversation'})); 
                   }
                   
