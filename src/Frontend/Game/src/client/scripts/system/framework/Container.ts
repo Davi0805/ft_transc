@@ -9,6 +9,7 @@ export default class Container {
         this._rotation = 0;
         this._scale = 1;
         this._pivot = new Point(0, 0);
+        this._alpha = 1;
         this._tint = 0xFFFFFF
     }
 
@@ -58,6 +59,10 @@ export default class Container {
     private _pivot: Point
     get pivot(): Point { return this._pivot; }
     set pivot(pivot: Point) { this._pivot = pivot; }
+
+    private _alpha: number;
+    get alpha(): number {return this._alpha; }
+    set alpha(alpha: number) { this._alpha = alpha; }
 
     private _tint: number;
     get tint() { return this._tint; }

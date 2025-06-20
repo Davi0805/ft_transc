@@ -1,27 +1,30 @@
-import Point from "../../../../misc/Point";
-import Container from "./Container";
+import VisualContainer from "./VisualContainer";
 
+
+type TextStyle = {
+    fontFamily: string,
+    fontSize: number,
+    fill: string
+}
 export type BitmapTextConfigs = {
     text: string | number,
-    style: {
-        fontFamily: string,
-        fontSize: number,
-        fill: string
-    }
+    style: TextStyle
 }
 
-export default class BitmapText extends Container {
+export default class BitmapText extends VisualContainer {
     constructor(configs: BitmapTextConfigs) {
         super();
-        this._text = "";
-        this._anchor = new Point(0, 0);
+        this._text = configs.text;
+        this._style = configs.style;
     }
 
     private _text: string | number;
     set text(text: string | number) { this._text = text; }
     get text(): string | number { return this._text; }
 
-    private _anchor: Point;
-    set anchor(anchor: Point) { this._anchor = anchor}
-    get anchor(): Point { return this._anchor; }
+    private _style: TextStyle;
+    set style(style: TextStyle) { this._style = style; }
+    get style(): TextStyle { return this._style; }
+
+    
 }

@@ -21,8 +21,14 @@ export default class Assets {
         const bundleToLoad = this._manifest.bundles.find(bundle => bundle.name === bundleName);
         if (bundleToLoad) {
             const promises = bundleToLoad.assets.map(async asset => {
-                const image = await this.loadImage(asset.src); //TODO: Not all are images!! Check how to read fonts
-                this._aliasImageMap.set(asset.alias, image);
+                if (asset.src.endsWith(".ttf")) {
+                    const font = new FontFace(asset.alias, "url(" + asset.src + ")");
+                    await font.load();
+                    document.fonts.add(font);
+                } else { 
+                    const image = await this.loadImage(asset.src);
+                    this._aliasImageMap.set(asset.alias, image);
+                }
             })
             await Promise.all(promises);
         }
@@ -42,5 +48,5 @@ export default class Assets {
     }
 
     private static _manifest: AssetsManifest;
-    private static _aliasImageMap: Map<string, HTMLImageElement>;
+    private static _aliasImageMap: Map<string, HTMLImageElement >;
 }

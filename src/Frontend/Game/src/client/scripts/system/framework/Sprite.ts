@@ -1,11 +1,10 @@
 import Point from "../../../../misc/Point";
 import Assets from "./Assets";
-import Container from "./Container";
+import VisualContainer from "./VisualContainer";
 
-export default class Sprite extends Container {
+export default class Sprite extends VisualContainer {
     constructor(image: HTMLImageElement) {
         super();
-        this._anchor = new Point(0, 0);
         this._image = image;
     }
 
@@ -17,10 +16,6 @@ export default class Sprite extends Container {
         const out = new Sprite(image);
         return (out);
     }
-
-    private _anchor: Point;
-    set anchor(anchor: Point) { this._anchor = anchor}
-    get anchor(): Point { return this._anchor; }
 
     private _image: HTMLImageElement;
     get image(): HTMLImageElement { return this._image; }
