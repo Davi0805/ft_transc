@@ -4,7 +4,7 @@ class ConversationService {
 
     async save(user1, user2)
     {
-        await conversationsRepo.save(user1, user2);
+        return await conversationsRepo.save(user1, user2);
     }
 
     async getAllMyConversations(user_id)
