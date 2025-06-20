@@ -21,7 +21,7 @@ export default class CNumbersText {
             style: {
                 fontFamily: 'gameFont',
                 fontSize: textOptions.size,
-                fill: '#666666'
+                fill: 0x666666
             }
         });
         this._sprite.anchor.setPoint(0.5, 0.5);

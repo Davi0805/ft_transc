@@ -30,15 +30,13 @@ export default class Renderer {
         this._ctx.scale(container.scale, container.scale)
         this._ctx.translate(-container.pivot.x, -container.pivot.y)
 
-        container.children.forEach( child => {
-            this._draw(child);
-        })
+        
 
         if (container instanceof VisualContainer) {
             
             let finalImage: HTMLImageElement | OffscreenCanvas;
             if (container instanceof Sprite) {
-                finalImage = (container.tint === 0xFFFFFF) ? container.image : this._getTintedImage(container);
+                finalImage = container.image//(container.tint === 0xFFFFFF) ? container.image : this._getTintedImage(container);
                 this._ctx.drawImage(
                     finalImage,
                     -(container.size.x * container.anchor.x),
@@ -46,24 +44,61 @@ export default class Renderer {
                     container.size.x,
                     container.size.y
                 )
+                this._ctx.globalCompositeOperation = "multiply"
+                this._ctx.fillStyle = `#${container.tint.toString(16).padStart(6, "0")}`
+                this._ctx.fillRect(-(container.size.x * container.anchor.x),
+                    -(container.size.y * container.anchor.y),
+                    container.size.x,
+                    container.size.y)
+                this._ctx.globalCompositeOperation = "source-over"
             } else if (container instanceof BitmapText){
                 this._ctx.font = container.style.fontSize.toString() + "px " + container.style.fontFamily;
+
+                const r = this._getRed(container.style.fill) * this._getRed(container.tint) * 255;
+                console.log(r.toString(16).padStart(2, "0"))
+                const g = this._getGreen(container.style.fill) * this._getGreen(container.tint) * 255;
+                const b = this._getBlue(container.style.fill) * this._getBlue(container.tint) * 255;
+                this._ctx.fillStyle = `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`
+
+                //console.log(container.style.fill.toString(16))
+                //console.log(container.tint.toString(16))
+                console.log(this._ctx.fillStyle)
                 const metrics = this._ctx.measureText(container.text.toString());
                 const width = Math.ceil(metrics.width);
                 const ascent = Math.ceil(metrics.actualBoundingBoxAscent || container.style.fontSize);
                 const descent = Math.ceil(metrics.actualBoundingBoxDescent || 0);
                 const height = ascent + descent;
+
+
+                this._ctx.fillText(container.text.toString(),
+                    -(width * container.anchor.x), height * container.anchor.y);
+                /* 
+                container.size.x = width;
+                container.size.y = height
                 const totalSize = { x: width, y: height };
                 finalImage = this._getTintedText(container, totalSize, ascent);
                 this._ctx.drawImage(
                     finalImage,
                     -(width * container.anchor.x),
                     -(height * container.anchor.y),
-                )
+                ) */
             }
         }
 
+        container.children.forEach( child => {
+            this._draw(child);
+        })
         this._ctx.restore();        
+    }
+
+    private _getRed(hex: number) {
+        return ((hex >> 16) & 0xFF) / 255
+    }
+    private _getGreen(hex: number) {
+        return ((hex >> 8) & 0xFF) / 255
+    }
+    private _getBlue(hex: number) {
+        return (hex & 0xFF) / 255
     }
 
     private _canvas: HTMLCanvasElement;
@@ -71,7 +106,7 @@ export default class Renderer {
     private _rootContainer: Container;
     private _backgroundColor: string;
 
-    private _getTintedImage(sprite: Sprite) {
+    /* private _getTintedImage(sprite: Sprite) {
         const imageSize = { x: sprite.image.naturalWidth, y: sprite.image.naturalHeight }
         const offscreen = new OffscreenCanvas(imageSize.x, imageSize.y);
         const ctx = offscreen.getContext("2d");
@@ -96,11 +131,12 @@ export default class Renderer {
         ctx.putImageData(imageData, 0, 0);
 
         return offscreen
-    }
+    } */
+
+    
 
 
-
-    private _getTintedText(bitmapText: BitmapText, canvasSize: point, ascent: number) {
+    /* private _getTintedText(bitmapText: BitmapText, canvasSize: point, ascent: number) {
         //console.log(canvasSize)
         const offscreen = new OffscreenCanvas(canvasSize.x, canvasSize.y);
         const ctx = offscreen.getContext("2d");
@@ -128,6 +164,6 @@ export default class Renderer {
         ctx.putImageData(imageData, 0, 0);
 
         return offscreen
-    }
+    } */
 }
 

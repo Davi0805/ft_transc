@@ -4,17 +4,22 @@ export default class Ticker {
     constructor(tickerRate: number) {
         this._tickerRate = tickerRate
         this._isRunning = true;
-        this._prevTime = Date.now();
-        this._currentTime = this._prevTime;
         this._tickerTimer = 0;
         this._delta = 0;
     }
 
     start() {
+        let prevTime = performance.now();
+        const interval = 1000 / this._tickerRate; //optimal MILLISSECONDS between each frame
         const loop = () => {
-            this._updateVars();
-            this._callCallbacks();
-            setTimeout(loop, 1000 / this._tickerRate);
+            const now = performance.now();
+            this._delta = (now - prevTime) / 1000; //SECONDS between each frame
+            if (now - prevTime >= interval) {
+                prevTime = now;
+                if (this._isRunning) {this._callCallbacks();}
+                this._tickerTimer += 1;
+            }
+            setTimeout(loop, 1);
         }
         loop();
     }
@@ -44,23 +49,15 @@ export default class Ticker {
     }
 
     protected _callCallbacks() {
+        //console.log(this._delta)
         this._callbacks.forEach(callback => {
             callback(this._delta, this._tickerTimer);
         })
     }
 
-    private _updateVars() {
-        this._prevTime = this._currentTime;
-        this._currentTime = Date.now();
-        this._delta = (this._currentTime - this._prevTime) / 1000;
-        if (this._isRunning) { this._tickerTimer++; }
-    }
-
     private _tickerRate: number; //in ticks per Second
     private _isRunning: boolean;
     get isRunning(): boolean { return this._isRunning; }
-    private _prevTime: number;
-    private _currentTime: number;
     private _tickerTimer: number;
     private _delta: number;
     get delta(): number { return this._delta }

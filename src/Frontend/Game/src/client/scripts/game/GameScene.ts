@@ -88,7 +88,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
 
     override tickerUpdate(delta: number, counter: number): void {
-        //console.log(delta)
+        //if (counter % 20 === 0) {console.log(delta)}
         this.teams.forEach(team => {
             team.hp.updateAnimations();
         })

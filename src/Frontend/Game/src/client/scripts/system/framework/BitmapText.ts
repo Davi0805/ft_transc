@@ -4,7 +4,7 @@ import VisualContainer from "./VisualContainer";
 type TextStyle = {
     fontFamily: string,
     fontSize: number,
-    fill: string
+    fill: number
 }
 export type BitmapTextConfigs = {
     text: string | number,
