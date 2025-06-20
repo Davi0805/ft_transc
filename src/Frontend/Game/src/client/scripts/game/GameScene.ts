@@ -14,7 +14,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
 
         this._root.pivot.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
         this._root.position.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
-        this._root.scale = 0.5
 
         this._timer = new CNumbersText(
             gameSceneConfigs.gameInitialState.gameLength,
@@ -89,7 +88,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
 
     override tickerUpdate(delta: number, counter: number): void {
-        console.log(delta)
+        //console.log(delta)
         this.teams.forEach(team => {
             team.hp.updateAnimations();
         })

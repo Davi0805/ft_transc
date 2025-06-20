@@ -24,14 +24,18 @@ export default class Renderer {
     }
 
     private _draw(container: Container) {
+        this._ctx.save();
+        this._ctx.translate(container.position.x, container.position.y)
+        this._ctx.rotate(container.rotation);
+        this._ctx.scale(container.scale, container.scale)
+        this._ctx.translate(-container.pivot.x, -container.pivot.y)
+
+        container.children.forEach( child => {
+            this._draw(child);
+        })
+
         if (container instanceof VisualContainer) {
-            this._ctx.save();
-            this._ctx.translate(
-                container.position.x,
-                container.position.y,
-            )
-            this._ctx.rotate(container.rotation);
-            this._ctx.scale(container.scale, container.scale)
+            
             let finalImage: HTMLImageElement | OffscreenCanvas;
             if (container instanceof Sprite) {
                 finalImage = (container.tint === 0xFFFFFF) ? container.image : this._getTintedImage(container);
@@ -42,14 +46,8 @@ export default class Renderer {
                     container.size.x,
                     container.size.y
                 )
-                this._ctx.restore();
-                
             } else if (container instanceof BitmapText){
                 this._ctx.font = container.style.fontSize.toString() + "px " + container.style.fontFamily;
-                //this._ctx.fillStyle = container.style.fill;
-                //console.log(container.style.fill)
-
-                //TODO I have somehow to tint the text first!
                 const metrics = this._ctx.measureText(container.text.toString());
                 const width = Math.ceil(metrics.width);
                 const ascent = Math.ceil(metrics.actualBoundingBoxAscent || container.style.fontSize);
@@ -61,31 +59,11 @@ export default class Renderer {
                     finalImage,
                     -(width * container.anchor.x),
                     -(height * container.anchor.y),
-                    /* container.size.x,
-                    container.size.y */
                 )
-                //console.log(container.size.x)
-                this._ctx.restore();
-
-
-
-                /* this._ctx.fillText(container.text.toString(),
-                    -(container.size.x * container.anchor.x),
-                    -(container.size.y * container.anchor.y))
-                this._ctx.restore(); */
-            } else { throw new Error("SOME CLASS WAS ADDED TO VISUALCONTAINER AND NOT HERE!!!!"); }
-            
-            
-            
+            }
         }
-        
 
-
-
-
-        container.children.forEach( child => {
-            this._draw(child);
-        })
+        this._ctx.restore();        
     }
 
     private _canvas: HTMLCanvasElement;
