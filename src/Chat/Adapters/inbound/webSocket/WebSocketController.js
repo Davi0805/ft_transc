@@ -64,6 +64,12 @@ class WebSocketController {
             if (session.user_id != conversation_data[0].user1 && session.user_id != conversation_data[0].user2)
                 return;
 
+            if (parsedMessage.type === 'read_event')
+            {
+                chatMessageService.setMessagesRead(parsedMessage.conversation_id, session.user_id);
+                return ;
+            }
+
             const receiver_id = conversation_data[0].user1 != session.user_id ? conversation_data[0].user1 : conversation_data[0].user2;
 
 
