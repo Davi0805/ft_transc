@@ -1,7 +1,7 @@
 import Point from "../../../misc/Point.js";
+import Container from "../system/framework/Container.js";
 import { point, SIDES } from "../../../misc/types.js";
 import { computeOrientation } from "../../../misc/utils.js";
-import { Container } from "pixi.js";
 import CObject from "../../../abstracts/CObject.js";
 
 type CPaddleConfigs = {

@@ -3,7 +3,7 @@ import { SIDES, ROLES, point, TUserCustoms, TGameConfigs } from "./types.js"
 
 export const UserCustoms: TUserCustoms = {
     field: {
-        size: { x: 800, y: 600 },
+        size: { x: 800, y: 800 },
         backgroundSpriteID: 0 //NOT USED YET
     },
     matchLength: 200,
@@ -14,24 +14,30 @@ export const UserCustoms: TUserCustoms = {
             role: ROLES.BACK,
             spriteID: 0
         },
-        /* {
-            id: 1,
-            side: SIDES.TOP,
-            role: ROLES.BACK,
-            spriteID: 0
-        }, */
         {
-            id: 2,
+            id: 1,
             side: SIDES.RIGHT,
             role: ROLES.BACK,
             spriteID: 0
         },
-        /* {
+        {
+            id: 2,
+            side: SIDES.TOP,
+            role: ROLES.BACK,
+            spriteID: 0
+        },
+        {
             id: 3,
             side: SIDES.BOTTOM,
             role: ROLES.BACK,
             spriteID: 0
-        }, */
+        },
+        /* {
+            id: 4,
+            side: SIDES.LEFT,
+            role: ROLES.FRONT,
+            spriteID: 0
+        } */
     ],
     // Clients are the sockets. Each one can have a different human playing. This allows for couch coop
     clients: [
@@ -49,10 +55,10 @@ export const UserCustoms: TUserCustoms = {
                 },
                 /* {
                     id: 2,
-                    paddleID: 4,
+                    paddleID: 1,
                     controls: {
-                        left: "k",
-                        right: "m",
+                        left: "m",
+                        right: "k",
                         pause: " "
                     }
                 } */
@@ -78,18 +84,18 @@ export const UserCustoms: TUserCustoms = {
             paddleID: 0,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         }, */
-        /* {
+        {
             paddleID: 1,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        }, */
+        },
         {
             paddleID: 2,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
-        /* {
+        {
             paddleID: 3,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        }, */
+        },
     ]
 }
 

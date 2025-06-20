@@ -1,6 +1,7 @@
 import AObject from "./AObject.js";
 import Point from "../misc/Point.js";
-import { Container, Sprite } from "pixi.js";
+import Container from "../client/scripts/system/framework/Container.js";
+import Sprite from "../client/scripts/system/framework/Sprite.js";
 import AAnimation from "../client/scripts/game/Animations/AAnimation.js";
 import AnimationBad from "../client/scripts/game/Animations/AnimationBad.js";
 import AnimationGood from "../client/scripts/game/Animations/AnimationGood.js";
@@ -11,11 +12,12 @@ export default abstract class CObject extends AObject {
         speed: number, spriteName: string, canvas: Container) {
         super(id, pos, size, speed, orientation);
         this._sprite = Sprite.from(spriteName);
-        this._sprite.anchor.set(0.5);
-        this._sprite.setSize(size.x, size.y)
+        this._sprite.anchor.setValue(0.5);
+        this._sprite.size.setPoint(size.x, size.y)
         this._sprite.rotation = Math.atan2(this._orientation.y, this._orientation.x);
-        this._sprite.position.set(pos.x, pos.y);
+        this._sprite.position.setPoint(pos.x, pos.y);
         canvas.addChild(this._sprite);
+        this._spriteOffset = new Point(0, 0);
     }
 
     updateAnimations() { 
@@ -30,26 +32,27 @@ export default abstract class CObject extends AObject {
 
     override set pos(pos: Point) {
         super.pos = pos;
-        this._sprite.position.set(pos.x, pos.y);
+        const newSpritePos = pos.add(this._spriteOffset);
+        this._sprite.position.setPoint(newSpritePos.x, newSpritePos.y);
     }
 
     protected _sprite: Sprite;
-    set sprite(sprite: Sprite) {
-        this._sprite = sprite;
-    }
-    get sprite(): Sprite {
-        return this._sprite;
-    }
+    set sprite(sprite: Sprite) { this._sprite = sprite; }
+    get sprite(): Sprite { return this._sprite; }
+    
+    protected _spriteOffset: Point;
+    get spriteOffset(): Point { return this._spriteOffset; }
+    set spriteOffset(spriteOffset: Point) { this._spriteOffset = spriteOffset; }
 
     protected _animations: AAnimation[] = [];
 
     override set size(size: Point) {
         if (!this._size.isEqual(size)) {
             this._animations.push((size.y < this._size.y)
-                ? new AnimationBad(this._sprite)
-                : new AnimationGood(this._sprite));
+                ? new AnimationBad(this)
+                : new AnimationGood(this));
             super.size = size;
-            this._sprite.setSize(size.x, size.y);
+            this._sprite.size.setPoint(size.x, size.y);
         }
     }
     override get size() {
@@ -59,9 +62,9 @@ export default abstract class CObject extends AObject {
     override set speed(speed: number) {
         if (speed != this._speed) {
             this._animations.push((speed < this._speed)
-                ? new AnimationBad(this._sprite)
-                : new AnimationGood(this._sprite));
-            this._animations.push(new AnimationShake(this._sprite))
+                ? new AnimationBad(this)
+                : new AnimationGood(this));
+            this._animations.push(new AnimationShake(this))
             super.speed = speed;
         }
     }

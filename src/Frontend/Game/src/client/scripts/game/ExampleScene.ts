@@ -1,6 +1,7 @@
 import AScene from "../system/AScene";
+import Sprite from "../system/framework/Sprite";
 import { ExampleSceneConfigs } from "../../../misc/types";
-import { Assets, Sprite } from "pixi.js";
+import Assets from "../system/framework/Assets";
 import { EventBus } from "../system/EventBus";
 
 export default class ExampleScene extends AScene<ExampleSceneConfigs> {

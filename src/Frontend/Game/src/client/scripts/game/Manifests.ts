@@ -1,4 +1,4 @@
-import { AssetsManifest } from "pixi.js"
+import { AssetsManifest } from "../system/framework/Assets"
 import { ExampleSceneConfigs, CGameSceneConfigs } from "../../../misc/types"
 
 import AScene from "../system/AScene"
@@ -82,7 +82,7 @@ export const assetsManifest: AssetsManifest = {
             assets: [
                 {
                     alias: "example",
-                    src: "./Game/public/sprites/example.png"
+                    src: "sprites/paddle0.png"
                 }
             ]
         }

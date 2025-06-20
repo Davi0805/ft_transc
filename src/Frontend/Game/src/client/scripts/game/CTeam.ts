@@ -7,7 +7,7 @@ export default class CTeam {
         this._hp = score;
     }
 
-    updateHP(newHP: number) {
+    update(newHP: number) {
         if (this._hp.value !== newHP) {
             this._hp.update(newHP, true);
         }

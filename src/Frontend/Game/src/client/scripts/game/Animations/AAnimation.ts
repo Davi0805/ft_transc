@@ -1,8 +1,15 @@
-import { BitmapText, Sprite } from "pixi.js";
+import Point from "../../../../misc/Point";
+import Sprite from "../../system/framework/Sprite";
+import BitmapText from "../../system/framework/BitmapText";
+
+export interface ObjectAnimationView {
+    sprite: Sprite | BitmapText,
+    spriteOffset: Point
+}
 
 export default abstract class AAnimation {
-    constructor(image: Sprite | BitmapText, timer: number) {
-        this._image = image;
+    constructor(object: ObjectAnimationView, timer: number) {
+        this._object = object;
         this._timer = timer;
     }
 
@@ -13,7 +20,7 @@ export default abstract class AAnimation {
         }
     };
 
-    protected _image: Sprite | BitmapText;
+    protected _object: ObjectAnimationView;
     protected _timer: number;
     private _isDone: boolean = false;
     get isDone() { return this._isDone; }

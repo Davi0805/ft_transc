@@ -1,6 +1,6 @@
 import AScene from "../system/AScene";
 import Point from "../../../misc/Point";
-import { Assets } from "pixi.js"
+import Assets from "../system/framework/Assets";
 import { SIDES, CGameSceneConfigs, SGameDTO } from "../../../misc/types";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
@@ -11,6 +11,9 @@ import CPaddleControls from "./CPaddleControls";
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         await Assets.loadBundle("gameScene");
+
+        this._root.pivot.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
+        this._root.position.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
 
         this._timer = new CNumbersText(
             gameSceneConfigs.gameInitialState.gameLength,
@@ -78,13 +81,14 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         gameDto.teams.forEach(teamState => {
             const team = this.teams.get(teamState.side);
             if (team) {
-                team.updateHP(teamState.score);
+                team.update(teamState.score);
             } 
         })
         this.timer?.update(gameDto.timeLeft, false); 
     }
 
-    override tickerUpdate(delta: number): void {
+    override tickerUpdate(delta: number, counter: number): void {
+        //if (counter % 20 === 0) {console.log(delta)}
         this.teams.forEach(team => {
             team.hp.updateAnimations();
         })

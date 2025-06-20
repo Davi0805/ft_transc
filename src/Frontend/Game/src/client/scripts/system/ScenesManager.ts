@@ -1,4 +1,4 @@
-import { Container } from "pixi.js";
+import Container from "./framework/Container";
 import AScene from "./AScene";
 import { EventBus } from "./EventBus";
 import { ScenesManifest, SceneConfigMap } from "../game/Manifests";
@@ -6,7 +6,6 @@ import { ScenesManifest, SceneConfigMap } from "../game/Manifests";
 export class ScenesManager {
     constructor(scenesManifest: ScenesManifest) {
         this._container = new Container(); // The scenes will be attached to (and removed from) this container
-        this._container.interactive = true;  //TODO: Must check if this actually does anything
         this._currentScene = null; // Since the function that creates scenes is async, it cannot be attributed here (constructor)
         this._SCENES = scenesManifest;
 

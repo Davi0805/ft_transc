@@ -1,4 +1,5 @@
-import { ApplicationOptions } from "pixi.js"
+//import { ApplicationOptions } from "pixi.js"
+import { AppConfigs } from "../client/scripts/system/framework/Application"
 import { BALL_TYPES } from "../server/Objects/SBall"
  
 export enum SIDES {
@@ -143,7 +144,7 @@ export type CGameSceneConfigs = {
 
 export type CAppConfigs = {
     websocket: WebSocket,
-    appConfigs: Partial<ApplicationOptions>,
+    appConfigs: AppConfigs,
     gameSceneConfigs: CGameSceneConfigs
 }
 
