@@ -42,16 +42,16 @@ async function consumeNewFriendsEvent()
 
                   // todo: modify the type of data that is been stored in redis, cause
                   // todo: on that you never know what type it is
-                  const user1Socket = await connectedUsersService.getUser(String(data.user1));
+                  const user1Socket = await connectedUsersService.getUser(String(parsedData.user1));
                   if (user1Socket) {
-                    await user1Socket.send(JSON.stringify({ conversation_id: conv_id,
-                      message: 'You now can talk with user ' + data.user2, metadata: 'newConversation'})); 
+                    await user1Socket.send(JSON.stringify({ conversation_id: conv_id.id,
+                      message: `${parsedData.user2}`, metadata: 'newConversation'})); 
                   }
 
-                  const user2Socket = await connectedUsersService.getUser(String(data.user2));
+                  const user2Socket = await connectedUsersService.getUser(String(parsedData.user2));
                   if (user2Socket) {
-                    await user2Socket.send(JSON.stringify({ conversation_id: conv_id,
-                      message: 'You now can talk with user ' + data.user1, metadata: 'newConversation'})); 
+                    await user2Socket.send(JSON.stringify({ conversation_id: conv_id.id,
+                      message: `${parsedData.user1}`, metadata: 'newConversation'})); 
                   }
                   
                   

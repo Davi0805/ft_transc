@@ -1,6 +1,7 @@
 import { webSocketService } from "../services/webSocketService.js";
 import { getMessagesByConvID } from "../api/getConversationMessagesAPI.js";
 import { Chat } from "./sidebar.js";
+import { authService } from "../services/authService.js";
 
 class ChatWindow {
   constructor() {
@@ -103,6 +104,8 @@ class ChatWindow {
     this.element.style.height = (this.element.style.height === "50px") ? "400px" : "50px";
     this.element.classList.toggle('minimized');
     this.isMinimized = !this.isMinimized;
+    if (!this.isMinimized)
+      authService.sidebar.updateContactUnreadUI(this.convID, 0);
   }
 
   attachEventListeners() {

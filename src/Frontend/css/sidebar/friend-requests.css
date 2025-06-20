@@ -34,9 +34,11 @@
 }
 
 .requests-container {
-    padding: 5px 24px 5% 24px;
+    padding: 5px 24px 5px 24px;
     max-height:50vh;
     overflow-y: auto;
+
+    text-align: center;
 
     scrollbar-width: none;
     -ms-overflow-style: none;
