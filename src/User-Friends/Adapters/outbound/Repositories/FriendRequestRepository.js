@@ -46,22 +46,22 @@ class FriendRequestRepository {
         );
     }
 
-    async blockFriend(request_id, user_id)
+    async blockFriend(target_id, user_id)
     {
         return await db.raw('UPDATE friend_requests ' +
                             'SET status = ?, blocked_by = ? ' +
-                            'WHERE request_id = ? AND status = ? ' +
+                            'WHERE (from_user_id = ? OR to_user_id = ?) AND status = ? ' +
                             'AND (from_user_id = ? OR to_user_id = ?)'
-                            , ['BLOCKED', user_id, request_id, 'ACCEPTED', user_id, user_id]);
+                            , ['BLOCKED', user_id, target_id, target_id, 'ACCEPTED', user_id, user_id]);
     }
 
-    async unblockFriend(request_id, user_id)
+    async unblockFriend(target_id, user_id)
     {
         return await db.raw('UPDATE friend_requests ' +
                             'SET status = ?, blocked_by = ? '+
-                            'WHERE request_id = ? AND status = ? '+
+                            'WHERE (from_user_id = ? OR to_user_id = ?) AND status = ? '+
                             'AND blocked_by = ?',
-                            ['ACCEPTED', null, request_id, 'BLOCKED', user_id]
+                            ['ACCEPTED', null, target_id, target_id, 'BLOCKED', user_id]
                             );
     }
 
