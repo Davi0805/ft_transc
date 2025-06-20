@@ -107,14 +107,6 @@ class WebSocketService {
     return false;
   }
 
-  initializeConversationTracker(conversations) {
-    conversations.forEach(conv => {
-      this.conversationTracker.set(conv.convID, {
-        unreadCount: conv.unreadMsg || 0,
-        lastMessage: null,
-      });
-    });
-  }
 
   // When the window opens it registers and therefore should be read
   registerMessageHandler(convID, handler) {

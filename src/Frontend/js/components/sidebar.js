@@ -41,8 +41,6 @@ export class Chat {
     
     await this.getSidebarConversations();
     
-    webSocketService.initializeConversationTracker(this.friends);
-
     webSocketService.connect(this.token, this.userID);
 
     webSocketService.registerNotificationCallback((convID) => {
