@@ -72,7 +72,7 @@ class FriendRequestController {
     /* 
     *    Endpoint to block friendship
     *    POST - localhost:8080/friend_requests/{id}/block
-    *    @params id: (Long) - id of friend_request
+    *    @params id: (Long) - id of target user
     */
     async blockFriend(req, reply)
     {

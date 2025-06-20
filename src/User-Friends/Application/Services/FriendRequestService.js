@@ -80,19 +80,19 @@ class FriendRequestService {
         }
     }
 
-    async blockFriend(request_id, user_id)
+    async blockFriend(target_id, user_id)
     {
         try {
-            return await friendRequestRepo.blockFriend(request_id, user_id);
+            return await friendRequestRepo.blockFriend(target_id, user_id);
         } catch (error) {
             throw exception('Failed to block friend request', 400); 
         }
     }
 
-    async unblockFriend(request_id, user_id)
+    async unblockFriend(target_id, user_id)
     {
         try {
-            return await friendRequestRepo.unblockFriend(request_id, user_id);
+            return await friendRequestRepo.unblockFriend(target_id, user_id);
         } catch (error) {
             throw exception('Failed to unblock friend request', 400);
         }
