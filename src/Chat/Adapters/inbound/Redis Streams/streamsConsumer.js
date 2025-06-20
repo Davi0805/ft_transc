@@ -50,7 +50,6 @@ async function consumeNewFriendsEvent()
 
                   const user2Socket = await connectedUsersService.getUser(String(parsedData.user2));
                   if (user2Socket) {
-
                     await user2Socket.send(JSON.stringify({ conversation_id: conv_id.id,
                       message: `${parsedData.user1}`, metadata: 'newConversation'})); 
                   }
