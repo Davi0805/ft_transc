@@ -16,8 +16,8 @@ class FriendRequestRepository {
 
     async listAllPendingRequest(user_id)
     {
-        return await db.raw('SELECT fr.request_id, u.name AS sender_name, '+
-                            'u.username AS sender_username, u.user_image AS sender_image '+
+        return await db.raw('SELECT u.user_id AS sender_id, fr.request_id, u.name AS sender_name, '+
+                            'u.username AS sender_username '+
                             'FROM friend_requests fr '+
                             'JOIN users u '+
                             'ON fr.from_user_id = u.user_id '+
