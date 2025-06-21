@@ -1,4 +1,5 @@
 const friendRequest = require('../../../Application/Services/FriendRequestService');
+const userService = require('../../../Application/Services/UserService');
 const exception = require('../../../Infrastructure/config/CustomException');
 const redisService = require('../../../Application/Services/RedisService');
 
@@ -20,13 +21,20 @@ class FriendRequestController {
     /* 
     *    Endpoint to create/start/request a new friendship
     *    POST - localhost:8080/friend_requests
-    *    @params {sender_id: (Long), receiver_id: (Long)}
+    *    @params {receiver_id: (Long)}
     */
     async create(req, reply)
     {
-        if (req.session.user_id != req.body.sender_id) throw exception('Invalid sender id', 400);
-        await friendRequest.newRequest(req.body.sender_id, req.body.receiver_id);
+        await friendRequest.newRequest(req.session.user_id, req.body.receiver_id);
         return reply.send();        
+    }
+
+    async createByUsername(req, reply)
+    {
+        const { user_id } = await userService.findByUsername(req.params.username);
+        console.log(user_id);
+        await friendRequest.newRequest(req.session.user_id, user_id);
+        return reply.send();
     }
 
 
