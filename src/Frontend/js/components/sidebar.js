@@ -19,6 +19,7 @@ export class Chat {
     this.friendRequests = null;
     this.friendRequestCount = 0;
 
+    /* (convID, {element: contactBtn, handler: clickHandler }) */
     this.contactElements = new Map();
 
     this.init();
@@ -116,8 +117,22 @@ export class Chat {
       });
     }
 
-    const searchInput = document.querySelector("search-input");
+    const searchInput = document.querySelector(".search-input");
     if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        e.preventDefault();
+
+        this.contactElements.forEach(({element}) => {
+          let value = searchInput.value;
+          if (value === ""){
+            element.style.display = "flex";
+            return;
+          } 
+          const username = element.classList[1].slice(2).toLowerCase(); // skip the f-
+
+          element.style.display = username.includes(value) ? "flex" : "none";
+        })
+      });
     }
 
     const friendRequestBtn = document.getElementById("friend-requests-btn");
@@ -161,15 +176,13 @@ export class Chat {
 
   createContactElement(friendAvatar, friendName, unreadMsg) {
     const newContact = document.createElement("button");
-    newContact.className = "contact";
+    newContact.className= `contact f-${friendName}`;
     newContact.innerHTML = `
-              <button class="contact f-${friendName}">
                   <img src="${friendAvatar}" width="40px" height="40px">
                   ${this.minimized ? "" : `<span>${friendName}</span>`}
                   <span class="unread-badge" style="display: ${unreadMsg ? "inline" : "none"
       };">${unreadMsg}</span>
-              </button>
-              `;
+                  `;
     return newContact;
   }
 
