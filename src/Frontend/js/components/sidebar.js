@@ -32,6 +32,12 @@ export class Chat {
 
     
     {
+      /* 
+      [ { "sender_id": 7,
+          "request_id": 7,
+          "sender_name": "sapo",
+          "sender_username": "sapo" }, ...]
+      */
       const reqArray = await getFriendRequests();
       this.friendRequestCount = reqArray.length;
       this.friendRequests = new Map(reqArray.map(req => [req.sender_username, req]));
@@ -73,10 +79,6 @@ export class Chat {
           </button>
           
           <div class="search-wrapper">
-            <button class="icon-btn search-toggle">
-              <img src="./Assets/icons/search.svg" alt="Search" />
-            </button>
-            
             <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
           </div>
         </div>
@@ -276,13 +278,11 @@ export class Chat {
 
       if (btn.classList.contains('accept')) {
         await acceptFriendRequest(this.friendRequests.get(username).request_id);
-        this.deleteFriendRequest(username);
       } else if (btn.classList.contains('reject')) {
         await rejectFriendRequest(this.friendRequests.get(username).request_id);
-        this.deleteFriendRequest(username);
-      } else if (btn.classList.contains('block')) { }
-      //localhost:8080/friend_requests/1/block
+      }
 
+      this.deleteFriendRequest(username);
     });
   }
 

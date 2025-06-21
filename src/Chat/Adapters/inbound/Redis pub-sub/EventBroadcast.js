@@ -32,7 +32,7 @@ class EventBroadcast {
         try {
             parsedMsg = JSON.parse(message);
         } catch (error) {
-            console.log('DEU MERDA');            
+            console.log('GAVE SHIT');            
         }
         const socket = await connectedUsersService.getUser(parsedMsg.user_id);
         console.log(message);
