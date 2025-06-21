@@ -4,6 +4,7 @@ import { getSelfConversations } from "../api/getSelfConversationsAPI.js";
 import { getFriendRequests } from "../api/getFriendRequestsAPI.js";
 import { acceptFriendRequest } from "../api/acceptFriendRequestAPI.js";
 import { rejectFriendRequest } from "../api/rejectFriendRequestAPI.js"
+import { createFriendRequestByUsername } from "../api/createFriendRequestAPI.js"
 import { authService } from "../services/authService.js";
 import { webSocketService } from "../services/webSocketService.js";
 import { chatWindowControler } from "./chatWindow.js";
@@ -12,7 +13,6 @@ export class Chat {
   constructor(userID) {
     this.sidebar = document.querySelector("aside");
     this.friends = [];
-    this.minimized = false;
     this.userID = userID;
     this.token = null;
 
@@ -67,10 +67,6 @@ export class Chat {
 
   renderHTML() {
     return `
-      <button id="toggle-sidebar" class="toggle-sidebar-btn icon-btn">
-        <img src="./Assets/icons/arrow-right.svg" alt="Toggle" />
-      </button>
-
       <div id="chat-sidebar" class="chat-sidebar content">
         <!-- Topbar with friend + search -->
 
@@ -94,6 +90,12 @@ export class Chat {
         </div>  
 
       </div>
+
+      <div id="add-friend-popover" class="add-friend-popover hidden">
+        <input type="text" id="friend-username-input" placeholder="Username..." />
+        <button id="send-friend-request-btn">Add</button>
+      </div>  
+
         `;
   }
 
@@ -110,13 +112,45 @@ export class Chat {
   }
 
   async attachHeaderEventListeners() {
-    const addBtn = document.querySelector(".chat-sidebar-topbar .add-friend");
-    if (addBtn) {
-      addBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-      });
-    }
 
+
+    // ADD FRIENDS
+    const addFriendBtn = document.querySelector('.add-friend');
+    const popover = document.getElementById('add-friend-popover');
+    const popoverInput = document.getElementById('friend-username-input');
+    const popoverSendBtn = document.getElementById('send-friend-request-btn');
+
+    addFriendBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      popover.classList.toggle('hidden');
+      if (popover.classList.contains('hidden')) 
+        popoverInput.value = "";
+      else
+        popoverInput.focus();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!popover.contains(e.target) && !addFriendBtn.contains(e.target)) {
+        popover.classList.add('hidden');
+        popoverInput.value = "";
+      }
+    });
+
+    popoverSendBtn.addEventListener('click', async () => {
+      const username = popoverInput.value.trim();
+      if (username) {
+        try {
+          await createFriendRequestByUsername(username);
+        } catch (error) {
+          //TODO          
+        }
+        popoverInput.value = '';
+        popover.classList.add('hidden');
+      }
+    });
+
+
+    // SEARCH
     const searchInput = document.querySelector(".search-input");
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
@@ -135,6 +169,7 @@ export class Chat {
       });
     }
 
+    // FRIEND REQUESTS
     const friendRequestBtn = document.getElementById("friend-requests-btn");
     if (friendRequestBtn) {
       friendRequestBtn.addEventListener("click", async (e) => {
@@ -179,9 +214,8 @@ export class Chat {
     newContact.className= `contact f-${friendName}`;
     newContact.innerHTML = `
                   <img src="${friendAvatar}" width="40px" height="40px">
-                  ${this.minimized ? "" : `<span>${friendName}</span>`}
-                  <span class="unread-badge" style="display: ${unreadMsg ? "inline" : "none"
-      };">${unreadMsg}</span>
+                  <span>${friendName}</span>
+                  <span class="unread-badge" style="display: ${unreadMsg ? "inline" : "none"};">${unreadMsg}</span>
                   `;
     return newContact;
   }
@@ -246,12 +280,12 @@ export class Chat {
 
   async openFriendRequetsDialog() {
     if (document.getElementById("friendRequestsDialog")) return; // prevent doubling
-
+    
     const dialogHTML = this.renderFriendRequestsHTML();
     document.body.insertAdjacentHTML("beforeend", dialogHTML);
-
+    
     await this.insertFriendRequests();
-
+    
     const dialog = document.getElementById("friendRequestsDialog");
     this.attachFriendRequetsDialogEventListeners(dialog);
     dialog.showModal();
