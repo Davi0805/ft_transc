@@ -11,6 +11,11 @@ async function FriendRequestRoutes(fastify, options) {
         preHandler: authMiddleware,
         handler: friendRequestController.create
     });
+
+    fastify.post('/friend_requests/add/:username', {
+        preHandler: authMiddleware,
+        handler: friendRequestController.createByUsername
+    });
     
     fastify.get('/friend_requests/pending', {
         preHandler: authMiddleware,

@@ -90,7 +90,6 @@ class InputValidator {
         type: 'object',
         required: ['sender_id', 'receiver_id'],
         properties: {
-            sender_id: { type: 'number' },
             receiver_id: { type: 'number' }
         },
         additionalProperties: false
