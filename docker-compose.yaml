@@ -68,6 +68,9 @@ services:
     build: ./nginx
     ports:
       - "80:80"
+    depends_on:
+      - chat-backend
+      - user-backend
     volumes:
       - ./src/Frontend:/usr/share/nginx/html
     networks:
