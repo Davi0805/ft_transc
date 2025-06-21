@@ -88,7 +88,7 @@ class InputValidator {
         fastify.addSchema({
         $id: 'createFriendReq',
         type: 'object',
-        required: ['sender_id', 'receiver_id'],
+        required: ['receiver_id'],
         properties: {
             receiver_id: { type: 'number' }
         },
