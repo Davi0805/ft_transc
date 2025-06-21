@@ -4,6 +4,7 @@ import { getSelfConversations } from "../api/getSelfConversationsAPI.js";
 import { getFriendRequests } from "../api/getFriendRequestsAPI.js";
 import { acceptFriendRequest } from "../api/acceptFriendRequestAPI.js";
 import { rejectFriendRequest } from "../api/rejectFriendRequestAPI.js"
+import { createFriendRequestByUsername } from "../api/createFriendRequestAPI.js"
 import { authService } from "../services/authService.js";
 import { webSocketService } from "../services/webSocketService.js";
 import { chatWindowControler } from "./chatWindow.js";
@@ -12,13 +13,13 @@ export class Chat {
   constructor(userID) {
     this.sidebar = document.querySelector("aside");
     this.friends = [];
-    this.minimized = false;
     this.userID = userID;
     this.token = null;
 
     this.friendRequests = null;
     this.friendRequestCount = 0;
 
+    /* (convID, {element: contactBtn, handler: clickHandler }) */
     this.contactElements = new Map();
 
     this.init();
@@ -32,6 +33,12 @@ export class Chat {
 
     
     {
+      /* 
+      [ { "sender_id": 7,
+          "request_id": 7,
+          "sender_name": "sapo",
+          "sender_username": "sapo" }, ...]
+      */
       const reqArray = await getFriendRequests();
       this.friendRequestCount = reqArray.length;
       this.friendRequests = new Map(reqArray.map(req => [req.sender_username, req]));
@@ -60,10 +67,6 @@ export class Chat {
 
   renderHTML() {
     return `
-      <button id="toggle-sidebar" class="toggle-sidebar-btn icon-btn">
-        <img src="./Assets/icons/arrow-right.svg" alt="Toggle" />
-      </button>
-
       <div id="chat-sidebar" class="chat-sidebar content">
         <!-- Topbar with friend + search -->
 
@@ -72,13 +75,7 @@ export class Chat {
             <img src="./Assets/icons/person-add.svg" alt="Add Friend" />
           </button>
           
-          <div class="search-wrapper">
-            <button class="icon-btn search-toggle">
-              <img src="./Assets/icons/search.svg" alt="Search" />
-            </button>
-            
-            <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
-          </div>
+          <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
         </div>
 
         <div class="friend-requests-btn-wrapper">
@@ -93,6 +90,12 @@ export class Chat {
         </div>  
 
       </div>
+
+      <div id="add-friend-popover" class="add-friend-popover hidden">
+        <input type="text" id="friend-username-input" placeholder="Username..." />
+        <button id="send-friend-request-btn">Add</button>
+      </div>  
+
         `;
   }
 
@@ -109,16 +112,64 @@ export class Chat {
   }
 
   async attachHeaderEventListeners() {
-    const addBtn = document.querySelector(".chat-sidebar-topbar .add-friend");
-    if (addBtn) {
-      addBtn.addEventListener("click", (e) => {
+
+
+    // ADD FRIENDS
+    const addFriendBtn = document.querySelector('.add-friend');
+    const popover = document.getElementById('add-friend-popover');
+    const popoverInput = document.getElementById('friend-username-input');
+    const popoverSendBtn = document.getElementById('send-friend-request-btn');
+
+    addFriendBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      popover.classList.toggle('hidden');
+      if (popover.classList.contains('hidden')) 
+        popoverInput.value = "";
+      else
+        popoverInput.focus();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!popover.contains(e.target) && !addFriendBtn.contains(e.target)) {
+        popover.classList.add('hidden');
+        popoverInput.value = "";
+      }
+    });
+
+    popoverSendBtn.addEventListener('click', async () => {
+      const username = popoverInput.value.trim();
+      if (username) {
+        try {
+          await createFriendRequestByUsername(username);
+        } catch (error) {
+          //TODO          
+        }
+        popoverInput.value = '';
+        popover.classList.add('hidden');
+      }
+    });
+
+
+    // SEARCH
+    const searchInput = document.querySelector(".search-input");
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
         e.preventDefault();
+
+        this.contactElements.forEach(({element}) => {
+          let value = searchInput.value;
+          if (value === ""){
+            element.style.display = "flex";
+            return;
+          } 
+          const username = element.classList[1].slice(2).toLowerCase(); // skip the f-
+
+          element.style.display = username.includes(value) ? "flex" : "none";
+        })
       });
     }
 
-    const searchInput = document.querySelector(".search-wrapper input");
-    const searchBtn = document.querySelector(".search-wrapper button");
-
+    // FRIEND REQUESTS
     const friendRequestBtn = document.getElementById("friend-requests-btn");
     if (friendRequestBtn) {
       friendRequestBtn.addEventListener("click", async (e) => {
@@ -160,15 +211,12 @@ export class Chat {
 
   createContactElement(friendAvatar, friendName, unreadMsg) {
     const newContact = document.createElement("button");
-    newContact.className = "contact";
+    newContact.className= `contact f-${friendName}`;
     newContact.innerHTML = `
-              <button class="contact f-${friendName}">
                   <img src="${friendAvatar}" width="40px" height="40px">
-                  ${this.minimized ? "" : `<span>${friendName}</span>`}
-                  <span class="unread-badge" style="display: ${unreadMsg ? "inline" : "none"
-      };">${unreadMsg}</span>
-              </button>
-              `;
+                  <span>${friendName}</span>
+                  <span class="unread-badge" style="display: ${unreadMsg ? "inline" : "none"};">${unreadMsg}</span>
+                  `;
     return newContact;
   }
 
@@ -197,10 +245,6 @@ export class Chat {
 
           <button class="request-btn reject" id="friend-reject" data-username="${friendRequest.sender_username}" title="Reject">
             <img src="../../Assets/icons/cancel-circle.svg" />
-          </button>
-
-          <button class="request-btn block" id="friend-block" data-username="${friendRequest.sender_username}" title="Block">
-            <img src="../../Assets/icons/block-circle.svg" />
           </button>
         </div>
     `;
@@ -236,12 +280,12 @@ export class Chat {
 
   async openFriendRequetsDialog() {
     if (document.getElementById("friendRequestsDialog")) return; // prevent doubling
-
+    
     const dialogHTML = this.renderFriendRequestsHTML();
     document.body.insertAdjacentHTML("beforeend", dialogHTML);
-
+    
     await this.insertFriendRequests();
-
+    
     const dialog = document.getElementById("friendRequestsDialog");
     this.attachFriendRequetsDialogEventListeners(dialog);
     dialog.showModal();
@@ -276,13 +320,11 @@ export class Chat {
 
       if (btn.classList.contains('accept')) {
         await acceptFriendRequest(this.friendRequests.get(username).request_id);
-        this.deleteFriendRequest(username);
       } else if (btn.classList.contains('reject')) {
         await rejectFriendRequest(this.friendRequests.get(username).request_id);
-        this.deleteFriendRequest(username);
-      } else if (btn.classList.contains('block')) { }
-      //localhost:8080/friend_requests/1/block
+      }
 
+      this.deleteFriendRequest(username);
     });
   }
 
