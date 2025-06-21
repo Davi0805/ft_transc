@@ -78,9 +78,7 @@ export class Chat {
             <img src="./Assets/icons/person-add.svg" alt="Add Friend" />
           </button>
           
-          <div class="search-wrapper">
-            <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
-          </div>
+          <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
         </div>
 
         <div class="friend-requests-btn-wrapper">
@@ -118,8 +116,9 @@ export class Chat {
       });
     }
 
-    const searchInput = document.querySelector(".search-wrapper input");
-    const searchBtn = document.querySelector(".search-wrapper button");
+    const searchInput = document.querySelector("search-input");
+    if (searchInput) {
+    }
 
     const friendRequestBtn = document.getElementById("friend-requests-btn");
     if (friendRequestBtn) {
@@ -199,10 +198,6 @@ export class Chat {
 
           <button class="request-btn reject" id="friend-reject" data-username="${friendRequest.sender_username}" title="Reject">
             <img src="../../Assets/icons/cancel-circle.svg" />
-          </button>
-
-          <button class="request-btn block" id="friend-block" data-username="${friendRequest.sender_username}" title="Block">
-            <img src="../../Assets/icons/block-circle.svg" />
           </button>
         </div>
     `;
