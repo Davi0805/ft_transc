@@ -2,7 +2,7 @@ import { authService } from "../services/authService.js";
 
 export async function createFriendRequestByUsername(username){
     try {
-        const response = await fetch(`localhost:8080/friend_requests/add/${username}`, {
+        const response = await fetch(`http://localhost:8080/friend_requests/add/${username}`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${authService.authToken}`
