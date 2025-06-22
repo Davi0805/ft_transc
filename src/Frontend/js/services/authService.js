@@ -6,7 +6,7 @@ import { webSocketService } from "./webSocketService.js";
 import { chatWindowControler } from "../components/chatWindow.js";
 export class AuthService {
   constructor() {
-    this.protectedRoutes = ["/play", "/profile"];
+    this.protectedRoutes = [/* "/match-center" */, "/profile"]; //TODO Do not forget to add this back!
     this.userID = null;
     this.userNick = null;
     this.userAvatar = null;

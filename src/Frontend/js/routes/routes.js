@@ -1,5 +1,5 @@
 import { HomePage } from '../pages/home.js'
-import { PlayPage } from '../pages/play.js'
+import { MatchCenterPage } from '../pages/matchCenter.js'
 import { LoginPage } from '../pages/login/login.js'
 import { NotFoundPage } from '../pages/404.js'
 import { ProfilePage  } from '../pages/profile.js'
@@ -26,12 +26,12 @@ export const routes = [
         template: AboutUsPage.template,
         script: AboutUsPage
     },
-    // Play
+    // Match center
     {
-        path: '/play',
-        title: 'Play',
-        template: PlayPage.template,
-        script: PlayPage
+        path: '/match-center',
+        title: 'Match Center',
+        template: MatchCenterPage.template,
+        script: MatchCenterPage
     },
     // Login
     {

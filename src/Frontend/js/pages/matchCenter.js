@@ -1,11 +1,11 @@
 //? PlayPage is an object with
 
-export const PlayPage = {
+export const MatchCenterPage = {
     template() {
         return `
-            <div class="play-container">
+            <div>
                 <h2>Game Area</h2>
-                <div class="game-placeholder">Game</div>
+                <div class="underline decoration-wavy">Game</div>
             </div>        
         `;
     }, 
