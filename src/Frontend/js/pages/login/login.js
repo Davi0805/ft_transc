@@ -1,7 +1,4 @@
-import {
-  togglePasswordVisibility,
-  showError,
-} from "../../utils/domUtils.js";
+import { togglePasswordVisibility } from "../../utils/domUtils.js";
 import { TwoFactorAuth } from "./twoFactorAuth.js";
 import { login } from "../../api/loginAPI.js";
 import { authService } from "../../services/authService.js";
@@ -12,27 +9,25 @@ export const LoginPage = {
       <div id="log-wrapper" class="loggin-wrapper">
       <div class = content>
         <form id="login-form">
-          <h1 class="title">Login</h1>
+          <h1 class="title" data-i18n="login-title"></h1>
           <div class="input-box">
-            <input id="username" type="text" placeholder="Username" name="username" required/>
+            <input id="username" type="text" name="username" data-i18n-placeholder="login-place-username" required/>
             <img src="../Assets/icons/user.svg" draggable="false"/>
           </div>
           <div class="input-box">
-            <input id="password" type="password" placeholder="Password" name="password" required />
+            <input id="password" type="password" name="password" data-i18n-placeholder="login-place-password" required />
             <img class="visibility" src="../Assets/icons/visibility-on.svg" draggable="false" />
-          </div>
-
-          <div class="forgot">
-            <a href="#">Forgot password?</a>
           </div>
 
           <div id="login-error" aria-live="polite" hidden></div>
 
-          <button type="submit" class="button">Login</button>
+          <button type="submit" class="button" data-i18n="login-btn"></button>
 
           <div class="register-link">
-            <p>Don't have an account? <a href="/register" data-link>Register</a></p>
-          </div>
+            <p>
+              <span data-i18n="login-register">Don't have an account?</span>
+              <a href="/register" data-link data-i18n="login-register-link">Register</a>
+            </p>
         </form>
       </div>
 

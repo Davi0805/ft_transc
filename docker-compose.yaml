@@ -6,23 +6,23 @@ services:
     networks:
       - net
 
-#  prometheus:
-#    build: ./Prometheus
-#    ports:
-#      - "9090:9090"
-#    depends_on:
-#      - user-backend
-#    networks:
-#      - net
-
-#  grafana:
-#    image: grafana/grafana-enterprise
-#    container_name: grafana
-#    restart: unless-stopped
-#    ports:
-#     - '3000:3000'
-#    networks:
-#      - net
+  prometheus:
+    build: ./Prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - user-backend
+    networks:
+      - net
+  
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+     - '3000:3000'
+    networks:
+      - net
   
 #  node_exporter:
 #    image: quay.io/prometheus/node-exporter:latest
@@ -63,6 +63,20 @@ services:
       - redis
     networks:
       - net
+
+  nginx-modsecurity:
+      build: ./nginx
+      ports:
+        - "80:80"
+        - "443:8443"
+      volumes:
+        - ./src/Frontend:/usr/share/nginx/html:ro
+        
+      depends_on:
+        - user-backend
+        - chat-backend
+      networks:
+        - net
 
 networks:
   net:

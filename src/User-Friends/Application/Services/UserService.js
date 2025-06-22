@@ -1,4 +1,5 @@
 const userRepository = require('../../Adapters/outbound/Repositories/UserRepository');
+const exception = require('../../Infrastructure/config/CustomException');
 
 //const bcrypt = require('bcryptjs'); // hashing lib to the passwords
 //import bcrypt from "bcryptjs";
@@ -7,63 +8,143 @@ const userRepository = require('../../Adapters/outbound/Repositories/UserReposit
 
 class UserService {
 
-    async getAll() {
-        return await userRepository.findAll();
+
+    /* 
+    *    @brief Method to get all users (more for debug)
+    *    @throws 404 - Not found
+    *    @returns list of users
+    */
+    async getAll()
+    {
+        const users = await userRepository.findAll();
+        if (!users || users.length === 0) throw exception('Users not Found!', 404);
+        return users;
     }
 
+
+    /* 
+    *    @brief Method to get user by id
+    *    @params id (integer) - user_id 
+    *    @throws 404 - Not found
+    */
     async findById(id)
     {
-        return await userRepository.findById(id);
+        const users = await userRepository.findById(id);
+        if (!users || users.length === 0) throw exception('Data not found!', 404);
+        return users;
     }
 
-    async createUser(User) {
-        /* User.password_hash = this.fastify.bcrypt.hashSync(User.password_hash, 10, function(err, hash) {
-            if (err)
-                console.log(err.message);
-            else
-                console.log(hash);
-        }); */
-        
+
+    /* 
+    *    @brief Method to get user by username
+    *    @params username (string) - username 
+    *    @throws 404 - Not found
+    */
+    async findByUsername(username)
+    {
+        const users = await userRepository.findByUsername(username);
+        if (!users || users.length === 0) throw exception('Data not found!, 404');
+        return {user_id: users[0].user_id,
+                username: users[0].username,
+                user_image: users[0].user_image};
+    }
+
+
+    /* 
+    *    @brief Method to get all users (more for debug)
+    *    name, username, email, password
+    *    @throws 400 - Bad request
+    */
+    async createUser(User)
+    {
         try {
-            const result = await userRepository.save(User);
-            return true;
+            await userRepository.save(User);
         } catch (error) {
-            return false;
+            throw exception('Failed to create user!', 400);
         }
     }
 
+
+    /* 
+    *    @brief Method that check users credentials on database
+    *    @params user (object) - user credentials {username, password}
+    *    @throws 401 - Unauthorized
+    *    @returns {user_id, twofa_secret}
+    */
     async Login(User)
     {
         try {
             const result = await userRepository.findByUsername(User.username);
             /* await this.fastify.bcrypt.compare(User.password, result[0].password_hash); */
-            if (User.password == result[0].password_hash)
-                return {user_id: result[0].user_id, twofa_secret: result[0].twofa_secret};
-            else
-                throw 401;
+            if ( !result || User.password != result[0].password_hash)
+                throw exception('Login failed!', 401);
+            return {user_id: result[0].user_id, twofa_secret: result[0].twofa_secret};
         } catch (error) {
-            console.log(error);
-            throw 401;
+            throw exception('Login failed!', 401);
         }
     }
 
+
+    /* 
+    *    @brief Method that saves the 2FA properties on database
+    *    @params user_id (integer)
+    *    @params twofa_secret (String) 
+    *    @throws 400 - Bad request
+    */
     async activateTwoFactorAuth(user_id, twofa_secret)
     {
         try {
-            const result = await userRepository.addTwoFactorAuth(user_id, twofa_secret);
+            await userRepository.addTwoFactorAuth(user_id, twofa_secret);
         } catch (error) {
-            console.log('ERRO: Activate Two Factor Auth - ' + error);
+            throw exception('Failed to activate 2FA', 400)
         }
     }
 
+
+    /* 
+    *    @brief Method that updates the user avatar image_path with new file path
+    *    @params user_id (integer)
+    *    @params path (string) - file path
+    *    @throws 400 - Bad request
+    */
     async uploadAvatar(path, user_id)
     {
-        return await userRepository.updateUserImagePath(path, user_id);
+        try {
+            await userRepository.updateUserImagePath(path, user_id);
+        } catch (error) {
+            throw exception('Failed to upload avatar', 400);
+        }
     }
 
+
+    /* 
+    *    @brief Method that updates the users name
+    *    @params user (object) - {name, id}
+    *    @throws 400 - Bad request
+    */
     async updateName(user)
     {
-        return await userRepository.updateName(user);
+        try {
+            await userRepository.updateName(user);
+        } catch (error) {
+            throw exception('Failed to update name', 400);
+        }
+    }
+
+
+    /* 
+    *    @brief Method that updates the users password
+    *    @params user (object) - {new_password, old_password, id}
+    *    @throws 400 - Bad request
+    */
+    async updatePassword(user)
+    {
+        // todo: implement proper error handling
+        try {
+            await userRepository.updatePassword(user);
+        } catch (error) {
+            throw exception('Failed to update password!', 400);
+        }
     }
 
 };

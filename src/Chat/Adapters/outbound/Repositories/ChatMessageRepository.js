@@ -17,6 +17,12 @@ class ChatMessageRepository {
                             [conversation_id, from_user_id, message_content]);
     }
 
+    async setMessagesRead(conversation_id, user_id)
+    {
+        return db.raw('UPDATE messages SET unread = 0' 
+            + ' WHERE conversation_id = ? AND from_user_id != ?', [conversation_id, user_id]);
+    }
+
     // with metadata
 /*     async saveSpecialMessage()
     {

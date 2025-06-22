@@ -16,11 +16,18 @@ class UserRepository {
 
     async findByUsername(username)
     {
-        return db.raw('SELECT user_id, username, password_hash, twofa_secret FROM users WHERE username = ?', [username]);
+        return db.raw('SELECT * FROM users WHERE username = ?', [username]);
     }
 
     async save(user) {
         return db('users').insert(user);
+    }
+
+    async updatePassword(user)
+    {
+        return db.raw('UPDATE users SET password_hash = ? WHERE user_id = ? AND password_hash = ?',
+            [user.new_password, user.id, user.old_password]
+        );
     }
 
     async updateName(user)

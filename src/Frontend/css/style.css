@@ -19,12 +19,19 @@ body {
 }
 
 
+.page-layout {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
 #main {
   /* second arg is the header height */
-  margin-top: 20px;
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   padding-top: 65px;
+  padding-right: 20px;
 }

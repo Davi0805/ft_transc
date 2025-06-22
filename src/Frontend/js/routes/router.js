@@ -1,5 +1,7 @@
 import { authService } from '../services/authService.js'
 import { header } from '../components/header.js';
+import { translator } from '../services/translationService.js';
+
 export class Router {
     constructor(routes) {
         this.routes = routes; // store route configurations
@@ -51,8 +53,6 @@ export class Router {
 
         if (route) {
 
-            authService.updateHeaderVisibility();
-            
             header.updateActiveUnderline(path);
 
             // Load HTML template
@@ -62,6 +62,7 @@ export class Router {
             // Initialize page-specific js (if any)
             if (route.script) 
                 route.script.init();
+            translator.apply();
         }
     }
 }
