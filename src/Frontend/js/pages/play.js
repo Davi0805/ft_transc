@@ -3,7 +3,7 @@
 export const PlayPage = {
     template() {
         return `
-            <div class="play-container">
+            <div class="play-container content">
                 <h2>Game Area</h2>
                 <div class="game-placeholder">Game</div>
             </div>        
