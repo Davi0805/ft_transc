@@ -46,9 +46,9 @@ export class Router {
             history.replaceState(null, null, path); // todo can we remove this by grabbing from navigateTo?
         }
 
-
+        
         // Find matching route or fallback to 404 not found
-        // find returns undified (evaluates as false) if cant find anything 
+        // find returns undified (evaluates as false) if cant find anything
         const route = this.routes.find(r => r.path === path) || this.routes.find(r => r.path === '/404');
 
         if (route) {
