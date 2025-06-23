@@ -62,6 +62,17 @@ export class Chat {
       this.handleUpdateFriends(data);
     });
 
+
+    /*
+      conversation_id?
+      message?:
+      metadata: {user_id?: string = reciever_id?,
+                event: "new_friend_request"}
+  */
+    webSocketService.registerFriendRequetsUpdate(() => {
+      this.updateFriendRequestsNumber(this.friendRequestCount + 1);
+    })
+
     this.insertContactsOnSidebar();
   }
 
@@ -221,7 +232,6 @@ export class Chat {
   }
 
   updateFriendRequestsNumber(number) {
-    console.log(number);
     const count = this.sidebar.querySelector(".friend-requests-count");
     if (!count) return;
     count.textContent = `${number}`;

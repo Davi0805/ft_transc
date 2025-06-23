@@ -15,6 +15,7 @@ class WebSocketService {
     this.notificationCallbacks = [];
     this.onlineCallbacks = [];
     this.friendsUpdateCallbacks = [];
+    this.newFriendRequestsCallbacks = [];
   }
 
   /**
@@ -37,11 +38,6 @@ class WebSocketService {
     }
 
     this.userID = userID;
-    // 1. Query parameter (mais comum)
-    // const wsUrl = `ws://localhost:8081/ws?token=${encodeURIComponent(token)}`;
-    // this.ws = new WebSocket(wsUrl);
-
-    // 2. Sub-protocolo
     this.ws = new WebSocket("ws://localhost:8081/ws", [`Bearer.${token}`]);
 
     this.ws.onopen = (ev) => {
@@ -130,22 +126,46 @@ class WebSocketService {
     this.friendsUpdateCallbacks.push(callback);
   }
 
+  registerFriendRequetsUpdate(callback) {
+    this.newFriendRequestsCallbacks.push(callback);
+  }
+
   /**
    * Handles incoming WebSocket messages
    *
    * @param {Object} data - The message data received from the WebSocket server.
    */
   handleMessage(data) {
+    /*
+      Event for online friends
+      Array [{ conv_id: number | string },...]
+    */
     const { online_users } = data;
     if (online_users) {
       this.triggerOnlineUpdate(online_users)
       return ;
     }  
 
+    /* 
+      Event for new friendship
+      Object {  conversation_id: 9,
+                message: "1",
+                metadata: "newConversation" }
+    */
     const { metadata } = data;
     if (metadata === "newConversation") {
       this.triggerFriendsUpdate(data);
       return;
+    } 
+    
+    /* 
+      Event for new friend request
+      Object { event: "new_friend_request" }
+    */
+    const { event } = data;
+    if (event === "new_friend_request") {
+      this.triggerNewFriendRequest();
+      return ;
     }
 
     const convID = data.conversation_id;
@@ -220,6 +240,16 @@ class WebSocketService {
         callback(data);
       } catch (error) {
         console.log("DEBUG: Error in websocket friendsUpdateCallbacks callback:", error);
+      }
+    })
+  }
+
+  triggerNewFriendRequest() {
+    this.newFriendRequestsCallbacks.forEach((callback) => {
+      try {
+        callback();
+      } catch (error) {
+        console.log("DEBUG: Error in websocket newFriendRequestsCallbacks callback:", error);
       }
     })
   }
