@@ -2,49 +2,61 @@
 
 export const MatchCenterPage = {
     template() {
-        const lobbiesInfo = [{
-            name: "Blobby Lobby",
-            host: "ndo-vale",
-            type: "friendly",
-            capacity: "6/8",
-            mode: "Classic",
-            map: "4-sided-teams",
-            matchLength: 300
-        }]
+        const lobbyCategories = ["NAME", "HOST", "TYPE", "CAPACITY", "MODE", "MAP", "MATCH LENGTH"]
+        let lobbyCategoriesHtml = "";
+        lobbyCategoriesHtml += `<tr class="backdrop-brightness-50 text-left">`;
+        for (let category of lobbyCategories) {
+            lobbyCategoriesHtml += `<th class="border-l border-current/50 p-2">${category}</th>`
+        }
+        lobbyCategoriesHtml += `</tr>`
+
+        const lobbiesInfo = [
+            {
+                name: "Blobby Lobby",
+                host: "ndo-vale",
+                type: "friendly",
+                capacity: "6/8",
+                mode: "Classic",
+                map: "4-sided-teams",
+                matchLength: 300
+            },
+            {
+                name: "Lelelelele",
+                host: "artuda",
+                type: "tournament",
+                capacity: "5/100",
+                mode: "Modern",
+                map: "1v1-small",
+                matchLength: 150
+            }
+        ]
 
         let lobbiesHtml = "";
-        for (let lobbyInfo of lobbiesInfo) {
-            lobbiesHtml += "<tr>";
-            Object.values(lobbyInfo).forEach(item =>{
-                lobbiesHtml += `<td>${item}</td>`
+        for (let i = 0; i < lobbiesInfo.length; i++) {
+            lobbiesHtml += `<tr>`;
+            Object.values(lobbiesInfo[i]).forEach(item =>{
+                lobbiesHtml += `<td class="backdrop-brightness-${i%2 === 0 ? 100 : 75} p-2">${item}</td>`
             })
-            lobbiesHtml += "</tr>";
+            lobbiesHtml += `</tr>`;
         }
+
         return `
             <div class="flex flex-col items-center justify-center bg-transparent backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-[40px] py-[30px]">
-                <h1>Match Center</h1>
+                <h1 class="text-3xl">Match Center</h1>
                 <div id="match-center-body" class="flex flex-row">
                     <div id="open-lobies">
                         <h2>Open Lobbies</h2>
                         <div id="lobies-list">
-                            <table>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Host</th>
-                                    <th>Type</th>
-                                    <th>Capacity</th>
-                                    <th>Mode</th>
-                                    <th>Map</th>
-                                    <th>Match Length</th>
-                                </tr>
+                            <table class="w-full table-fixed">
+                                ${lobbyCategoriesHtml}
                                 ${lobbiesHtml}
                             </table>
                         </div>
                     </div>
-                    <div id="create-buttons" class="flex flex-col">
-                        <button type="button">Create Friendly Match</button>
-                        <button type="button">Create Ranked Match</button>
-                        <button type="button">Create Tournament</button>
+                    <div id="new-buttons" class="flex flex-col">
+                        <button type="button">New Friendly Match</button>
+                        <button type="button">New Ranked Match</button>
+                        <button type="button">New Tournament</button>
                     </div>
                 </div>
             </div>
