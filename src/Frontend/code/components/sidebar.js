@@ -71,6 +71,7 @@ export class Chat {
   */
     webSocketService.registerFriendRequetsUpdate(() => {
       this.updateFriendRequestsNumber(this.friendRequestCount + 1);
+      this.friendRequests.set()
     })
 
     this.insertContactsOnSidebar();
@@ -376,6 +377,7 @@ export class Chat {
   // { conversation_id: conv_id,
   //   message: 'You now can talk with user ' + data.user1, metadata: 'newConversation'})); 
   async handleUpdateFriends(data) {
+    console.log(data);
     const type = data.metadata;
     if (type === "newConversation") {
       const friendID = Number(data.message);
