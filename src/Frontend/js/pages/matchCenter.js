@@ -4,8 +4,39 @@ export const MatchCenterPage = {
     template() {
         return `
             <div class="flex flex-col items-center justify-center bg-transparent backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-[40px] py-[30px]">
-                <h2>About Us</h2>
-                <div>This is the About Us Page</div>
+                <h1>Match Center</h1>
+                <div id="match-center-body" class="flex flex-row">
+                    <div id="open-lobies">
+                        <h2>Open Lobbies</h2>
+                        <div id="lobies-list">
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Host</th>
+                                    <th>Type</th>
+                                    <th>Capacity</th>
+                                    <th>Mode</th>
+                                    <th>Map</th>
+                                    <th>Match Length</th>
+                                </tr>
+                                </tr>
+                                    <td>Bobbly Lobby</td>
+                                    <td>ndo-vale</td>
+                                    <td>Friendly</td>
+                                    <td>6/8</td>
+                                    <td>Classic</td>
+                                    <td>4-sided-teams</td>
+                                    <td>300</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="create-buttons" class="flex flex-col">
+                        <button type="button">Create Friendly Match</button>
+                        <button type="button">Create Ranked Match</button>
+                        <button type="button">Create Tournament</button>
+                    </div>
+                </div>
             </div>
         `;
     }, 
