@@ -2,6 +2,24 @@
 
 export const MatchCenterPage = {
     template() {
+        const lobbiesInfo = [{
+            name: "Blobby Lobby",
+            host: "ndo-vale",
+            type: "friendly",
+            capacity: "6/8",
+            mode: "Classic",
+            map: "4-sided-teams",
+            matchLength: 300
+        }]
+
+        let lobbiesHtml = "";
+        for (let lobbyInfo of lobbiesInfo) {
+            lobbiesHtml += "<tr>";
+            Object.values(lobbyInfo).forEach(item =>{
+                lobbiesHtml += `<td>${item}</td>`
+            })
+            lobbiesHtml += "</tr>";
+        }
         return `
             <div class="flex flex-col items-center justify-center bg-transparent backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-[40px] py-[30px]">
                 <h1>Match Center</h1>
@@ -19,15 +37,7 @@ export const MatchCenterPage = {
                                     <th>Map</th>
                                     <th>Match Length</th>
                                 </tr>
-                                </tr>
-                                    <td>Bobbly Lobby</td>
-                                    <td>ndo-vale</td>
-                                    <td>Friendly</td>
-                                    <td>6/8</td>
-                                    <td>Classic</td>
-                                    <td>4-sided-teams</td>
-                                    <td>300</td>
-                                </tr>
+                                ${lobbiesHtml}
                             </table>
                         </div>
                     </div>
