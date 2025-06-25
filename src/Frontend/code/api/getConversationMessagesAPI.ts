@@ -1,11 +1,12 @@
 import { authService } from "../services/authService";
 
 export interface Message {
-    id: number;
-    conversation_id: number;
-    from_user_id: number;
-    message_content: string | null;
-    metadata?: unknown;
+  id: number;
+  conversation_id: number;
+  from_user_id: number;
+  message_content: string | null;
+  unread: number;
+  metadata?: unknown;
 }
 
 /**
@@ -22,7 +23,7 @@ export interface Message {
  * @returns A promise that resolves to an array of messages when processed.
  * @throws {Error} If the authentication token is missing or the API request fails.
  */
-export async function getMessagesByConvID(convID: number) : Promise<Message[]> {
+export async function getMessagesByConvID(convID: number): Promise<Message[]> {
   try {
     if (!authService.authToken) {
       const errorMessage: string = `DEBUG: No authToken at getMessagesByConvID`;
@@ -44,7 +45,7 @@ export async function getMessagesByConvID(convID: number) : Promise<Message[]> {
       throw error;
     }
 
-    return await response.json() as Message[];
+    return (await response.json()) as Message[];
   } catch (error) {
     throw error;
   }
