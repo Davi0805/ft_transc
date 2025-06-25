@@ -46,7 +46,10 @@ export const MatchCenterPage = {
                 <h1 class="text-3xl p-3">Match Center</h1>
                 <div id="match-center-body" class="flex flex-col min-h-0 gap-4">
                     <div id="lobby-list" class="flex flex-col min-h-0 gap-4">
-                        <h2 class="text-2xl p-2">Lobby list</h2>
+                        <div class="flex flex-row justify-between">
+                            <h2 class="text-2xl p-2">Lobby list</h2>
+                            <button type="button" class="backdrop-brightness-60 p-2 rounded-4xl hover:backdrop-brightness-0 active:backdrop-brightness-80">Refresh</button>
+                        </div>
                         <div id="lobby-table" class="block max-w-full max-h-full overflow-y-auto overflow-x-auto">
                             <table class="w-full">
                                 <thead class="sticky top-0 z-1 backdrop-blur-xs">
