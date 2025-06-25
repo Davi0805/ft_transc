@@ -1,8 +1,10 @@
 import { authService } from "../services/authService";
 
-export async function rejectFriendRequest( friendRequestID: number): Promise<void> {
+export async function rejectFriendRequest(
+  friendRequestID: number
+): Promise<void> {
   try {
-    if (!authService.isAuthenticated) {
+    if (!authService.isUserAuthenticated()) {
       const errorMessage: string = `DEBUG: No authToken at rejectFriendRequest`;
       const error: Error = new Error(errorMessage);
       throw error;

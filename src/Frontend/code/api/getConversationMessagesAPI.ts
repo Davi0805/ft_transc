@@ -25,7 +25,7 @@ export interface Message {
  */
 export async function getMessagesByConvID(convID: number): Promise<Message[]> {
   try {
-    if (!authService.isAuthenticated) {
+    if (!authService.isUserAuthenticated()) {
       const errorMessage: string = `DEBUG: No authToken at getMessagesByConvID`;
       const error: Error = new Error(errorMessage);
       throw error;

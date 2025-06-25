@@ -22,7 +22,7 @@ export interface Conversation {
  */
 export async function getSelfConversations(): Promise<Conversation[]> {
   try {
-    if (!authService.isAuthenticated) {
+    if (!authService.isUserAuthenticated()) {
       const errorMessage: string = `DEBUG: No authToken at getSelfConversations`;
       const error: Error = new Error(errorMessage);
       throw error;

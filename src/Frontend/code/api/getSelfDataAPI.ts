@@ -20,7 +20,7 @@ export interface SelfData {
  */
 export async function getSelfData(): Promise<SelfData> {
   try {
-    if (!authService.isAuthenticated) {
+    if (!authService.isUserAuthenticated()) {
       const errorMessage: string = `DEBUG: No authToken at getSelfData`;
       const error: Error = new Error(errorMessage);
       throw error;
