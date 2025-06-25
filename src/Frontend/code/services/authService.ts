@@ -1,10 +1,20 @@
-import { header } from "../components/header.js";
-import { Chat } from "../components/sidebar.js";
-import { getSelfData } from "../api/getSelfDataAPI.js";
-import { getUserAvatarById } from "../api/getUserAvatarAPI.js";
-import { webSocketService } from "./webSocketService.js";
-import { chatWindowControler } from "../components/chatWindow.js";
+import { header } from "../components/header";
+import { Chat } from "../components/sidebar";
+import { SelfData, getSelfData } from "../api/getSelfDataAPI";
+import { getUserAvatarById } from "../api/getUserAvatarAPI";
+import { webSocketService } from "./webSocketService";
+import { chatWindowControler } from "../components/chatWindow";
+
 export class AuthService {
+  private protectedRoutes: string[];
+  private authToken: string | null;
+
+  public userID: number | null;
+  public userNick: string | null;
+  public userAvatar: string | null;
+  public isAuthenticated: boolean;
+  public sidebar: Chat | null;
+
   constructor() {
     this.protectedRoutes = ["/play", "/profile"];
     this.userID = null;
@@ -15,66 +25,74 @@ export class AuthService {
     this.sidebar = null;
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.authToken = localStorage.getItem("authToken");
     this.isAuthenticated = !!this.authToken;
     if (this.isAuthenticated) await this.getMyData();
+
     header.updateHeaderVisibility();
+
     if (this.isAuthenticated) this.sidebar = new Chat(this.userID);
+
+    return;
   }
 
-  async getMyData() {
+  async getMyData(): Promise<void> {
     try {
-      const userData = await getSelfData();
+      const userData: SelfData = await getSelfData();
       this.userID = userData.id;
       this.userNick = userData.nickname;
 
       this.userAvatar = await getUserAvatarById(this.userID);
-      if (!this.userAvatar) this.userAvatar = "./Assets/default/bobzao.jpg";
     } catch (error) {
       this.authToken = null;
-      this.authToken = localStorage.removeItem("authToken");
+      localStorage.removeItem("authToken");
       this.isAuthenticated = false;
     }
+
+    return;
   }
 
-  async login(token) {
+  async login(token: string): Promise<void> {
     this.authToken = token;
     this.isAuthenticated = true;
     localStorage.setItem("authToken", token);
     await this.getMyData();
     await header.updateHeaderVisibility();
     if (!this.sidebar) this.sidebar = new Chat(this.userID);
+
+    return;
   }
 
-  async logout() {
+  async logout(): Promise<void> {
     this.authToken = null;
     this.isAuthenticated = false;
     localStorage.removeItem("authToken");
     await header.updateHeaderVisibility();
-    this.sidebar.deleteSideBar();
-    webSocketService.disconnect();
     chatWindowControler.close();
-    
-    this.sidebar = null;
+    webSocketService.disconnect();
+    if (this.sidebar) {
+      this.sidebar.deleteSideBar();
+      this.sidebar = null;
+    }
   }
 
-  getToken() {
+  getToken(): string | null {
     return this.authToken;
   }
 
-  isUserAuthenticated() {
+  isUserAuthenticated(): boolean {
     return this.isAuthenticated;
   }
 
-  canAccessRoute(routePath) {
+  canAccessRoute(routePath: string): boolean {
     if (this.protectedRoutes.includes(routePath)) {
       return this.isAuthenticated;
     }
     return true;
   }
 
-  handleProtectedRoute(routePath) {
+  handleProtectedRoute(routePath: string): string {
     if (!this.canAccessRoute(routePath)) {
       sessionStorage.setItem("redirectAfterLogin", routePath);
       return "/login";
@@ -82,7 +100,7 @@ export class AuthService {
     return routePath;
   }
 
-  getRedirectAfterLogin() {
+  getRedirectAfterLogin(): string {
     const redirect = sessionStorage.getItem("redirectAfterLogin");
 
     if (redirect) {
