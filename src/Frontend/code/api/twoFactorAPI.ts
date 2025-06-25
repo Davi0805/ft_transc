@@ -1,4 +1,4 @@
-export async function verifyTwoFactorCode(token, code) {
+export async function verifyTwoFactorCode(token: string, code: string): Promise<void> {
   try {
     const response = await fetch("http://localhost:8080/twofa/auth", {
       method: "POST",
@@ -12,9 +12,10 @@ export async function verifyTwoFactorCode(token, code) {
     if (!response.ok) {
       const errorMessage = `2FA code failed with status ${response.status}`;
       const error = new Error(errorMessage);
-      error.status = response.status;
+      (error as any).status = response.status;
       throw error;
     }
+    return; // sucess
   } catch (error) {
     throw error;
   }
