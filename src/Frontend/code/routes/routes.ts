@@ -1,17 +1,24 @@
-import { HomePage } from '../pages/home.js'
-import { PlayPage } from '../pages/play.js'
-import { LoginPage } from '../pages/login/login.js'
-import { NotFoundPage } from '../pages/404.js'
-import { ProfilePage  } from '../pages/profile.js'
-import { RegisterPage } from '../pages/register.js'
-import { AboutUsPage } from '../pages/about.js'
-import { SettingsPage } from '../pages/settings/settings.js'
+import { HomePage } from '../pages/home'
+import { PlayPage } from '../pages/play'
+import { LoginPage } from '../pages/login/login'
+import { NotFoundPage } from '../pages/404'
+import { ProfilePage  } from '../pages/profile'
+import { RegisterPage } from '../pages/register'
+import { AboutUsPage } from '../pages/about'
+import { SettingsPage } from '../pages/settings/settings'
+
+export interface Route {
+    path: string;
+    title: string;
+    template: string;
+    script?: any;
+}
 
 
 //? template is the function that returns the base html
 //? script is the page-sepecific logic
 //? list of routes objects with the path, title, template and script
-export const routes = [
+export const routes: Array<Route> = [
     // Home
     {
         path: '/',
