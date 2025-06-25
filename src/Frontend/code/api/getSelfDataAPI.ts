@@ -38,10 +38,7 @@ export async function getSelfData(): Promise<SelfData> {
     }
 
     if (!response.ok) {
-      const errorMessage: string = `Fetch user failed with status ${
-        response.status
-      }
-                             and token ${localStorage.getItem("authToken")}`;
+      const errorMessage: string = `Fetch user failed with status ${response.status}`;
       const error: Error = new Error(errorMessage);
       (error as any).status = response.status;
       throw error;
