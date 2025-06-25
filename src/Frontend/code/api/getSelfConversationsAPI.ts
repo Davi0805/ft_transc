@@ -22,16 +22,21 @@ export interface Conversation {
  */
 export async function getSelfConversations(): Promise<Conversation[]> {
   try {
+    if (!authService.isAuthenticated) {
+      const errorMessage: string = `DEBUG: No authToken at getSelfConversations`;
+      const error: Error = new Error(errorMessage);
+      throw error;
+    }
     const response = await fetch("http://localhost:8081/conversations", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${authService.authToken}`,
+        Authorization: `Bearer ${authService.getToken()}`,
       },
     });
 
     if (!response.ok) {
-      const errorMessage = `DEBUG: getSelfConversations failed with status ${response.status}`;
-      const error = new Error(errorMessage);
+      const errorMessage: string = `DEBUG: getSelfConversations failed with status ${response.status}`;
+      const error: Error = new Error(errorMessage);
       (error as any).status = response.status;
       throw error;
     }

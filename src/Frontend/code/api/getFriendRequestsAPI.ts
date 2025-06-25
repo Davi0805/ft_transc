@@ -22,7 +22,7 @@ export interface FriendRequest {
  */
 export async function getFriendRequests(): Promise<FriendRequest[]> {
   try {
-    if (!authService.authToken) {
+    if (!authService.isAuthenticated) {
       const errorMessage: string = `DEBUG: No authToken at getFriendRequests`;
       const error: Error = new Error(errorMessage);
       throw error;
@@ -31,7 +31,7 @@ export async function getFriendRequests(): Promise<FriendRequest[]> {
     const response = await fetch(`http://localhost:8080/friend_requests/pending`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${authService.authToken}`,
+          Authorization: `Bearer ${authService.getToken()}`,
         },
       }
     );

@@ -25,7 +25,7 @@ export interface Message {
  */
 export async function getMessagesByConvID(convID: number): Promise<Message[]> {
   try {
-    if (!authService.authToken) {
+    if (!authService.isAuthenticated) {
       const errorMessage: string = `DEBUG: No authToken at getMessagesByConvID`;
       const error: Error = new Error(errorMessage);
       throw error;
@@ -34,7 +34,7 @@ export async function getMessagesByConvID(convID: number): Promise<Message[]> {
     const response = await fetch(`http://localhost:8081/messages/${convID}`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${authService.authToken}`,
+        Authorization: `Bearer ${authService.getToken()}`,
       },
     });
 

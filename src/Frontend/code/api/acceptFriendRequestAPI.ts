@@ -16,7 +16,7 @@ import { authService } from "../services/authService";
  */
 export async function acceptFriendRequest(reqID: number): Promise<void> {
   try {
-    if (!authService.authToken) {
+    if (!authService.isAuthenticated) {
       const errorMessage: string = `DEBUG: No authToken at acceptFriendRequest`;
       const error: Error = new Error(errorMessage);
       throw error;
@@ -27,7 +27,7 @@ export async function acceptFriendRequest(reqID: number): Promise<void> {
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${authService.authToken}`,
+          Authorization: `Bearer ${authService.getToken()}`,
         },
       }
     );
