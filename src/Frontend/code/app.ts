@@ -1,9 +1,7 @@
-import { Router } from "./routes/router.js";
-import { Route, routes } from "./routes/routes";
-import { authService } from "./services/authService.js";
+import { router } from "./routes/router";
+import { authService } from "./services/authService";
+import { header } from "./components/header"
 
 document.addEventListener('DOMContentLoaded', async () => {
-
     await authService.init();
-    const router: Router = new Router(routes);
 });
