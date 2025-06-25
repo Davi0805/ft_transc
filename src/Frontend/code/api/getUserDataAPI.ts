@@ -23,7 +23,7 @@ export async function getUserDataById(userID: number): Promise<UserData> {
     });
 
     if (!response.ok) {
-      const errorMessage: string = `DEBUG: getUserByID failed with status ${response.status}`;
+      const errorMessage: string = `DEBUG: getUserDataById failed with status ${response.status}`;
       const error: Error = new Error(errorMessage);
       (error as any).status = response.status;
       throw error;
