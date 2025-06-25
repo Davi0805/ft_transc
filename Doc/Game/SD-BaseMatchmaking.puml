@@ -1,0 +1,57 @@
+@startuml
+actor UsuarioA
+actor UsuarioB
+participant "Game Service" as GameService
+participant "Redis" as Redis
+participant "Chat Service" as ChatService
+participant "Banco de Dados" as DB
+
+
+note left of UsuarioA: Create Lobby Case
+UsuarioA -> GameService: Create lobby (section 5 figma)
+GameService <--> Redis: Save LobbyData - TTL 1 Minute
+GameService -> UsuarioA :Return match_id
+UsuarioA -> GameService :Handshake Ws lobby/match - params(match_id)
+GameService <--> Redis:Remove TTL
+UsuarioA -> UsuarioA : Refresh frontend to lobby component
+
+
+note left of UsuarioA: Update Lobby Case
+UsuarioA -> GameService: Update LobbyData
+GameService <--> Redis: Update LobbyData
+GameService -> UsuarioA :Return new lobby data
+GameService -> UsuarioB :Return new lobby data
+UsuarioA -> UsuarioA : Refresh local data
+
+
+note left of UsuarioA: Invite Friend Case
+UsuarioA -> GameService :Invite friend websocket event - params (user_id)
+GameService <--> Redis :this user is friend?
+GameService <--> Redis :this match still valid?
+GameService --> Redis :Publish Stream - params (match_id, user_id)
+Redis --> ChatService:Consume Stream - params (match_id, user_id)
+ChatService -> UsuarioB :receive match_id on live chat
+UsuarioB -> GameService :Handshake lobby/match - params(match_id)
+GameService <--> Redis :is this lobby full?
+GameService <--> Redis :Update lobby state
+GameService -> UsuarioB:successful lobby join
+
+
+note left of UsuarioA: Start Game Case
+UsuarioA -> GameService :Update ready state to True
+GameService <--> Redis : Is he the last user to set Ready state? - NO
+GameService <--> Redis :Update user state in match data
+UsuarioB -> GameService :Update ready state to True
+GameService <--> Redis : Is he the last user to set Ready state? - YES
+GameService <--> Redis :Update user state in match data
+GameService -> UsuarioA :Notify match is starting in 15 seconds
+GameService -> UsuarioB :Notify match is starting in 15 seconds
+GameService --> GameService :Start delay of 15 seconds
+
+note left of UsuarioA: End game Case
+GameService -> UsuarioA : Disconnect WebSocket
+GameService -> UsuarioB : Disconnect WebSocket
+GameService <--> DB : Save match
+GameService <--> Redis: Delete lobby data
+
+@enduml
