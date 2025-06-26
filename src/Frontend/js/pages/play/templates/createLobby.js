@@ -46,7 +46,7 @@ export const CreateLobbyPage = {
                     </div>
                     <div id="create-lobby-form-buttons" class="flex flex-row gap-6">
                         <button id="btn-return" type="button" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Return</button>
-                        <button id="btn-submit" type="submit" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Create Lobby</button>
+                        <button type="submit" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Create Lobby</button>
                     </div>
                 </form>
             </div>

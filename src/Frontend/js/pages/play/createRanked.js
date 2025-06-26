@@ -11,6 +11,14 @@ export const CreateRankedPage = {
 
         const buttonReturn = document.getElementById('btn-return');
         buttonReturn.addEventListener('click', () => window.router.navigateTo('/play'))
+        
+        const form = document.getElementById('lobby-creation-form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            //TODO put here the logic to create the lobby in the backend
+            window.router.navigateTo('/lobby-ranked')
+        })
+        
         console.log('Create Ranked page loaded!')
-    }
+    },
 }

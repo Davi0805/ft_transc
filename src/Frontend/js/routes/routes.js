@@ -9,7 +9,9 @@ import { SettingsPage } from '../pages/settings/settings.js'
 import { CreateFriendlyPage } from '../pages/play/createFriendly.js'
 import { CreateRankedPage } from '../pages/play/createRanked.js'
 import { CreateTournamentPage } from '../pages/play/createTournament.js'
-
+import { LobbyFriendlyPage } from '../pages/play/lobbyFriendly.js'
+import { LobbyRankedPage } from '../pages/play/lobbyRanked.js'
+import { LobbyTournamentPage } from '../pages/play/lobbyTournament.js'
 
 //? template is the function that returns the base html
 //? script is the page-sepecific logic
@@ -92,7 +94,27 @@ export const routes = [
         title: 'Create Tournament',
         template: CreateTournamentPage.template,
         script: CreateTournamentPage
+    },
+    // Lobby for friendly match
+    {
+        path: '/lobby-friendly',
+        title: 'Friendly Match Lobby',
+        template: LobbyFriendlyPage.template,
+        script: LobbyFriendlyPage
+    },
+    // Lobby for ranked match
+    {
+        path: '/lobby-ranked',
+        title: 'Ranked Match Lobby',
+        template: LobbyRankedPage.template,
+        script: LobbyRankedPage
+    },
+    // Lobby for tournament
+    {
+        path: '/lobby-tournament',
+        title: 'Tournament Lobby',
+        template: LobbyTournamentPage.template,
+        script: LobbyTournamentPage
     }
-
     //? additional pages would be put here
 ];
