@@ -11,4 +11,4 @@ export const HomePage = {
     init() {
         console.log("Home page loaded!")
     }
-};
+} as const;
