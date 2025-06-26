@@ -11,5 +11,5 @@ export const NotFoundPage = {
     init () {
         console.log('404 page loaded!');
     }
-};
+} as const;
 
