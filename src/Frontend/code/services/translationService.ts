@@ -40,17 +40,22 @@ class translationService {
 
     const placeholders = document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("[data-i18n-placeholder]");
     placeholders.forEach((element) => {
-      const key = element.getAttribute("data-i18n-placeholder") as keyof LanguageStrings;
+      const key = element.getAttribute(
+        "data-i18n-placeholder"
+      ) as keyof LanguageStrings;
       if (key && this.translations[this.currentLang][key])
         element.placeholder = this.get(key);
     });
 
     //todo fix
-    const inputTitles = document.querySelectorAll<HTMLElement>("[data-i18n-title]");
+    const inputTitles =
+      document.querySelectorAll<HTMLElement>("[data-i18n-title]");
     inputTitles.forEach((element) => {
-      const key = element.getAttribute("data-i18n-title") as keyof LanguageStrings;
+      const key = element.getAttribute(
+        "data-i18n-title"
+      ) as keyof LanguageStrings;
       if (key && this.translations[this.currentLang][key])
-         element.title = this.get(key);
+        element.title = this.get(key);
     });
   }
 }
