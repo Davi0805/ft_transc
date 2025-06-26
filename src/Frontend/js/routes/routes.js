@@ -1,11 +1,14 @@
 import { HomePage } from '../pages/home.js'
-import { MatchCenterPage } from '../pages/matchCenter.js'
+import { PlayPage } from '../pages/play/play.js'
 import { LoginPage } from '../pages/login/login.js'
 import { NotFoundPage } from '../pages/404.js'
 import { ProfilePage  } from '../pages/profile.js'
 import { RegisterPage } from '../pages/register.js'
 import { AboutUsPage } from '../pages/about.js'
 import { SettingsPage } from '../pages/settings/settings.js'
+import { CreateFriendlyPage } from '../pages/play/createFriendly.js'
+import { CreateRankedPage } from '../pages/play/createRanked.js'
+import { CreateTournamentPage } from '../pages/play/createTournament.js'
 
 
 //? template is the function that returns the base html
@@ -28,10 +31,10 @@ export const routes = [
     },
     // Match center
     {
-        path: '/match-center',
-        title: 'Match Center',
-        template: MatchCenterPage.template,
-        script: MatchCenterPage
+        path: '/play',
+        title: 'Play',
+        template: PlayPage.template,
+        script: PlayPage
     },
     // Login
     {
@@ -61,12 +64,35 @@ export const routes = [
         template: ProfilePage.template,
         script: ProfilePage
     },   
-    // Not Foumd
+    // Not Found
     {
         path: '/404',
         title: 'Not Found',
         template: NotFoundPage.template,
         script: NotFoundPage
+    },
+    // ROUTES INSIDE PLAY LOGIC
+    // Create friendly match lobby
+    {
+        path: '/create-friendly',
+        title: 'Create Friendly Match',
+        template: CreateFriendlyPage.template,
+        script: CreateFriendlyPage
+    },
+    // Create ranked match lobby
+    {
+        path: '/create-ranked',
+        title: 'Create Ranked Match',
+        template: CreateRankedPage.template,
+        script: CreateRankedPage
+    },
+    // Create Tournament lobby
+    {
+        path: '/create-tournament',
+        title: 'Create Tournament',
+        template: CreateTournamentPage.template,
+        script: CreateTournamentPage
     }
+
     //? additional pages would be put here
 ];

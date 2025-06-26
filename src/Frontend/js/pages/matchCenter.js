@@ -27,7 +27,7 @@ export const MatchCenterPage = {
 
         return `
             <div class="flex flex-col items-center justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 overflow-hidden">
-                <h1 class="text-3xl p-3">${lobbySettings.name}</h1>
+                <h1 id="lobby-title" class="text-3xl p-3">${lobbySettings.name}</h1>
                 <div id="lobby-body" class="flex flex-row">
                     <div id="teams" class="flex flex-col">
                         ${matchPositionsHtml}
