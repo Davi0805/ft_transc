@@ -1,10 +1,11 @@
-import { togglePasswordVisibility } from "../../utils/domUtils.js";
-import { TwoFactorAuth } from "./twoFactorAuth.js";
-import { login } from "../../api/loginAPI.js";
-import { authService } from "../../services/authService.js";
+import { togglePasswordVisibility } from "../../utils/domUtils";
+import { TwoFactorAuth } from "./twoFactorAuth";
+import { login, LoginState } from "../../api/loginAPI";
+import { authService } from "../../services/authService";
+import { router } from "../../routes/router";
 
 export const LoginPage = {
-  template() {
+  template(): string {
     return `
       <div id="log-wrapper" class="loggin-wrapper">
       <div class = content>
@@ -35,48 +36,46 @@ export const LoginPage = {
         `;
   },
 
-  init() {
-    console.log("Login Page loaded!");
+  init(): void {
+    console.log("DEUBG: Login Page loaded!");
 
     togglePasswordVisibility();
 
-    const form = document.getElementById("login-form");
+    const form = document.getElementById("login-form") as HTMLFormElement;
     form.addEventListener("submit", this.handleSubmit);
   },
 
-  async handleSubmit(e) {
+  async handleSubmit(e: Event) {
     e.preventDefault(); // prevent default browser action
 
     // Input
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    const userData = { username, password };
+    const username = (document.getElementById("username") as HTMLInputElement)
+      .value;
+    const password = (document.getElementById("password") as HTMLInputElement)
+      .value;
 
     try {
-      const response = await login(userData);
-
-      const token = response.token;
+      const response: LoginState = await login({ username, password });
 
       if (!response.verified) {
-        await TwoFactorAuth.show(token); // error checking for this inside
+        await TwoFactorAuth.show(response.token); // error checking for this inside
         return;
       }
 
-      authService.login(token);
+      authService.login(response.token);
       const redirectPath = authService.getRedirectAfterLogin();
-      window.router.navigateTo(redirectPath);
-
+      router.navigateTo(redirectPath);
     } catch (error) {
-      if (error.status == 401) {
-        const loginError = document.getElementById('login-error');
-        loginError.textContent = "Username or password incorrect!"
+      if ((error as any).status == 401) {
+        const loginError = document.getElementById("login-error") as HTMLElement;
+        loginError.textContent = "Username or password incorrect!";
         loginError.hidden = false;
         console.error("DEBUG Pass ou user wrong");
       } else {
-        console.error(error.message);
+        console.error((error as any)?.message);
         console.error("DEBUG FODEU GERAL");
-      } 
+      }
     }
     return;
-  },
-};
+  }
+} as const;
