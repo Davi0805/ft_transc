@@ -140,4 +140,8 @@ export const languages = {
         
         // PLAY
     }
-} 
+} as const;
+
+export type LanguageCode = 'uk' | 'pt' | 'es';
+export type LanguageStrings = typeof languages['uk'];
+export type Languages = typeof languages;
