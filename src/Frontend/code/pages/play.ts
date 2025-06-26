@@ -14,4 +14,4 @@ export const PlayPage = {
     init () {
         console.log('Play page loaded!');
     }
-};
+} as const;
