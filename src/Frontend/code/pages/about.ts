@@ -11,4 +11,4 @@ export const AboutUsPage = {
     init() {
         console.log("About Us page loaded!")
     }
-};
+} as const;
