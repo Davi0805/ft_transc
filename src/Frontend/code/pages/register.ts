@@ -1,9 +1,10 @@
-import { togglePasswordVisibility } from "../utils/domUtils.js";
-import { register } from "../api/registerAPI.js"
-import { translator } from "../services/translationService.js";
+import { togglePasswordVisibility } from "../utils/domUtils";
+import { RegisterCredentials, register } from "../api/registerAPI";
+import { translator } from "../services/translationService";
+import { router } from "../routes/router";
 
 export const RegisterPage = {
-  template() {
+  template(): string {
     return `
     <div id="register-wrapper" class="content">
       <form id="register-form">
@@ -58,9 +59,11 @@ export const RegisterPage = {
       `;
   },
 
-  renderSuccessHTML() {
-    const wrapper = document.getElementById('register-wrapper');
-    wrapper.innerHTML =  `
+  renderSuccessHTML(): void {
+    const wrapper: HTMLElement | null =
+      document.getElementById("register-wrapper");
+    if (!wrapper) return;
+    wrapper.innerHTML = `
       <div class="registration-success">
         <h1 class="title" data-i18n="register-success-title">Success!</h1>
         <p class="description" data-i18n="register-success-description">Congratulations, your account has been successfully created.</p>
@@ -70,33 +73,46 @@ export const RegisterPage = {
         </div>
       </div>
     `;
+
     translator.apply();
-    const buttonHome = document.getElementById('btn-home');
-    const buttonLogin = document.getElementById('btn-login');
-    buttonHome.addEventListener('click', () => window.router.navigateTo('/'));
-    buttonLogin.addEventListener('click', () => window.router.navigateTo('/login'));
+    const buttonHome = document.getElementById("btn-home") as HTMLButtonElement;
+    const buttonLogin = document.getElementById(
+      "btn-login"
+    ) as HTMLButtonElement;
+    buttonHome.addEventListener("click", () => router.navigateTo("/"));
+    buttonLogin.addEventListener("click", () => router.navigateTo("/login"));
   },
 
-  init() {
-    console.log("Register page loaded!");
+  init(): void {
+    console.log("DEUBG: Register page loaded!");
 
     togglePasswordVisibility();
 
-    const form = document.getElementById('register-form');
+    const form = document.getElementById("register-form") as HTMLFormElement;
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // prevent default browser action
-
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault(); // prevent default browser action (Refresh)
 
       // Input
-      const name = document.getElementById('name').value;
-      const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-      const passError = document.querySelector('.error[data-i18n="register-pass-error"]');
-      const takenError = document.querySelector('.error[data-i18n="register-taken-error"]');
-      
+      const name: string = (document.getElementById("name") as HTMLInputElement)
+        ?.value;
+      const username = (document.getElementById("username") as HTMLInputElement)
+        .value;
+      const email = (document.getElementById("email") as HTMLInputElement)
+        .value;
+      const password = (document.getElementById("password") as HTMLInputElement)
+        .value;
+      const confirmPassword = (
+        document.getElementById("confirm-password") as HTMLInputElement
+      ).value;
+
+      const passError = document.querySelector(
+        '.error[data-i18n="register-pass-error"]'
+      ) as HTMLElement;
+      const takenError = document.querySelector(
+        '.error[data-i18n="register-taken-error"]'
+      ) as HTMLElement;
+
       passError.hidden = true;
       takenError.hidden = true;
 
@@ -108,15 +124,15 @@ export const RegisterPage = {
       }
 
       try {
-        await register (name, username, email, password);
+        await register({ name, username, email, password });
         this.renderSuccessHTML();
         return;
       } catch (error) {
-        if (error.status == 400) {
+        if ((error as any).status == 400) {
           takenError.textContent = translator.get("register-taken-error");
           takenError.hidden = false;
         }
       }
     });
-  }
-};
+  },
+} as const;
