@@ -52,9 +52,9 @@ class Router {
 
     // Find matching route or fallback to 404 not found
     // find returns undified (evaluates as false) if cant find anything
-    const route: Route =
+    const route: Route | null =
       this.routes.find((r: Route) => r.path === path) ||
-      this.routes.find((r: Route) => r.path === "/404");
+      this.routes.find((r: Route) => r.path === "/404") || null;
 
     if (route) {
       header.updateActiveUnderline(path);

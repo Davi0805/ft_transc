@@ -10,10 +10,9 @@ import { SettingsPage } from '../pages/settings/settings'
 export interface Route {
     path: string;
     title: string;
-    template: string;
+    template: any;
     script?: any;
 }
-
 
 //? template is the function that returns the base html
 //? script is the page-sepecific logic
