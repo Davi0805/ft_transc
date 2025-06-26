@@ -11,4 +11,4 @@ export const SettingsPage = {
     init() {
         console.log("Settings page loaded!")
     }
-};
+} as const;
