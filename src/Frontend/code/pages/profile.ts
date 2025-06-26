@@ -11,4 +11,4 @@ export const ProfilePage = {
   init() {
     console.log("Profile page loaded!");
   },
-};
+} as const;
