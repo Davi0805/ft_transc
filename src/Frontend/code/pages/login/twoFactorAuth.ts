@@ -1,9 +1,10 @@
-import { verifyTwoFactorCode } from "../../api/twoFactorAPI.js";
-import { authService } from "../../services/authService.js";
-import { translator } from "../../services/translationService.js"
+import { verifyTwoFactorCode } from "../../api/twoFactorAPI";
+import { authService } from "../../services/authService";
+import { translator } from "../../services/translationService"
+import { router } from "../../routes/router";
 
 export const TwoFactorAuth = {
-  renderHTML() {
+  renderHTML(): string {
     return `
       <div id="twofa-wrapper" class="twofa-wrapper">
       <div class = content>
@@ -27,12 +28,13 @@ export const TwoFactorAuth = {
     `;
   },
 
-  async show(token) {
+  async show(token: string): Promise<void> {
     const container = document.getElementById("log-wrapper");
+    if (!container) return;
     container.innerHTML = this.renderHTML();
     translator.apply();
     
-    const inputs = document.querySelectorAll('.otp-input');
+    const inputs = document.querySelectorAll<HTMLInputElement>('.otp-input');
 
     inputs.forEach((input, idx) => {
       input.addEventListener('input', () => {
@@ -47,7 +49,7 @@ export const TwoFactorAuth = {
       })
     });
 
-    const twofaForm = document.getElementById("twofa-form");
+    const twofaForm = document.getElementById("twofa-form") as HTMLFormElement;
     twofaForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -58,10 +60,10 @@ export const TwoFactorAuth = {
         authService.login(token);
         
         const redirectPath = authService.getRedirectAfterLogin();
-        window.router.navigateTo(redirectPath);
+        router.navigateTo(redirectPath);
       } catch (error) {
-        if (error.status == 401) {
-          const loginError = document.getElementById('2facode-error');
+        if ((error as any).status == 401) {
+          const loginError = document.getElementById('2facode-error') as HTMLElement;
           loginError.textContent = "Verification code is incorrect!"
           loginError.hidden = false;
           console.error("DEBUG 2FA code wrong");
@@ -69,5 +71,5 @@ export const TwoFactorAuth = {
       }
     });
     return;
-  },
-};
+  }
+} as const;
