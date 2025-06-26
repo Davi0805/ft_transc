@@ -1,11 +1,11 @@
 export interface LoginState {
-  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE3NTA4NjU3MjQsImV4cCI6MTc1MDg2OTMyNH0.mP9mLPgXCw3PIoeo7cRfJBsNahJYuppGsBpB8o7GIHQ";
-  verified: true;
+  token: string;
+  verified: boolean;
 }
 
 export interface LoginCredentials {
-  username: string | null;
-  password: string | null;
+  username: string;
+  password: string;
 }
 
 /**
