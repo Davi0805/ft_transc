@@ -8,9 +8,6 @@ export const LobbyMatchPage = {
                     </div>
                     <div id="lobby-settings-and-buttons" class="flex flex-col">
                         <div id="lobby-settings">
-                            <div id="settings-listing">
-                            </div>
-                            <button type="button" class="bg-gray-900/50 bg-opacity-60 p-2 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Change lobby settings</button>
                         </div>
                         <div id="lobby-buttons" class="flex flex-col">
                             <button type="button" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Invite</button>
