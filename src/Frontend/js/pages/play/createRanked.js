@@ -1,4 +1,5 @@
 import { CreateLobbyPage } from "./templates/createLobby.js";
+import { getLobbyOptionsHTML } from "./utils/concreteComponents.js";
 
 export const CreateRankedPage = {
     template() {
@@ -9,6 +10,9 @@ export const CreateRankedPage = {
         
         const title = document.getElementById('create-lobby-title');
         title.textContent = "New Ranked Match"
+
+        const lobbyOptions = document.getElementById('lobby-options');
+        lobbyOptions.innerHTML += getLobbyOptionsHTML(true, "ranked");
 
         const buttonReturn = document.getElementById('btn-return');
         buttonReturn.addEventListener('click', () => window.router.navigateTo('/play'))

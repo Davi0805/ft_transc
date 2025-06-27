@@ -86,7 +86,6 @@ export const LobbyFriendlyPage = {
     renderSettings() {
         const lobbySettingsElement = document.getElementById('lobby-settings');
         const lobbySettingsListing = {
-            type: "Friendly Match",
             name: "Some lobby",
             map: "1v1-medium",
             mode: "modern",
@@ -95,7 +94,7 @@ export const LobbyFriendlyPage = {
 
         let lobbySettingsHtml = `
             <div id="settings-listing" class="flex flex-col">
-                ${getLobbyOptionsHTML(false, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(false, "friendly", lobbySettingsListing)}
                 ${getButtonHTML("btn-change-settings", "button", "Change lobby settings")}
             </div>
         `;
@@ -107,7 +106,7 @@ export const LobbyFriendlyPage = {
 
     renderChangeSettings(lobbySettingsListing) {
         const lobbySettingsElement = document.getElementById('lobby-settings');
-        let settingsListingHtml = getLobbyOptionsHTML(true, lobbySettingsListing);
+        //let settingsListingHtml = getLobbyOptionsHTML(true, lobbySettingsListing);
         /* for (let setting in lobbySettingsListing) {
 
             settingsListingHtml += `
@@ -118,7 +117,7 @@ export const LobbyFriendlyPage = {
         } */
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col">
-                ${getLobbyOptionsHTML(true, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(true, "friendly", lobbySettingsListing)}
                 ${getButtonHTML("apply-lobby-settings", "submit", "Apply")}
             </div>
         `;

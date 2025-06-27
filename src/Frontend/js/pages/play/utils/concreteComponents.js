@@ -1,6 +1,6 @@
-export function getLobbyOptionsHTML(editable, {
-    type, name, map, mode, length
-} = {type: "", name: "", map: "", mode: "", length: ""}) {
+export function getLobbyOptionsHTML(editable, type, {
+    name, map, mode, length
+} = {name: "", map: "", mode: "", length: ""}) {
     let tagType = "";
     let mapOptionsHtml = "";
     let modeOptionsHtml = ""
@@ -8,20 +8,33 @@ export function getLobbyOptionsHTML(editable, {
 
     if (editable) {
         tagType = "select"
-        const mapOptions = [
-            "1v1-small",
-            "1v1-medium",
-            "1v1-big",
-            "1v1v1v1-small",
-            "1v1v1v1-medium",
-            "1v1v1v1-big",
-            "2v2-small",
-            "2v2-medium",
-            "2v2-big",
-            "2v2v2v2-small",
-            "2v2v2v2-medium",
-            "2v2v2v2-big"
-        ]
+        const mapOptions = []
+        switch (type) {
+            case "friendly": {
+                mapOptions.push(...[
+                    "2v2-small",
+                    "2v2-medium",
+                    "2v2-big",
+                    "2v2v2v2-small",
+                    "2v2v2v2-medium",
+                    "2v2v2v2-big"
+                ])
+            } case "ranked": {
+                mapOptions.push(...[
+                    "1v1v1v1-small",
+                    "1v1v1v1-medium",
+                    "1v1v1v1-big"
+                ])
+            } case "tournament": {
+                mapOptions.push(...[
+                    "1v1-small",
+                    "1v1-medium",
+                    "1v1-big"
+                ])
+                break ; //TODO: How to put them in order?
+            } 
+            default: { throw new Error("GAVE SHIT") }
+        } 
         
         for (let option of mapOptions) {
             mapOptionsHtml += `<option value="${option}" ${map === option ? "selected" : ""}>${option}</option>`;
