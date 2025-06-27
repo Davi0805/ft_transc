@@ -1,3 +1,5 @@
+import { getButtonHTML } from "../utils/stylingComponents.js";
+
 export const LobbyMatchPage = {
     template() {
         return `
@@ -10,9 +12,9 @@ export const LobbyMatchPage = {
                         <div id="lobby-settings">
                         </div>
                         <div id="lobby-buttons" class="flex flex-col">
-                            <button type="button" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Invite</button>
-                            <button type="button" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Leave</button>
-                            <button type="button" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Ready</button>
+                            ${getButtonHTML("btn-invite", "button", "Invite")}
+                            ${getButtonHTML("btn-leave", "button", "Leave")}
+                            ${getButtonHTML("btn-ready", "button", "Ready")}
                         </div>
                     </div>
                 </div>

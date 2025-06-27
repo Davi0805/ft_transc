@@ -6,6 +6,7 @@ export const CreateRankedPage = {
     },
 
     init() {
+        
         const title = document.getElementById('create-lobby-title');
         title.textContent = "New Ranked Match"
 

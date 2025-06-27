@@ -1,4 +1,6 @@
 import { LobbyMatchPage } from "./templates/lobbyMatch.js"
+import { getLobbyOptionsHTML } from "./utils/concreteComponents.js";
+import { getButtonHTML } from "./utils/stylingComponents.js";
 
 /* export enum SLOT_TYPES = {
     EMPTY = -2,
@@ -86,54 +88,38 @@ export const LobbyFriendlyPage = {
         const lobbySettingsListing = {
             type: "Friendly Match",
             name: "Some lobby",
-            map: "1v1 medium",
+            map: "1v1-medium",
             mode: "modern",
             length: "marathon"
         } //TODO: Get Lobby Settings from db
 
-        let settingsListingHtml = ""
-        for (let setting in lobbySettingsListing) {
-            settingsListingHtml += `
-                <div class="flex flex-row">
-                    <p>${setting}</p><p>${lobbySettingsListing[setting]}</p>
-                </div>
-            `
-        }
         let lobbySettingsHtml = `
             <div id="settings-listing" class="flex flex-col">
-                ${settingsListingHtml}
-                <button id="btn-change-settings" type="button" class="bg-gray-900/50 bg-opacity-60 p-2 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Change lobby settings</button>
+                ${getLobbyOptionsHTML(false, lobbySettingsListing)}
+                ${getButtonHTML("btn-change-settings", "button", "Change lobby settings")}
             </div>
         `;
         lobbySettingsElement.innerHTML = lobbySettingsHtml;
 
         const buttonChangeSettings = document.getElementById('btn-change-settings');
-        buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings())
+        buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
     },
 
-    renderChangeSettings() {
+    renderChangeSettings(lobbySettingsListing) {
         const lobbySettingsElement = document.getElementById('lobby-settings');
-        const lobbySettingsListing = {
-            type: "Friendly Match",
-            name: "Some lobby",
-            map: "1v1 medium",
-            mode: "modern",
-            length: "marathon"
-        } //TODO: Get Lobby Settings from db
-
-        let settingsListingHtml = ""
-        for (let setting in lobbySettingsListing) {
+        let settingsListingHtml = getLobbyOptionsHTML(true, lobbySettingsListing);
+        /* for (let setting in lobbySettingsListing) {
 
             settingsListingHtml += `
                 <div class="flex flex-row">
                     <p>${setting}</p><input type="text" name="${setting}" value="${lobbySettingsListing[setting]}" ${setting === "type" ? "readonly" : "required"}></input>
                 </div>
             `
-        }
+        } */
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col">
-                ${settingsListingHtml}
-                <button id="btn-change-settings" type="submit" class="bg-gray-900/50 bg-opacity-60 p-2 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Apply</button>
+                ${getLobbyOptionsHTML(true, lobbySettingsListing)}
+                ${getButtonHTML("apply-lobby-settings", "submit", "Apply")}
             </div>
         `;
         lobbySettingsElement.innerHTML = lobbySettingsHtml;
@@ -142,6 +128,7 @@ export const LobbyFriendlyPage = {
         formChangeSettings.addEventListener('submit', async (e) => {
             e.preventDefault();
             //TODO: Update the database here with new lobby settings
+            console.log("New settings applied!")
             this.renderSettings()
         })
     },
