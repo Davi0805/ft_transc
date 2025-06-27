@@ -42,24 +42,19 @@ export const LobbyFriendlyPage = {
         } //TODO: This has to be a function that returns this object
 
         const teamsElement = document.getElementById('slots');
-        //let slotsHtml = "";
         teamsElement.innerHTML = ""; //Clean current content
         for (const [team, roles] of Object.entries(slots)) {
-            //slotsHtml += `<div class="flex flex-col">`;
             const teamElement = document.createElement("div");
             teamElement.className = "flex flex-col";
 
-            //slotsHtml += `<h3>${team}</h3>`
             const teamNameElement = document.createElement("h3");
             teamNameElement.textContent = team;
             teamElement.appendChild(teamNameElement);
             
             for (const [role, player] of Object.entries(roles)) {
-                //slotsHtml += `<div class="flex flex-row>"`
                 const slotElement = document.createElement("div");
                 slotElement.className = "flex flex-row";
 
-                //slotsHtml += `<p>front</p>`
                 const roleNameElement = document.createElement("p");
                 roleNameElement.textContent = role;
                 slotElement.appendChild(roleNameElement)
@@ -84,37 +79,6 @@ export const LobbyFriendlyPage = {
             }
             teamsElement.appendChild(teamElement);
         }
-
-
-            /* if (roles.front !== -3) {
-                //slotsHtml += `<div class="flex flex-row>"`
-                const slotElement = document.createElement("div");
-                slotElement.className = "flex flex-row";
-
-                //slotsHtml += `<p>front</p>`
-                
-                if (roles.back === -2) {
-                    slotsHtml += `<button type="button">Join</button>`
-                } else {
-                    slotsHtml += `<p>${roles.front}</p>` //TODO: Get info of player with this userid instead
-                }
-                slotsHtml += `</div>`
-            }
-            if (roles.back !== -3) {
-                slotsHtml += `<div class="flex flex-row>"`
-                slotsHtml += `<p>back</p>`
-                if (roles.back === -2) {
-                    slotsHtml += `<button type="button">Join</button>`
-                } else {
-                    slotsHtml += `<p>${roles.back}</p>` //TODO: Get info of player with this userid instead
-                }
-                slotsHtml += `</div>`
-            }
-            teamsElement.appendChild(teamElement);
-            //slotsHtml += `</div>`;
-        }
-
-        teamsElement.innerHTML = slotsHtml; */
     },
 
     renderSettings() {
