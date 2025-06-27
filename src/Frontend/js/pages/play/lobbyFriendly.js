@@ -1,7 +1,6 @@
 import { LobbyMatchPage } from "./templates/lobbyMatch.js"
 
 /* export enum SLOT_TYPES = {
-    INEXISTENT = -3,
     EMPTY = -2,
     BOT = -1
 } */
@@ -27,31 +26,73 @@ export const LobbyFriendlyPage = {
         // TODO: change to enum values once typescript is applied
         const slots = {
             LEFT: {
-                front: -3,
                 back: 123
             },
             RIGHT: {
-                front: -3,
+                front: -2,
                 back: -2
             },
             TOP: {
-                front: -3,
-                back: -2
+                front: -1,
             },
             BOTTOM: {
-                front: -3,
+                front: 321,
                 back: -2
             },
         } //TODO: This has to be a function that returns this object
 
         const teamsElement = document.getElementById('slots');
-        let slotsHtml = "";
+        //let slotsHtml = "";
+        teamsElement.innerHTML = ""; //Clean current content
         for (const [team, roles] of Object.entries(slots)) {
-            slotsHtml += `<div class="flex flex-col">`;
-            slotsHtml += `<h3>${team}</h3>`
-            if (roles.front !== -3) {
-                slotsHtml += `<div class="flex flex-row>"`
-                slotsHtml += `<p>front</p>`
+            //slotsHtml += `<div class="flex flex-col">`;
+            const teamElement = document.createElement("div");
+            teamElement.className = "flex flex-col";
+
+            //slotsHtml += `<h3>${team}</h3>`
+            const teamNameElement = document.createElement("h3");
+            teamNameElement.textContent = team;
+            teamElement.appendChild(teamNameElement);
+            
+            for (const [role, player] of Object.entries(roles)) {
+                //slotsHtml += `<div class="flex flex-row>"`
+                const slotElement = document.createElement("div");
+                slotElement.className = "flex flex-row";
+
+                //slotsHtml += `<p>front</p>`
+                const roleNameElement = document.createElement("p");
+                roleNameElement.textContent = role;
+                slotElement.appendChild(roleNameElement)
+                
+                if (player === -2) {
+                    const slotJoinElement = document.createElement("button");
+                    slotJoinElement.type = "button";
+                    slotJoinElement.textContent = "Join";
+                    slotJoinElement.addEventListener('click', async () => {
+                        //TODO: add the player to this slot in the backend
+                        //The slot would consist in vars team + role
+                        console.log(`Player added to team ${team} and role ${role}!`) //How to have access to userid?
+                        this.renderSlots();
+                    })
+                    slotElement.appendChild(slotJoinElement);
+                } else {
+                    const playerElement = document.createElement("p");
+                    playerElement.textContent = player;
+                    slotElement.appendChild(playerElement);
+                }
+                teamElement.appendChild(slotElement);
+            }
+            teamsElement.appendChild(teamElement);
+        }
+
+
+            /* if (roles.front !== -3) {
+                //slotsHtml += `<div class="flex flex-row>"`
+                const slotElement = document.createElement("div");
+                slotElement.className = "flex flex-row";
+
+                //slotsHtml += `<p>front</p>`
+                
                 if (roles.back === -2) {
                     slotsHtml += `<button type="button">Join</button>`
                 } else {
@@ -69,10 +110,11 @@ export const LobbyFriendlyPage = {
                 }
                 slotsHtml += `</div>`
             }
-            slotsHtml += `</div>`;
+            teamsElement.appendChild(teamElement);
+            //slotsHtml += `</div>`;
         }
 
-        teamsElement.innerHTML = slotsHtml;
+        teamsElement.innerHTML = slotsHtml; */
     },
 
     renderSettings() {
