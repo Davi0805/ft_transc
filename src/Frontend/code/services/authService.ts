@@ -28,11 +28,15 @@ export class AuthService {
   async init(): Promise<void> {
     this.authToken = localStorage.getItem("authToken");
     this.isAuthenticated = !!this.authToken;
-    if (this.isAuthenticated) await this.getMyData();
+    if (this.isAuthenticated)
+      await this.getMyData();
 
     header.updateHeaderVisibility();
 
-    if (this.isAuthenticated) this.sidebar = new Chat(this.userID);
+    if (this.isAuthenticated) {
+      this.sidebar = new Chat();
+      await this.sidebar.init();
+    }
 
     return;
   }
@@ -58,8 +62,11 @@ export class AuthService {
     this.isAuthenticated = true;
     localStorage.setItem("authToken", token);
     await this.getMyData();
-    await header.updateHeaderVisibility();
-    if (!this.sidebar) this.sidebar = new Chat(this.userID);
+    header.updateHeaderVisibility();
+    if (!this.sidebar) {
+      this.sidebar = new Chat();
+      await this.sidebar.init();
+    }
 
     return;
   }
@@ -68,7 +75,7 @@ export class AuthService {
     this.authToken = null;
     this.isAuthenticated = false;
     localStorage.removeItem("authToken");
-    await header.updateHeaderVisibility();
+    header.updateHeaderVisibility();
     chatWindowControler.close();
     webSocketService.disconnect();
     if (this.sidebar) {

@@ -15,7 +15,7 @@ import { authService } from "../services/authService";
  */
 export async function getUserAvatarById(userId: number): Promise<string> {
   try {
-    if (!authService.authToken) {
+    if (!authService.getToken()) {
       const errorMessage = `DEBUG: No authToken at getUserAvatarById`;
       const error = new Error(errorMessage);
       throw error;
@@ -25,7 +25,7 @@ export async function getUserAvatarById(userId: number): Promise<string> {
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${authService.authToken}`,
+          Authorization: `Bearer ${authService.getToken()}`,
         },
       }
     );

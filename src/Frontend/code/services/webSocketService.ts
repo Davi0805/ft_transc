@@ -19,10 +19,9 @@ export interface OnlineUsersEvent {
 }
 
 export interface NewFriendRequestEvent {
+  // user_id: string; // sender id
   event: "new_friend_request"
 }
-
-
 
 export interface MessageDTO {
   conversation_id: number;

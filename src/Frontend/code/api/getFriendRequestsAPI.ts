@@ -3,8 +3,8 @@ import { authService } from "../services/authService";
 export interface FriendRequest {
   sender_id: number;
   request_id: number;
-  sender_name: string | null;
-  sender_username: string | null;
+  sender_name: string;
+  sender_username: string;
 }
 
 /**
