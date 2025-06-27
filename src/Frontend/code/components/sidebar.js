@@ -69,7 +69,7 @@ export class Chat {
       metadata: {user_id?: string = reciever_id?,
                 event: "new_friend_request"}
   */
-    webSocketService.registerFriendRequetsUpdate(() => {
+    webSocketService.registerFriendRequestsUpdate(() => {
       this.updateFriendRequestsNumber(this.friendRequestCount + 1);
       this.friendRequests.set()
     })
