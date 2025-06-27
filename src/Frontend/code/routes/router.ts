@@ -8,10 +8,9 @@ class Router {
 
   constructor(routes: Array<Route>) {
     this.routes = routes; // store route configurations
-    this.initRouter(); // Initialize router logic
   }
 
-  initRouter(): void {
+  init(): void {
     // Handle manual URL changes (on back/forward buttons)
     window.addEventListener("popstate", () => {
       this.loadRoute();
@@ -54,7 +53,8 @@ class Router {
     // find returns undified (evaluates as false) if cant find anything
     const route: Route | null =
       this.routes.find((r: Route) => r.path === path) ||
-      this.routes.find((r: Route) => r.path === "/404") || null;
+      this.routes.find((r: Route) => r.path === "/404") ||
+      null;
 
     if (route) {
       header.updateActiveUnderline(path);

@@ -12,8 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "sourceMap": true,
-    "noEmit": true
+    "noEmit": false
   },
-  "include": ["./**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["code/**/*"],
+  "exclude": ["node_modules", "dist", "js"]
 }

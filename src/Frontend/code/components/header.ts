@@ -1,6 +1,7 @@
 import { authService } from "../services/authService";
 import { translator } from "../services/translationService";
 import { router } from "../routes/router";
+import { LanguageCode } from "../languages/languages";
 
 /**
  * @class Header
@@ -15,6 +16,9 @@ class Header {
    */
   constructor() {
     this.navBarElement = document.getElementById("header-nav");
+  }
+  
+  init() {
     this.logOutEventListener();
     this.languageSelectorDisplayEventListener();
     this.languageSelectorChangeEventListener();
@@ -185,7 +189,7 @@ class Header {
         langOptionImg.dataset.lang = currData;
 
         // Update language
-        translator.setLanguage(selectedData);
+        translator.setLanguage(selectedData as LanguageCode);
         (document.querySelector(".lang-options") as HTMLElement).style.display = "none";
         translator.apply();
       });
