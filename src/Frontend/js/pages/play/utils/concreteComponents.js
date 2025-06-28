@@ -69,19 +69,19 @@ export function getLobbyOptionsHTML(editable, type, {
 
 
     return `
-        <div class="flex flex-row w-full justify-between">
+        <div class="flex flex-row w-full justify-between gap-1">
             <label for="match-map" class="text-xl">Map:</label>
             <${tagType} id="match-map" name="lobby-map" class="bg-gray-900/50 rounded-2xl px-4 text-center">
                 ${mapOptionsHtml}
             </${tagType}>
         </div>
-        <div class="flex flex-row w-full justify-between">
+        <div class="flex flex-row w-full justify-between gap-1">
             <label for="match-mode" class="text-xl">Mode:</label>
             <${tagType} id="match-mode" name="match-mode" class="bg-gray-900/50 rounded-2xl px-4 text-center">
                 ${modeOptionsHtml}
             </${tagType}>
         </div>
-        <div class="flex flex-row w-full justify-between">
+        <div class="flex flex-row w-full justify-between gap-1">
             <label for="match-length" class="text-xl">Match Length:</label>
             <${tagType} id="match-length" name="match-length" class="bg-gray-900/50 rounded-2xl px-4 text-center">
                 ${lengthOptionsHtml}

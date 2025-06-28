@@ -1,6 +1,6 @@
 import { LobbyMatchPage } from "./templates/lobbyMatch.js"
 import { getLobbyOptionsHTML } from "./utils/concreteComponents.js";
-import { getButtonHTML } from "./utils/stylingComponents.js";
+import { getButton } from "./utils/stylingComponents.js";
 
 /* export enum SLOT_TYPES = {
     EMPTY = -2,
@@ -13,10 +13,17 @@ export const LobbyFriendlyPage = {
     },
 
     init() {
-        //Set title
-        const titleElement = document.getElementById('lobby-title');
-        titleElement.textContent = "Friendly Match Lobby" //TODO: Probably should get the name of the lobby instead?
+        const lobbySettingsListing = {
+            name: "Some lobby",
+            map: "1v1-medium",
+            mode: "modern",
+            duration: "marathon"
+        } //TODO: Get Lobby Settings from db
 
+        const titleElement = document.getElementById('lobby-title');
+        titleElement.textContent = lobbySettingsListing.name //TODO: Probably should get the name of the lobby instead?
+        const subtitleElement = document.getElementById('lobby-subtitle');
+        subtitleElement.textContent = "Friendly Match Lobby"
         this.renderSlots();
 
         this.renderSettings();
@@ -45,42 +52,48 @@ export const LobbyFriendlyPage = {
 
         const teamsElement = document.getElementById('slots');
         teamsElement.innerHTML = ""; //Clean current content
+        const slotsTable = document.createElement('table');
+        /* slotsTable.className = "w-full" */
         for (const [team, roles] of Object.entries(slots)) {
-            const teamElement = document.createElement("div");
-            teamElement.className = "flex flex-col";
-
-            const teamNameElement = document.createElement("h3");
+            const teamElement = document.createElement("tr");
+    
+            const teamNameElement = document.createElement("td");
+            teamNameElement.className = "bg-gray-900/75 text-2xl"
+            teamNameElement.colSpan = "2";
             teamNameElement.textContent = team;
             teamElement.appendChild(teamNameElement);
+            slotsTable.appendChild(teamElement);
             
             for (const [role, player] of Object.entries(roles)) {
-                const slotElement = document.createElement("div");
-                slotElement.className = "flex flex-row";
+                const slotElement = document.createElement("tr");
 
-                const roleNameElement = document.createElement("p");
+                const roleNameElement = document.createElement("td");
+                roleNameElement.className = "text-xl p-2 bg-gray-900/50 w-0"
                 roleNameElement.textContent = role;
                 slotElement.appendChild(roleNameElement)
                 
+                const slotSpaceElement = document.createElement("td");
+                slotSpaceElement.className = "text-center"
                 if (player === -2) {
-                    const slotJoinElement = document.createElement("button");
-                    slotJoinElement.type = "button";
-                    slotJoinElement.textContent = "Join";
+                    const slotJoinElement = getButton(`join-${team}-${role}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
                         //TODO: add the player to this slot in the backend
                         //The slot would consist in vars team + role
                         console.log(`Player added to team ${team} and role ${role}!`) //How to have access to userid?
                         this.renderSlots();
                     })
-                    slotElement.appendChild(slotJoinElement);
+                    slotSpaceElement.appendChild(slotJoinElement);
                 } else {
                     const playerElement = document.createElement("p");
+                    playerElement.className = "text-xl p-2"
                     playerElement.textContent = player;
-                    slotElement.appendChild(playerElement);
+                    slotSpaceElement.appendChild(playerElement);
                 }
-                teamElement.appendChild(slotElement);
+                slotElement.appendChild(slotSpaceElement);
+                slotsTable.appendChild(slotElement);
             }
-            teamsElement.appendChild(teamElement);
         }
+        teamsElement.appendChild(slotsTable);
     },
 
     renderSettings() {
@@ -93,9 +106,9 @@ export const LobbyFriendlyPage = {
         } //TODO: Get Lobby Settings from db
 
         let lobbySettingsHtml = `
-            <div id="settings-listing" class="flex flex-col">
+            <div id="settings-listing" class="flex flex-col gap-1">
                 ${getLobbyOptionsHTML(false, "friendly", lobbySettingsListing)}
-                ${getButtonHTML("btn-change-settings", "button", "Change lobby settings")}
+                ${getButton("btn-change-settings", "button", "Change lobby settings", false).outerHTML}
             </div>
         `;
         lobbySettingsElement.innerHTML = lobbySettingsHtml;
@@ -106,19 +119,10 @@ export const LobbyFriendlyPage = {
 
     renderChangeSettings(lobbySettingsListing) {
         const lobbySettingsElement = document.getElementById('lobby-settings');
-        //let settingsListingHtml = getLobbyOptionsHTML(true, lobbySettingsListing);
-        /* for (let setting in lobbySettingsListing) {
-
-            settingsListingHtml += `
-                <div class="flex flex-row">
-                    <p>${setting}</p><input type="text" name="${setting}" value="${lobbySettingsListing[setting]}" ${setting === "type" ? "readonly" : "required"}></input>
-                </div>
-            `
-        } */
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col">
                 ${getLobbyOptionsHTML(true, "friendly", lobbySettingsListing)}
-                ${getButtonHTML("apply-lobby-settings", "submit", "Apply")}
+                ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
             </div>
         `;
         lobbySettingsElement.innerHTML = lobbySettingsHtml;

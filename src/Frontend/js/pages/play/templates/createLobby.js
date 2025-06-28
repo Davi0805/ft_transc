@@ -6,7 +6,7 @@ export const CreateLobbyPage = {
                 <form id="lobby-creation-form" class="flex flex-col items-center justify-center gap-6">
                     <h1 id="create-lobby-title" class="text-3xl p-3"></h1>
                     <div id="lobby-options" class="flex flex-col items-center gap-4">
-                        <div class="flex flex-row w-full justify-between">
+                        <div class="flex flex-row w-full justify-between gap-4">
                             <label for="match-name" class="text-xl">Name:</label>
                             <input id="match-map" name="lobby-map" class="bg-gray-900/50 rounded-2xl px-4 text-center" required></input>
                         </div>
