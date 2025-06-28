@@ -3,6 +3,7 @@ const sensible = require('@fastify/sensible');
 const cors = require('@fastify/cors');
 const path = require('path');
 const matchRoutes = require('./Infrastructure/routes/MatchRoutes');
+const lobbyRoutes = require('./Infrastructure/routes/LobbyRoutes');
 
 const prometheus = require('fastify-metrics');
 
@@ -16,6 +17,9 @@ const setup = () => {
       });
     
     app.register(matchRoutes);
+    app.register(lobbyRoutes);
+
+
     app.register(sensible);
 
     return app;
@@ -24,7 +28,7 @@ const setup = () => {
 const run = () => {
     const app = setup();
     try {
-        app.listen({ port: 8082, host: '0.0.0.0' });
+        app.listen({ port: 8084, host: '0.0.0.0' });
         console.log("Listening...");
     } catch (error) {
         console.log("FATAL");
