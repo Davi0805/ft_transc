@@ -6,6 +6,21 @@ export const LobbyRankedPage = {
     },
 
     init() {
+        const lobbySettingsListing = {
+            name: "Some lobby",
+            map: "1v1-medium",
+            mode: "modern",
+            duration: "marathon"
+        } //TODO: Get Lobby Settings from db
+
+        const titleElement = document.getElementById('lobby-title');
+        titleElement.textContent = lobbySettingsListing.name
+        const subtitleElement = document.getElementById('lobby-subtitle');
+        subtitleElement.textContent = "Ranked Match Lobby"
+        
+        LobbyMatchPage.renderSlots();
+        LobbyMatchPage.renderSettings();
+
         console.log('Lobby Ranked page loaded!')
-    }
+    },
 }
