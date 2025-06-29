@@ -55,6 +55,7 @@ export const PlayPage = {
 
     updateCurrentLobbiesHtml() {
         const lobbiesBody = document.getElementById('lobbies-body');
+        lobbiesBody.innerHTML = ""
 
         const lobbiesInfo = [
             {
@@ -77,17 +78,26 @@ export const PlayPage = {
             }
         ] // TODO change this for a function that gets this info from database
 
-        let lobbiesHtml = "";
-        for (let i = 0; i < 6; i++) {
-            lobbiesHtml += `<tr>`;
+        for (let i = 0; i < lobbiesInfo.length; i++) {
+            const row = document.createElement("tr");
+            row.className = "hover:bg-gray-900/90 active:bg-gray-900/25"
+            
             Object.values(lobbiesInfo[i % 2]).forEach(item =>{
                 const bdBrightness = i % 2 === 0 ? "bg-gray-900/0" : "bg-gray-900/25";
-                lobbiesHtml += `<td class="${bdBrightness} px-6 py-2 wrap-anywhere">${item}</td>`
+                const tdata = document.createElement('td');
+                tdata.className = `${bdBrightness} px-6 py-2 wrap-anywhere`;
+                tdata.textContent = item;
+                row.appendChild(tdata);
             })
-            lobbiesHtml += `</tr>`;
+            row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].name)) //TODO pass whatever is necessary to identify the lobby
+            lobbiesBody.appendChild(row)
         }
 
-        lobbiesBody.innerHTML = lobbiesHtml;
         console.log("Lobby list updated!")
+    },
+
+    goToLobby(name) {
+        //TODO: Logic to go to a lobby goes here
+        console.log(`Should go to lobby ${name}`)
     }
 }
