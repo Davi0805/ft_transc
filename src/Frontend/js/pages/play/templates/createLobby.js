@@ -10,7 +10,6 @@ export const CreateLobbyPage = {
                             <label for="match-name" class="text-xl">Name:</label>
                             <input id="match-map" name="lobby-map" class="bg-gray-900/50 rounded-2xl px-4 text-center" required></input>
                         </div>
-                        
                     </div>
                     <div id="create-lobby-form-buttons" class="flex flex-row gap-6">
                         <button id="btn-return" type="button" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Return</button>

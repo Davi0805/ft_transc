@@ -11,7 +11,7 @@ export function getLobbyOptionsHTML(editable, type, {
         const mapOptions = []
         switch (type) {
             case "friendly": {
-                mapOptions.push(...[
+                mapOptions.unshift(...[
                     "2v2-small",
                     "2v2-medium",
                     "2v2-big",
@@ -20,13 +20,13 @@ export function getLobbyOptionsHTML(editable, type, {
                     "2v2v2v2-big"
                 ])
             } case "ranked": {
-                mapOptions.push(...[
+                mapOptions.unshift(...[
                     "1v1v1v1-small",
                     "1v1v1v1-medium",
                     "1v1v1v1-big"
                 ])
             } case "tournament": {
-                mapOptions.push(...[
+                mapOptions.unshift(...[
                     "1v1-small",
                     "1v1-medium",
                     "1v1-big"
