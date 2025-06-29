@@ -1,16 +1,16 @@
-import { getButton } from "../utils/stylingComponents.js";
+import { getButton, getTable } from "../utils/stylingComponents.js";
 import { getLobbyOptionsHTML } from "../utils/concreteComponents.js";
 
 export const LobbyMatchPage = {
     template() {
         return `
-            <div class="flex flex-col w-fit items-center justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 overflow-hidden gap-3">
+            <div class="flex flex-col items-center justify-center h-full backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 gap-3">
                 <h1 id="lobby-title" class="text-3xl p-2"></h1>
                 <h3 id="lobby-subtitle" class="text-xl p-1"></h3>
-                <div id="lobby-body" class="flex flex-row w-full gap-3">
-                    <div id="slots" class="flex flex-col min-w-[300px] border-2 rounded-2xl border-gray-900/75 overflow-hidden">
+                <div id="lobby-body" class="flex flex-row w-full min-h-0 gap-3">
+                    <div id="participants" class="flex flex-col min-w-[300px] border-2 rounded-2xl border-gray-900/75  min-h-0">
                     </div>
-                    <div id="lobby-settings-and-buttons" class="flex flex-col justify-between">
+                    <div id="lobby-settings-and-buttons" class="flex flex-col justify-between gap-6">
                         <div id="lobby-settings">
                         </div>
                         <div id="lobby-buttons" class="flex flex-col gap-1">
@@ -43,7 +43,7 @@ export const LobbyMatchPage = {
             },
         } //TODO: This has to be a function that returns this object
 
-        const teamsElement = document.getElementById('slots');
+        const teamsElement = document.getElementById('participants');
         teamsElement.innerHTML = "";
         const slotsTable = document.createElement('table');
         for (const [team, roles] of Object.entries(slots)) {
@@ -129,4 +129,58 @@ export const LobbyMatchPage = {
             this.renderSettings()
         })
     },
+
+    renderParticipants() {
+        const participants = [
+            {
+                nick: "artuda-s",
+                rank: 1800,
+                score: 3
+            },
+            {
+                nick: "dmelo-ca",
+                rank: 1600,
+                score: 1
+            },
+            {
+                nick: "ndo-vale",
+                rank: 1700,
+                score: 0
+            }
+        ] //TODO: GET THIS FROM DB.DO NOT FORGET TO ORDER BT POINTS!!!!
+
+
+        const participantsElement = document.getElementById('participants');
+
+        const header = document.createElement("h2");
+        header.className = "text-center text-2xl bg-gray-900/75 p-1"
+        header.textContent = "Participants";
+        participantsElement.appendChild(header)
+
+
+        let participantsTableBody = ""
+        let place = 1
+        for (let participant of participants) {
+            participantsTableBody += `<tr class="bg-gray-900/${place % 2 === 0 ? "25" : "50"}"><td>${place++}</td>`;
+            Object.values(participant).forEach(info => {
+                participantsTableBody += `<td>${info}</td>`
+            })
+            participantsTableBody += "</tr>";
+        }
+
+        const participantsTableHead = `
+            <tr class="text-xl bg-gray-900/90">
+                <td>Place</td><td>Player</td><td>rank</td><td>score</td>
+            </tr>
+        `
+        const participantsTable = getTable("participants", participantsTableHead, participantsTableBody)
+        participantsElement.innerHTML += participantsTable.outerHTML;
+        
+
+        const joinWithdrawButton = getButton("btn-join-withdraw", "button", this.participating ? "Withdraw" : "Join", false)
+        joinWithdrawButton.classList.add("w-full");
+        participantsElement.appendChild(joinWithdrawButton)
+    },
+
+    participating: false
 }
