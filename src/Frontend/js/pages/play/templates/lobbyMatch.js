@@ -24,6 +24,82 @@ export const LobbyMatchPage = {
         `;
     },
 
+    renderSettings() {
+        const lobbySettingsElement = document.getElementById('lobby-settings');
+        const lobbySettingsListing = {
+            name: "Some lobby",
+            map: "1v1-medium",
+            mode: "modern",
+            length: "marathon"
+        } //TODO: Get Lobby Settings from db
+
+        let lobbySettingsHtml = `
+            <div id="settings-listing" class="flex flex-col gap-1">
+                ${getLobbyOptionsHTML(false, "friendly", lobbySettingsListing)}
+                ${getButton("btn-change-settings", "button", "Change lobby settings", false).outerHTML}
+            </div>
+        `;
+        lobbySettingsElement.innerHTML = lobbySettingsHtml;
+
+        const buttonChangeSettings = document.getElementById('btn-change-settings');
+        buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
+    },
+
+    renderChangeSettings(lobbySettingsListing) {
+        const lobbySettingsElement = document.getElementById('lobby-settings');
+        let lobbySettingsHtml = `
+            <form id="settings-change-form" class="flex flex-col gap-1">
+                ${getLobbyOptionsHTML(true, "friendly", lobbySettingsListing)}
+                ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
+            </div>
+        `;
+        lobbySettingsElement.innerHTML = lobbySettingsHtml;
+
+        const formChangeSettings = document.getElementById('settings-change-form');
+        formChangeSettings.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            //TODO: Update the database here with new lobby settings
+            console.log("New settings applied!")
+            this.renderSettings()
+        })
+    },
+
+
+    activateButtons() {
+        const inviteButton = document.getElementById('btn-invite');
+        inviteButton.addEventListener('click', () => {
+            //TODO: ADD INVITE LOGIC HERE
+            console.log("Invite button was clicked")
+        })
+
+        const leaveButton = document.getElementById('btn-leave');
+        leaveButton.addEventListener('click', () => {
+            //TODO: ADD COMM TO DB THAT PLAYER LEFT
+            console.log("Leave button was clicked")
+
+            window.router.navigateTo('/play')
+        })
+
+        const readyButton = document.getElementById('btn-ready');
+        readyButton.addEventListener('click', () => {
+            //TODO: ADD COMM TO DB THAT PLAYER IS READY
+            readyButton.classList.toggle("active");
+            const isActive = readyButton.classList.contains("active");
+            console.log("button is now ", isActive ? "DOWN" : "UP");
+            if (isActive) {
+                //TODO: COMM WITH DB SAYING THAT PLAYER IS READY
+                readyButton.textContent = "I'm ready! (cancel...)"
+                readyButton.classList.remove("bg-gray-900/50") //the normal color
+                readyButton.classList.add("bg-gray-900/25") //the active color
+            } else {
+                //TODO: COMM WITH DB SAYING THAT PLAYER IS NOT READY
+                readyButton.textContent = "Ready"
+                readyButton.classList.remove("bg-gray-900/25") //the active color
+                readyButton.classList.add("bg-gray-900/50") //the normal color
+            }
+        })
+    },
+
     renderSlots() {
         // TODO: change to enum values once typescript is applied
         const slots = {
@@ -90,46 +166,6 @@ export const LobbyMatchPage = {
         teamsElement.appendChild(slotsTable);
     },
 
-    renderSettings() {
-        const lobbySettingsElement = document.getElementById('lobby-settings');
-        const lobbySettingsListing = {
-            name: "Some lobby",
-            map: "1v1-medium",
-            mode: "modern",
-            length: "marathon"
-        } //TODO: Get Lobby Settings from db
-
-        let lobbySettingsHtml = `
-            <div id="settings-listing" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(false, "friendly", lobbySettingsListing)}
-                ${getButton("btn-change-settings", "button", "Change lobby settings", false).outerHTML}
-            </div>
-        `;
-        lobbySettingsElement.innerHTML = lobbySettingsHtml;
-
-        const buttonChangeSettings = document.getElementById('btn-change-settings');
-        buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
-    },
-
-    renderChangeSettings(lobbySettingsListing) {
-        const lobbySettingsElement = document.getElementById('lobby-settings');
-        let lobbySettingsHtml = `
-            <form id="settings-change-form" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(true, "friendly", lobbySettingsListing)}
-                ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
-            </div>
-        `;
-        lobbySettingsElement.innerHTML = lobbySettingsHtml;
-
-        const formChangeSettings = document.getElementById('settings-change-form');
-        formChangeSettings.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            //TODO: Update the database here with new lobby settings
-            console.log("New settings applied!")
-            this.renderSettings()
-        })
-    },
-
     renderParticipants() {
         const participants = [
             {
@@ -147,7 +183,7 @@ export const LobbyMatchPage = {
                 rank: 1700,
                 score: 0
             }
-        ] //TODO: GET THIS FROM DB.DO NOT FORGET TO ORDER BT POINTS!!!!
+        ] //TODO: GET THIS FROM DB. DO NOT FORGET TO ORDER BT POINTS!!!!
 
 
         const participantsElement = document.getElementById('participants');

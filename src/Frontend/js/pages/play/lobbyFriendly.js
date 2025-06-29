@@ -20,6 +20,7 @@ export const LobbyFriendlyPage = {
         
         LobbyMatchPage.renderSlots();
         LobbyMatchPage.renderSettings();
+        LobbyMatchPage.activateButtons();
 
         console.log('Lobby Friendly page loaded!')
     },

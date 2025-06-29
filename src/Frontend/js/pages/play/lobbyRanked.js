@@ -20,6 +20,7 @@ export const LobbyRankedPage = {
         
         LobbyMatchPage.renderSlots();
         LobbyMatchPage.renderSettings();
+        LobbyMatchPage.activateButtons();
 
         console.log('Lobby Ranked page loaded!')
     },

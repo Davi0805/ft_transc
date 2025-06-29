@@ -20,6 +20,7 @@ export const LobbyTournamentPage = {
         
         LobbyMatchPage.renderParticipants();
         LobbyMatchPage.renderSettings();
+        LobbyMatchPage.activateButtons();
         console.log('Lobby Tournament page loaded!')
     }
 }
