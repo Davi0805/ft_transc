@@ -4,11 +4,11 @@ import { getLobbyOptionsHTML } from "../utils/concreteComponents.js";
 export const LobbyMatchPage = {
     template() {
         return `
-            <div class="flex flex-col items-center justify-center h-full backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 gap-3">
+            <div class="flex flex-col items-center justify-center h-full backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 gap-3 overflow-hidden">
                 <h1 id="lobby-title" class="text-3xl p-2"></h1>
                 <h3 id="lobby-subtitle" class="text-xl p-1"></h3>
                 <div id="lobby-body" class="flex flex-row w-full min-h-0 gap-3">
-                    <div id="participants" class="flex flex-col min-w-[300px] border-2 rounded-2xl border-gray-900/75  min-h-0">
+                    <div id="participants" class="flex flex-col min-w-[300px] border-2 rounded-2xl border-gray-900/75 min-h-0 overflow-hidden">
                     </div>
                     <div id="lobby-settings-and-buttons" class="flex flex-col justify-between gap-6">
                         <div id="lobby-settings">
@@ -215,6 +215,7 @@ export const LobbyMatchPage = {
 
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", this.participating ? "Withdraw" : "Join", false)
         joinWithdrawButton.classList.add("w-full");
+
         participantsElement.appendChild(joinWithdrawButton)
     },
 

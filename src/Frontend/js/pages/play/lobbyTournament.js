@@ -14,7 +14,7 @@ export const LobbyTournamentPage = {
         } //TODO: Get Lobby Settings from db
 
         const titleElement = document.getElementById('lobby-title');
-        titleElement.textContent = lobbySettingsListing.name //TODO: Probably should get the name of the lobby instead?
+        titleElement.textContent = lobbySettingsListing.name
         const subtitleElement = document.getElementById('lobby-subtitle');
         subtitleElement.textContent = "Friendly Match Lobby"
         
