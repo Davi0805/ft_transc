@@ -38,8 +38,8 @@ class WebSocketService {
   private userID: number | null;
 
   // Message Handling
+  public conversationTracker: Map<number, number>;
   private messageHandlers: Map<number, FunctionCallback>;
-  private conversationTracker: Map<number, number>;
   private notificationCallbacks: FunctionCallback[];
   private onlineCallbacks: FunctionCallback[];
   private friendsUpdateCallbacks: FunctionCallback[];
@@ -94,7 +94,7 @@ class WebSocketService {
         const data = JSON.parse(ev.data);
         this.handleMessage(data);
       } catch (error) {
-        console.log("DEBUG: Error parsing websocket message");
+        console.error("Error parsing websocket message");
       }
     };
     this.ws.onclose = (ev: CloseEvent) => {
@@ -209,10 +209,9 @@ class WebSocketService {
     return (data && typeof data === "object" &&
       "conversation_id" in data &&
       "message" in data &&
-      "metadata" in data &&
-      typeof data.conversation_id === "number" &&
+      (typeof data.conversation_id === "number") &&
       (typeof data.message === "string") &&
-      (typeof data.metadata === "string" || data.metadata === null)
+      (typeof data.metadata === "string" || data.metadata === null || data.metadata === undefined)
     );
   }
 

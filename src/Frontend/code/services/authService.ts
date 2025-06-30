@@ -41,21 +41,21 @@ export class AuthService {
     return;
   }
 
-  async getMyData(): Promise<void> {
-    try {
-      const userData: SelfData = await getSelfData();
-      this.userID = userData.id;
-      this.userNick = userData.nickname;
+    async getMyData(): Promise<void> {
+      try {
+        const userData: SelfData = await getSelfData();
+        this.userID = userData.id;
+        this.userNick = userData.nickname;
 
-      this.userAvatar = await getUserAvatarById(this.userID);
-    } catch (error) {
-      this.authToken = null;
-      localStorage.removeItem("authToken");
-      this.isAuthenticated = false;
+        this.userAvatar = await getUserAvatarById(this.userID);
+      } catch (error) {
+        this.authToken = null;
+        localStorage.removeItem("authToken");
+        this.isAuthenticated = false;
+      }
+
+      return;
     }
-
-    return;
-  }
 
   async login(token: string): Promise<void> {
     this.authToken = token;
