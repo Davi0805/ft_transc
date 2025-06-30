@@ -57,7 +57,7 @@ class ChatWindow {
     });
 
     this.isOpen = true;
-    //! this.createElement();
+    this.createElement();
     this.attachEventListeners();
     this.attachLastMessages();
 
@@ -97,24 +97,23 @@ class ChatWindow {
     this.element = null;
   }
 
-  // //! TODO CHECK IF REALLY USED
-  // createElement(): void {
-  //   this.element = document.createElement("div");
-  //   this.element.className = "chat-window";
-  //   this.element.innerHTML = `
-  //       <div class="chat-header">
-  //           <img src="${this.friendAvatar}" width="30" height="30" alt="${this.friendName}">
-  //           <span class="friend-name">${this.friendName}</span>
-  //           <button class="minimize-btn">−</button>
-  //           <button class="close-btn">×</button>
-  //       </div>
-  //       <div class="chat-messages"></div>
-  //       <div class="chat-input-container">
-  //           <input type="text" class="message-input" placeholder="Type a message...">
-  //           <button class="send-btn">Send</button>
-  //       </div>
-  //       `;
-  // }
+  createElement(): void {
+    this.element = document.createElement("div");
+    this.element.className = "chat-window";
+    this.element.innerHTML = `
+        <div class="chat-header">
+            <img src="${this.friendAvatar}" width="30" height="30" alt="${this.friendName}">
+            <span class="friend-name">${this.friendName}</span>
+            <button class="minimize-btn">−</button>
+            <button class="close-btn">×</button>
+        </div>
+        <div class="chat-messages"></div>
+        <div class="chat-input-container">
+            <input type="text" class="message-input" placeholder="Type a message...">
+            <button class="send-btn">Send</button>
+        </div>
+        `;
+  }
 
   toggleMinimize(): void {
     if (!this.element || !authService.userID) return;
