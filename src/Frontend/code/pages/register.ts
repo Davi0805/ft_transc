@@ -100,7 +100,7 @@ export const RegisterPage = {
         .value;
       const email = (document.getElementById("email") as HTMLInputElement)
         .value;
-      const password = (document.getElementById("password") as HTMLInputElement)
+      const password_hash = (document.getElementById("password") as HTMLInputElement)
         .value;
       const confirmPassword = (
         document.getElementById("confirm-password") as HTMLInputElement
@@ -117,14 +117,14 @@ export const RegisterPage = {
       takenError.hidden = true;
 
       // check for correct characters, lenght and confirmation match
-      if (password != confirmPassword) {
+      if (password_hash != confirmPassword) {
         passError.textContent = translator.get("register-pass-error");
         passError.hidden = false;
         return;
       }
 
       try {
-        await register({ name, username, email, password });
+        await register({ name, username, email, password_hash });
         this.renderSuccessHTML();
         return;
       } catch (error) {

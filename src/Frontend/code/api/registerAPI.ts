@@ -2,7 +2,7 @@ export interface RegisterCredentials {
   name: string | null;
   username: string | null;
   email: string | null;
-  password: string | null;
+  password_hash: string | null;
 }
 
 /**
