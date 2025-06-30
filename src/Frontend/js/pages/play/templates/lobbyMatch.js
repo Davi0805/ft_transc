@@ -111,6 +111,7 @@ export const LobbyMatchPage = {
         })
     },
 
+    //TODO friendly and ranked are sterting to have a lot of differences. Maybe find a way to put the common things in one place here and pass the differences to their respective objects
     renderSlots(useDefaultSettings) {
         // TODO: change to enum values once typescript is applied
         const slots = {
@@ -154,7 +155,8 @@ export const LobbyMatchPage = {
                 
                 const slotSpaceElement = document.createElement("td");
                 slotSpaceElement.className = "text-center"
-                if (player === -2 && !this.participating) {
+                if (player === -2 && (!useDefaultSettings || !this.participating)) {
+                    console.log("dafuq");
                     const slotJoinElement = getButton(`join-${team}-${role}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
                         if (!useDefaultSettings) {
@@ -181,7 +183,9 @@ export const LobbyMatchPage = {
                             `;
                             document.body.appendChild(settingsDialog);
                             const closeDialogButton = document.getElementById("btn-close-dialog");
+                            console.log("LOLOLOLOL");
                             closeDialogButton.addEventListener("click", (e) => {
+                                console.log("bruh");
                                 const form = settingsDialog.querySelector("form");
                                 if (!form.reportValidity()) return;
                                 e.preventDefault();
@@ -192,12 +196,10 @@ export const LobbyMatchPage = {
                                 //Use the above chosen settings!!
                                 console.log(`Player saved with alias ${alias} and paddle id ${paddleId}`)
                                 console.log(`Player added to team ${team} and role ${role}!`) //How to have access to userid?
-                                this.participating = !this.participating
-                                this.renderSlots();
-                                settingsDialog.close({
-                                    alias: alias,
-                                    paddleId: paddleId
-                                })
+                                this.participating = true
+                                this.renderSlots(useDefaultSettings);
+                                settingsDialog.close();
+                                settingsDialog.remove();
                             })
                             settingsDialog.showModal();
                         } else {
@@ -207,7 +209,7 @@ export const LobbyMatchPage = {
 
                             console.log(`Player added to team ${team} and role ${role}!`) //How to have access to userid?
                             this.participating = !this.participating
-                            this.renderSlots();
+                            this.renderSlots(useDefaultSettings);
                         }
                     })
                     slotSpaceElement.appendChild(slotJoinElement);
