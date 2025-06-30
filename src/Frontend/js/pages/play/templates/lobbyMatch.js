@@ -107,7 +107,7 @@ export const LobbyMatchPage = {
         })
     },
 
-    renderSlots() {
+    renderSlots(useDefaultSettings) {
         // TODO: change to enum values once typescript is applied
         const slots = {
             LEFT: {
@@ -153,12 +153,58 @@ export const LobbyMatchPage = {
                 if (player === -2 && !this.participating) {
                     const slotJoinElement = getButton(`join-${team}-${role}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
-                        //TODO: add the player to this slot in the backend
-                        //The slot would consist in vars team + role
-                        //TODO: Somehow this has to be different between friendly and ranked!!
-                        console.log(`Player added to team ${team} and role ${role}!`) //How to have access to userid?
-                        this.participating = !this.participating
-                        this.renderSlots();
+                        if (!useDefaultSettings) {
+                            const settingsDialog = document.createElement('dialog');
+                            settingsDialog.className = "fixed m-auto overflow-hidden rounded-lg"
+                            settingsDialog.innerHTML = `
+                                <form id="player-settings" method="dialog" class="flex flex-col items-center justify-center bg-gray-900/75 border-2 border-black/40 shadow-sm text-white rounded-lg gap-3 p-3 overflow-hidden">
+                                    <h2>Configure player</h2>
+                                    <div id="choose-alias" class="flex flex-row gap-3">
+                                        <label for="player-alias" class="text-xl">Alias:</label>
+                                        <input id="player-alias" name="player-alias" class="bg-gray-900/50 rounded-2xl px-4 text-center" required></input>
+                                    </div>
+                                    <div id="choose-paddle" class="flex flex-row gap-3">
+                                        <label for="player-paddle" class="text-xl">Paddle:</label>
+                                        <select id="player-paddle" name="player-alias" class="bg-gray-900/50 rounded-2xl px-4 text-center">
+                                            <option>1</option>
+                                            <option>2</option>
+                                            <option>3</option>
+                                        </select>
+                                    </div>
+
+                                    ${getButton("btn-close-dialog", "submit", "Join", false).outerHTML}
+                                </form>
+                            `;
+                            document.body.appendChild(settingsDialog);
+                            const closeDialogButton = document.getElementById("btn-close-dialog");
+                            closeDialogButton.addEventListener("click", (e) => {
+                                const form = settingsDialog.querySelector("form");
+                                if (!form.reportValidity()) return;
+                                e.preventDefault();
+                                const alias = document.getElementById("player-alias").value
+                                const paddleId = document.getElementById("player-paddle").value
+                                //TODO: add the player to this slot in the backend
+                                //The slot would consist in vars team + role
+                                //Use the above chosen settings!!
+                                console.log(`Player saved with alias ${alias} and paddle id ${paddleId}`)
+                                console.log(`Player added to team ${team} and role ${role}!`) //How to have access to userid?
+                                this.participating = !this.participating
+                                this.renderSlots();
+                                settingsDialog.close({
+                                    alias: alias,
+                                    paddleId: paddleId
+                                })
+                            })
+                            settingsDialog.showModal();
+                        } else {
+                            //TODO: add the player to this slot in the backend
+                            //The slot would consist in vars team + role
+                            //Should be fetched from the user's settings!
+
+                            console.log(`Player added to team ${team} and role ${role}!`) //How to have access to userid?
+                            this.participating = !this.participating
+                            this.renderSlots();
+                        }
                     })
                     slotSpaceElement.appendChild(slotJoinElement);
                 } else if (player !== -2) {
