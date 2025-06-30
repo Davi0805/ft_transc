@@ -1,0 +1,12 @@
+{
+  "name": "tempisolatedtournamentlogic",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx tsc && node index.js"
+  }
+}
