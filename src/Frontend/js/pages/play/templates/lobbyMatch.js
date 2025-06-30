@@ -82,6 +82,13 @@ export const LobbyMatchPage = {
 
         const readyButton = document.getElementById('btn-ready');
         readyButton.addEventListener('click', () => {
+            if (!this.participating) {
+                readyButton.textContent = "You must join first!"
+                setTimeout(() => {
+                    readyButton.textContent = "Ready"
+                }, 1000)
+                return
+            }
             //TODO: ADD COMM TO DB THAT PLAYER IS READY
             readyButton.classList.toggle("active");
             const isActive = readyButton.classList.contains("active");
@@ -143,17 +150,19 @@ export const LobbyMatchPage = {
                 
                 const slotSpaceElement = document.createElement("td");
                 slotSpaceElement.className = "text-center"
-                if (player === -2) {
+                if (player === -2 && !this.participating) {
                     const slotJoinElement = getButton(`join-${team}-${role}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
                         //TODO: add the player to this slot in the backend
                         //The slot would consist in vars team + role
                         //TODO: Somehow this has to be different between friendly and ranked!!
                         console.log(`Player added to team ${team} and role ${role}!`) //How to have access to userid?
+                        this.participating = !this.participating
                         this.renderSlots();
                     })
                     slotSpaceElement.appendChild(slotJoinElement);
-                } else {
+                } else if (player !== -2) {
+                    //TODO should find a way do identify is player is current user and add a withdraw button
                     const playerElement = document.createElement("p");
                     playerElement.className = "text-xl p-2"
                     playerElement.textContent = player;
