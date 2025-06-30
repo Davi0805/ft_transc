@@ -74,6 +74,10 @@ export const LobbyMatchPage = {
 
         const leaveButton = document.getElementById('btn-leave');
         leaveButton.addEventListener('click', () => {
+            if (this.participating) {
+                //TODO: tell db that player is not participating anymore!
+                this.participating = false
+            }
             //TODO: ADD COMM TO DB THAT PLAYER LEFT
             console.log("Leave button was clicked")
 

@@ -18,7 +18,7 @@ export const LobbyRankedPage = {
         const subtitleElement = document.getElementById('lobby-subtitle');
         subtitleElement.textContent = "Ranked Match Lobby"
         
-        LobbyMatchPage.renderSlots();
+        LobbyMatchPage.renderSlots(true);
         LobbyMatchPage.renderSettings();
         LobbyMatchPage.activateButtons();
 
