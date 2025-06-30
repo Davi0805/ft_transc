@@ -156,7 +156,6 @@ export const LobbyMatchPage = {
                 const slotSpaceElement = document.createElement("td");
                 slotSpaceElement.className = "text-center"
                 if (player === -2 && (!useDefaultSettings || !this.participating)) {
-                    console.log("dafuq");
                     const slotJoinElement = getButton(`join-${team}-${role}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
                         if (!useDefaultSettings) {
@@ -183,9 +182,7 @@ export const LobbyMatchPage = {
                             `;
                             document.body.appendChild(settingsDialog);
                             const closeDialogButton = document.getElementById("btn-close-dialog");
-                            console.log("LOLOLOLOL");
                             closeDialogButton.addEventListener("click", (e) => {
-                                console.log("bruh");
                                 const form = settingsDialog.querySelector("form");
                                 if (!form.reportValidity()) return;
                                 e.preventDefault();
