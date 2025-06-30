@@ -48,10 +48,17 @@ export class Chat {
     this.sidebar.innerHTML = this.renderHTML();
     await this.attachHeaderEventListeners();
 
-    {
+    try {
       const reqArray: FriendRequest[] = await getFriendRequests();
       this.friendRequestCount = reqArray.length;
-      this.friendRequests = new Map(reqArray.map(req => [req.sender_username, req]));
+      this.friendRequests = new Map(
+        reqArray.map((req) => [req.sender_username, req])
+      );
+    } catch (error) {
+      console.error("Error at Chat initialization", error);
+      // could check why and handle it individually
+      authService.logout();
+      return;
     }
 
     this.updateFriendRequestsNumber(this.friendRequestCount);
@@ -79,7 +86,7 @@ export class Chat {
     webSocketService.registerFriendRequestsUpdate(() => {
       this.updateFriendRequestsNumber(this.friendRequestCount + 1);
       //! this.friendRequests?.set()  TODO check this event!!!
-    })
+    });
 
     this.insertContactsOnSidebar();
   }
@@ -217,23 +224,42 @@ export class Chat {
   }
 
   async getSidebarConversations(): Promise<void> {
-    const convs: Conversation[] = await getSelfConversations();
-    if (convs.length == 0) return;
+    let convs: Conversation[];
+    try {
+      convs = await getSelfConversations();
+      if (convs.length == 0) return;
+    } catch (error) {
+      console.error("Error getting conversations", error);
+      authService.logout();
+      // could be improved
+      return;
+    }
 
     for (const conv of convs) {
       const friendID =
         conv.user1_id === authService.userID ? conv.user2_id : conv.user1_id;
-      const friendData = await getUserDataById(friendID);
-      const friendAvatarURL = await getUserAvatarById(friendID);
+      try {
+        const friendData = await getUserDataById(friendID);
+        const friendAvatarURL = await getUserAvatarById(friendID);
+  
+        console.log("with friend:", friendData.name, " got: ", conv.unread_count);
+      
+        this.friends.push({
+          convID: conv.id,
+          friendID: friendID,
+          friendName: friendData.name,
+          friendAvatar: friendAvatarURL,
+          unreadMsg: conv.unread_count,
+          friendOn: false,
+        });  
 
-      this.friends.push({
-        convID: conv.id,
-        friendID: friendID,
-        friendName: friendData.name,
-        friendAvatar: friendAvatarURL,
-        unreadMsg: conv.unread_count,
-        friendOn: false,
-      });
+        // conversationTracker initialization
+        webSocketService.conversationTracker.set(conv.id, conv.unread_count);
+      } catch (error) {
+        console.error("Error getting friend on sidebar", error);
+        // just skip it. could be improved
+      }
+
     }
   }
 
@@ -356,13 +382,24 @@ export class Chat {
 
         if (!this.friendRequests) return;
 
-        if (btn.classList.contains('accept')) {
-          await acceptFriendRequest(this.friendRequests.get(username)?.request_id!);
-        } else if (btn.classList.contains('reject')) {
-          await rejectFriendRequest(this.friendRequests.get(username)?.request_id!);
+        try {
+          if (btn.classList.contains("accept")) {
+            await acceptFriendRequest(
+              this.friendRequests.get(username)?.request_id!
+            );
+          } else if (btn.classList.contains("reject")) {
+            await rejectFriendRequest(
+              this.friendRequests.get(username)?.request_id!
+            );
+          }
+  
+          this.deleteFriendRequest(username);
+        } catch (error) {
+          console.error("Error: could not handle friend request action", error);
+          // could implement better error handling
+          authService.logout();
+          return;
         }
-
-        this.deleteFriendRequest(username);
       });
     }
   }
@@ -407,44 +444,48 @@ export class Chat {
   async handleUpdateFriends(data: MessageDTO): Promise<void> {
     if (data.metadata === "newConversation") {
       const friendID: number = Number(data.message);
-      const friendData: UserData = await getUserDataById(friendID);
-      let friendAvatarURL: string = await getUserAvatarById(friendID);
-
-      this.friends.push({
-        convID: data.conversation_id,
-        friendID: friendID,
-        friendName: friendData.name,
-        friendAvatar: friendAvatarURL,
-        unreadMsg: 0,
-        friendOn: false,
-      } as Friend);
-
-
-      const friend = this.friends[this.friends.length - 1];
-      const contactBtn = this.createContactElement(
-        friend.friendAvatar,
-        friend.friendName,
-        friend.unreadMsg
-      );
-
-
-      const clickHandler = () => {
-        chatWindowControler.open(friend);
-        this.updateContactUnreadUI(friend.convID, 0);
-      };
-
-      contactBtn.addEventListener("click", clickHandler);
-
-      const chatContacts = document.querySelector(".chat-contacts");
-      chatContacts?.appendChild(contactBtn);
-
-      this.contactElements.set(friend.convID, {
-        element: contactBtn,
-        handler: clickHandler,
-      });
-
+      try {
+        const friendData: UserData = await getUserDataById(friendID);
+        let friendAvatarURL: string = await getUserAvatarById(friendID);
+        
+        this.friends.push({
+          convID: data.conversation_id,
+          friendID: friendID,
+          friendName: friendData.name,
+          friendAvatar: friendAvatarURL,
+          unreadMsg: 0,
+          friendOn: false,
+        } as Friend);
+  
+        const friend = this.friends[this.friends.length - 1];
+        const contactBtn = this.createContactElement(
+          friend.friendAvatar,
+          friend.friendName,
+          friend.unreadMsg
+        );
+  
+        const clickHandler = () => {
+          chatWindowControler.open(friend);
+          this.updateContactUnreadUI(friend.convID, 0);
+        };
+  
+        contactBtn.addEventListener("click", clickHandler);
+  
+        const chatContacts = document.querySelector(".chat-contacts");
+        chatContacts?.appendChild(contactBtn);
+  
+        this.contactElements.set(friend.convID, {
+          element: contactBtn,
+          handler: clickHandler,
+        });
+        // else if (type === "remove") { } // todo remover amizade
+      } catch (error) {
+        console.error("Error getting new conversation with new friend", error);
+        //could implement better error handling
+        authService.logout();
+        return;
+      }
     }
-    // else if (type === "remove") { } // todo remover amizade
   }
 
   updateContactUnreadUI(convID: number, unreadCount: number): void {
