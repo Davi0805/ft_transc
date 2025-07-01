@@ -134,21 +134,20 @@ export const LobbyMatchPage = {
 
     //TODO friendly and ranked are starting to have a lot of differences. Maybe find a way to put the common things in one place here and pass the differences to their respective objects
     renderSlots(useDefaultSettings) {
-        // TODO: change to enum values once typescript is applied
         const slots = {
             LEFT: {
                 back: 123
             },
             RIGHT: {
-                front: -2,
-                back: -2
+                front: -1,
+                back: -1
             },
             TOP: {
                 front: -1,
             },
             BOTTOM: {
                 front: 321,
-                back: -2
+                back: -1
             },
         } //TODO: This has to be a function that returns this object
 
@@ -176,7 +175,7 @@ export const LobbyMatchPage = {
                 
                 const slotSpaceElement = document.createElement("td");
                 slotSpaceElement.className = "text-center"
-                if (player === -2 && (!useDefaultSettings || !this.participating)) {
+                if (player === -1 && (!useDefaultSettings || !this.participating)) {
                     const slotJoinElement = getButton(`join-${team}-${role}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
                         if (!useDefaultSettings) {
