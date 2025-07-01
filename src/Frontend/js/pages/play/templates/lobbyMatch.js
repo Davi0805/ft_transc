@@ -14,9 +14,6 @@ export const LobbyMatchPage = {
                         <div id="lobby-settings">
                         </div>
                         <div id="lobby-buttons" class="flex flex-col gap-1">
-                            ${getButton("btn-invite", "button", "Invite").outerHTML}
-                            ${getButton("btn-leave", "button", "Leave").outerHTML}
-                            ${getButton("btn-ready", "button", "Ready").outerHTML}
                         </div>
                     </div>
                 </div>
@@ -27,6 +24,7 @@ export const LobbyMatchPage = {
     renderSettings() {
         const lobbySettingsElement = document.getElementById('lobby-settings');
         const lobbySettingsListing = {
+            id: 1,
             name: "Some lobby",
             map: "1v1-medium",
             mode: "modern",
@@ -66,13 +64,16 @@ export const LobbyMatchPage = {
 
 
     activateButtons() {
-        const inviteButton = document.getElementById('btn-invite');
+        const buttonsDiv = document.getElementById("lobby-buttons");
+
+        const inviteButton = getButton("btn-invite", "button", "Invite");
         inviteButton.addEventListener('click', () => {
             //TODO: ADD INVITE LOGIC HERE
             console.log("Invite button was clicked")
         })
+        buttonsDiv.appendChild(inviteButton);
 
-        const leaveButton = document.getElementById('btn-leave');
+        const leaveButton = getButton("btn-leave", "button", "Leave");
         leaveButton.addEventListener('click', () => {
             if (this.participating) {
                 //TODO: tell db that player is not participating anymore!
@@ -83,8 +84,9 @@ export const LobbyMatchPage = {
 
             window.router.navigateTo('/play')
         })
+        buttonsDiv.appendChild(leaveButton);
 
-        const readyButton = document.getElementById('btn-ready');
+        const readyButton = getButton("btn-ready", "button", "Ready");
         readyButton.addEventListener('click', () => {
             if (!this.participating) {
                 readyButton.textContent = "You must join first!"
@@ -108,10 +110,29 @@ export const LobbyMatchPage = {
                 readyButton.classList.remove("bg-gray-900/25") //the active color
                 readyButton.classList.add("bg-gray-900/50") //the normal color
             }
-        })
+        });
+        buttonsDiv.appendChild(readyButton);
+
+        const isHost = true; //TODO: Ask db if this client is host
+        if (isHost) {
+            const startButton = getButton("btn-start", "button", "Start");
+            startButton.addEventListener('click', () => {
+                const everyoneReady = false; //TODO: Ask db if everyone is ready
+                if (everyoneReady) {
+                    //TODO: Logic to start the game
+                    console.log("Everyone is ready. Starting game...")
+                } else {
+                    startButton.textContent = "Not everyone is ready!"
+                    setTimeout(() => {
+                        startButton.textContent = "Start"
+                    }, 1000)
+                }
+            })
+            buttonsDiv.appendChild(startButton)
+        }
     },
 
-    //TODO friendly and ranked are sterting to have a lot of differences. Maybe find a way to put the common things in one place here and pass the differences to their respective objects
+    //TODO friendly and ranked are starting to have a lot of differences. Maybe find a way to put the common things in one place here and pass the differences to their respective objects
     renderSlots(useDefaultSettings) {
         // TODO: change to enum values once typescript is applied
         const slots = {
