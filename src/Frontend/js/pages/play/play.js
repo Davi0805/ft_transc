@@ -59,6 +59,7 @@ export const PlayPage = {
 
         const lobbiesInfo = [
             {
+                id: 1,
                 name: "Blobby Lobby",
                 host: "ndo-vale",
                 type: "friendly",
@@ -68,6 +69,7 @@ export const PlayPage = {
                 matchLength: 300
             },
             {
+                id: 2,
                 name: "Lelelele",
                 host: "artuda",
                 type: "tournament",
@@ -89,7 +91,7 @@ export const PlayPage = {
                 tdata.textContent = item;
                 row.appendChild(tdata);
             })
-            row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].name)) //TODO pass whatever is necessary to identify the lobby
+            row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].id))
             lobbiesBody.appendChild(row)
         }
 
