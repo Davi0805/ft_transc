@@ -4,6 +4,7 @@ const cors = require('@fastify/cors');
 const path = require('path');
 const matchRoutes = require('./Infrastructure/routes/MatchRoutes');
 const lobbyRoutes = require('./Infrastructure/routes/LobbyRoutes');
+const lobbyMatchWsGateRoutes = require('./Infrastructure/routes/LobbyMatchWsGatewayRoutes');
 
 const prometheus = require('fastify-metrics');
 
@@ -11,6 +12,20 @@ const setup = () => {
     const app = Fastify({ logger: true,
         bodyLimit: 10 * 1024 * 1024
      });
+
+    app.setErrorHandler((error, request, reply) => {
+        const statusCode = error.statusCode ?? 500;
+        console.log(error);
+
+        reply.status(statusCode).send(
+        {
+            message: error.message,
+            statusCode
+        });
+    });
+
+    app.register(require('@fastify/websocket'));
+     
     app.register(prometheus, {endpoint: '/metrics'});
     app.register(cors, {
         origin: true
@@ -18,6 +33,7 @@ const setup = () => {
     
     app.register(matchRoutes);
     app.register(lobbyRoutes);
+    app.register(lobbyMatchWsGateRoutes);
 
 
     app.register(sensible);
