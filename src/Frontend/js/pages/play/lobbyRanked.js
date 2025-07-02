@@ -44,7 +44,6 @@ export const LobbyRankedPage = {
                 }
             })
         }
-        
     },
 
     startGame(websocket) {
@@ -64,7 +63,7 @@ export const LobbyRankedPage = {
 
                 // UserCustoms will be the object that will be generated at runtime
                 const gameConfigs = applyDevCustoms(UserCustoms); //TODO: Get user customs from REDIS 
-                const clientGameConfigs = buildCAppConfigs(gameConfigs, clientID, websocket)
+                const clientGameConfigs = buildCAppConfigs(gameConfigs, clientID, websocket, getElementById(''))
                 await App.init(clientGameConfigs);
             }
         }
