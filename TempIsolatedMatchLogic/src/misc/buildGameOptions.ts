@@ -14,6 +14,7 @@ export function buildCAppConfigs(gameConfigs: TGameConfigs,
     const out: CAppConfigs = {
       websocket: websocket,
       appConfigs: {
+        rootElement: document.body,
         width: gameConfigs.field.size.x,
         height: gameConfigs.field.size.y
       },

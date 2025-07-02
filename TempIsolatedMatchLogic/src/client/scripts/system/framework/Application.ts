@@ -4,6 +4,7 @@ import RendererTicker from "./RendererTicker";
 import Ticker from "./Ticker";
 
 export type AppConfigs = {
+    rootElement: HTMLElement,
     width: number,
     height: number
 }
