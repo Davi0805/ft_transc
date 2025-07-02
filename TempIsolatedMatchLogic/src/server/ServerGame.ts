@@ -44,7 +44,7 @@ export default class ServerGame {
         loop.start(() => {
             const message: Adto = {
                 type: "SGameDTO",
-                dto: this.getGameDTO()
+                dto: this._getGameDTO()
             }
             const data = JSON.stringify(message);
             for (var client of clients) {
@@ -53,17 +53,7 @@ export default class ServerGame {
         })
     }
 
-    //THIS SHOULD BE PRIVATE (will change later to make sure I do not break anything)
-    //DO NOT USE
-    getGameDTO(): SGameDTO {
-        const out: SGameDTO = {
-            balls: this._ballsManager.getBallsDTO(),
-            teams: this._teamsManager.getTeamsDTO(),
-            paddles: this._paddlesManager.getPaddlesDTO(),
-            timeLeft: this._timeLeft
-        }
-        return out
-    }
+
 
     //This should be called whenever a message is received by one of the clients. 
     //The message should be casted to a CGameDTO and then sent as argument
@@ -93,6 +83,18 @@ export default class ServerGame {
     private _humansManager: SHumansManager;
     private _botsManager: BotsManager;
     private _paddlesManager: SPaddlesManager;
+
+    //THIS SHOULD BE PRIVATE (will change later to make sure I do not break anything)
+    //DO NOT USE
+    private _getGameDTO(): SGameDTO {
+        const out: SGameDTO = {
+            balls: this._ballsManager.getBallsDTO(),
+            teams: this._teamsManager.getTeamsDTO(),
+            paddles: this._paddlesManager.getPaddlesDTO(),
+            timeLeft: this._timeLeft
+        }
+        return out
+    }
 
     private _countdownLoop(loop: LoopController) {
         if (loop.isEventTime(1)) {
