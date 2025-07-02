@@ -53,8 +53,6 @@ export default class ServerGame {
         })
     }
 
-
-
     //This should be called whenever a message is received by one of the clients. 
     //The message should be casted to a CGameDTO and then sent as argument
     processClientDTO(dto: CGameDTO) {
@@ -62,11 +60,6 @@ export default class ServerGame {
             dto.controlsState.humanID,
             dto.controlsState.controlsState
         );
-    }
-
-    //NOT NECESSARY (was used for debug). DO NOT USE
-    getHumansAmount(): number {
-        return this._humansManager.humans.length
     }
 
     private _windowSize: point;
@@ -84,8 +77,7 @@ export default class ServerGame {
     private _botsManager: BotsManager;
     private _paddlesManager: SPaddlesManager;
 
-    //THIS SHOULD BE PRIVATE (will change later to make sure I do not break anything)
-    //DO NOT USE
+
     private _getGameDTO(): SGameDTO {
         const out: SGameDTO = {
             balls: this._ballsManager.getBallsDTO(),
