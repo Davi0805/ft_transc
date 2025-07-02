@@ -230,8 +230,8 @@ export const LobbyMatchPage = {
                         }
                     })
                     slotSpaceElement.appendChild(slotJoinElement);
-                } else if (player !== -2) {
-                    //TODO should find a way do identify is player is current user and add a withdraw button
+                } else if (player !== -1) {
+                    //TODO should find a way to identify if player is current user and add a withdraw button
                     const playerElement = document.createElement("p");
                     playerElement.className = "text-xl p-2"
                     playerElement.textContent = player;

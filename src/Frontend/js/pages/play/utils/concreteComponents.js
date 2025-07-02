@@ -31,7 +31,7 @@ export function getLobbyOptionsHTML(editable, type, {
                     "1v1-medium",
                     "1v1-big"
                 ])
-                break ; //TODO: How to put them in order?
+                break ;
             } 
             default: { throw new Error("GAVE SHIT") }
         } 
@@ -51,7 +51,7 @@ export function getLobbyOptionsHTML(editable, type, {
         const lengthOptions = [
             "blitz",
             "rapid",
-            "classic",
+            "classical",
             "long",
             "marathon"
         ]
