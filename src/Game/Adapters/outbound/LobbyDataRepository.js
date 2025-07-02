@@ -30,20 +30,46 @@ class LobbyDataRepository {
         redis.hSet(`lobby:${lobby_id}`, 'map_usr_min', data.map_usr_min);
         redis.hSet(`lobby:${lobby_id}`, 'map_usr_max', data.map_usr_max);
 
-        //redis.hSet(`lobby:${lobby_id}`, 'users', data.users);
+        redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify([]));
 
         await redis.expire(`lobby:${lobby_id}`, 60);
     }
 
+
+    // TTL - Time To Leave
+    // method to check and remove TTL
+    async isTemp(lobby_id)
+    {
+        const ttl = await redis.ttl(`lobby:${lobby_id}`);
+        if (ttl == -1) console.log('No ttl on it');
+        else if (ttl > 0) 
+        {
+            const result = await redis.persist(`lobby:${lobby_id}`);
+            console.log(result ? 'ttl removed' : 'tll failed to remove');
+        }
+    }
+
     async addUser(lobby_id, data)
     {
-
+        const lobby = this.get(lobby_id);
+        if (!lobby.users)
+        {
+            const arr = [];
+            arr.push({id: 1, ready: false});
+            await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(arr));
+        }
+        else
+        {
+            await lobby.users.push({id: 1, ready: false});
+            await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(lobby.users));
+        }
     }
 
     async get(lobby_id)
     {
         const result = await redis.hGetAll(`lobby:${lobby_id}`);
         //console.log('RAW GET = ' + result.name + ' | JSON GET = ' + JSON.stringify(result));
+        if (result.users) result.users = JSON.parse(result.users);
         return result;
     }
 
