@@ -120,30 +120,8 @@ export const LobbyMatchPage = {
         const isHost = true; //TODO: Ask db if this client is host
         if (isHost) {
             const startButton = getButton("btn-start", "button", "Start");
-            startButton.addEventListener('click', () => {
-                const everyoneReady = false; //TODO: Ask db if everyone is ready
-                if (everyoneReady) {
-                    //TODO: Logic to start the game
-                    //
-
-
-
-
-
-
-
-
-
-
-                    console.log("Everyone is ready. Starting game...")
-                } else {
-                    startButton.textContent = "Not everyone is ready!"
-                    setTimeout(() => {
-                        startButton.textContent = "Start"
-                    }, 1000)
-                }
-            })
-            buttonsDiv.appendChild(startButton)
+            buttonsDiv.appendChild(startButton);
+            
         }
     },
 
@@ -312,5 +290,5 @@ export const LobbyMatchPage = {
         participantsElement.appendChild(joinWithdrawButton)
     },
 
-    participating: false
+    participating: false //This should be gotten from redis
 }
