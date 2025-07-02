@@ -1,6 +1,10 @@
 import { getButton, getTable } from "../utils/stylingComponents.js";
 import { getLobbyOptionsHTML } from "../utils/concreteComponents.js";
 
+//IMPORTANT TODO!!!!!!
+//Must pass the functionality of the buttons to each lobby!! Separates rendering from logic, and allows to pass different configs
+
+
 export const LobbyMatchPage = {
     template() {
         return `
@@ -120,6 +124,17 @@ export const LobbyMatchPage = {
                 const everyoneReady = false; //TODO: Ask db if everyone is ready
                 if (everyoneReady) {
                     //TODO: Logic to start the game
+                    //
+
+
+
+
+
+
+
+
+
+
                     console.log("Everyone is ready. Starting game...")
                 } else {
                     startButton.textContent = "Not everyone is ready!"

@@ -13,6 +13,8 @@ export const LobbyFriendlyPage = {
             duration: "marathon"
         } //TODO: Get Lobby Settings from db
 
+        //Should create websocket here and save it
+        
         const titleElement = document.getElementById('lobby-title');
         titleElement.textContent = lobbySettingsListing.name //TODO: Probably should get the name of the lobby instead?
         const subtitleElement = document.getElementById('lobby-subtitle');
@@ -23,5 +25,7 @@ export const LobbyFriendlyPage = {
         LobbyMatchPage.activateButtons();
 
         console.log('Lobby Friendly page loaded!')
+
+        //
     },
 }

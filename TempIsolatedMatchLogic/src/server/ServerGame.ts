@@ -10,6 +10,9 @@ import { BALL_TYPES } from "./Objects/SBall.js";
 
 
 export default class ServerGame {
+    //Creates the game. To pass the correct configuration, must build a UserCustoms object (see in file src/misc/gameOptions.ts)
+    //and then apply to it applyDevCustoms() and buildSGameConfigs() to the result of that.
+    //See server.ts for example
     constructor(gameOpts: SGameConfigs) {
         this._windowSize = gameOpts.window.size;
         this._matchLength = gameOpts.matchLength;
@@ -21,6 +24,7 @@ export default class ServerGame {
         this._botsManager = new BotsManager(gameOpts.bots, this._paddlesManager.paddles, this.windowSize)
     }
 
+    //Starts the internal logic loop. Should be started once all players are connected and ready to play
     startGameLoop() {
         const loop = new LoopController(90);
         loop.start(() => {
@@ -34,6 +38,7 @@ export default class ServerGame {
         })
     }
 
+    //Starts the broadcasting of the game to all the websockets in the array that is passed to it as argument
     startBroadcast(clients: WebSocket[]) {
         const loop = new LoopController(90);
         loop.start(() => {
@@ -48,6 +53,8 @@ export default class ServerGame {
         })
     }
 
+    //THIS SHOULD BE PRIVATE (will change later to make sure I do not break anything)
+    //DO NOT USE
     getGameDTO(): SGameDTO {
         const out: SGameDTO = {
             balls: this._ballsManager.getBallsDTO(),
@@ -58,6 +65,8 @@ export default class ServerGame {
         return out
     }
 
+    //This should be called whenever a message is received by one of the clients. 
+    //The message should be casted to a CGameDTO and then sent as argument
     processClientDTO(dto: CGameDTO) {
         this._humansManager.updateControlState(
             dto.controlsState.humanID,
@@ -65,6 +74,7 @@ export default class ServerGame {
         );
     }
 
+    //NOT NECESSARY (was used for debug). DO NOT USE
     getHumansAmount(): number {
         return this._humansManager.humans.length
     }
