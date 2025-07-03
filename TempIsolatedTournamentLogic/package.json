@@ -8,5 +8,11 @@
   "main": "index.js",
   "scripts": {
     "test": "npx tsc && node index.js"
+  },
+  "dependencies": {
+    "edmonds-blossom": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10"
   }
 }
