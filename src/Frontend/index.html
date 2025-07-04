@@ -2,21 +2,26 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>SPA test</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/components/utils.css" />
-    <link rel="stylesheet" href="css/login/login.css" />
-    <link rel="stylesheet" href="css/login/twoFactor.css" />
-    <link rel="stylesheet" href="css/register/register.css" />
-    <link rel="stylesheet" href="css/header/header.css" />
-    <link rel="stylesheet" href="css/sidebar/chat.css" />
-    <link rel="stylesheet" href="css/sidebar/sidebar.css" />
-    <link rel="stylesheet" href="css/sidebar/friend-requests.css" />
-  </head>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>SPA test</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components/utils.css" />
+  <link rel="stylesheet" href="css/login/login.css" />
+  <link rel="stylesheet" href="css/login/twoFactor.css"/>
+  <link rel="stylesheet" href="css/register/register.css"/>
+  <link rel="stylesheet" href="css/header/header.css" />
+  <link rel="stylesheet" href="css/sidebar/chat.css" />
+  <link rel="stylesheet" href="css/sidebar/sidebar.css" />
+  <link rel="stylesheet" href="css/sidebar/friend-requests.css" />
+  <link rel="stylesheet" href="css/matchCenter/tailwindOutput.css" />
+  <!-- <link rel="preload" href="css/matchCenter/tailwindOutput.css" as="style" onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="css/matchCenter/tailwindOutput.css"></noscript> -->
+
+</head>
 
   <body>
     <!-- Header (will contain navigation links) -->
@@ -42,6 +47,14 @@
             data-i18n="header-home"
             class="active nav-link"
             >Home</a
+          >
+          <a 
+            id="play-link"
+            href="/play"
+            data-link
+            data-i18n="header-play"
+            class="nav-link"
+            >Play</a
           >
           <a
             id="about-link"
