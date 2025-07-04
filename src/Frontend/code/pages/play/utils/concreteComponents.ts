@@ -1,10 +1,22 @@
-export function getLobbyOptionsHTML(editable, type, {
-    name, map, mode, length
-} = {name: "", map: "", mode: "", length: ""}) {
+type TLobbyType = "friendly" | "ranked" | "tournament"
+type TMapType = "1v1-small" | "1v1-medium" | "1v1-big" | "1v1v1v1-small" | "1v1v1v1-medium" | "1v1v1v1-big"
+    | "2v2-small" | "2v2-medium" | "2v2-big" | "2v2v2v2-small" | "2v2v2v2-medium" | "2v2v2v2-big"
+type TMatchMode = "classic" | "modern"
+type TMatchDuration = "blitz" | "rapid" | "classical" | "long" | "marathon"
+
+export type TLobbySettings = {
+    id: number,
+    name: string,
+    map: TMapType,
+    mode: TMatchMode,
+    duration: TMatchDuration
+}
+
+export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySettings: TLobbySettings) {
     let tagType = "";
     let mapOptionsHtml = "";
     let modeOptionsHtml = ""
-    let lengthOptionsHtml = "";
+    let durationOptionsHtml = "";
 
     if (editable) {
         tagType = "select"
@@ -37,7 +49,7 @@ export function getLobbyOptionsHTML(editable, type, {
         } 
         
         for (let option of mapOptions) {
-            mapOptionsHtml += `<option value="${option}" ${map === option ? "selected" : ""}>${option}</option>`;
+            mapOptionsHtml += `<option value="${option}" ${lobbySettings?.map === option ? "selected" : ""}>${option}</option>`;
         }
         const modeOptions = [
             "classic",
@@ -45,7 +57,7 @@ export function getLobbyOptionsHTML(editable, type, {
         ]
         
         for (let option of modeOptions) {
-            modeOptionsHtml += `<option value="${option}" ${mode === option ? "selected" : ""}>${option}</option>`;
+            modeOptionsHtml += `<option value="${option}" ${lobbySettings?.mode === option ? "selected" : ""}>${option}</option>`;
         }
     
         const lengthOptions = [
@@ -57,13 +69,13 @@ export function getLobbyOptionsHTML(editable, type, {
         ]
         
         for (let option of lengthOptions) {
-            lengthOptionsHtml += `<option value="${option}" ${length === option ? "selected" : ""}>${option}</option>`;
+            durationOptionsHtml += `<option value="${option}" ${lobbySettings?.duration === option ? "selected" : ""}>${option}</option>`;
         }
     } else {
         tagType = "p";
-        mapOptionsHtml = map;
-        modeOptionsHtml = mode
-        lengthOptionsHtml = length;
+        mapOptionsHtml = lobbySettings?.map;
+        modeOptionsHtml = lobbySettings?.mode
+        durationOptionsHtml = lobbySettings?.duration;
     }
 
 
@@ -82,9 +94,9 @@ export function getLobbyOptionsHTML(editable, type, {
             </${tagType}>
         </div>
         <div class="flex flex-row w-full justify-between gap-1">
-            <label for="match-length" class="text-xl">Match Length:</label>
-            <${tagType} id="match-length" name="match-length" class="bg-gray-900/50 rounded-2xl px-4 text-center">
-                ${lengthOptionsHtml}
+            <label for="match-duration" class="text-xl">Match duration:</label>
+            <${tagType} id="match-duration" name="match-duration" class="bg-gray-900/50 rounded-2xl px-4 text-center">
+                ${durationOptionsHtml}
             </${tagType}>
         </div>
     `

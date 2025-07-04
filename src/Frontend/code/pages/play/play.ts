@@ -1,4 +1,5 @@
-import { getTable } from "./utils/stylingComponents.js";
+import { router } from "../../routes/router";
+import { getTable } from "./utils/stylingComponents";
 
 export const PlayPage = {
     template() {
@@ -24,20 +25,20 @@ export const PlayPage = {
     },
 
     init() {
-        const lobbiesHead = document.getElementById('lobbies-head');
+        const lobbiesHead = document.getElementById('lobbies-head') as HTMLElement;
         lobbiesHead.innerHTML = this.getLobbyCategoriesHtml();
 
         this.updateCurrentLobbiesHtml();
 
-        const buttonRefresh = document.getElementById('btn-refresh');
+        const buttonRefresh = document.getElementById('btn-refresh') as HTMLElement;
         buttonRefresh.addEventListener('click', () => this.updateCurrentLobbiesHtml());
 
-        const buttonNewFriendly = document.getElementById('btn-new-friendly');
-        const buttonNewRanked = document.getElementById('btn-new-ranked');
-        const buttonNewTournament = document.getElementById('btn-new-tournament');
-        buttonNewFriendly.addEventListener('click', () => window.router.navigateTo('/create-friendly'));
-        buttonNewRanked.addEventListener('click', () => window.router.navigateTo('/create-ranked'));
-        buttonNewTournament.addEventListener('click', () => window.router.navigateTo('/create-tournament'));
+        const buttonNewFriendly = document.getElementById('btn-new-friendly') as HTMLElement;
+        const buttonNewRanked = document.getElementById('btn-new-ranked') as HTMLElement;
+        const buttonNewTournament = document.getElementById('btn-new-tournament') as HTMLElement;
+        buttonNewFriendly.addEventListener('click', () => router.navigateTo('/create-friendly'));
+        buttonNewRanked.addEventListener('click', () => router.navigateTo('/create-ranked'));
+        buttonNewTournament.addEventListener('click', () => router.navigateTo('/create-tournament'));
 
         
     },
@@ -54,7 +55,7 @@ export const PlayPage = {
     },
 
     updateCurrentLobbiesHtml() {
-        const lobbiesBody = document.getElementById('lobbies-body');
+        const lobbiesBody = document.getElementById('lobbies-body') as HTMLElement;
         lobbiesBody.innerHTML = ""
 
         const lobbiesInfo = [
@@ -88,7 +89,7 @@ export const PlayPage = {
                 const bdBrightness = i % 2 === 0 ? "bg-gray-900/0" : "bg-gray-900/25";
                 const tdata = document.createElement('td');
                 tdata.className = `${bdBrightness} px-6 py-2 wrap-anywhere`;
-                tdata.textContent = item;
+                tdata.textContent = item.toString();
                 row.appendChild(tdata);
             })
             row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].id))
@@ -98,8 +99,8 @@ export const PlayPage = {
         console.log("Lobby list updated!")
     },
 
-    goToLobby(name) {
+    goToLobby(id: number) {
         //TODO: Logic to go to a lobby goes here
-        console.log(`Should go to lobby ${name}`)
+        console.log(`Should go to lobby with id ${id}`)
     }
 }

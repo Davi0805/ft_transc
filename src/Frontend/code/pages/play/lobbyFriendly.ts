@@ -1,4 +1,4 @@
-import { LobbyMatchPage } from "./templates/lobbyMatch.js"
+import { LobbyMatchPage } from "./templates/lobbyMatch"
 
 export const LobbyFriendlyPage = {
     template() {
@@ -15,12 +15,12 @@ export const LobbyFriendlyPage = {
 
         //Should create websocket here and save it
 
-        const titleElement = document.getElementById('lobby-title');
+        const titleElement = document.getElementById('lobby-title') as HTMLElement;
         titleElement.textContent = lobbySettingsListing.name //TODO: Probably should get the name of the lobby instead?
-        const subtitleElement = document.getElementById('lobby-subtitle');
+        const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
         subtitleElement.textContent = "Friendly Match Lobby"
         
-        LobbyMatchPage.renderSlots();
+        LobbyMatchPage.renderSlots(false);
         LobbyMatchPage.renderSettings();
         LobbyMatchPage.activateButtons();
 

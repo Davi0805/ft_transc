@@ -1,4 +1,6 @@
-export function getButton(id, type, text, big = true) {
+type TButton = "button" | "submit" | "reset"
+
+export function getButton(id: string, type: TButton, text: string, big = true) {
     const out = document.createElement("button");
     out.id = id;
     out.type = type;
@@ -8,7 +10,7 @@ export function getButton(id, type, text, big = true) {
     return out
 }
 
-export function getTable(id, headHtml, bodyHtml) {
+export function getTable(id: string, headHtml: string, bodyHtml: string) {
     const out = document.createElement("div");
     out.id = id;
     out.className = "block max-w-full max-h-full rounded-2xl overflow-y-auto"

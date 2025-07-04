@@ -1,4 +1,4 @@
-import { LobbyMatchPage } from "./templates/lobbyMatch.js";
+import { LobbyMatchPage } from "./templates/lobbyMatch";
 
 export const LobbyTournamentPage = {
     template() {
@@ -13,9 +13,9 @@ export const LobbyTournamentPage = {
             duration: "marathon"
         } //TODO: Get Lobby Settings from db
 
-        const titleElement = document.getElementById('lobby-title');
+        const titleElement = document.getElementById('lobby-title') as HTMLElement;
         titleElement.textContent = lobbySettingsListing.name
-        const subtitleElement = document.getElementById('lobby-subtitle');
+        const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
         subtitleElement.textContent = "Friendly Match Lobby"
         
         LobbyMatchPage.renderParticipants();

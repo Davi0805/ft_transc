@@ -1,4 +1,4 @@
-import { LobbyMatchPage } from "./templates/lobbyMatch.js"
+import { LobbyMatchPage } from "./templates/lobbyMatch"
 
 export const LobbyRankedPage = {
     template() {
@@ -14,11 +14,11 @@ export const LobbyRankedPage = {
             duration: "marathon"
         } //TODO: Get Lobby Settings from db
 
-        const websocket = new WebSocket(`ws://${window.location.hostname}:8888/ws/${id}`); //Confirm websocket endpoint
+        const websocket = new WebSocket(`ws://${window.location.hostname}:8888/ws/${lobbySettingsListing.id}`); //Confirm websocket endpoint
 
-        const titleElement = document.getElementById('lobby-title');
+        const titleElement = document.getElementById('lobby-title') as HTMLElement;
         titleElement.textContent = lobbySettingsListing.name
-        const subtitleElement = document.getElementById('lobby-subtitle');
+        const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
         subtitleElement.textContent = "Ranked Match Lobby"
         
         LobbyMatchPage.renderSlots(true);
@@ -29,7 +29,7 @@ export const LobbyRankedPage = {
 
         const isHost = false //ask redis if is host
         if (isHost) {
-            const startButton = document.getElementById('btn-start')
+            const startButton = document.getElementById('btn-start') as HTMLElement
             startButton.addEventListener('click', () => {
                 const everyoneReady = false; //TODO: Ask db if everyone is ready
                 if (everyoneReady) {
@@ -46,8 +46,9 @@ export const LobbyRankedPage = {
         }
     },
 
-    startGame(websocket) {
-        websocket.addEventListener('message', onInitMessage);
+    startGame(websocket: WebSocket) {
+        console.log("Starting game")
+        /* websocket.addEventListener('message', onInitMessage);
 
         // Putting all logic here makes sure that game only loads once the connection is established
         async function onInitMessage(event) {
@@ -66,7 +67,7 @@ export const LobbyRankedPage = {
                 const clientGameConfigs = buildCAppConfigs(gameConfigs, clientID, websocket, getElementById(''))
                 await App.init(clientGameConfigs);
             }
-        }
+        } */
     }
 
 

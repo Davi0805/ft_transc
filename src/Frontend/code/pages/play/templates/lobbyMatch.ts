@@ -1,9 +1,10 @@
-import { getButton, getTable } from "../utils/stylingComponents.js";
-import { getLobbyOptionsHTML } from "../utils/concreteComponents.js";
+import { router } from "../../../routes/router";
+import { getButton, getTable } from "../utils/stylingComponents";
+import { TLobbySettings, getLobbyOptionsHTML } from "../utils/concreteComponents";
+
 
 //IMPORTANT TODO!!!!!!
 //Must pass the functionality of the buttons to each lobby!! Separates rendering from logic, and allows to pass different configs
-
 
 export const LobbyMatchPage = {
     template() {
@@ -26,13 +27,13 @@ export const LobbyMatchPage = {
     },
 
     renderSettings() {
-        const lobbySettingsElement = document.getElementById('lobby-settings');
-        const lobbySettingsListing = {
+        const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
+        const lobbySettingsListing: TLobbySettings = {
             id: 1,
             name: "Some lobby",
             map: "1v1-medium",
             mode: "modern",
-            length: "marathon"
+            duration: "marathon"
         } //TODO: Get Lobby Settings from db
 
         let lobbySettingsHtml = `
@@ -43,12 +44,12 @@ export const LobbyMatchPage = {
         `;
         lobbySettingsElement.innerHTML = lobbySettingsHtml;
 
-        const buttonChangeSettings = document.getElementById('btn-change-settings');
+        const buttonChangeSettings = document.getElementById('btn-change-settings') as HTMLElement;
         buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
     },
 
-    renderChangeSettings(lobbySettingsListing) {
-        const lobbySettingsElement = document.getElementById('lobby-settings');
+    renderChangeSettings(lobbySettingsListing: TLobbySettings) {
+        const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col gap-1">
                 ${getLobbyOptionsHTML(true, "friendly", lobbySettingsListing)}
@@ -57,7 +58,7 @@ export const LobbyMatchPage = {
         `;
         lobbySettingsElement.innerHTML = lobbySettingsHtml;
 
-        const formChangeSettings = document.getElementById('settings-change-form');
+        const formChangeSettings = document.getElementById('settings-change-form') as HTMLElement;
         formChangeSettings.addEventListener('submit', async (e) => {
             e.preventDefault();
             //TODO: Update the database here with new lobby settings
@@ -68,7 +69,7 @@ export const LobbyMatchPage = {
 
 
     activateButtons() {
-        const buttonsDiv = document.getElementById("lobby-buttons");
+        const buttonsDiv = document.getElementById("lobby-buttons") as HTMLElement;
 
         const inviteButton = getButton("btn-invite", "button", "Invite");
         inviteButton.addEventListener('click', () => {
@@ -86,7 +87,7 @@ export const LobbyMatchPage = {
             //TODO: ADD COMM TO DB THAT PLAYER LEFT
             console.log("Leave button was clicked")
 
-            window.router.navigateTo('/play')
+            router.navigateTo('/play')
         })
         buttonsDiv.appendChild(leaveButton);
 
@@ -126,7 +127,7 @@ export const LobbyMatchPage = {
     },
 
     //TODO friendly and ranked are starting to have a lot of differences. Maybe find a way to put the common things in one place here and pass the differences to their respective objects
-    renderSlots(useDefaultSettings) {
+    renderSlots(useDefaultSettings: boolean) {
         const slots = {
             LEFT: {
                 back: 123
@@ -144,7 +145,7 @@ export const LobbyMatchPage = {
             },
         } //TODO: This has to be a function that returns this object
 
-        const teamsElement = document.getElementById('participants');
+        const teamsElement = document.getElementById('participants') as HTMLElement;
         teamsElement.innerHTML = "";
         const slotsTable = document.createElement('table');
         for (const [team, roles] of Object.entries(slots)) {
@@ -152,7 +153,7 @@ export const LobbyMatchPage = {
     
             const teamNameElement = document.createElement("td");
             teamNameElement.className = "bg-gray-900/75 text-2xl"
-            teamNameElement.colSpan = "2";
+            teamNameElement.colSpan = 2;
             teamNameElement.textContent = team;
             teamElement.appendChild(teamNameElement);
             slotsTable.appendChild(teamElement);
@@ -194,13 +195,15 @@ export const LobbyMatchPage = {
                                 </form>
                             `;
                             document.body.appendChild(settingsDialog);
-                            const closeDialogButton = document.getElementById("btn-close-dialog");
+                            const closeDialogButton = document.getElementById("btn-close-dialog") as HTMLElement;
                             closeDialogButton.addEventListener("click", (e) => {
-                                const form = settingsDialog.querySelector("form");
+                                const form = settingsDialog.querySelector("form") as HTMLFormElement;
                                 if (!form.reportValidity()) return;
                                 e.preventDefault();
-                                const alias = document.getElementById("player-alias").value
-                                const paddleId = document.getElementById("player-paddle").value
+                                const aliasInput = document.getElementById("player-alias") as HTMLInputElement;
+                                const alias = aliasInput.value;
+                                const paddleIdInput = document.getElementById("player-paddle") as HTMLInputElement;
+                                const paddleId = paddleIdInput.value
                                 //TODO: add the player to this slot in the backend
                                 //The slot would consist in vars team + role
                                 //Use the above chosen settings!!
@@ -227,7 +230,7 @@ export const LobbyMatchPage = {
                     //TODO should find a way to identify if player is current user and add a withdraw button
                     const playerElement = document.createElement("p");
                     playerElement.className = "text-xl p-2"
-                    playerElement.textContent = player;
+                    playerElement.textContent = player.toString();
                     slotSpaceElement.appendChild(playerElement);
                 }
                 slotElement.appendChild(slotSpaceElement);
@@ -257,7 +260,7 @@ export const LobbyMatchPage = {
         ] //TODO: GET THIS FROM DB. DO NOT FORGET TO ORDER BT POINTS!!!!
 
 
-        const participantsElement = document.getElementById('participants');
+        const participantsElement = document.getElementById('participants') as HTMLElement;
 
         const header = document.createElement("h2");
         header.className = "text-center text-2xl bg-gray-900/75 p-1"
