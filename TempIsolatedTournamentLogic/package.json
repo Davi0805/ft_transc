@@ -10,7 +10,8 @@
     "test": "npx tsc && node index.js"
   },
   "dependencies": {
-    "edmonds-blossom": "^1.0.0"
+    "edmonds-blossom": "^1.0.0",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/node": "^24.0.10"

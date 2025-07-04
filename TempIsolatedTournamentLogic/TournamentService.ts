@@ -21,31 +21,31 @@ export class TournamentService {
 
     getNextRoundPairings(players: Player[]): Match[] {
 
-        const normalizedPlayers = Array.from(players).sort((a, b) => {
+        const normalizedPlayers = structuredClone(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
             else return b.rating - a.rating;
         });
         let playerRank = 1;
         normalizedPlayers.forEach(player => { player.rating = playerRank++; })
-        
 
 
         const playerGraph: PlayerGraph = this._generatePlayerGraph(normalizedPlayers);
         const scoreGroupSizes: Map<number, number> = this._getScoreGroupSizes(players.map(player => player.score))
         const weightedGraph: WeightedGraph = this._generateWeightedGraph(playerGraph, scoreGroupSizes);
 
-        console.log(weightedGraph)
-
         const pairingsIndexes: number[] = blossom(weightedGraph);
-
-        console.log(pairingsIndexes)
         const pairings: Match[] = this._convertToPairings(normalizedPlayers, pairingsIndexes)
 
         return pairings;
     }
 
     getClassificationTable(players: Player[]): Player[] {
-        const classificationTable: Player[] = [];
+        const classificationTable = Array.from(players).sort((a, b) => {
+            if (a.score !== b.score) return b.score - a.score;
+            else { //put here tiebreaks
+                return b.rating - a.rating
+            };
+        });
 
         return classificationTable
     }
@@ -67,7 +67,7 @@ export class TournamentService {
     private _generateWeightedGraph(
         playerGraph: PlayerGraph,
         scoreGroupSizes: Map<number, number>): WeightedGraph {
-        
+        //console.log("GRAPH: ")
         const weightedGraph: WeightedGraph = []
         playerGraph.forEach(edge => {
             const scoreGroupSize = edge[0].score === edge[1].score
@@ -81,18 +81,19 @@ export class TournamentService {
                 this._calculateEdgeWeight(edge[0], edge[1], scoreGroupSize)
             ])
         })
+        //console.log(weightedGraph)
 
         return weightedGraph
     }
 
-    _calculateEdgeWeight(p1: Player, p2: Player, scoreGroupSize: number): number {
+    private _calculateEdgeWeight(p1: Player, p2: Player, scoreGroupSize: number): number {
         const ratingWeight = Math.abs(p1.rating - p2.rating); // rating is rank
         const weightMiddleScoreGroup = Math.abs((scoreGroupSize / 2) - ratingWeight);
         const dutchWeight: number = -Math.pow(weightMiddleScoreGroup, 1.01)
 
         return ((10000 * (-Math.abs(p1.score - p2.score)))
             + (100 * (-Math.abs(p1.teamDist + p2.teamDist)))
-            + (dutchWeight) + 10210
+            + (dutchWeight) + 100210
         );
     }
 
