@@ -2,7 +2,6 @@ const redis = require('../../Infrastructure/config/Redis');
 
 
 
-
 /* 
 *   {
 *    "name": "Pato Caolho",
@@ -51,25 +50,35 @@ class LobbyDataRepository {
 
     async addUser(lobby_id, data)
     {
-        const lobby = this.get(lobby_id);
-        if (!lobby.users)
-        {
-            const arr = [];
-            arr.push({id: 1, ready: false});
-            await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(arr));
-        }
-        else
-        {
-            await lobby.users.push({id: 1, ready: false});
-            await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(lobby.users));
-        }
+        const lobby = await this.get(lobby_id);
+        if (lobby) this.isTemp(lobby_id);
+        lobby.users.push({id: data.user_id, ready: false});
+        await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(lobby.users));
+    }
+
+    async removeUser(lobby_id, user_id)
+    {
+    }
+
+    async setUserState(lobby_id, user_id, ready_state)
+    {
+        if (ready_state != false && ready_state != true) throw new Error('Invalid argument');
+        const lobby = await this.get(lobby_id);
+        const user = lobby.users.find(u => u.id == user_id);
+        user.ready = ready_state;
+        await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(lobby.users));
+    }
+
+    async setUserPosition(lobby_id, position)
+    {
+
     }
 
     async get(lobby_id)
     {
         const result = await redis.hGetAll(`lobby:${lobby_id}`);
         //console.log('RAW GET = ' + result.name + ' | JSON GET = ' + JSON.stringify(result));
-        if (result.users) result.users = JSON.parse(result.users);
+        result.users = JSON.parse(result.users);
         return result;
     }
 
