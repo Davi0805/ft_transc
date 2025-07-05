@@ -1,3 +1,6 @@
+import { getSelfData } from "../../api/getSelfDataAPI";
+import { createLobby, TLobbyCreationConfigs } from "../../api/lobbyMatchAPI/createLobbyAPI";
+import { TMapType, TMatchDuration, TMatchMode } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { router } from "../../routes/router";
 import { CreateLobbyPage } from "./templates/createLobby";
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
@@ -21,7 +24,22 @@ export const CreateTournamentPage = {
         const form = document.getElementById('lobby-creation-form') as HTMLFormElement;
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            //TODO put here the logic to create the lobby in the backend
+            
+            const hostName = (await getSelfData()).nickname;
+            if (!hostName) { throw Error(); }
+            const nameInput = document.getElementById("lobby-name") as HTMLInputElement
+            const matchMapInput = document.getElementById("match-map") as HTMLSelectElement
+            const matchModeInput = document.getElementById("match-mode") as HTMLSelectElement
+            const matchDurationInput = document.getElementById("match-duration") as HTMLSelectElement
+            const lobbySettings: TLobbyCreationConfigs = {
+                name: nameInput.value,
+                host: hostName,
+                type: "tournament",
+                map: matchMapInput.value as TMapType,
+                mode: matchModeInput.value as TMatchMode,
+                duration: matchDurationInput.value as TMatchDuration
+            }
+            await createLobby(lobbySettings);
             router.navigateTo('/lobby-tournament')
         })
         

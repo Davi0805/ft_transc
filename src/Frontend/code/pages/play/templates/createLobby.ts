@@ -8,7 +8,7 @@ export const CreateLobbyPage = {
                     <div id="lobby-options" class="flex flex-col items-center gap-4">
                         <div class="flex flex-row w-full justify-between gap-4">
                             <label for="match-name" class="text-xl">Name:</label>
-                            <input id="match-map" name="lobby-map" class="bg-gray-900/50 rounded-2xl px-4 text-center" required></input>
+                            <input id="match-name" name="lobby-name" class="bg-gray-900/50 rounded-2xl px-4 text-center" required></input>
                         </div>
                     </div>
                     <div id="create-lobby-form-buttons" class="flex flex-row gap-6">

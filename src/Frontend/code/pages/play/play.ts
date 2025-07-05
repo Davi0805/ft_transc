@@ -1,3 +1,4 @@
+import { getLobbySettings } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { router } from "../../routes/router";
 import { getTable } from "./utils/stylingComponents";
 
@@ -39,8 +40,6 @@ export const PlayPage = {
         buttonNewFriendly.addEventListener('click', () => router.navigateTo('/create-friendly'));
         buttonNewRanked.addEventListener('click', () => router.navigateTo('/create-ranked'));
         buttonNewTournament.addEventListener('click', () => router.navigateTo('/create-tournament'));
-
-        
     },
 
     getLobbyCategoriesHtml() {
@@ -54,41 +53,20 @@ export const PlayPage = {
         return lobbyCategoriesHtml;
     },
 
-    updateCurrentLobbiesHtml() {
+    async updateCurrentLobbiesHtml() {
         const lobbiesBody = document.getElementById('lobbies-body') as HTMLElement;
         lobbiesBody.innerHTML = ""
 
-        const lobbiesInfo = [
-            {
-                id: 1,
-                name: "Blobby Lobby",
-                host: "ndo-vale",
-                type: "friendly",
-                capacity: "6/8",
-                mode: "Classic",
-                map: "4-sided-teams",
-                matchLength: 300
-            },
-            {
-                id: 2,
-                name: "Lelelele",
-                host: "artuda",
-                type: "tournament",
-                capacity: "5/100",
-                mode: "Modern",
-                map: "1v1-small",
-                matchLength: 150
-            }
-        ] // TODO change this for a function that gets this info from database
+        const lobbiesInfo = await getLobbySettings();
 
         for (let i = 0; i < lobbiesInfo.length; i++) {
             const row = document.createElement("tr");
-            row.className = "hover:bg-gray-900/90 active:bg-gray-900/25"
+            const bgBrightness = i % 2 === 0 ? "bg-gray-900/0" : "bg-gray-900/25";
+            row.className = `${bgBrightness} hover:bg-gray-900/90 active:bg-gray-900/25`
             
-            Object.values(lobbiesInfo[i % 2]).forEach(item =>{
-                const bdBrightness = i % 2 === 0 ? "bg-gray-900/0" : "bg-gray-900/25";
+            Object.values(lobbiesInfo[i]).forEach(item => {
                 const tdata = document.createElement('td');
-                tdata.className = `${bdBrightness} px-6 py-2 wrap-anywhere`;
+                tdata.className = `px-6 py-2 wrap-anywhere`;
                 tdata.textContent = item.toString();
                 row.appendChild(tdata);
             })

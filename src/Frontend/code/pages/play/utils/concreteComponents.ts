@@ -1,4 +1,4 @@
-type TLobbyType = "friendly" | "ranked" | "tournament"
+/* type TLobbyType = "friendly" | "ranked" | "tournament"
 type TMapType = "1v1-small" | "1v1-medium" | "1v1-big" | "1v1v1v1-small" | "1v1v1v1-medium" | "1v1v1v1-big"
     | "2v2-small" | "2v2-medium" | "2v2-big" | "2v2v2v2-small" | "2v2v2v2-medium" | "2v2v2v2-big"
 type TMatchMode = "classic" | "modern"
@@ -10,7 +10,7 @@ export type TLobbySettings = {
     map: TMapType,
     mode: TMatchMode,
     duration: TMatchDuration
-}
+} */
 
 export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySettings: TLobbySettings) {
     let tagType = "";
