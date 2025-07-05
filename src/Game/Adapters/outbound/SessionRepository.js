@@ -1,4 +1,4 @@
-const redis = require('../../../Infrastructure/config/Redis');
+const redis = require('../../Infrastructure/config/Redis');
 
 class SessionRepository {
     

@@ -1,6 +1,6 @@
-const sessionRepository = require('../../Adapters/outbound/Repositories/SessionRepository');
+const sessionRepository = require('../../Adapters/outbound/SessionRepository');
 const exception = require('../../Infrastructure/config/CustomException');
-const friendsCacheRepo = require('../../Adapters/outbound/Repositories/FriendsCacheRepository');
+const friendsCacheRepo = require('../../Adapters/outbound/FriendsCacheRepository');
 /* const messageRepository = require('../../Adapters/outbound/Repositories/MessageRepository');
 const friendsRequestRepo = require('../../Adapters/outbound/Repositories/FriendRequestRepository');
  */
