@@ -6,9 +6,7 @@ import { ProfilePage  } from '../pages/profile'
 import { RegisterPage } from '../pages/register'
 import { AboutUsPage } from '../pages/about'
 import { SettingsPage } from '../pages/settings/settings'
-import { LobbyFriendlyPage } from '../pages/play/lobbyFriendly'
-import { LobbyRankedPage } from '../pages/play/lobbyRanked'
-import { LobbyTournamentPage } from '../pages/play/lobbyTournament'
+import { LobbyPage } from '../pages/play/lobby'
 import { CreateLobbyPage } from '../pages/play/createLobby'
 
 export interface Route {
@@ -85,47 +83,12 @@ export const routes: Array<Route> = [
         template: CreateLobbyPage.template,
         script: CreateLobbyPage
     },
-    // Create friendly match lobby
-/*     {
-        path: '/create-friendly',
-        title: 'Create Friendly Match',
-        template: CreateFriendlyPage.template,
-        script: CreateFriendlyPage
+
+    {
+        path: '/lobby',
+        title: 'Lobby',
+        template: LobbyPage.template,
+        script: LobbyPage
     },
-    // Create ranked match lobby
-    {
-        path: '/create-ranked',
-        title: 'Create Ranked Match',
-        template: CreateRankedPage.template,
-        script: CreateRankedPage
-    },
-    // Create Tournament lobby
-    {
-        path: '/create-tournament',
-        title: 'Create Tournament',
-        template: CreateTournamentPage.template,
-        script: CreateTournamentPage
-    }, */
-    // Lobby for friendly match
-    {
-        path: '/lobby-friendly',
-        title: 'Friendly Match Lobby',
-        template: LobbyFriendlyPage.template,
-        script: LobbyFriendlyPage
-    },
-    // Lobby for ranked match
-    {
-        path: '/lobby-ranked',
-        title: 'Ranked Match Lobby',
-        template: LobbyRankedPage.template,
-        script: LobbyRankedPage
-    },
-    // Lobby for tournament
-    {
-        path: '/lobby-tournament',
-        title: 'Tournament Lobby',
-        template: LobbyTournamentPage.template,
-        script: LobbyTournamentPage
-    }
     //? additional pages would be put here
 ];

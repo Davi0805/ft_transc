@@ -28,7 +28,43 @@ export const LobbyPage = {
         `;
     },
 
-    init() {},
+    async init() { //TODO: Doublecheck this does not break anything
+        const lobbySettings = await getLobbySettingsByID(lobbySocketService.lobbyID);
+
+        const titleElement = document.getElementById('lobby-title') as HTMLElement;
+        titleElement.textContent = lobbySettings.name
+        const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
+        switch (lobbySettings.type) {
+            case "friendly": subtitleElement.textContent = "Friendly Match Lobby"; break;
+            case "ranked": subtitleElement.textContent = "Ranked Match Lobby"; break;
+            case "tournament": subtitleElement. textContent = "Tournament Lobby"; break;
+            default: throw new Error("GAVE SHIT");
+        }
+        
+        this.renderSlots(true);
+        this.renderSettings();
+        this.activateButtons();
+
+        console.log('Lobby Ranked page loaded!')
+
+        /* const isHost = false //ask redis if is host
+        if (isHost) {
+            const startButton = document.getElementById('btn-start') as HTMLElement
+            startButton.addEventListener('click', () => {
+                const everyoneReady = false; //TODO: Ask db if everyone is ready
+                if (everyoneReady) {
+                    //TODO: Logic to start the game
+                    this.startGame(websocket)
+                    console.log("Everyone is ready. Starting game...")
+                } else {
+                    startButton.textContent = "Not everyone is ready!"
+                    setTimeout(() => {
+                        startButton.textContent = "Start"
+                    }, 1000)
+                }
+            })
+        } */
+    },
 
     async renderSettings() {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
