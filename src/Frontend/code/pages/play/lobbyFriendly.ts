@@ -1,4 +1,4 @@
-import { LobbyMatchPage } from "./templates/lobbyMatch"
+import { LobbyMatchPage } from "./lobby"
 
 export const LobbyFriendlyPage = {
     template() {

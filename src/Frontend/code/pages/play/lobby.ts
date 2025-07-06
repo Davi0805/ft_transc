@@ -1,12 +1,14 @@
-import { router } from "../../../routes/router";
-import { getButton, getTable } from "../utils/stylingComponents";
-import { TLobbySettings, getLobbyOptionsHTML } from "../utils/concreteComponents";
+import { router } from "../../routes/router";
+import { getButton, getTable } from "./utils/stylingComponents";
+import { TLobbySettings, getLobbyOptionsHTML } from "./utils/concreteComponents";
+import { getLobbySettingsByID, TLobby } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { lobbySocketService } from "../../services/lobbySocketService";
 
 
 //IMPORTANT TODO!!!!!!
 //Must pass the functionality of the buttons to each lobby!! Separates rendering from logic, and allows to pass different configs
 
-export const LobbyMatchPage = {
+export const LobbyPage = {
     template() {
         return `
             <div class="flex flex-col items-center h-full max-h-[650px] justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 gap-3 overflow-hidden">
@@ -26,15 +28,11 @@ export const LobbyMatchPage = {
         `;
     },
 
-    renderSettings() {
+    init() {},
+
+    async renderSettings() {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        const lobbySettingsListing: TLobbySettings = {
-            id: 1,
-            name: "Some lobby",
-            map: "1v1-medium",
-            mode: "modern",
-            duration: "marathon"
-        } //TODO: Get Lobby Settings from db
+        const lobbySettingsListing: TLobby = await getLobbySettingsByID(lobbySocketService.lobbyID)
 
         let lobbySettingsHtml = `
             <div id="settings-listing" class="flex flex-col gap-1">

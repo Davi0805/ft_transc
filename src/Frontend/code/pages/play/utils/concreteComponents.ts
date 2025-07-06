@@ -12,6 +12,10 @@ export type TLobbySettings = {
     duration: TMatchDuration
 } */
 
+import { TLobby, TLobbyType } from "../../../api/lobbyMatchAPI/getLobbySettingsAPI";
+
+export type TLobbySettings = Pick<TLobby, "map" | "mode" | "duration">
+
 export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySettings: TLobbySettings) {
     let tagType = "";
     let mapOptionsHtml = "";
@@ -24,24 +28,24 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
         switch (type) {
             case "friendly": {
                 mapOptions.unshift(...[
-                    "2v2-small",
-                    "2v2-medium",
-                    "2v2-big",
-                    "2v2v2v2-small",
-                    "2v2v2v2-medium",
-                    "2v2v2v2-big"
+                    "2-teams-small",
+                    "2-teams-medium",
+                    "2-teams-big",
+                    "4-teams-small",
+                    "4-teams-medium",
+                    "4-teams-big"
                 ])
             } case "ranked": {
                 mapOptions.unshift(...[
-                    "1v1v1v1-small",
-                    "1v1v1v1-medium",
-                    "1v1v1v1-big"
+                    "4-players-small",
+                    "4-players-medium",
+                    "4-players-big"
                 ])
             } case "tournament": {
                 mapOptions.unshift(...[
-                    "1v1-small",
-                    "1v1-medium",
-                    "1v1-big"
+                    "2-players-small",
+                    "2-players-medium",
+                    "2-players-big"
                 ])
                 break ;
             } 

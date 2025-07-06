@@ -1,5 +1,6 @@
 import { getLobbySettings } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { router } from "../../routes/router";
+import { lobbySocketService } from "../../services/lobbySocketService";
 import { getTable } from "./utils/stylingComponents";
 
 export const PlayPage = {
@@ -16,9 +17,7 @@ export const PlayPage = {
                         ${getTable("lobbies", "", "").outerHTML}
                     </div>
                     <div id="new-buttons" class="flex flex-row gap-4 items-center justify-center text-xl">
-                        <button id="btn-new-friendly" type="button" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">New Friendly Match</button>
-                        <button id="btn-new-ranked" type="button" class="bg-gray-900/50 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">New Ranked Match</button>
-                        <button id="btn-new-tournament" type="button" class="bg-gray-900/50 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">New Tournament</button>
+                        <button id="btn-new-lobby" type="button" class="bg-gray-900/50 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">New Lobby</button>
                     </div>
                 </div>
             </div>
@@ -34,12 +33,8 @@ export const PlayPage = {
         const buttonRefresh = document.getElementById('btn-refresh') as HTMLElement;
         buttonRefresh.addEventListener('click', () => this.updateCurrentLobbiesHtml());
 
-        const buttonNewFriendly = document.getElementById('btn-new-friendly') as HTMLElement;
-        const buttonNewRanked = document.getElementById('btn-new-ranked') as HTMLElement;
-        const buttonNewTournament = document.getElementById('btn-new-tournament') as HTMLElement;
-        buttonNewFriendly.addEventListener('click', () => router.navigateTo('/create-friendly'));
-        buttonNewRanked.addEventListener('click', () => router.navigateTo('/create-ranked'));
-        buttonNewTournament.addEventListener('click', () => router.navigateTo('/create-tournament'));
+        const buttonNewLobby = document.getElementById('btn-new-lobby') as HTMLElement;
+        buttonNewLobby.addEventListener('click', () => router.navigateTo('/create-lobby'));
     },
 
     getLobbyCategoriesHtml() {
@@ -78,7 +73,7 @@ export const PlayPage = {
     },
 
     goToLobby(id: number) {
-        //TODO: Logic to go to a lobby goes here
-        console.log(`Should go to lobby with id ${id}`)
+        lobbySocketService.connect(id);
+        router.navigateTo('/lobby')
     }
 }

@@ -2,8 +2,9 @@ import { authService } from "../../services/authService";
 import { TLobby } from "./getLobbySettingsAPI";
 
 export type TLobbyCreationConfigs = Pick<TLobby, "name" | "host" | "type" | "map" | "mode" | "duration">;
+type CreationResultData = {lobby_id: number}
 
-export async function createLobby(lobbySettings: TLobbyCreationConfigs): Promise<void> {
+export async function createLobby(lobbySettings: TLobbyCreationConfigs): Promise<number> {
   try {
     if (!authService.isUserAuthenticated()) {
       const errorMessage: string = `DEBUG: No authToken at createLobby`;
@@ -12,7 +13,7 @@ export async function createLobby(lobbySettings: TLobbyCreationConfigs): Promise
     }
 
     const response = await fetch(
-      ``, //TODO Create endpoint to send data
+      `http://localhost:8084/lobby`,
       {
         method: "POST",
         headers: {
@@ -29,7 +30,8 @@ export async function createLobby(lobbySettings: TLobbyCreationConfigs): Promise
       throw error;
     }
 
-    return;
+    const data = (await response.json()) as CreationResultData;
+    return data.lobby_id;
   } catch (error) {
     throw error;
   }

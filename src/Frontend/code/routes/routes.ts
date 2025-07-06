@@ -6,12 +6,10 @@ import { ProfilePage  } from '../pages/profile'
 import { RegisterPage } from '../pages/register'
 import { AboutUsPage } from '../pages/about'
 import { SettingsPage } from '../pages/settings/settings'
-import { CreateFriendlyPage } from '../pages/play/createFriendly'
-import { CreateRankedPage } from '../pages/play/createRanked'
-import { CreateTournamentPage } from '../pages/play/createTournament'
 import { LobbyFriendlyPage } from '../pages/play/lobbyFriendly'
 import { LobbyRankedPage } from '../pages/play/lobbyRanked'
 import { LobbyTournamentPage } from '../pages/play/lobbyTournament'
+import { CreateLobbyPage } from '../pages/play/createLobby'
 
 export interface Route {
     path: string;
@@ -81,8 +79,14 @@ export const routes: Array<Route> = [
         script: NotFoundPage
     },
     // ROUTES INSIDE PLAY LOGIC
-    // Create friendly match lobby
     {
+        path: '/create-lobby',
+        title: 'Create Lobby',
+        template: CreateLobbyPage.template,
+        script: CreateLobbyPage
+    },
+    // Create friendly match lobby
+/*     {
         path: '/create-friendly',
         title: 'Create Friendly Match',
         template: CreateFriendlyPage.template,
@@ -101,7 +105,7 @@ export const routes: Array<Route> = [
         title: 'Create Tournament',
         template: CreateTournamentPage.template,
         script: CreateTournamentPage
-    },
+    }, */
     // Lobby for friendly match
     {
         path: '/lobby-friendly',
