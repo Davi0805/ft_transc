@@ -1,10 +1,10 @@
 import { router } from "../../routes/router";
 import { flashButton, getButton, getTable, toggleButton } from "./utils/stylingComponents";
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
-import { TLobbySettings, updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
-import { getLobbySettingsByID, TLobby, TLobbyType, TMapType, TMatchDuration, TMatchMode } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { TLobbySettings } from "../../api/lobbyMatchAPI/updateLobbyAPI";
+import { getLobbySettingsByID, TLobby } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { lobbySocketService } from "../../services/lobbySocketService";
-import { LobbyLogic, TSlots, TTeam } from "./lobbyLogic";
+import { LobbyLogic, TSlots } from "./lobbyLogic";
 
 export const LobbyPage = {
     template() {
@@ -41,7 +41,11 @@ export const LobbyPage = {
             default: throw new Error("GAVE SHIT");
         }
         
-        await this.renderSlots();
+        if (lobbySocketService.lobbyType == "tournament") {
+            await this.renderParticipants();
+        } else {
+            await this.renderSlots();
+        }
         await this.renderSettings();
         await this.activateButtons();
 
@@ -117,7 +121,7 @@ export const LobbyPage = {
             const startButton = getButton("btn-start", "button", "Start");
             buttonsDiv.appendChild(startButton);
             startButton.addEventListener('click', async () => {
-                const everyoneReady = await LobbyLogic.isEveryoneReady(); //TODO: Ask db if everyone is ready
+                const everyoneReady = await LobbyLogic.isEveryoneReady();
                 if (!everyoneReady) {
                     flashButton(startButton, "Not everyone is ready!");
                 } else {
@@ -127,9 +131,8 @@ export const LobbyPage = {
         }
     },
 
-    //TODO friendly and ranked are starting to have a lot of differences. Maybe find a way to put the common things in one place here and pass the differences to their respective objects
     async renderSlots() {
-        const slots = await LobbyLogic.getSlots(); //TODO: This has to be a function that returns this object
+        const slots = await LobbyLogic.getSlots();
         const canJoin = !(await LobbyLogic.isPlayerParticipating()) || lobbySocketService.lobbyType == "friendly";
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
