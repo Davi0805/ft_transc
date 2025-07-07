@@ -1,22 +1,8 @@
-/* type TLobbyType = "friendly" | "ranked" | "tournament"
-type TMapType = "1v1-small" | "1v1-medium" | "1v1-big" | "1v1v1v1-small" | "1v1v1v1-medium" | "1v1v1v1-big"
-    | "2v2-small" | "2v2-medium" | "2v2-big" | "2v2v2v2-small" | "2v2v2v2-medium" | "2v2v2v2-big"
-type TMatchMode = "classic" | "modern"
-type TMatchDuration = "blitz" | "rapid" | "classical" | "long" | "marathon"
+import { TLobbyType } from "../../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { TLobbySettings } from "../../../api/lobbyMatchAPI/updateLobbyAPI";
 
-export type TLobbySettings = {
-    id: number,
-    name: string,
-    map: TMapType,
-    mode: TMatchMode,
-    duration: TMatchDuration
-} */
 
-import { TLobby, TLobbyType } from "../../../api/lobbyMatchAPI/getLobbySettingsAPI";
-
-export type TLobbySettings = Pick<TLobby, "map" | "mode" | "duration">
-
-export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySettings: TLobbySettings) {
+export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType | null, lobbySettings: TLobbySettings) {
     let tagType = "";
     let mapOptionsHtml = "";
     let modeOptionsHtml = ""

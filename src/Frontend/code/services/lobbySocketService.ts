@@ -1,12 +1,15 @@
+import { TLobbyType } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { authService } from "./authService";
 
 class LobbySocketService {
     constructor() {
         this._ws = null;
-        this._lobbyID = -1;
+        this._lobbyID = null;
+        this._lobbyType = null;
+        this._userID = null;
     }
 
-    connect(lobbyID: number) {
+    connect(lobbyID: number, lobbyType: TLobbyType, userID: number) {
         if (this._ws && this._ws.readyState === WebSocket.OPEN) {
             console.log("DEBUG: lobbySocket already connected");
             return;
@@ -14,6 +17,8 @@ class LobbySocketService {
 
         this._ws = new WebSocket(`ws://localhost:8084/ws/${lobbyID}`, [`Bearer.${authService.getToken()}`]);
         this._lobbyID = lobbyID;
+        this._lobbyType = lobbyType;
+        this._userID = userID;
 
         this._ws.onopen = (ev: Event) => {
             console.log("DEBUG: lobbySocket connected");
@@ -56,8 +61,13 @@ class LobbySocketService {
     }
 
     private _ws: WebSocket | null;
-    private _lobbyID: number;
-    get lobbyID(): number { return this._lobbyID; }
+    get ws(): WebSocket | null { return this._ws; }
+    private _lobbyID: number | null;
+    get lobbyID(): number | null { return this._lobbyID; }
+    private _lobbyType: TLobbyType | null;
+    get lobbyType(): TLobbyType | null { return this._lobbyType }
+    private _userID: number | null;
+    get userID(): number | null { return this._userID; }
 
     private _handleMessage(data: unknown /*TODO*/) {
 

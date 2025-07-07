@@ -33,3 +33,19 @@ export function getTable(id: string, headHtml: string, bodyHtml: string) {
     
     return out
 }
+
+export function toggleButton(button: HTMLButtonElement, onText: string, offText: string): boolean {
+    const isActive = button.classList.toggle('active');
+    button.textContent = isActive ? onText : offText;
+    button.classList.toggle('bg-gray-900/50', !isActive);
+    button.classList.toggle('bg-gray-900/25', isActive);
+    return isActive;
+}
+
+export function flashButton(button: HTMLButtonElement, tempText: string) {
+    const originalText = button.textContent;
+    button.textContent = tempText
+    setTimeout(() => {
+        button.textContent = originalText
+    }, 1000)
+}
