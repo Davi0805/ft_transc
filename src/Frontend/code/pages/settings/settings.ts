@@ -1,89 +1,82 @@
+import { authService } from "../../services/authService"
+
 export const SettingsPage = {
   template() {
-    return `<div class="settings-wrapper flex bg-gradient-to-b from-blue-500 to-neutral-900">
+    const username = authService.userUsername;
+    const nickname = authService.userNick;
+    const avatar = authService.userAvatar;
+    const email = authService.userEmail;
+
+    // <div class="settings-wrapper flex bg-gradient-to-b from-blue-500 to-neutral-900">
+    return `<div class="settings-wrapper flex rounded-xl bg-gradient-to-b from-blue-500 to-neutral-900 shadow-2xl shadow-black border-y border-black text-white">
   <!-- SIDEBAR -->
-  <div class="sidebar w-50 flex flex-col items-center text-white border-white/20 relative pt-4">
+  <div class="sidebar relative flex w-50 flex-col items-center border-white/20 pt-4 text-white">
     <!-- INFO USER -->
     <div class="user flex flex-col items-center">
-      <img class="user-avatar mb-2 w-16 h-16 rounded-full border-2 border-sky-300" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLk156iHiE6mviqLSwV6NV_s-vV1v3Un34LCcbDCIJXcAuWNQc-hwBF-v_w-3Q1RvtuwIGtpsFbolBnxiqdEmIRfZbyf4-3a_dbyYKog" alt="User avatar">
+      <img class="user-avatar mb-2 h-16 w-16 rounded-full border-2 border-sky-300" src="${avatar}" alt="User avatar" />
       <div class="user-data text-center text-base">
-        <p class="user-name">Bob Esponja</p>
-        <p class="user-username text-gray-400">mrBob201</p>
+        <p class="user-name font-bold">${nickname}</p>
+        <p class="user-username text-gray-400">${username}</p>
       </div>
     </div>
 
     <!-- NAVBAR -->
-    <div class="navbar w-full text-center mt-4">
-      <button class="account w-full border-t border-white/20 py-2 brightness-85 hover:brightness-100 hover:bg-blue-400 transition-all duration-300 ease-in rounded-sm">Account</button>
-      <button class="Security w-full border-t border-white/20 py-2 brightness-85 hover:brightness-100 hover:bg-blue-400 transition-all duration-300 ease-in rounded-sm">Security</button>
-      <button class="Social w-full border-y border-white/20 py-2 brightness-85 hover:brightness-100 hover:bg-blue-400 transition-all duration-300 ease-in rounded-sm">Social</button>
+    <div class="navbar mt-4 w-full text-center">
+      <button class="account transition- w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 duration-300 ease-in-out hover:bg-gray-500/70 hover:brightness-100">Account</button>
+      <button class="Security w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-500/70 hover:brightness-100">Security</button>
+      <button class="Social w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-500/70 hover:brightness-100">Social</button>
     </div>
 
     <!-- LOGOUT -->
     <div class="mt-auto w-full">
-      <button class="logout w-full border-t border-white/20 py-2 brightness-85 hover:brightness-100 hover:bg-blue-400 transition-all duration-300 ease-in rounded-sm">Log Out</button>
+      <button class="logout w-full rounded-sm border-t border-white/20 py-2 brightness-85 transition-all duration-200 ease-in hover:bg-red-500/70 hover:brightness-100">Log Out</button>
     </div>
   </div>
 
   <!-- Settings body -->
-  <div class="settings-content flex-1 p-8 text-white flex flex-col relative">
+  <div class="settings-content relative flex flex-1 flex-col p-8 text-white">
     <!-- Content shadow -->
-    <div class="absolute left-0 top-0 h-full w-2 bg-gradient-to-r from-black/10 to-transparent pointer-events-none"></div>
-    
-    <h1 class="mb-6 text-4xl font-bold">Settings</h1>
-    <h2 class="pt-4 mb-4 text-2xl border-t border-white/20 font-semibold">Account</h2>
+    <div class="pointer-events-none absolute top-0 left-0 h-full w-2 bg-gradient-to-r from-black/10 to-transparent"></div>
 
-    <div class="info space-y-6 flex-1">
+    <h1 class="mb-6 text-4xl font-bold">Settings</h1>
+    <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Account</h2>
+
+    <div class="info flex-1 space-y-6">
       <!-- Username -->
       <div class="username flex items-center space-x-3">
-        <label for="username" class="font-semibold w-20">Username:</label>
-        <input 
-          id="username" 
-          type="text" 
-          value="esponjinha123" 
-          disabled
-          readonly
-          class="rounded-md bg-gray-300 px-3 py-2 text-gray-500 cursor-not-allowed opacity-60"
-        />
-        <span class="text-gray-400 text-sm">🔒</span>
+        <label for="username" class="w-20 font-semibold">Username:</label>
+        <input id="username" type="text" value="${username}" disabled readonly class="h-11 cursor-not-allowed rounded-3xl border-2 border-white/20 bg-black/20 px-[20px] py-[20px] pr-[45px] text-base font-medium text-white caret-white opacity-60 outline-none" />
+        <span class="text-sm text-gray-400">🔒</span>
       </div>
-      
+
       <!-- Name -->
       <div class="name flex items-center space-x-3">
-        <label for="name" class="font-semibold w-20">Name:</label>
-        <input 
-          id="name" 
-          type="text" 
-          value="Bob Esponja" 
-          class="rounded-md bg-white px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
-        />
-        <button class="edit hover:text-blue-300 transition-colors duration-200" title="Edit">✎</button>
+        <label for="name" class="w-20 font-semibold">Name:</label>
+        <input id="name" type="text" value="${nickname}" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
+        <span class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</span>
       </div>
-      
+
       <!-- Email -->
       <div class="email flex items-center space-x-3">
-        <label for="email" class="font-semibold w-20">Email:</label>
-        <input 
-          id="email" 
-          type="email" 
-          value="bobesponja@gmail.com" 
-          class="rounded-md bg-white px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
-        />
-        <button class="edit hover:text-blue-300 transition-colors duration-200" title="Edit">✎</button>
+        <label for="email" class="w-20 font-semibold">Email:</label>
+        <input id="email" type="email" value="${email}" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
+        <button class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</button>
       </div>
     </div>
 
     <!-- Save Button positioned at bottom right -->
-    <div class="save flex justify-end mt-auto pt-6">
-      <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transform active:scale-85 transition-all duration-100">
-        Save
-      </button>
+    <div class="save mt-auto flex justify-end pt-6">
+      <button class="transform rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white transition-all duration-100 hover:bg-blue-700 active:scale-85">Save</button>
     </div>
   </div>
-</div> `;
+</div>
+`;
   },
 
   init() {
-    console.log("Settings page loaded!");
+    // fill template with user-data
+
+    // Event listener delegations
+    
   },
 } as const;

@@ -9,6 +9,10 @@ module.exports = {
     extend: {
       'poppins': ['Poppins', 'sans-serif'],
       'sans': ['Poppins', 'sans-serif'],
+      'colors': {
+        myWhite: '#fff',
+        myBlack: '#141414',
+      }
     },
   },
   plugins: [],

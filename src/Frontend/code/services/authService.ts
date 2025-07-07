@@ -12,6 +12,8 @@ export class AuthService {
   public userID: number | null;
   public userNick: string | null;
   public userAvatar: string | null;
+  public userUsername: string | null;
+  public userEmail: string | null;
   public isAuthenticated: boolean;
   public sidebar: Chat | null;
 
@@ -20,6 +22,8 @@ export class AuthService {
     this.userID = null;
     this.userNick = null;
     this.userAvatar = null;
+    this.userUsername = null;
+    this.userEmail = null;
     this.authToken = null;
     this.isAuthenticated = false;
     this.sidebar = null;
@@ -46,6 +50,7 @@ export class AuthService {
         const userData: SelfData = await getSelfData();
         this.userID = userData.id;
         this.userNick = userData.nickname;
+        this.userEmail = userData.email;
 
         this.userAvatar = await getUserAvatarById(this.userID);
       } catch (error) {
@@ -72,6 +77,12 @@ export class AuthService {
   }
 
   async logout(): Promise<void> {
+    this.userID = null;
+    this.userNick = null;
+    this.userAvatar = null;
+    this.userUsername = null;
+    this.userEmail = null;
+
     this.authToken = null;
     this.isAuthenticated = false;
     localStorage.removeItem("authToken");

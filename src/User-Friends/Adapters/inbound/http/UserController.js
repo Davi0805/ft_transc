@@ -30,7 +30,7 @@ class UserController {
     async getMyData(req, reply)
     {
         const users = await userService.findById(req.session.user_id);
-        return reply.send({id: users[0].user_id, nickname: users[0].name});
+        return reply.send({id: users[0].user_id, nickname: users[0].name, email: users[0].email});
     }
 
 
