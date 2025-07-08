@@ -55,9 +55,8 @@ export class AuthService {
         
         this.userAvatar = await getUserAvatarById(this.userID);
       } catch (error) {
-        this.authToken = null;
-        localStorage.removeItem("authToken");
-        this.isAuthenticated = false;
+        this.logout();
+        console.log("DEBUG: error getting self data", error)
       }
 
       return;
