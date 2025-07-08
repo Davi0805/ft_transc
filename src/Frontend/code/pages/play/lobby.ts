@@ -161,7 +161,7 @@ export const LobbyPage = {
                 
                 const slotSpaceElement = document.createElement("td");
                 slotSpaceElement.className = "text-center"
-                if (player !== -1) {
+                if (player !== null) {
                     //TODO should find a way to identify if player is current user and add a withdraw button
                     const playerElement = document.createElement("p");
                     playerElement.className = "text-xl p-2"

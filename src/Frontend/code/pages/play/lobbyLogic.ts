@@ -2,10 +2,11 @@ import { lobbySocketService } from "../../services/lobbySocketService";
 import { updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
 import { TMapType, TMatchMode, TMatchDuration, TLobbyType, getLobbySettingsByID, TLobby } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TournamentService, TournPlayer } from "../../services/TournamentService";
+import { TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
 
 export type TTeam = {
-    front?: number,
-    back?: number
+    front?: TPlayerInSlot | null,
+    back?: TPlayerInSlot | null
 }
 
 export type TSlots = {
@@ -13,6 +14,12 @@ export type TSlots = {
     RIGHT?: TTeam,
     TOP?: TTeam,
     BOTTOM?: TTeam
+}
+
+type TPlayerInSlot = {
+    id: number,
+    paddleID: number,
+    spriteID: number
 }
 
 export const LobbyLogic = {
@@ -72,7 +79,8 @@ export const LobbyLogic = {
         if (lobbySocketService.lobbyType == "tournament") {
             LobbyLogic.prepareNextRound(settings);
         } else {
-            LobbyLogic.startMatch(settings);
+            const players = await LobbyLogic.getSlots();
+            LobbyLogic.buildUserCustoms(settings, players);
         }
     },
 
@@ -80,20 +88,44 @@ export const LobbyLogic = {
     //Slots logic
     getSlots: async (): Promise<TSlots> => {
         //TODO: get slots from backend
+        
+        
+        
+        
+        //IMPORTANT TODO:
+        //Might be easier to save as a list of players wit the slots as members??
+        //That would make it easier as well to build user customs!!
+        
+        
+        
+        
+        
         return {
             LEFT: {
-                back: 123
+                back: {
+                    id: 123,
+                    paddleID: 0,
+                    spriteID: 0
+                }
             },
             RIGHT: {
-                front: -1,
-                back: -1
+                front: null,
+                back: {
+                    id: 125,
+                    paddleID: 2,
+                    spriteID: 0
+                }
             },
             TOP: {
-                front: -1,
+                front: null,
             },
             BOTTOM: {
-                front: 321,
-                back: -1
+                front: {
+                    id: 126,
+                    paddleID: 3,
+                    spriteID: 0
+                },
+                back: null
             },
         }
     },
@@ -153,14 +185,27 @@ export const LobbyLogic = {
 
 
 
-    prepareNextRound: async (settings: TLobby) => {
+    prepareNextRoundNumber: async (settings: TLobby) => {
         const participants = await LobbyLogic.getParticipants();
         const pairings = TournamentService.getNextRoundPairings(participants);
         //TODO: start all games with the pairings
     },
 
-    startMatch: async (settings: TLobby) => {
+    buildUserCustoms: (settings: TLobby, players: TSlots): TUserCustoms => {
+        const userCustoms: TUserCustoms = {
+            field: {
+                size: { x: 800, y: 400 }, //TODO: GET THIS FROM MAP IN SETTINGS
+                backgroundSpriteID: 0 //TODO: Generate randomly
+            },
+            matchLength: 200, //TODO: GET FROM SETTINGS
+            paddles: [],
+            clients: [],
+            bots: []
+        }
 
+        
+
+        return userCustoms
     }
 
 }
