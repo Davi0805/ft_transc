@@ -125,7 +125,7 @@ export const LobbyPage = {
                 if (!everyoneReady) {
                     flashButton(startButton, "Not everyone is ready!");
                 } else {
-                    LobbyLogic.startGame();
+                    LobbyLogic.startLogic();
                 }
             })
         }

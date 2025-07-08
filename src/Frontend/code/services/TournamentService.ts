@@ -1,7 +1,8 @@
 var blossom = require('edmonds-blossom')
 
-export type Player = {
+export type TournPlayer = {
     id: number
+    nick: string
     score: number
     rating: number
     prevOpponents: number[]
@@ -10,7 +11,7 @@ export type Player = {
 
 type Match = [number, number]
 
-type PlayerGraph = [Player, Player][]
+type PlayerGraph = [TournPlayer, TournPlayer][]
 
 type GraphEdge = [number, number, number];
 type WeightedGraph = GraphEdge[];
@@ -19,7 +20,7 @@ type WeightedGraph = GraphEdge[];
 export class TournamentService {
     constructor() {}
 
-    getNextRoundPairings(players: Player[]): Match[] {
+    static getNextRoundPairings(players: TournPlayer[]): Match[] {
 
         const normalizedPlayers = structuredClone(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
@@ -39,7 +40,7 @@ export class TournamentService {
         return pairings;
     }
 
-    getClassificationTable(players: Player[]): Player[] {
+    static getClassificationTable(players: TournPlayer[]): TournPlayer[] {
         const classificationTable = Array.from(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
             else { //put here tiebreaks
@@ -50,7 +51,7 @@ export class TournamentService {
         return classificationTable
     }
 
-    private _generatePlayerGraph(players: Player[]): PlayerGraph {
+    private static _generatePlayerGraph(players: TournPlayer[]): PlayerGraph {
         const playerGraph: PlayerGraph = [];
         for (let i: number = 0; i < players.length - 1; i++) {
             for (let j: number = i + 1; j < players.length; j++) {
@@ -64,7 +65,7 @@ export class TournamentService {
         return playerGraph;
     }
 
-    private _generateWeightedGraph(
+    private static _generateWeightedGraph(
         playerGraph: PlayerGraph,
         scoreGroupSizes: Map<number, number>): WeightedGraph {
         //console.log("GRAPH: ")
@@ -86,7 +87,7 @@ export class TournamentService {
         return weightedGraph
     }
 
-    private _calculateEdgeWeight(p1: Player, p2: Player, scoreGroupSize: number): number {
+    private static _calculateEdgeWeight(p1: TournPlayer, p2: TournPlayer, scoreGroupSize: number): number {
         const ratingWeight = Math.abs(p1.rating - p2.rating); // rating is rank
         const weightMiddleScoreGroup = Math.abs((scoreGroupSize / 2) - ratingWeight);
         const dutchWeight: number = -Math.pow(weightMiddleScoreGroup, 1.01)
@@ -97,7 +98,7 @@ export class TournamentService {
         );
     }
 
-    private _getScoreGroupSizes(scores: number[]): Map<number, number> {
+    private static _getScoreGroupSizes(scores: number[]): Map<number, number> {
         const map = new Map<number, number>;
         for (const score of scores) {
             map.set(score, (map.get(score) ?? 0) + 1);
@@ -105,7 +106,7 @@ export class TournamentService {
         return map
     }
 
-    private _convertToPairings(normalizedPlayers: Player[], pairingsIndexes: number[]): Match[] {
+    private static _convertToPairings(normalizedPlayers: TournPlayer[], pairingsIndexes: number[]): Match[] {
         const pairings: Match[] = []
         const usedIDs: number [] = [];
         for (let i = 0; i < pairingsIndexes.length; i++) {

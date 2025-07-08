@@ -1,6 +1,7 @@
 import { lobbySocketService } from "../../services/lobbySocketService";
 import { updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
-import { TMapType, TMatchMode, TMatchDuration, TLobbyType } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { TMapType, TMatchMode, TMatchDuration, TLobbyType, getLobbySettingsByID, TLobby } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { TournamentService, TournPlayer } from "../../services/TournamentService";
 
 export type TTeam = {
     front?: number,
@@ -12,12 +13,6 @@ export type TSlots = {
     RIGHT?: TTeam,
     TOP?: TTeam,
     BOTTOM?: TTeam
-}
-
-export type TParticipant = {
-    nick: string,
-    rank: number,
-    score: number
 }
 
 export const LobbyLogic = {
@@ -69,10 +64,17 @@ export const LobbyLogic = {
         //TODO: update backend of player readiness
     },
 
-    startGame: async () => {
-        //TODO: Start game logic
+    startLogic: async () => {
+        if (!lobbySocketService.lobbyID) {
+            throw Error("How can I start a game without a lobby?")
+        }
+        const settings = await getLobbySettingsByID(lobbySocketService.lobbyID);
+        if (lobbySocketService.lobbyType == "tournament") {
+            LobbyLogic.prepareNextRound(settings);
+        } else {
+            LobbyLogic.startMatch(settings);
+        }
     },
-
 
 
     //Slots logic
@@ -116,24 +118,49 @@ export const LobbyLogic = {
 
 
     //TournamentLogic
-    getParticipants: async (): Promise<TParticipant[]> => {
+    getParticipants: async (): Promise<TournPlayer[]> => {
         return [
             {
+                id: 1,
                 nick: "artuda-s",
-                rank: 1800,
-                score: 3
+                score: 3,
+                rating: 1800,
+                prevOpponents: [],
+                teamDist: 0
             },
             {
+                id: 2,
                 nick: "dmelo-ca",
-                rank: 1600,
-                score: 1
+                score: 1,
+                rating: 1600,
+                prevOpponents: [],
+                teamDist: 0
             },
             {
+                id: 3,
                 nick: "ndo-vale",
-                rank: 1700,
-                score: 0
+                score: 0,
+                rating: 1700,
+                prevOpponents: [],
+                teamDist: 0
             }
         ] //TODO: GET THIS FROM DB. Make this go through the tournament service to get classification!!
+    },
+
+    getCurrentRound: async (): Promise<number> => {
+        return 1 //TODO: get current round from backend
+    },
+
+
+
+    prepareNextRound: async (settings: TLobby) => {
+        const participants = await LobbyLogic.getParticipants();
+        const pairings = TournamentService.getNextRoundPairings(participants);
+        //TODO: start all games with the pairings
+    },
+
+    startMatch: async (settings: TLobby) => {
+
     }
 
 }
