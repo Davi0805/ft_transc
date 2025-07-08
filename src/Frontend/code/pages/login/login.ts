@@ -59,12 +59,10 @@ export const LoginPage = {
 
       if (!response.verified) {
         await TwoFactorAuth.show(response.token); // error checking for this inside
-        authService.userUsername = username;
         return;
       }
 
       authService.login(response.token);
-      authService.userUsername = username;
       const redirectPath = authService.getRedirectAfterLogin();
       router.navigateTo(redirectPath);
     } catch (error) {

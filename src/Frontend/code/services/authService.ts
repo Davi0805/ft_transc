@@ -45,13 +45,14 @@ export class AuthService {
     return;
   }
 
-    async getMyData(): Promise<void> {
+    async  getMyData(): Promise<void> {
       try {
         const userData: SelfData = await getSelfData();
         this.userID = userData.id;
         this.userNick = userData.nickname;
         this.userEmail = userData.email;
-
+        this.userUsername = userData.username;
+        
         this.userAvatar = await getUserAvatarById(this.userID);
       } catch (error) {
         this.authToken = null;
