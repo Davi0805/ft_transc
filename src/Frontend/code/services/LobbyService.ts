@@ -1,7 +1,9 @@
+import Sprite from "../../../../TempIsolatedMatchLogic/src/client/scripts/system/framework/Sprite";
 import { getSelfData } from "../api/getSelfDataAPI";
 import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TSlots } from "../pages/play/lobbyLogic";
 import { TMatchPlayer, TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
+import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
 
 class LobbyService {
@@ -32,9 +34,24 @@ class LobbyService {
     }
 
     async getSlots(): Promise<TSlots> {
-        const participatingPlayers = await lobbySocketService.sendRequest("GETparticipatingPlayers", null);
-        //TODO: convert participating players into slots
-        return {}
+        const mapSlots = getSlotsFromMap(await lobbySocketService.sendRequest("GETselectedMap", null))
+        const participatingPlayers = await lobbySocketService.sendRequest("GETmatchPlayers", null);
+        participatingPlayers.forEach(player => {
+            if (mapSlots[player.team] === undefined || mapSlots[player.team]![player.role] === undefined) {
+                throw Error("Fuck everything about this bullshit")
+            }
+            if (!player.id || !player.spriteID) {
+                throw Error("Player should have been initialized by backend at this point!")
+            }
+            if (mapSlots[player.team]![player.role] === null) {
+                mapSlots[player.team]![player.role] = {
+                    id: player.id,
+                    spriteID: player.spriteID
+                }
+            }
+            mapSlots[player.team]
+        })
+        return mapSlots
     }
 
     async addMatchPlayer(player: TMatchPlayer) {

@@ -1,8 +1,7 @@
-import { TLobbyType } from "../../../api/lobbyMatchAPI/getLobbySettingsAPI";
-import { TLobbySettings } from "../../../api/lobbyMatchAPI/updateLobbyAPI";
+import { TLobbyType } from "../lobbyTyping";
+import { TDynamicLobbySettings } from "../lobbyTyping";
 
-
-export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType | null, lobbySettings: TLobbySettings) {
+export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySettings: TDynamicLobbySettings) {
     let tagType = "";
     let mapOptionsHtml = "";
     let modeOptionsHtml = ""

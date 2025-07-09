@@ -7,16 +7,15 @@ import { ROLES, SIDES, TUserCustoms } from "../../../../../TempIsolatedMatchLogi
 import { lobby } from "../../services/LobbyService";
 
 export type TTeam = {
-    [key in keyof typeof ROLES]?: TPlayerInSlot | null 
+    -readonly [key in keyof typeof ROLES]?: TPlayerInSlot | null //The shittiest fucking language I have ever seen in my life
 }
 
 export type TSlots = {
-    [key in keyof typeof SIDES]?: TTeam
+    -readonly [key in keyof typeof SIDES]?: TTeam
 }
 
 type TPlayerInSlot = {
     id: number,
-    paddleID: number,
     spriteID: number
 }
 

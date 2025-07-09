@@ -9,10 +9,14 @@ export type RequestResponseMap = {
         request: null,
         response: boolean
     },
-    GETparticipatingPlayers: {
+    GETmatchPlayers: {
         request: null,
         response: TMatchPlayer[]
     },
+    GETselectedMap: {
+        request: null,
+        response: TMapType
+    }
     POSTupdateMyReadiness: {
         request: boolean,
         response: null

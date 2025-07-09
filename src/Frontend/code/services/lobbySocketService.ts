@@ -8,7 +8,7 @@ class LobbySocketService {
         this._lobbyID = null;
     }
 
-    connect(lobbyID: number, userID: number) {
+    connect(lobbyID: number) {
         if (this._ws && this._ws.readyState === WebSocket.OPEN) {
             console.log("DEBUG: lobbySocket already connected");
             return;

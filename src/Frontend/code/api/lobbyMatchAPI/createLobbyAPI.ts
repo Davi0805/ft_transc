@@ -1,5 +1,5 @@
 import { authService } from "../../services/authService";
-import { TLobby } from "./getLobbySettingsAPI";
+import { TLobby } from "../../pages/play/lobbyTyping";
 
 export type TLobbyCreationConfigs = Pick<TLobby, "name" | "host" | "type" | "map" | "mode" | "duration">;
 type CreationResultData = {lobby_id: number}

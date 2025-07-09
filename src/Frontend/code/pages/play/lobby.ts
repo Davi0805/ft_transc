@@ -62,7 +62,8 @@ export const LobbyPage = {
         }
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         const lobbySettingsListing: TLobby = await getLobbySettingsByID(lobbySocketService.lobbyID)
-
+        
+        if (!lobby.staticSettings) { throw Error("Lobby is not initizlized when it should"); }
         let lobbySettingsHtml = `
             <div id="settings-listing" class="flex flex-col gap-1">
                 ${getLobbyOptionsHTML(false, lobby.staticSettings?.type, lobbySettingsListing)}
@@ -77,6 +78,7 @@ export const LobbyPage = {
 
     renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
+        if (!lobby.staticSettings) { throw Error("Lobby is not initizlized when it should"); }
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col gap-1">
                 ${getLobbyOptionsHTML(true, lobby.staticSettings?.type, lobbySettingsListing)}
