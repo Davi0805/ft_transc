@@ -7,6 +7,7 @@ import { getLobbySettingsByID} from "../../api/lobbyMatchAPI/getLobbySettingsAPI
 import { lobbySocketService } from "../../services/lobbySocketService";
 import { LobbyLogic, TSlots } from "./lobbyLogic";
 import { lobby } from "../../services/LobbyService";
+import { ROLES, SIDES } from "../../../../../TempIsolatedMatchLogic/src/misc/types";
 
 export const LobbyPage = {
     template() {
@@ -140,25 +141,28 @@ export const LobbyPage = {
         const teamsElement = document.getElementById('participants') as HTMLElement;
         teamsElement.innerHTML = "";
         const slotsTable = document.createElement('table');
-        for (const team of Object.keys(slots) as (keyof TSlots)[]) {
-            const roles = slots[team];
-            if (!roles) continue;
+        for (const teamName of (Object.keys(slots) as (keyof typeof SIDES)[])) {
+            const team = slots[teamName];
+            if (!team) continue;
 
             const teamElement = document.createElement("tr");
             const teamNameElement = document.createElement("td");
             teamNameElement.className = "bg-gray-900/75 text-2xl"
             teamNameElement.colSpan = 2;
-            teamNameElement.textContent = team;
+            teamNameElement.textContent = teamName;
             teamElement.appendChild(teamNameElement);
             slotsTable.appendChild(teamElement);
             
-            for (const [role, player] of Object.entries(roles)) {
+            for (const roleName of (Object.keys(team) as (keyof typeof ROLES)[])) {
+                const player = team[roleName]
+                if (!player) { continue; }
+
                 const slotElement = document.createElement("tr");
                 slotElement.className = "border-b border-gray-900/50"
 
                 const roleNameElement = document.createElement("td");
                 roleNameElement.className = "text-xl p-2 bg-gray-900/50 w-0"
-                roleNameElement.textContent = role;
+                roleNameElement.textContent = roleName;
                 slotElement.appendChild(roleNameElement)
                 
                 const slotSpaceElement = document.createElement("td");
@@ -170,11 +174,11 @@ export const LobbyPage = {
                     playerElement.textContent = player.toString();
                     slotSpaceElement.appendChild(playerElement);
                 } else if (canJoin){
-                    const slotJoinElement = getButton(`join-${team}-${role}`, "button", "Join", false);
+                    const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
                         lobby.staticSettings?.type === "friendly"
-                        ? this.slotJoinFriendlyCallback(team, role)
-                        : this.slotJoinRankedCallback(team, role)
+                        ? this.slotJoinFriendlyCallback(SIDES[teamName], ROLES[roleName])
+                        : this.slotJoinRankedCallback(SIDES[teamName], ROLES[roleName])
                     })
                     slotSpaceElement.appendChild(slotJoinElement);
                 }
@@ -185,7 +189,7 @@ export const LobbyPage = {
         teamsElement.appendChild(slotsTable);
     },
 
-    async slotJoinFriendlyCallback(team: string, role: string) {
+    async slotJoinFriendlyCallback(team: SIDES, role: ROLES) {
         const settingsDialog = document.createElement('dialog');
         settingsDialog.className = "fixed m-auto overflow-hidden rounded-lg"
         settingsDialog.innerHTML = `
@@ -219,8 +223,19 @@ export const LobbyPage = {
         settingsDialog.showModal();
     },
 
-    async slotJoinRankedCallback(team: string, role: string) {
-        lobby.addPlayerToSlot();
+    async slotJoinRankedCallback(team: SIDES, role: ROLES) {
+        const leftControl: string = "LeftArrow" //TODO: calculate from team
+        const rightControl: string = "RightArrow" //TODO: calculate from team
+        lobby.addMatchPlayer({
+            userID: null,
+            id: null,
+            nick: null,
+            spriteID: null,
+            team: team,
+            role: role,
+            leftControl: leftControl,
+            rightControl: rightControl
+        });
         this.renderSlots();
     },
 

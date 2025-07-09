@@ -3,19 +3,15 @@ import { updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
 import { TLobby, TMapType, TMatchDuration, TMatchMode, TTournPlayer } from "./lobbyTyping";
 import { getLobbySettingsByID } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TournamentService} from "../../services/TournamentService";
-import { TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
+import { ROLES, SIDES, TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
 import { lobby } from "../../services/LobbyService";
 
 export type TTeam = {
-    front?: TPlayerInSlot | null,
-    back?: TPlayerInSlot | null
+    [key in keyof typeof ROLES]?: TPlayerInSlot | null 
 }
 
 export type TSlots = {
-    LEFT?: TTeam,
-    RIGHT?: TTeam,
-    TOP?: TTeam,
-    BOTTOM?: TTeam
+    [key in keyof typeof SIDES]?: TTeam
 }
 
 type TPlayerInSlot = {
@@ -62,14 +58,23 @@ export const LobbyLogic = {
     },
 
     fetchAndAddPlayerToSlot: async (settingsDialog: HTMLDialogElement,
-            team: string, role: string): Promise<void> => {
+            team: SIDES, role: ROLES): Promise<void> => {
         const form = settingsDialog.querySelector("form") as HTMLFormElement;
         if (!form.reportValidity()) return;
         const aliasInput = document.getElementById("player-alias") as HTMLInputElement;
         const alias = aliasInput.value;
         const paddleIdInput = document.getElementById("player-paddle") as HTMLInputElement;
-        const paddleId = paddleIdInput.value
-        await lobby.addPlayerToSlot();
+        const paddleId = Number(paddleIdInput.value)
+        await lobby.addMatchPlayer({
+            userID: null,
+            id: null,
+            nick: alias,
+            spriteID: paddleId,
+            team: team,
+            role: role,
+            leftControl: "LeftArrow", //TODO: must add choice of controls to UI
+            rightControl: "RightArrow"
+        });
         console.log(`Player saved with alias ${alias} and paddle id ${paddleId}`)
         console.log(`Player added to team ${team} and role ${role}!`)
     },

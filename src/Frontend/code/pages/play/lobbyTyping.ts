@@ -43,13 +43,13 @@ export type TStaticLobbySettings = Pick<TLobby, "id" | "hostID" | "name" | "host
 export type TDynamicLobbySettings = Pick<TLobby, "map" | "mode" | "duration">
 
 export type TMatchPlayer = {
-    userID: number,
-    id: number, //This is the same as userID if in a friendly match
-    nick: string
-    paddleID: number, //Maybe not necessary? Connection might be only necessary to be created later
-    spriteID: number,
+    userID: number | null, //To be taken from auth
+    id: number | null, //To be generated.
+    nick: string | null //If null, take the nick from userid
+    //paddleID: number, //Maybe not necessary? Connection might be only necessary to be created later
+    spriteID: number | null, //If null, take spriteID from settings of userid
     team: SIDES,
-    role: ROLES
+    role: ROLES,
     leftControl: string,
     rightControl: string
 }

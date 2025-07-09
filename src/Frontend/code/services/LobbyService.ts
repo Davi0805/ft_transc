@@ -1,7 +1,7 @@
 import { getSelfData } from "../api/getSelfDataAPI";
-import { getLobbySettings, getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TSlots } from "../pages/play/lobbyLogic";
-import { TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
+import { TMatchPlayer, TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
 import { lobbySocketService } from "./lobbySocketService";
 
 class LobbyService {
@@ -37,7 +37,7 @@ class LobbyService {
         return {}
     }
 
-    async addPlayerToSlot() {
+    async addMatchPlayer(player: TMatchPlayer) {
         //TODO: WEBSOCKET
     }
 
