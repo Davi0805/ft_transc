@@ -1,10 +1,12 @@
 import { router } from "../../routes/router";
 import { flashButton, getButton, getTable, toggleButton } from "./utils/stylingComponents";
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
-import { TLobbySettings } from "../../api/lobbyMatchAPI/updateLobbyAPI";
-import { getLobbySettingsByID, TLobby } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { TLobby } from "./lobbyTyping";
+import { TDynamicLobbySettings } from "./lobbyTyping";
+import { getLobbySettingsByID} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { lobbySocketService } from "../../services/lobbySocketService";
 import { LobbyLogic, TSlots } from "./lobbyLogic";
+import { lobby } from "../../services/LobbyService";
 
 export const LobbyPage = {
     template() {
@@ -26,11 +28,12 @@ export const LobbyPage = {
         `;
     },
 
-    async init() { //TODO: Doublecheck this asyncing this does not break anything
-        if (!lobbySocketService.lobbyID) {
-            throw Error("How the fuck did I get to this lobby without opening the socket??")
-        }
+    async init() {
+        if (!lobbySocketService.lobbyID) { throw Error("Socket service is not active"); }
+        await lobby.setSettings(lobbySocketService.lobbyID)
+        if (!lobby.staticSettings) { throw Error("Settings could not be fetched from backend")}
         const lobbySettings = await getLobbySettingsByID(lobbySocketService.lobbyID);
+
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
         titleElement.textContent = lobbySettings.name
         const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
@@ -41,7 +44,7 @@ export const LobbyPage = {
             default: throw new Error("GAVE SHIT");
         }
         
-        if (lobbySocketService.lobbyType == "tournament") {
+        if (lobby.staticSettings.type == "tournament") {
             await this.renderParticipants();
         } else {
             await this.renderSlots();
@@ -61,7 +64,7 @@ export const LobbyPage = {
 
         let lobbySettingsHtml = `
             <div id="settings-listing" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(false, lobbySocketService.lobbyType, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(false, lobby.staticSettings?.type, lobbySettingsListing)}
                 ${getButton("btn-change-settings", "button", "Change lobby settings", false).outerHTML}
             </div>
         `;
@@ -71,11 +74,11 @@ export const LobbyPage = {
         buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
     },
 
-    renderChangeSettings(lobbySettingsListing: TLobbySettings) {
+    renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(true, lobbySocketService.lobbyType, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(true, lobby.staticSettings?.type, lobbySettingsListing)}
                 ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
             </div>
         `;
@@ -133,7 +136,7 @@ export const LobbyPage = {
 
     async renderSlots() {
         const slots = await LobbyLogic.getSlots();
-        const canJoin = !(await LobbyLogic.isPlayerParticipating()) || lobbySocketService.lobbyType == "friendly";
+        const canJoin = !(await LobbyLogic.isPlayerParticipating()) || lobby.staticSettings?.type == "friendly";
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
         teamsElement.innerHTML = "";
@@ -170,7 +173,7 @@ export const LobbyPage = {
                 } else if (canJoin){
                     const slotJoinElement = getButton(`join-${team}-${role}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
-                        lobbySocketService.lobbyType === "friendly"
+                        lobby.staticSettings?.type === "friendly"
                         ? this.slotJoinFriendlyCallback(team, role)
                         : this.slotJoinRankedCallback(team, role)
                     })

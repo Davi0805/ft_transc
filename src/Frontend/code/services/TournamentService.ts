@@ -1,17 +1,9 @@
+import { TTournPlayer } from "../pages/play/lobbyTyping";
 var blossom = require('edmonds-blossom')
-
-export type TournPlayer = {
-    id: number
-    nick: string
-    score: number
-    rating: number
-    prevOpponents: number[]
-    teamDist: number
-}
 
 type Match = [number, number]
 
-type PlayerGraph = [TournPlayer, TournPlayer][]
+type PlayerGraph = [TTournPlayer, TTournPlayer][]
 
 type GraphEdge = [number, number, number];
 type WeightedGraph = GraphEdge[];
@@ -20,7 +12,7 @@ type WeightedGraph = GraphEdge[];
 export class TournamentService {
     constructor() {}
 
-    static getNextRoundPairings(players: TournPlayer[]): Match[] {
+    static getNextRoundPairings(players: TTournPlayer[]): Match[] {
 
         const normalizedPlayers = structuredClone(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
@@ -40,7 +32,7 @@ export class TournamentService {
         return pairings;
     }
 
-    static getClassificationTable(players: TournPlayer[]): TournPlayer[] {
+    static getClassificationTable(players: TTournPlayer[]): TTournPlayer[] {
         const classificationTable = Array.from(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
             else { //put here tiebreaks
@@ -51,7 +43,7 @@ export class TournamentService {
         return classificationTable
     }
 
-    private static _generatePlayerGraph(players: TournPlayer[]): PlayerGraph {
+    private static _generatePlayerGraph(players: TTournPlayer[]): PlayerGraph {
         const playerGraph: PlayerGraph = [];
         for (let i: number = 0; i < players.length - 1; i++) {
             for (let j: number = i + 1; j < players.length; j++) {
@@ -87,7 +79,7 @@ export class TournamentService {
         return weightedGraph
     }
 
-    private static _calculateEdgeWeight(p1: TournPlayer, p2: TournPlayer, scoreGroupSize: number): number {
+    private static _calculateEdgeWeight(p1: TTournPlayer, p2: TTournPlayer, scoreGroupSize: number): number {
         const ratingWeight = Math.abs(p1.rating - p2.rating); // rating is rank
         const weightMiddleScoreGroup = Math.abs((scoreGroupSize / 2) - ratingWeight);
         const dutchWeight: number = -Math.pow(weightMiddleScoreGroup, 1.01)
@@ -106,7 +98,7 @@ export class TournamentService {
         return map
     }
 
-    private static _convertToPairings(normalizedPlayers: TournPlayer[], pairingsIndexes: number[]): Match[] {
+    private static _convertToPairings(normalizedPlayers: TTournPlayer[], pairingsIndexes: number[]): Match[] {
         const pairings: Match[] = []
         const usedIDs: number [] = [];
         for (let i = 0; i < pairingsIndexes.length; i++) {

@@ -1,9 +1,7 @@
 import { authService } from "../../services/authService";
-import { TLobby } from "./getLobbySettingsAPI";
+import { TDynamicLobbySettings } from "../../pages/play/lobbyTyping";
 
-export type TLobbySettings = Pick<TLobby, "map" | "mode" | "duration">
-
-export async function updateLobby(lobbyID: number, lobbySettings: TLobbySettings): Promise<void> {
+export async function updateLobby(lobbyID: number, lobbySettings: TDynamicLobbySettings): Promise<void> {
   try {
     if (!authService.isUserAuthenticated()) {
       const errorMessage: string = `DEBUG: No authToken at createLobby`;

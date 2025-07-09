@@ -1,9 +1,10 @@
 import { getSelfData } from "../../api/getSelfDataAPI";
-import { getLobbySettings, TLobbyType } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { getLobbySettings} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { TLobbyType } from "./lobbyTyping";
 import { router } from "../../routes/router";
 import { lobbySocketService } from "../../services/lobbySocketService";
-import { LobbyLogic } from "./lobbyLogic";
 import { getTable } from "./utils/stylingComponents";
+import { lobby } from "../../services/LobbyService";
 
 export const PlayPage = {
     template() {
@@ -67,16 +68,15 @@ export const PlayPage = {
                 tdata.textContent = item.toString();
                 row.appendChild(tdata);
             })
-            row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].id, lobbiesInfo[i].type))
+            row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].id))
             lobbiesBody.appendChild(row)
         }
 
         console.log("Lobby list updated!")
     },
 
-    async goToLobby(id: number, type: TLobbyType) {
-        const userID = (await getSelfData()).id
-        lobbySocketService.connect(id, type, userID);
+    async goToLobby(id: number) {
+        lobbySocketService.connect(id);
         router.navigateTo('/lobby')
     }
 }

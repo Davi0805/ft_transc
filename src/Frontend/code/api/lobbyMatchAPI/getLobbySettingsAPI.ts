@@ -1,22 +1,5 @@
 import { authService } from "../../services/authService";
-
-export type TLobbyType = "friendly" | "ranked" | "tournament"
-export type TMapType = "2-players-small" | "2-players-medium" | "2-players-big" | "4-players-small" | "4-players-medium" | "4-players-big"
-    | "2-teams-small" | "2-teams-medium" | "2-teams-big" | "4-teams-small" | "4-teams-medium" | "4-teams-big"
-export type TMatchCapacity = { taken: number, max: number }
-export type TMatchMode = "classic" | "modern"
-export type TMatchDuration = "blitz" | "rapid" | "classical" | "long" | "marathon"
-
-export type TLobby = {
-    id: number,
-    name: string,
-    host: string,
-    type: TLobbyType,
-    capacity: TMatchCapacity,
-    map: TMapType,
-    mode: TMatchMode,
-    duration: TMatchDuration
-}
+import { TLobby } from "../../pages/play/lobbyTyping";
 
 export async function getLobbySettingsByID(lobbyID: number): Promise<TLobby> {
     try {

@@ -1,8 +1,10 @@
 import { lobbySocketService } from "../../services/lobbySocketService";
 import { updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
-import { TMapType, TMatchMode, TMatchDuration, TLobbyType, getLobbySettingsByID, TLobby } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
-import { TournamentService, TournPlayer } from "../../services/TournamentService";
+import { TLobby, TMapType, TMatchDuration, TMatchMode, TTournPlayer } from "./lobbyTyping";
+import { getLobbySettingsByID } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { TournamentService} from "../../services/TournamentService";
 import { TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
+import { lobby } from "../../services/LobbyService";
 
 export type TTeam = {
     front?: TPlayerInSlot | null,
@@ -28,7 +30,7 @@ export const LobbyLogic = {
         if (!lobbySocketService.lobbyID) {
             throw Error("How the fuck did I get to this lobby without opening the socket??")
         }
-        const map = (document.getElementById('match-map') as HTMLSelectElement).value as TMapType;
+        const map = (document.getElementById('match-map') as HTMLSelectElement).value;
         const mode = (document.getElementById('match-mode') as HTMLSelectElement).value;
         const duration = (document.getElementById('match-duration') as HTMLSelectElement).value;
         await updateLobby(lobbySocketService.lobbyID, {
@@ -76,7 +78,7 @@ export const LobbyLogic = {
             throw Error("How can I start a game without a lobby?")
         }
         const settings = await getLobbySettingsByID(lobbySocketService.lobbyID);
-        if (lobbySocketService.lobbyType == "tournament") {
+        if (lobby.staticSettings?.type == "tournament") {
             LobbyLogic.prepareNextRound(settings);
         } else {
             const players = await LobbyLogic.getSlots();
@@ -150,7 +152,7 @@ export const LobbyLogic = {
 
 
     //TournamentLogic
-    getParticipants: async (): Promise<TournPlayer[]> => {
+    getParticipants: async (): Promise<TTournPlayer[]> => {
         return [
             {
                 id: 1,

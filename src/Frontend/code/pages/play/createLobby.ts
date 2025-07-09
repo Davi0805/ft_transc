@@ -2,8 +2,9 @@ import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { router } from "../../routes/router";
 import { getSelfData } from "../../api/getSelfDataAPI";
 import { TLobbyCreationConfigs, createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
-import { TMapType, TMatchMode, TMatchDuration, TLobbyType } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { lobbySocketService } from "../../services/lobbySocketService";
+import { TLobbyType, TMapType, TMatchMode, TMatchDuration } from "./lobbyTyping";
+import { lobby } from "../../services/LobbyService";
 
 export const CreateLobbyPage = {
     template() {
