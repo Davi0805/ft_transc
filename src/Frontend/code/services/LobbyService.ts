@@ -30,7 +30,7 @@ class LobbyService {
     }
 
     async updateMyReadiness(ready: boolean) {
-        return await lobbySocketService.sendRequest("POSTupdateMyReadiness", ready);
+        await lobbySocketService.sendRequest("POSTupdateMyReadiness", ready);
     }
 
     async getSlots(): Promise<TSlots> {
@@ -55,24 +55,33 @@ class LobbyService {
     }
 
     async addMatchPlayer(player: TMatchPlayer) {
-        //TODO: WEBSOCKET
+        await lobbySocketService.sendRequest("POSTaddMatchPlayer", player);
     }
 
+    async addTournPlayer() {
+        //This request does not need any payload because every info is either taken from auth or has default values
+        //Must add a TTournPlayer to the participating list. See the type definition for details
+        await lobbySocketService.sendRequest("POSTaddTournPlayer", null);
+    }
+
+    async removeTournPlayer() {
+        //Sets participating to false, so it does not get paired, but does not remove it from the db, so it still gets in the final classification table
+        await lobbySocketService.sendRequest("POSTwithdrawTournPlayer", null);
+    }
 
     async getTournParticipants(): Promise<TTournPlayer[]> {
-        //TODO: WEBSOCKET
-        return []
+        return await lobbySocketService.sendRequest("GETtournPlayers", null);
     }
 
     async getCurrentRoundNumber(): Promise<number> {
-        //TODO: WEBSOCKET
-        return 1
+        return await lobbySocketService.sendRequest("GETcurrentRoundNo", null);
     }
 
     async leave() {
-        //TODO: tell db that player is not participating anymore!
-        //TODO: ADD COMM TO DB THAT PLAYER LEFT
-        //TODO: CLOSE WEBSOCKET AND SERVICE
+        await lobbySocketService.sendRequest("POSTleaveLobby", null);
+        //TODO: tell db that player is not participating anymore! (Davi)
+        //TODO: ADD COMM TO DB THAT PLAYER LEFT (Davi)
+        //TODO: CLOSE WEBSOCKET AND SERVICE (Nuno)
     }
 
     private _staticSettings: TStaticLobbySettings | null = null;

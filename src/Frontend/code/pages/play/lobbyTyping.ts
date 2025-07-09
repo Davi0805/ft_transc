@@ -2,7 +2,7 @@ import { ROLES, SIDES } from "../../../../../TempIsolatedMatchLogic/src/misc/typ
 
 export type RequestResponseMap = {
     GETamIParticipating: {
-        request: null //TODO check if it is necessary to send the userid
+        request: null
         response: boolean
     },
     GETisEveryoneReady: {
@@ -13,12 +13,36 @@ export type RequestResponseMap = {
         request: null,
         response: TMatchPlayer[]
     },
+    GETtournPlayers: {
+        request: null,
+        response: TTournPlayer[]
+    }
     GETselectedMap: {
         request: null,
         response: TMapType
+    },
+    GETcurrentRoundNo: {
+        request: null,
+        response: number
     }
     POSTupdateMyReadiness: {
         request: boolean,
+        response: null
+    },
+    POSTaddMatchPlayer: {
+        request: TMatchPlayer,
+        response: null
+    },
+    POSTaddTournPlayer: {
+        request: null,
+        response: null
+    },
+    POSTwithdrawTournPlayer: {
+        request: null,
+        response: null
+    }
+    POSTleaveLobby: {
+        request: null,
         response: null
     }
 }
@@ -59,10 +83,12 @@ export type TMatchPlayer = {
 }
 
 export type TTournPlayer = {
-    id: number
-    nick: string
-    score: number
-    rating: number
-    prevOpponents: number[]
-    teamDist: number
+    id: number | null // To be taken from auth
+    nick: string | null // To be taken from userid
+    score: number //default: 0
+    rating: number //get from userid
+    prevOpponents: number[] //default[]
+    teamDist: number //default: 0
+    participating: boolean //default: true
+    //TODO: IN TOURNAMENT SERVICE, ONLY PAIR PLAYERS THAT HAVE THIS FLAG SET TO TRUE!!!!
 }

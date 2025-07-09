@@ -271,6 +271,10 @@ export const LobbyPage = {
         
         const participating = await lobby.amIParticipating();
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", participating ? "Withdraw" : "Join", false)
+        joinWithdrawButton.addEventListener("click", () => {
+            lobby.addTournPlayer()
+        })
+        //TODO: callback for this button is missing!
         joinWithdrawButton.classList.add("w-full");
 
         participantsElement.appendChild(joinWithdrawButton)
