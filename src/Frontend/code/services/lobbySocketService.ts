@@ -1,4 +1,5 @@
 /* import { TLobbyType } from "../api/lobbyMatchAPI/getLobbySettingsAPI"; */
+import { RequestResponseMap } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
 
 class LobbySocketService {
@@ -23,7 +24,12 @@ class LobbySocketService {
         this._ws.onmessage = (ev: MessageEvent) => {
             try {
                 const data = JSON.parse(ev.data);
-                this._handleMessage(data);
+                const resolver = this._pendingRequests.get(data.requestID) 
+                if (resolver) {
+                    resolver(data.response); //Not 100% typesafe, but fuck it, gotta trust backend at some point
+                    this._pendingRequests.delete(data.requestID);
+                }
+                
             } catch (error) {
                 console.error("Error parsing websocket message");
             }
@@ -46,8 +52,24 @@ class LobbySocketService {
         }
     }
 
+    async sendRequest<K extends keyof RequestResponseMap>(
+        type: K,
+        data: RequestResponseMap[K]['request']
+    ): Promise<RequestResponseMap[K]['response']> {
+        const uid = this._uid++;
+        return new Promise((resolve) => {
+            this._pendingRequests.set(uid, resolve);
+            this.send({
+                requestType: type,
+                requestID: uid,
+                data: data
+            })
+        })
+    }
+
     send(data: unknown /*TODO*/) {
         if (this._ws && this._ws.readyState === WebSocket.OPEN) {
+
             this._ws.send(JSON.stringify(data));
             return true;
         } else {
@@ -60,6 +82,9 @@ class LobbySocketService {
     get ws(): WebSocket | null { return this._ws; }
     private _lobbyID: number | null;
     get lobbyID(): number | null { return this._lobbyID; }
+    
+    private _pendingRequests = new Map<number, (response: any) => void>(); //TODO how to type response?
+    private _uid: number = 0;
 
     private _handleMessage(data: unknown /*TODO*/) {
 

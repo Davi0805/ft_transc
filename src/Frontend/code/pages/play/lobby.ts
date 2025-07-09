@@ -102,29 +102,28 @@ export const LobbyPage = {
 
         const leaveButton = getButton("btn-leave", "button", "Leave");
         leaveButton.addEventListener('click', () => {
-            LobbyLogic.leaveLobby()
+            lobby.leave()
             router.navigateTo('/play')
         })
         buttonsDiv.appendChild(leaveButton);
 
         const readyButton = getButton("btn-ready", "button", "Ready");
         readyButton.addEventListener('click', async () => {
-            const participating = await LobbyLogic.isPlayerParticipating();
+            const participating = await lobby.amIParticipating();
             if (!participating) {
                 flashButton(readyButton, "You must join first!")
             } else {
                 const state = toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
-                LobbyLogic.updatePlayerReadiness(state);
+                lobby.updateMyReadiness(state);
             }
         });
         buttonsDiv.appendChild(readyButton);
 
-        const isHost = await LobbyLogic.isPlayerHost();
-        if (isHost) {
+        if (lobby.amIHost) {
             const startButton = getButton("btn-start", "button", "Start");
             buttonsDiv.appendChild(startButton);
             startButton.addEventListener('click', async () => {
-                const everyoneReady = await LobbyLogic.isEveryoneReady();
+                const everyoneReady = await lobby.isEveryoneReady();
                 if (!everyoneReady) {
                     flashButton(startButton, "Not everyone is ready!");
                 } else {
@@ -135,8 +134,8 @@ export const LobbyPage = {
     },
 
     async renderSlots() {
-        const slots = await LobbyLogic.getSlots();
-        const canJoin = !(await LobbyLogic.isPlayerParticipating()) || lobby.staticSettings?.type == "friendly";
+        const slots = await lobby.getSlots();
+        const canJoin = !(await lobby.amIParticipating()) || lobby.staticSettings?.type == "friendly";
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
         teamsElement.innerHTML = "";
@@ -221,12 +220,12 @@ export const LobbyPage = {
     },
 
     async slotJoinRankedCallback(team: string, role: string) {
-        LobbyLogic.addPlayerToSlot();
+        lobby.addPlayerToSlot();
         this.renderSlots();
     },
 
     async renderParticipants() {
-        const participants = await LobbyLogic.getParticipants();
+        const participants = await lobby.getTournParticipants();
         const participantsElement = document.getElementById('participants') as HTMLElement;
 
         const header = document.createElement("h2");
@@ -253,7 +252,7 @@ export const LobbyPage = {
         const participantsTable = getTable("participants", participantsTableHead, participantsTableBody)
         participantsElement.innerHTML += participantsTable.outerHTML;
         
-        const participating = await LobbyLogic.isPlayerParticipating();
+        const participating = await lobby.amIParticipating();
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", participating ? "Withdraw" : "Join", false)
         joinWithdrawButton.classList.add("w-full");
 
