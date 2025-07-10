@@ -1,5 +1,5 @@
 /* import { TLobbyType } from "../api/lobbyMatchAPI/getLobbySettingsAPI"; */
-import { RequestResponseMap } from "../pages/play/lobbyTyping";
+import { lobbyDTO, RequestResponseMap } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
 
 class LobbySocketService {
@@ -57,19 +57,23 @@ class LobbySocketService {
         type: K,
         data: RequestResponseMap[K]['request']
     ): Promise<RequestResponseMap[K]['response']> {
+        const currentLobbyID = this._lobbyID;
+        if (currentLobbyID === null) {
+            throw Error("Websocket not connected!!")
+        }
         const uid = this._uid++;
         return new Promise((resolve) => {
             this._pendingRequests.set(uid, resolve);
             this.send({
                 requestType: type,
-                lobbyID: this._lobbyID,
+                lobbyID: currentLobbyID,
                 requestID: uid,
                 data: data
             })
         })
     }
 
-    send(data: unknown /*TODO*/) {
+    send(data: lobbyDTO) {
         if (this._ws && this._ws.readyState === WebSocket.OPEN) {
 
             this._ws.send(JSON.stringify(data));

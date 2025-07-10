@@ -1,5 +1,7 @@
 import { ROLES, SIDES } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
 
+
+
 export type RequestResponseMap = {
     GETmySettings: {
         request: null,
@@ -54,6 +56,16 @@ export type RequestResponseMap = {
         response: null
     }
 }
+
+export type lobbyDTO<T extends keyof RequestResponseMap = keyof RequestResponseMap> = {
+    requestType: T,
+    lobbyID: number,
+    requestID: number,
+    data: RequestResponseMap[T]['request']
+}
+
+
+
 
 export type TLobbyType = "friendly" | "ranked" | "tournament"
 export type TMapType = "2-players-small" | "2-players-medium" | "2-players-big" | "4-players-small" | "4-players-medium" | "4-players-big"
