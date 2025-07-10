@@ -1,5 +1,4 @@
 import "../css/tailwind.css"
-import "../css/style.css"
 import "../css/components/utils.css"
 import "../css/login/login.css"
 import "../css/login/twoFactor.css"

@@ -56,7 +56,7 @@ export class AuthService {
         this.userAvatar = await getUserAvatarById(this.userID);
       } catch (error) {
         this.logout();
-        console.log("DEBUG: error getting self data", error)
+        console.log("DEBUG: Did not get self data", error)
       }
 
       return;

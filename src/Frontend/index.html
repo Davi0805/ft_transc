@@ -9,9 +9,9 @@
     <title>SPA test</title>
   </head>
 
-  <body>
+  <body class="flex flex-col flex-1 overflow-x-auto">
     <!-- Header (will contain navigation links) -->
-    <header class="content">
+    <header id="header">
       <div class="left flex flex-center">
         <a href="/" class="flex center gap-8 site-home" data-link>
           <img
@@ -97,10 +97,10 @@
     </header>
 
     <!-- Main content area (will be dynamically updated) -->
-    <div class="page-layout">
+    <div id="page-layout">
       <main id="main"></main>
 
-      <aside></aside>
+      <aside class="flex justify-end w-[200px]"></aside>
 
       <div id="chat-window-wrapper"></div>
     </div>
