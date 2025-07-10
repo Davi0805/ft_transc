@@ -8,6 +8,7 @@ import { AboutUsPage } from '../pages/about'
 import { SettingsPage } from '../pages/settings/settings'
 import { LobbyPage } from '../pages/play/lobby'
 import { CreateLobbyPage } from '../pages/play/createLobby'
+import { MatchPage } from '../pages/play/match'
 
 export interface Route {
     path: string;
@@ -83,12 +84,17 @@ export const routes: Array<Route> = [
         template: CreateLobbyPage.template,
         script: CreateLobbyPage
     },
-
     {
         path: '/lobby',
         title: 'Lobby',
         template: LobbyPage.template,
         script: LobbyPage
     },
+    {
+        path: '/match',
+        title: 'Match',
+        template: MatchPage.template,
+        script: MatchPage
+    }
     //? additional pages would be put here
 ];

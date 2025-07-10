@@ -1,10 +1,7 @@
-import { getSelfData } from "../../api/getSelfDataAPI";
 import { getLobbySettings} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
-import { TLobbyType } from "./lobbyTyping";
 import { router } from "../../routes/router";
 import { lobbySocketService } from "../../services/lobbySocketService";
 import { getTable } from "./utils/stylingComponents";
-import { lobby } from "../../services/LobbyService";
 
 export const PlayPage = {
     template() {

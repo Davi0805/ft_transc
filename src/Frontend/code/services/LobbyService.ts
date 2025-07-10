@@ -1,3 +1,4 @@
+import { TUserCustoms } from "../../../../TempIsolatedMatchLogic/src/misc/types";
 import { getSelfData } from "../api/getSelfDataAPI";
 //import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TSlots } from "../pages/play/lobbyLogic";
@@ -99,6 +100,11 @@ class LobbyService {
         lobbySocketService.disconnect();
         this._staticSettings = null;
         this._amIHost = false;
+    }
+
+
+    async startGame(userCustoms: TUserCustoms) {
+        await lobbySocketService.sendRequest("POSTstartGame", userCustoms);
     }
 
     private _staticSettings: TStaticLobbySettings | null = null;

@@ -1,4 +1,4 @@
-import { ROLES, SIDES } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
+import { ROLES, SIDES, TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
 
 export type RequestResponseMap = {
     GETmySettings: {
@@ -55,6 +55,10 @@ export type RequestResponseMap = {
     }
     POSTleaveLobby: {
         request: null,
+        response: null
+    },
+    POSTstartGame: {
+        request: TUserCustoms,
         response: null
     }
 }

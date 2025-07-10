@@ -4,6 +4,8 @@ import { TLobby, TMapType, TMatchDuration, TMatchMode, TMatchPlayer, TTournPlaye
 import { TournamentService} from "../../services/TournamentService";
 import { ROLES, SIDES, TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
 import { lobby } from "../../services/LobbyService";
+import { matchService } from "../../services/matchService";
+import { router } from "../../routes/router";
 
 export type TTeam = {
     -readonly [key in keyof typeof ROLES]?: TPlayerInSlot | null //The shittiest fucking language I have ever seen in my life
@@ -67,7 +69,9 @@ export const LobbyLogic = {
             LobbyLogic.prepareNextRound(settings);
         } else {
             const players = await lobby.getMatchPlayers();
-            LobbyLogic.buildUserCustoms(settings, players);
+            const userCustoms = LobbyLogic.buildUserCustoms(settings, players);
+            matchService.injectConfigs(userCustoms);
+            router.navigateTo("/match");
         }
     },
 
@@ -122,8 +126,7 @@ export const LobbyLogic = {
             }
             
         })
-
-        
+        //TODO: Have to find a way to build bots into empty slots
 
         return userCustoms
     }

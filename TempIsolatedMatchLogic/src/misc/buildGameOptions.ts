@@ -1,7 +1,7 @@
 import { TGameConfigs, CAppConfigs, SGameConfigs, TControls } from "./types.js";
 
 export function buildCAppConfigs(gameConfigs: TGameConfigs, 
-  clientID: number, websocket: WebSocket, rootElement: HTMLElement): CAppConfigs {
+  clientID: number, websocket: WebSocket): CAppConfigs {
     const humansInClient = gameConfigs.clients.find(client => client.id == clientID)?.humans;
     if (humansInClient === undefined) {
       throw new Error(`The clientID ${clientID} has no controls saved in gameConfigs!`)
@@ -14,7 +14,6 @@ export function buildCAppConfigs(gameConfigs: TGameConfigs,
     const out: CAppConfigs = {
       websocket: websocket,
       appConfigs: {
-        rootElement: rootElement,
         width: gameConfigs.field.size.x,
         height: gameConfigs.field.size.y
       },

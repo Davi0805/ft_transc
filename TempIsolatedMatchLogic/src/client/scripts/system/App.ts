@@ -6,7 +6,7 @@ import { Adto, CAppConfigs } from '../../../misc/types';
 import { assetsManifest, scenesManifest } from '../game/Manifests';
 
 class FtApplication {
-    async init(gameConfigs: CAppConfigs) {
+    async init(gameConfigs: CAppConfigs, rootElement: HTMLElement) {
         // Socket setup
         this._socket = gameConfigs.websocket;
         
@@ -21,7 +21,7 @@ class FtApplication {
         this._app = new Application(gameConfigs.appConfigs);
         
         //await this._app.init(gameConfigs.appConfigs);
-        document.body.appendChild(this._app.canvas); // This makes the canvas of the Pixi app show up on the browser
+        rootElement.appendChild(this._app.canvas); // This makes the canvas of the Pixi app show up on the browser
 
         // assetsManifest has the assets bundles, which include all paths to all sprites and their alias
         // This makes the bundles available directly in Assets, which is globally accessible
