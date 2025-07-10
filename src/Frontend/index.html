@@ -9,10 +9,10 @@
     <title>SPA test</title>
   </head>
 
-  <body class="flex flex-col flex-1 overflow-x-auto">
+  <body class="flex flex-col flex-1 overflow-x-auto min-w-[850px]">
     <!-- Header (will contain navigation links) -->
     <header id="header">
-      <div class="left flex flex-center">
+      <div class="left flex flex-center flex-shrink-0 min-w-0">
         <a href="/" class="flex center gap-8 site-home" data-link>
           <img
             class="logo"
@@ -24,7 +24,7 @@
         </a>
       </div>
 
-      <div class="right flex flex-center gap-16">
+      <div class="right flex flex-center gap-16 min-w-0">
         <nav id="header-nav" class="flex flex-center gap-24">
           <a
             id="home-link"
@@ -100,7 +100,7 @@
     <div id="page-layout">
       <main id="main"></main>
 
-      <aside class="flex justify-end w-[200px]"></aside>
+      <aside class="flex justify-end w-[200px] flex-shrink-0"></aside>
 
       <div id="chat-window-wrapper"></div>
     </div>

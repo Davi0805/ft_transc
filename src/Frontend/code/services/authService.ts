@@ -8,6 +8,7 @@ import { chatWindowControler } from "../components/chatWindow";
 export class AuthService {
   private protectedRoutes: string[];
   private authToken: string | null;
+  private has2FA: boolean;
 
   public userID: number | null;
   public userNick: string | null;
@@ -25,6 +26,7 @@ export class AuthService {
     this.userUsername = null;
     this.userEmail = null;
     this.authToken = null;
+    this.has2FA = false;
     this.isAuthenticated = false;
     this.sidebar = null;
   }
@@ -84,6 +86,7 @@ export class AuthService {
     this.userEmail = null;
 
     this.authToken = null;
+    this.has2FA = false;
     this.isAuthenticated = false;
     localStorage.removeItem("authToken");
     header.updateHeaderVisibility();
@@ -101,6 +104,14 @@ export class AuthService {
 
   isUserAuthenticated(): boolean {
     return this.isAuthenticated;
+  }
+
+  getHas2FA(): boolean {
+    return this.has2FA;
+  }
+
+  setHas2FA(value: boolean): void {
+    this.has2FA = value;
   }
 
   canAccessRoute(routePath: string): boolean {

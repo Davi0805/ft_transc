@@ -59,6 +59,7 @@ export const LoginPage = {
 
       if (!response.verified) {
         await TwoFactorAuth.show(response.token); // error checking for this inside
+        authService.setHas2FA(true);
         return;
       }
 
