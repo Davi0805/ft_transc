@@ -100,7 +100,7 @@ export const LobbyPage = {
         const buttonsDiv = document.getElementById("lobby-buttons") as HTMLElement;
 
         const inviteButton = getButton("btn-invite", "button", "Invite");
-        inviteButton.addEventListener('click', () => { LobbyLogic.inviteUserToLobby(); })
+        inviteButton.addEventListener('click', () => { lobby.inviteUserToLobby(1); }) //TODO: "1" is hardcoded. Find a way to invite specific user
         buttonsDiv.appendChild(inviteButton);
 
         const leaveButton = getButton("btn-leave", "button", "Leave");

@@ -1,5 +1,4 @@
-/* import { TLobbyType } from "../api/lobbyMatchAPI/getLobbySettingsAPI"; */
-import { lobbyDTO, RequestResponseMap } from "../pages/play/lobbyTyping";
+import { lobbyRequestDTO, lobbyResponseDTO, RequestResponseMap } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
 
 class LobbySocketService {
@@ -23,10 +22,10 @@ class LobbySocketService {
         
         this._ws.onmessage = (ev: MessageEvent) => {
             try {
-                const data = JSON.parse(ev.data);
+                const data = JSON.parse(ev.data) as lobbyResponseDTO;
                 const resolver = this._pendingRequests.get(data.requestID) 
                 if (resolver) {
-                    resolver(data.response); //Not 100% typesafe, but fuck it, gotta trust backend at some point
+                    resolver(data.data); //Not 100% typesafe, but fuck it, gotta trust backend at some point
                     this._pendingRequests.delete(data.requestID);
                 }
                 
@@ -73,7 +72,7 @@ class LobbySocketService {
         })
     }
 
-    send(data: lobbyDTO) {
+    send(data: lobbyRequestDTO) {
         if (this._ws && this._ws.readyState === WebSocket.OPEN) {
 
             this._ws.send(JSON.stringify(data));

@@ -28,6 +28,10 @@ class LobbyService {
         await lobbySocketService.sendRequest("POSTupdateLobby", settings);
     }
 
+    async inviteUserToLobby(userID: number): Promise<void> {
+        await lobbySocketService.sendRequest("POSTinviteUserToLobby", userID);
+    }
+
     async amIParticipating(): Promise<boolean> {
         return await lobbySocketService.sendRequest("GETamIParticipating", null)
     }
@@ -40,9 +44,13 @@ class LobbyService {
         await lobbySocketService.sendRequest("POSTupdateMyReadiness", ready);
     }
 
+    async getMatchPlayers(): Promise<TMatchPlayer[]> {
+        return await lobbySocketService.sendRequest("GETmatchPlayers", null);
+    }
+
     async getSlots(): Promise<TSlots> {
         const mapSlots = getSlotsFromMap(await lobbySocketService.sendRequest("GETselectedMap", null))
-        const participatingPlayers = await lobbySocketService.sendRequest("GETmatchPlayers", null);
+        const participatingPlayers = await this.getMatchPlayers();
         participatingPlayers.forEach(player => {
             if (mapSlots[player.team] === undefined || mapSlots[player.team]![player.role] === undefined) {
                 throw Error("Fuck everything about this bullshit")

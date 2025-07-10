@@ -1,7 +1,5 @@
 import { ROLES, SIDES } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
 
-
-
 export type RequestResponseMap = {
     GETmySettings: {
         request: null,
@@ -30,9 +28,13 @@ export type RequestResponseMap = {
     GETcurrentRoundNo: {
         request: null,
         response: number
-    }
+    },
     POSTupdateLobby: {
         request: TDynamicLobbySettings,
+        response: null
+    },
+    POSTinviteUserToLobby: {
+        request: number,
         response: null
     }
     POSTupdateMyReadiness: {
@@ -57,12 +59,18 @@ export type RequestResponseMap = {
     }
 }
 
-export type lobbyDTO<T extends keyof RequestResponseMap = keyof RequestResponseMap> = {
+export type lobbyRequestDTO<T extends keyof RequestResponseMap = keyof RequestResponseMap> = {
     requestType: T,
     lobbyID: number,
     requestID: number,
     data: RequestResponseMap[T]['request']
 }
+
+export type lobbyResponseDTO<T extends keyof RequestResponseMap = keyof RequestResponseMap> = {
+    requestID: number,
+    data: RequestResponseMap[T]['response']
+}
+
 
 
 

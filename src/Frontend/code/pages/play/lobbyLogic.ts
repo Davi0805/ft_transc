@@ -1,6 +1,6 @@
 import { lobbySocketService } from "../../services/lobbySocketService";
 import { updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
-import { TLobby, TMapType, TMatchDuration, TMatchMode, TTournPlayer } from "./lobbyTyping";
+import { TLobby, TMapType, TMatchDuration, TMatchMode, TMatchPlayer, TTournPlayer } from "./lobbyTyping";
 import { TournamentService} from "../../services/TournamentService";
 import { ROLES, SIDES, TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
 import { lobby } from "../../services/LobbyService";
@@ -35,26 +35,6 @@ export const LobbyLogic = {
         console.log("New settings applied!")
     },
 
-
-    //Interactivity logic
-    inviteUserToLobby: async () => {
-        //TODO: Invite player to lobby
-        console.log("Invite button was clicked")
-    },
-
-    startLogic: async () => {
-        if (!lobbySocketService.lobbyID) {
-            throw Error("How can I start a game without a lobby?")
-        }
-        const settings = await lobby.getMySettings();
-        if (lobby.staticSettings?.type == "tournament") {
-            LobbyLogic.prepareNextRound(settings);
-        } else {
-            const players = await lobby.getSlots();
-            LobbyLogic.buildUserCustoms(settings, players);
-        }
-    },
-
     fetchAndAddPlayerToSlot: async (settingsDialog: HTMLDialogElement,
             team: SIDES, role: ROLES): Promise<void> => {
         const form = settingsDialog.querySelector("form") as HTMLFormElement;
@@ -78,13 +58,26 @@ export const LobbyLogic = {
     },
 
 
+    startLogic: async () => {
+        if (!lobbySocketService.lobbyID) {
+            throw Error("How can I start a game without a lobby?")
+        }
+        const settings = await lobby.getMySettings();
+        if (lobby.staticSettings?.type == "tournament") {
+            LobbyLogic.prepareNextRound(settings);
+        } else {
+            const players = await lobby.getMatchPlayers();
+            LobbyLogic.buildUserCustoms(settings, players);
+        }
+    },
+
     prepareNextRound: async (settings: TLobby) => {
         //const participants = await LobbyLogic.getParticipants();
         //const pairings = TournamentService.getNextRoundPairings(participants);
         //TODO: start all games with the pairings
     },
 
-    buildUserCustoms: (settings: TLobby, players: TSlots): TUserCustoms => {
+    buildUserCustoms: (settings: TLobby, players: TMatchPlayer[]): TUserCustoms => {
         const userCustoms: TUserCustoms = {
             field: {
                 size: { x: 800, y: 400 }, //TODO: GET THIS FROM MAP IN SETTINGS
@@ -95,6 +88,40 @@ export const LobbyLogic = {
             clients: [],
             bots: []
         }
+
+        const paddleID = 0;
+        players.forEach(player => {
+            if (!player.userID || !player.id || !player.spriteID) {
+                throw Error("This player is not initialized!!");
+            }
+
+            userCustoms.paddles.push({
+                id: paddleID,
+                side: player.team,
+                role: player.role,
+                spriteID: player.spriteID
+            })
+
+            const human = {
+                id: player.id,
+                paddleID: paddleID,
+                controls: {
+                    left: player.leftControl,
+                    right: player.rightControl,
+                    pause: " " //TODO: Deprecated. To be removed
+                }
+            }
+            const client = userCustoms.clients.find(client => client.id === player.userID);
+            if (client) {
+                client.humans.push(human);
+            } else {
+                userCustoms.clients.push({
+                    id: player.userID,
+                    humans: [human]
+                })
+            }
+            
+        })
 
         
 
