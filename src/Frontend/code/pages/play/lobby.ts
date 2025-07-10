@@ -31,9 +31,9 @@ export const LobbyPage = {
 
     async init() {
         if (!lobbySocketService.lobbyID) { throw Error("Socket service is not active"); }
-        await lobby.setSettings(lobbySocketService.lobbyID)
+        await lobby.initSettings(lobbySocketService.lobbyID)
         if (!lobby.staticSettings) { throw Error("Settings could not be fetched from backend")}
-        const lobbySettings = await getLobbySettingsByID(lobbySocketService.lobbyID);
+        const lobbySettings = await lobby.getMySettings();
 
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
         titleElement.textContent = lobbySettings.name

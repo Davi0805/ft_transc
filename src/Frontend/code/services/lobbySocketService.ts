@@ -38,6 +38,7 @@ class LobbySocketService {
         this._ws.onclose = (ev: CloseEvent) => {
             console.log("DEBUG: websocket closed:", ev.code, ev.reason);
             this._ws = null;
+            this._lobbyID = null;
         };
 
         this._ws.onerror = (error: Event) => {
@@ -61,6 +62,7 @@ class LobbySocketService {
             this._pendingRequests.set(uid, resolve);
             this.send({
                 requestType: type,
+                lobbyID: this._lobbyID,
                 requestID: uid,
                 data: data
             })

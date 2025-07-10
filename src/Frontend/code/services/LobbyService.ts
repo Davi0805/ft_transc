@@ -1,14 +1,13 @@
-import Sprite from "../../../../TempIsolatedMatchLogic/src/client/scripts/system/framework/Sprite";
 import { getSelfData } from "../api/getSelfDataAPI";
-import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
+//import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TSlots } from "../pages/play/lobbyLogic";
-import { TMatchPlayer, TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
+import { TDynamicLobbySettings, TLobby, TMatchPlayer, TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
 
 class LobbyService {
-    async setSettings(lobbyID: number) {
-        const settings = await getLobbySettingsByID(lobbyID);
+    async initSettings(lobbyID: number) {
+        const settings = await this.getMySettings();
         const selfData = await getSelfData();
 
         this._staticSettings = {
@@ -19,6 +18,14 @@ class LobbyService {
             type: settings.type
         }
         this._amIHost = selfData.id === settings.hostID
+    }
+
+    async getMySettings(): Promise<TLobby> {
+        return await lobbySocketService.sendRequest("GETmySettings", null);
+    }
+
+    async updateLobbySettings(settings: TDynamicLobbySettings): Promise<void> {
+        await lobbySocketService.sendRequest("POSTupdateLobby", settings);
     }
 
     async amIParticipating(): Promise<boolean> {
@@ -81,7 +88,9 @@ class LobbyService {
         await lobbySocketService.sendRequest("POSTleaveLobby", null);
         //TODO: tell db that player is not participating anymore! (Davi)
         //TODO: ADD COMM TO DB THAT PLAYER LEFT (Davi)
-        //TODO: CLOSE WEBSOCKET AND SERVICE (Nuno)
+        lobbySocketService.disconnect();
+        this._staticSettings = null;
+        this._amIHost = false;
     }
 
     private _staticSettings: TStaticLobbySettings | null = null;

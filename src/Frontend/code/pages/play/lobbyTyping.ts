@@ -1,6 +1,10 @@
 import { ROLES, SIDES } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
 
 export type RequestResponseMap = {
+    GETmySettings: {
+        request: null,
+        response: TLobby
+    }
     GETamIParticipating: {
         request: null
         response: boolean
@@ -24,6 +28,10 @@ export type RequestResponseMap = {
     GETcurrentRoundNo: {
         request: null,
         response: number
+    }
+    POSTupdateLobby: {
+        request: TDynamicLobbySettings,
+        response: null
     }
     POSTupdateMyReadiness: {
         request: boolean,

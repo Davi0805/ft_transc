@@ -1,7 +1,6 @@
 import { lobbySocketService } from "../../services/lobbySocketService";
 import { updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
 import { TLobby, TMapType, TMatchDuration, TMatchMode, TTournPlayer } from "./lobbyTyping";
-import { getLobbySettingsByID } from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TournamentService} from "../../services/TournamentService";
 import { ROLES, SIDES, TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
 import { lobby } from "../../services/LobbyService";
@@ -47,7 +46,7 @@ export const LobbyLogic = {
         if (!lobbySocketService.lobbyID) {
             throw Error("How can I start a game without a lobby?")
         }
-        const settings = await getLobbySettingsByID(lobbySocketService.lobbyID);
+        const settings = await lobby.getMySettings();
         if (lobby.staticSettings?.type == "tournament") {
             LobbyLogic.prepareNextRound(settings);
         } else {
