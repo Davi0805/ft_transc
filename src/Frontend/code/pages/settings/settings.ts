@@ -99,19 +99,20 @@ export const SettingsPage = {
               <label for="new-pass" class="w-20 font-semibold text-center">New password</label>
               <input id="new-pass" type="password" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
             </div>
-            
+
+          <div class="flex items-center">
+              <h3 class="mr-6 text-l font-semibold">Enable/Disable 2FA</h3>
+              <label class="relative inline-block w-[60px] h-[34px]">
+                <input type="checkbox" class="peer sr-only" ${authService.getHas2FA() ? "checked" : ""}>
+                <span class="block bg-gray-500 peer-checked:bg-myWhite w-full h-full rounded-full transition-all duration-300"></span>
+                <span class="absolute left-[3px] bottom-[3px] bg-blue-600 w-[28px] h-[28px] rounded-full transition-transform duration-300 peer-checked:translate-x-[26px]"></span>
+              </label>
+            </div>
+
             <div id="save-btn" class="mt-auto flex justify-end ">
              <button type="submit" class="rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white transition-all duration-100 hover:bg-blue-700 active:scale-85">Save</button>
             </div>
           </form>
-
-          <!-- Enable/Disable 2FA -->
-          <div class="flex pt-2 ">
-            <h3 class="text-l font-semibold">Two Factor Authentication</h3>
-             <button class="ml-6 rounded-lg bg-blue-600 px-6 py-1 font-semibold text-white transition-all duration-100 hover:bg-blue-700 active:scale-85">
-             ${authService.getHas2FA() ? "Turn off" : "Turn on"}
-             </button>
-          </div>
 
     `;
   },
