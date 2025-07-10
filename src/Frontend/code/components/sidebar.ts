@@ -93,7 +93,7 @@ export class Chat {
 
   renderHTML(): string {
     return `
-      <div id="chat-sidebar" class="chat-sidebar content">
+      <div id="chat-sidebar" class="chat-sidebar content w-[200px] flex-shrink-0">
         <!-- Topbar with friend + search -->
 
         <div class="chat-sidebar-topbar">
