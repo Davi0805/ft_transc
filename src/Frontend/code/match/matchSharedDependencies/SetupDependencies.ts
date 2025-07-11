@@ -1,4 +1,4 @@
-import { SIDES, ROLES, point, TPaddle } from "./sharedTypes.js"
+import { SIDES, ROLES, point, TPaddle } from "./sharedTypes"
 
 export type TControls = {
     left: string,

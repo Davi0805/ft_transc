@@ -1,7 +1,7 @@
-import Point from "../../../shared/Point";
+import Point from "../matchSharedDependencies/Point";
 import Container from "../system/framework/Container";
 import CObject from "./CObject";
-import { point, BALL_TYPES } from "../../../shared/sharedTypes.js";
+import { point, BALL_TYPES } from "../matchSharedDependencies/sharedTypes";
 
 const TypeSpriteMap: Record<BALL_TYPES, string> = {
     [BALL_TYPES.BASIC]: "ballBasic",

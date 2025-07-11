@@ -1,8 +1,8 @@
-import Point from "../../../shared/Point.js";
-import Container from "../system/framework/Container.js";
-import { point, SIDES } from "../../../shared/sharedTypes.js";
-import { computeOrientation } from "../../../shared/sharedUtils.js";
-import CObject from "./CObject.js";
+import Point from "../matchSharedDependencies/Point";
+import Container from "../system/framework/Container";
+import { point, SIDES } from "../matchSharedDependencies/sharedTypes";
+import { computeOrientation } from "../matchSharedDependencies/sharedUtils";
+import CObject from "./CObject";
 
 type CPaddleConfigs = {
     id: number,

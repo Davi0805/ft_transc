@@ -1,4 +1,4 @@
-import Point from "../../../../shared/Point";
+import Point from "../../matchSharedDependencies/Point";
 import Sprite from "../../system/framework/Sprite";
 import BitmapText from "../../system/framework/BitmapText";
 

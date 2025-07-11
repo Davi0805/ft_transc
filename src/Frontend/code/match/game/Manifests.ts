@@ -1,5 +1,5 @@
 import { AssetsManifest } from "../system/framework/Assets"
-import { CGameSceneConfigs } from "../../setup"
+import { CGameSceneConfigs } from "../setup"
 
 import AScene from "../system/AScene"
 import GameScene from "./GameScene"
@@ -26,51 +26,51 @@ export const assetsManifest: AssetsManifest = {
             assets: [
                 {
                     alias: "ballBasic",
-                    src: "sprites/ballBasic.png"
+                    src: "Assets/sprites/ballBasic.png"
                 },
                 {
                     alias: "ballExpand",
-                    src: "sprites/ballExpand.png"
+                    src: "Assets/sprites/ballExpand.png"
                 },
                 {
                     alias: "ballShrink",
-                    src: "sprites/ballShrink.png"
+                    src: "Assets/sprites/ballShrink.png"
                 },
                 {
                     alias: "ballSlowDown",
-                    src: "sprites/ballSlowDown.png"
+                    src: "Assets/sprites/ballSlowDown.png"
                 },
                 {
                     alias: "ballSpeedUp",
-                    src: "sprites/ballSpeedUp.png"
+                    src: "Assets/sprites/ballSpeedUp.png"
                 },
                 {
                     alias: "ballDestroy",
-                    src: "sprites/ballDestroy.png"
+                    src: "Assets/sprites/ballDestroy.png"
                 },
                 {
                     alias: "ballExtraBall",
-                    src: "sprites/ballExtraBall.png"
+                    src: "Assets/sprites/ballExtraBall.png"
                 },
                 {
                     alias: "ballMassiveDamage",
-                    src: "sprites/ballMassiveDamage.png"
+                    src: "Assets/sprites/ballMassiveDamage.png"
                 },
                 {
                     alias: "ballMystery",
-                    src: "sprites/ballMystery.png"
+                    src: "Assets/sprites/ballMystery.png"
                 },
                 {
                     alias: "ballRestore",
-                    src: "sprites/ballRestore.png"
+                    src: "Assets/sprites/ballRestore.png"
                 },
                 {
                     alias: "paddle0",
-                    src: "sprites/paddle0.png"
+                    src: "Assets/sprites/paddle0.png"
                 },
                 {
                     alias: "gameFont",
-                    src: "sprites/gameFont.ttf"
+                    src: "Assets/sprites/gameFont.ttf"
                 }
             ]
         },

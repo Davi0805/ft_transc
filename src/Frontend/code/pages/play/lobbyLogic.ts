@@ -62,13 +62,19 @@ export const LobbyLogic = {
 
 
     startLogic: async () => {
-        if (!lobbySocketService.lobbyID) {
-            throw Error("How can I start a game without a lobby?")
-        }
         if (lobby.settings.type == "tournament") {
             LobbyLogic.prepareNextRound(lobby.settings);
         } else {
-            const userCustoms = LobbyLogic.buildUserCustoms(lobby.settings, lobby.matchPlayers);
+            const userCustoms = LobbyLogic.buildUserCustoms(lobby.settings, [{
+                userID: 0,
+                id: 0,
+                nick: "Fucker",
+                spriteID: 0,
+                team: SIDES.LEFT,
+                role: ROLES.BACK,
+                leftControl: "ArrowLeft",
+                rightControl: "ArrowRight"
+            }]/*lobby.matchPlayers*/);
             matchService.injectConfigs(userCustoms);
             router.navigateTo("/match");
         }
@@ -83,7 +89,7 @@ export const LobbyLogic = {
     buildUserCustoms: (settings: TLobby, players: TMatchPlayer[]): TUserCustoms => {
         const userCustoms: TUserCustoms = {
             field: {
-                size: { x: 800, y: 400 }, //TODO: GET THIS FROM MAP IN SETTINGS
+                size: { x: 800, y: 600 }, //TODO: GET THIS FROM MAP IN SETTINGS
                 backgroundSpriteID: 0 //TODO: Generate randomly
             },
             matchLength: 200, //TODO: GET FROM SETTINGS
@@ -94,7 +100,7 @@ export const LobbyLogic = {
 
         const paddleID = 0;
         players.forEach(player => {
-            if (!player.userID || !player.id || !player.spriteID) {
+            if (player.userID === null || player.id === null || player.spriteID === null) {
                 throw Error("This player is not initialized!!");
             }
 

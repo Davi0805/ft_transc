@@ -30,7 +30,7 @@ export const LobbyPage = {
     },
 
     async init() {
-        if (!lobbySocketService.lobbyID) { throw Error("Socket service is not active"); }
+        if (lobbySocketService.lobbyID === null) { throw Error("Socket service is not active"); }
         await lobby.initSettings(lobbySocketService.lobbyID)
 
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
@@ -55,11 +55,8 @@ export const LobbyPage = {
     },
 
     async renderSettings() {
-        if (!lobbySocketService.lobbyID) {
-            throw Error("How the fuck did I get to this lobby without opening the socket??")
-        }
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        const lobbySettingsListing: TLobby = await getLobbySettingsByID(lobbySocketService.lobbyID)
+        const lobbySettingsListing: TLobby = lobby.settings;
         
         let lobbySettingsHtml = `
             <div id="settings-listing" class="flex flex-col gap-1">

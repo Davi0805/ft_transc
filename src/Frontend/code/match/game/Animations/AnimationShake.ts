@@ -1,5 +1,5 @@
 import AAnimation from "./AAnimation";
-import Point from "../../../../shared/Point";
+import Point from "../../matchSharedDependencies/Point";
 import CNumbersText from "../CNumbersText";
 import CObject from "../CObject";
 

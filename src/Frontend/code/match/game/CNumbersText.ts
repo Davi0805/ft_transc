@@ -1,5 +1,5 @@
-import { point } from "../../../shared/sharedTypes";
-import Point from "../../../shared/Point";
+import { point } from "../matchSharedDependencies/sharedTypes";
+import Point from "../matchSharedDependencies/Point";
 import Container from "../system/framework/Container";
 import BitmapText from "../system/framework/BitmapText";
 import AnimationBad from "./Animations/AnimationBad";

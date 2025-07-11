@@ -1,5 +1,4 @@
-import { TUserCustoms } from "../../../../TempIsolatedMatchLogic/src/misc/types";
-import { getSelfData } from "../api/getSelfDataAPI";
+import { getSelfData, SelfData } from "../api/getSelfDataAPI";
 import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 //import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TSlots } from "../pages/play/lobbyLogic";
@@ -8,13 +7,30 @@ import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
 
 
+
+
+
 //IMPORTANT TODO: DOUBLE CHECK WHICH OF THESE SHOULD BE TRIGGERED BY FRONT END, BUT WHICH SHOULD BE SENT AS EVENTS FROM BACKEND!!!!
 //Next, isolate the common components in game
 class LobbyService {
     async initSettings(lobbyID: number) {
         //It is important to get this from the backend on demand. This way nothing is written by the client whatsoever and there is no desync or common responsibilities
-        const selfData = await getSelfData();
-        this._settings = await getLobbySettingsByID(lobbyID);
+        const selfData: SelfData = { //await getSelfData(); TODO: uncomment
+            id: 0,
+            nickname: "Fucker McDickFace"
+        }
+        this._settings = { //await getLobbySettingsByID(lobbyID); TODO: Uncomment
+            id: 0,
+            hostID: 0,
+            name: "fdp",
+            host: "lolada",
+            type: "ranked",
+            capacity: { taken: 0, max: 8 },
+            map: "4-players-big",
+            mode: "classic",
+            duration: "blitz",
+            round: 1
+        }
         this._amIHost = selfData.id === this._settings.hostID
         if (this._settings.type === "tournament") {
             this._tournPlayers = [];
@@ -46,25 +62,25 @@ class LobbyService {
     }
 
     async updateMyReadiness(ready: boolean) {
-        await lobbySocketService.sendRequest("POSTupdateMyReadiness", ready);
+        //await lobbySocketService.sendRequest("POSTupdateMyReadiness", ready);
     }
 
     async addMatchPlayer(player: TMatchPlayer) {
-        await lobbySocketService.sendRequest("POSTaddMatchPlayer", player);
+        //await lobbySocketService.sendRequest("POSTaddMatchPlayer", player);
     }
 
     async addTournPlayer() {
         //This request does not need any payload because every info is either taken from auth or has default values
         //Must add a TTournPlayer to the participating list. See the type definition for details
-        await lobbySocketService.sendRequest("POSTaddTournPlayer", null);
+        //await lobbySocketService.sendRequest("POSTaddTournPlayer", null);
     }
 
     async inviteUserToLobby(userID: number): Promise<void> {
-        await lobbySocketService.sendRequest("POSTinviteUserToLobby", userID);
+        //await lobbySocketService.sendRequest("POSTinviteUserToLobby", userID);
     }
 
     async leave() {
-        await lobbySocketService.sendRequest("POSTleaveLobby", null);
+        //await lobbySocketService.sendRequest("POSTleaveLobby", null);
         //TODO: tell db that player is not participating anymore! (Davi)
         //TODO: ADD COMM TO DB THAT PLAYER LEFT (Davi)
         lobbySocketService.disconnect();
@@ -173,7 +189,7 @@ class LobbyService {
     get amIHost(): boolean { return this._amIHost; }
     private _participating: boolean = false; //TODO: needs an update function from socket
     get participating(): boolean { return this._participating; }
-    private _everyoneReady: boolean = false; //TODO: needs an update function from socket
+    private _everyoneReady: boolean = true; //TODO: needs an update function from socket
     get everyoneReady(): boolean { return this._everyoneReady; }
 
     //These should definitely be children of some parent class lol. Fuck it

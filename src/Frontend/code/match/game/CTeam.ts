@@ -1,4 +1,4 @@
-import { SIDES } from "../../../shared/sharedTypes";
+import { SIDES } from "../matchSharedDependencies/sharedTypes";
 import CNumbersText from "./CNumbersText";
 
 export default class CTeam {

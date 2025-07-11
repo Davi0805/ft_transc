@@ -1,4 +1,4 @@
-import { SIDES } from "./sharedTypes.js";
+import { SIDES } from "./sharedTypes";
 
 export default class Rectangle {
     constructor(x: number, y: number, width: number, height: number) {

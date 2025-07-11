@@ -4,7 +4,7 @@ import { authService } from "./authService";
 class LobbySocketService {
     constructor() {
         this._ws = null;
-        this._lobbyID = null;
+        this._lobbyID = 0; //TODO change to null
     }
 
     connect(lobbyID: number) {
@@ -86,7 +86,12 @@ class LobbySocketService {
     private _ws: WebSocket | null;
     get ws(): WebSocket | null { return this._ws; }
     private _lobbyID: number | null;
-    get lobbyID(): number | null { return this._lobbyID; }
+    get lobbyID(): number {
+        if (this._lobbyID === null) {
+            throw Error("LobbyID was accessed without being initialized!")
+        }
+        return this._lobbyID;
+    }
     
     private _pendingRequests = new Map<number, (response: any) => void>(); //TODO how to type response?
     private _uid: number = 0;

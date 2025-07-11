@@ -1,4 +1,5 @@
-import { ROLES, SIDES, TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
+import { TUserCustoms } from "../../match/matchSharedDependencies/SetupDependencies"
+import { SIDES, ROLES } from "../../match/matchSharedDependencies/sharedTypes"
 
 export type RequestResponseMap = {
     GETmySettings: {

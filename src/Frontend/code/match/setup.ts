@@ -29,6 +29,7 @@ export type CAppConfigs = {
 
 export function buildCAppConfigs(gameConfigs: TGameConfigs, 
   clientID: number, websocket: WebSocket): CAppConfigs {
+    console.log(gameConfigs.clients)
     const humansInClient = gameConfigs.clients.find(client => client.id == clientID)?.humans;
     if (humansInClient === undefined) {
       throw new Error(`The clientID ${clientID} has no controls saved in gameConfigs!`)

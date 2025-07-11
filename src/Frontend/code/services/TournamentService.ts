@@ -47,7 +47,9 @@ export class TournamentService {
         const playerGraph: PlayerGraph = [];
         for (let i: number = 0; i < players.length - 1; i++) {
             for (let j: number = i + 1; j < players.length; j++) {
-                if (!players[i].prevOpponents.includes(players[j].id)
+                const possibleOpponent = players[j];
+                if (!possibleOpponent.id) { throw Error("Player not initialized when it should")}
+                if (!players[i].prevOpponents.includes(possibleOpponent.id)
                     && players[i].teamDist + players[j].teamDist < 4) {
 
                     playerGraph.push([players[i], players[j]]);
@@ -107,6 +109,7 @@ export class TournamentService {
             const player1 = normalizedPlayers.find(player => player.rating - 1 === i);
             const player2 = normalizedPlayers.find(player => player.rating - 1 === pairingsIndexes[i])
             if (player1 && player2) {
+                if (!player1.id || !player2.id) { throw Error("Player not initialized when it should!"); }
                 pairings.push([
                     player1.id,
                     player2.id

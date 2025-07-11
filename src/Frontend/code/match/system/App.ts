@@ -2,8 +2,8 @@ import Application from './framework/Application';
 import Assets from './framework/Assets';
 import { ScenesManager } from './ScenesManager';
 import { EventBus } from './EventBus';
-import { Adto } from '../../../shared/dtos';
-import { CAppConfigs } from '../../setup';
+import { Adto } from '../matchSharedDependencies/dtos';
+import { CAppConfigs } from '../setup';
 import { assetsManifest, scenesManifest } from '../game/Manifests';
 
 class FtApplication {

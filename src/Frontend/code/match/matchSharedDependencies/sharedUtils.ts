@@ -1,5 +1,5 @@
-import Point from "./Point.js";
-import { SIDES } from "./sharedTypes.js";
+import Point from "./Point";
+import { SIDES } from "./sharedTypes";
 
 export function computeOrientation(paddleSide: SIDES): Point {
     const sidesToOrientation: Record<SIDES, Point> = {
