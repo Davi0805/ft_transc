@@ -1,7 +1,9 @@
 import AScene from "../system/AScene";
-import Point from "../../../misc/Point";
+import Point from "../../../shared/Point";
 import Assets from "../system/framework/Assets";
-import { SIDES, CGameSceneConfigs, SGameDTO } from "../../../misc/types";
+import { SIDES } from "../../../shared/sharedTypes";
+import { CGameSceneConfigs } from "../../setup";
+import { SGameDTO } from "../../../shared/dtos";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
 import CTeam from "./CTeam";

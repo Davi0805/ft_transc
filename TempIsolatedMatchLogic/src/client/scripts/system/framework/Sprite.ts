@@ -1,4 +1,3 @@
-import Point from "../../../../misc/Point";
 import Assets from "./Assets";
 import VisualContainer from "./VisualContainer";
 

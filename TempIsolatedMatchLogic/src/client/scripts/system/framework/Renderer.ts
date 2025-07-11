@@ -1,4 +1,3 @@
-import { point } from "../../../../misc/types";
 import BitmapText from "./BitmapText";
 import Container from "./Container";
 import Sprite from "./Sprite";

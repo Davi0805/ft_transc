@@ -1,12 +1,10 @@
 import { AssetsManifest } from "../system/framework/Assets"
-import { ExampleSceneConfigs, CGameSceneConfigs } from "../../../misc/types"
+import { CGameSceneConfigs } from "../../setup"
 
 import AScene from "../system/AScene"
-import ExampleScene from "./ExampleScene"
 import GameScene from "./GameScene"
 
 export type SceneConfigMap = {
-    exampleScene: ExampleSceneConfigs
     gameScene: CGameSceneConfigs
 }
 
@@ -18,7 +16,6 @@ export type ScenesManifest = {
 
 
 export const scenesManifest: ScenesManifest = {
-    exampleScene: ExampleScene,
     gameScene: GameScene
 }
 

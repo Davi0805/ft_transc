@@ -1,8 +1,8 @@
-import Point from "../../misc/Point.js";
-import { SIDES } from "../../misc/types.js";
-import SObject from "../../abstracts/SObject.js";
-import { computeOrientation } from "../../misc/utils.js";
-import { TPaddle } from "../../misc/types.js";
+import Point from "../../shared/Point.js";
+import { SIDES } from "../../shared/sharedTypes.js";
+import SObject from "./SObject.js";
+import { computeOrientation } from "../../shared/sharedUtils.js";
+import { TPaddle } from "../../shared/sharedTypes.js";
 
 export type TSPaddleConfigs = Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 

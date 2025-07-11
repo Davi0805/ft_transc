@@ -1,4 +1,4 @@
-import { TControlsState } from "../../misc/types";
+import { TControlsState } from "../../shared/sharedTypes.js";
 import SHuman from "./SHuman.js";
 import SPaddle from "../Objects/SPaddle";
 
