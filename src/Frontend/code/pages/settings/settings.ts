@@ -1,3 +1,4 @@
+import { UserData } from "../../api/getUserDataAPI";
 import { authService } from "../../services/authService"
 
 export const SettingsPage = {
@@ -55,21 +56,21 @@ export const SettingsPage = {
                     <div class="info flex-1 space-y-6">
                       <!-- Username -->
                       <div class="username flex items-center space-x-3">
-                        <label for="username" class="w-20 font-semibold">Username:</label>
+                        <label for="username" class="w-20 font-semibold">Username</label>
                         <input id="username" type="text" value="${username}" disabled readonly class="h-11 cursor-not-allowed rounded-3xl border-2 border-white/20 bg-black/20 px-[20px] py-[20px] pr-[45px] text-base font-medium text-white caret-white opacity-60 outline-none" />
                         <span class="text-sm text-gray-400">🔒</span>
                       </div>
 
                       <!-- Name -->
                       <div class="name flex items-center space-x-3">
-                        <label for="name" class="w-20 font-semibold">Name:</label>
+                        <label for="name" class="w-20 font-semibold">Name</label>
                         <input id="name" type="text" value="${nickname}" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
                         <span class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</span>
                       </div>
 
                       <!-- Email -->
                       <div class="email flex items-center space-x-3">
-                        <label for="email" class="w-20 font-semibold">Email:</label>
+                        <label for="email" class="w-20 font-semibold">Email</label>
                         <input id="email" type="email" value="${email}" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
                         <button class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</button>
                       </div>
@@ -100,7 +101,7 @@ export const SettingsPage = {
               <input id="new-pass" type="password" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
             </div>
 
-          <div class="flex items-center">
+            <div class="flex items-center">
               <h3 class="mr-6 text-l font-semibold">Enable/Disable 2FA</h3>
               <label class="relative inline-block w-[60px] h-[34px]">
                 <input type="checkbox" class="peer sr-only" ${authService.getHas2FA() ? "checked" : ""}>
@@ -119,8 +120,46 @@ export const SettingsPage = {
 
   getSocialHTML(): string {
     return `
-    
+          <h1 class="mb-6 text-4xl font-bold">Settings</h1>
+          <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Social</h2>
+
+          <!-- Block Username Form -->
+          <form class="mb-4 flex items-center gap-2">
+            <input type="text" id="block-user" placeholder="Block username"
+                  class="w-64 px-2 py-1 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-sky-400" />
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md font-semibold transition duration-200">
+              Block User
+            </button>
+          </form>
+
+          <!-- Blocked Users List -->
+          <h3 class="text-lg font-semibold mb-2">Blocked users</h3>
+
+          <div id="blocked-users-list" class="overflow-y-auto max-h-[240px] pr-2 space-y-3">
+            <!-- Will insert blocked users dynamically -->
+            
+          </div>
+
+
     `;
+  },
+
+  createBlockedFriendElement(userData: UserData, avatar: string) : HTMLElement {
+    const newElement = document.createElement("div") as HTMLDivElement;
+    newElement.classList = `blocked-${userData.username} flex items-center justify-between bg-white/10 rounded-lg px-4 py-2`;
+    newElement.innerHTML = `
+        <div class="flex items-center gap-3">
+          <img src="${avatar}"
+              alt="user-avatar"
+              class="w-10 h-10 rounded-full border-2 border-yellow-400" />
+          <span class="font-medium">${userData.name}</span>
+        </div>
+        <button class="unblock-btn bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-white font-semibold transition duration-200"
+                data-username="${userData.user_id}">
+          Unblock
+        </button>
+         `;
+    return newElement;
   },
 
   currentSection: "account" as "account" | "security" | "social",
@@ -170,7 +209,48 @@ export const SettingsPage = {
   },
 
   initSocialEvents(): void {
+    // Add blocked friends list
+    // need endpoint for that
+    // this is mock data
+    // add a loop after getting all blocked users and append with somehting like that
+    let user1: UserData = {user_id: 1,
+    name: "panela",
+    username: "aaa-s",
+    email: "a@example.com",}
 
+    let user2: UserData = {user_id: 1,
+    name: "puta",
+    username: "www-s",
+    email: "a@example.com",}
+    
+    let user3: UserData = {user_id: 1,
+    name: "pariu",
+    username: "qweqwe-s",
+    email: "a@example.com",}
+    
+    let avatar= 'https://occ-0-8407-92.1.nflxso.net/dnm/api/v6/Z-WHgqd_TeJxSuha8aZ5WpyLcX8/AAAABUqatshN8F7cMuNtNde6DqnltLSeN4ZVpl00kvU65RKdUO0HqEL1q3hAf3Zfdc2FlRn14S9eBrpEwHDb_LdsWH_iMRbDxdhy8KJx.jpg?r=9b9';
+
+    const blockList = document.getElementById("blocked-users-list");
+    if (! blockList) return;
+
+    const newFriendElement : HTMLElement = this.createBlockedFriendElement(user1, avatar);
+    blockList.insertAdjacentElement("beforeend", newFriendElement);
+
+    const newFriendElement2 : HTMLElement = this.createBlockedFriendElement(user2, avatar);
+    blockList.insertAdjacentElement("beforeend", newFriendElement2);
+
+    const newFriendElement3 : HTMLElement = this.createBlockedFriendElement(user3, avatar);
+    blockList.insertAdjacentElement("beforeend", newFriendElement3);
+
+
+    // block user by username
+    // add the event listener 
+
+    // unblock contact for specific user
+    // btn unblock has data-username="${userData.user_id} so we can use that
+
+
+      
   },
 
   init(): void {
