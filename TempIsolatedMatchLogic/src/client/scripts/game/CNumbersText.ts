@@ -1,4 +1,5 @@
-import { point } from "../../../misc/types";
+import { point } from "../../../shared/sharedTypes";
+import Point from "../../../shared/Point";
 import Container from "../system/framework/Container";
 import BitmapText from "../system/framework/BitmapText";
 import AnimationBad from "./Animations/AnimationBad";
@@ -6,7 +7,6 @@ import AnimationGood from "./Animations/AnimationGood";
 import AnimationShake from "./Animations/AnimationShake";
 import AAnimation from "./Animations/AAnimation";
 import AnimationScaleUp from "./Animations/AnimationScaleUp";
-import Point from "../../../misc/Point";
 
 type TextOptions = {
     size: number,

@@ -1,4 +1,4 @@
-/* import { SIDES } from "./types";
+import { SIDES } from "./sharedTypes.js";
 
 export default class Rectangle {
     constructor(x: number, y: number, width: number, height: number) {
@@ -42,4 +42,4 @@ export default class Rectangle {
         ]
         return wallDistances.indexOf(Math.min(...wallDistances)) as SIDES
     }
-} */
+}

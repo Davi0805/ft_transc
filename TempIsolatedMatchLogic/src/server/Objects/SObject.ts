@@ -1,6 +1,6 @@
-import AObject from "./AObject.js";
-import Point from "../misc/Point.js";
-import Rectangle from "../misc/Rectangle.js";
+import AObject from "../../shared/AObject.js";
+import Point from "../../shared/Point.js";
+import Rectangle from "../../shared/Rectangle.js";
 
 export default abstract class SObject extends AObject {
     constructor(id: number, pos: Point, orientation: Point, size: Point, speed: number) {

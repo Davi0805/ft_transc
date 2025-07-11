@@ -1,4 +1,4 @@
-/* export default class Point {
+export default class Point {
     constructor(x: number, y: number) {
         this._x = x;
         this._y = y;
@@ -61,4 +61,4 @@
     private _y: number;
     set y(y: number) { this._y = y; }
     get y(): number { return this._y; }
-} */
+}

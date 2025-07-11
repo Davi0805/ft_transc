@@ -1,7 +1,7 @@
 import AAnimation from "./AAnimation";
-import Point from "../../../../misc/Point";
+import Point from "../../../../shared/Point";
 import CNumbersText from "../CNumbersText";
-import CObject from "../../../../abstracts/CObject";
+import CObject from "../CObject";
 
 export default class AnimationShake extends AAnimation {
     constructor(object: CObject | CNumbersText) {

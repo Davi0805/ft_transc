@@ -3,10 +3,10 @@ import FastifyStatic from '@fastify/static' // allows fastify to send whole file
 import FastifyWebsocket from '@fastify/websocket'; // allows fastify to handle websockets
 import { WebSocket } from 'ws' // lowlevel type of the websocket to be used by the websocket plugin. Needed to be able to declare an array of those objects
 import path from 'path' // utility to work with paths
-import { applyDevCustoms, UserCustoms } from '../misc/gameOptions.js';
+import { applyDevCustoms, UserCustoms } from '../shared/SetupDependencies.js';
+import { Adto, CGameDTO } from '../shared/dtos.js';
 import ServerGame from './ServerGame.js';
-import { CGameDTO, Adto } from '../misc/types.js';
-import { buildSGameConfigs } from '../misc/buildGameOptions.js';
+import { buildSGameConfigs } from './setup.js';
 
 
 

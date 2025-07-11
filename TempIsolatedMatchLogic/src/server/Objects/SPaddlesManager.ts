@@ -1,6 +1,6 @@
 import SPaddle, { TSPaddleConfigs } from "./SPaddle.js";
-import Point from "../../misc/Point.js";
-import { point } from "../../misc/types.js";
+import Point from "../../shared/Point.js";
+import { point } from "../../shared/sharedTypes.js";
 import SBallsManager from "./SBallsManager.js";
 import LoopController from "../LoopController.js";import STeamsManager from "../STeamsManager.js";
 ;

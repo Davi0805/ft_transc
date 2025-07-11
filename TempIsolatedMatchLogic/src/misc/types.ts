@@ -1,5 +1,4 @@
-//import { ApplicationOptions } from "pixi.js"
-import { AppConfigs } from "../client/scripts/system/framework/Application"
+/* import { AppConfigs } from "../client/scripts/system/framework/Application"
 import { BALL_TYPES } from "../server/Objects/SBall"
  
 export enum SIDES {
@@ -221,4 +220,4 @@ export type CGameDTO = {
         humanID:  number,
         controlsState: TControlsState
     }
-}
+} */

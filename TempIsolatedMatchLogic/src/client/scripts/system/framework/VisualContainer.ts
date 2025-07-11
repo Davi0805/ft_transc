@@ -1,5 +1,5 @@
 import Container from "./Container";
-import Point from "../../../../misc/Point";
+import Point from "../../../../shared/Point.js";
 
 export default abstract class VisualContainer extends Container {
     constructor() {

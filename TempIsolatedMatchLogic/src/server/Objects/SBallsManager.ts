@@ -1,8 +1,8 @@
-import { point, SIDES } from "../../misc/types.js";
-import SBall, { BALL_TYPES, TSBallConfigs } from "./SBall.js";
+import { point, SIDES, BALL_TYPES } from "../../shared/sharedTypes.js";
+import SBall, { TSBallConfigs } from "./SBall.js";
 import SPaddle from "../Objects/SPaddle.js";
-import Point from "../../misc/Point.js";
-import { getRandomInt } from "../../misc/utils.js";
+import Point from "../../shared/Point.js";
+import { getRandomInt } from "../../shared/sharedUtils.js";
 import STeamsManager from "../STeamsManager.js";
 import LoopController from "../LoopController.js";
 

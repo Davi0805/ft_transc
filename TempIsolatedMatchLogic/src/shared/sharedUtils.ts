@@ -1,13 +1,5 @@
-/* import { SIDES } from "./types.js";
 import Point from "./Point.js";
-
-export function getRelativeSide(side: SIDES, relationship: 'left' | 'right' | 'opposite'): SIDES {
-    switch (relationship) {
-        case 'left': return (side + 1) % 4;
-        case 'opposite': return (side + 2) % 4;
-        case 'right': return (side + 3) % 4;
-    }
-}
+import { SIDES } from "./sharedTypes.js";
 
 export function computeOrientation(paddleSide: SIDES): Point {
     const sidesToOrientation: Record<SIDES, Point> = {
@@ -21,4 +13,4 @@ export function computeOrientation(paddleSide: SIDES): Point {
 
 export function getRandomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min) + min);
-} */
+}
