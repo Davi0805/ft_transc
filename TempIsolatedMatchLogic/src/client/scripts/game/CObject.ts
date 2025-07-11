@@ -1,11 +1,11 @@
-import AObject from "./AObject.js";
-import Point from "../misc/Point.js";
-import Container from "../client/scripts/system/framework/Container.js";
-import Sprite from "../client/scripts/system/framework/Sprite.js";
-import AAnimation from "../client/scripts/game/Animations/AAnimation.js";
-import AnimationBad from "../client/scripts/game/Animations/AnimationBad.js";
-import AnimationGood from "../client/scripts/game/Animations/AnimationGood.js";
-import AnimationShake from "../client/scripts/game/Animations/AnimationShake.js";
+import AObject from "../../../shared/AObject";
+import Point from "../../../shared/Point";
+import Container from "../system/framework/Container.js";
+import Sprite from "../system/framework/Sprite.js";
+import AAnimation from "./Animations/AAnimation.js";
+import AnimationBad from "./Animations/AnimationBad.js";
+import AnimationGood from "./Animations/AnimationGood.js";
+import AnimationShake from "./Animations/AnimationShake.js";
 
 export default abstract class CObject extends AObject {
     constructor(id: number, pos: Point, size: Point, orientation: Point,

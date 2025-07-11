@@ -1,4 +1,4 @@
-import Point from "../../../../misc/Point";
+import Point from "../../../../shared/Point.js";
 
 
 

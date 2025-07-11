@@ -1,4 +1,4 @@
-import { point, rectangle, SIDES } from "../../misc/types.js";
+import { point, rectangle, SIDES } from "../../shared/sharedTypes.js";
 import SBot from "./SBot.js";
 import SPaddle from "../Objects/SPaddle";
 import SBall from "../Objects/SBall.js";

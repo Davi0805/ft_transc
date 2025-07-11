@@ -1,8 +1,8 @@
-import { point, rectangle, SIDES } from "../../misc/types.js";
+import { point, rectangle, SIDES } from "../../shared/sharedTypes.js";
+import Point from "../../shared/Point.js";
 import SPaddle from "../Objects/SPaddle.js";
 import SPlayer from "./SPlayer.js";
 import SBall from "../Objects/SBall.js";
-import Point from "../../misc/Point.js";
 
 // In pixels. The smaller the value, the closer to the target position the bot will attempt to place its paddle.
 // Increases precision, but increases chance of overshooting (especially with high paddle speeds)

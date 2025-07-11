@@ -1,4 +1,4 @@
-import { TControlsState } from "../../misc/types.js"
+import { TControlsState } from "../../shared/sharedTypes.js"
 import SPaddle, { MOVEMENT } from "../Objects/SPaddle.js";
 
 export default abstract class SPlayer {

@@ -1,4 +1,4 @@
-import Point from "../misc/Point";
+import Point from "./Point.js";
 
 export default abstract class AObject {
     constructor (id: number, pos: Point, size: Point, speed: number, orientation: Point) {
