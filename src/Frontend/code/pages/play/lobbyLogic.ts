@@ -2,7 +2,8 @@ import { lobbySocketService } from "../../services/lobbySocketService";
 import { updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
 import { TLobby, TMapType, TMatchDuration, TMatchMode, TMatchPlayer, TTournPlayer } from "./lobbyTyping";
 import { TournamentService} from "../../services/TournamentService";
-import { ROLES, SIDES, TUserCustoms } from "../../../../../TempIsolatedMatchLogic/src/misc/types"
+import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes"
+import { TUserCustoms } from "../../match/matchSharedDependencies/SetupDependencies";
 import { lobby } from "../../services/LobbyService";
 import { matchService } from "../../services/matchService";
 import { router } from "../../routes/router";

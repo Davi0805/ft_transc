@@ -1,9 +1,9 @@
-import { CAppConfigs, TUserCustoms } from "../../../../TempIsolatedMatchLogic/src/misc/types";
-import { applyDevCustoms } from "../../../../TempIsolatedMatchLogic/src/misc/gameOptions";
+import { TUserCustoms } from "../match/matchSharedDependencies/SetupDependencies";
+import { CAppConfigs, buildCAppConfigs } from "../match/setup";
+import { applyDevCustoms } from "../match/matchSharedDependencies/SetupDependencies";
 import { lobbySocketService } from "./lobbySocketService";
 import { getSelfData } from "../api/getSelfDataAPI";
-import { buildCAppConfigs } from "../../../../TempIsolatedMatchLogic/src/misc/buildGameOptions";
-import { App } from "../../../../TempIsolatedMatchLogic/src/client/scripts/system/App"
+import { App } from "../match/system/App";
 
 class MatchService {
     async injectConfigs(userCustoms: TUserCustoms) {

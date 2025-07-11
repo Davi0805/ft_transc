@@ -7,7 +7,7 @@ import { getLobbySettingsByID} from "../../api/lobbyMatchAPI/getLobbySettingsAPI
 import { lobbySocketService } from "../../services/lobbySocketService";
 import { LobbyLogic, TSlots } from "./lobbyLogic";
 import { lobby } from "../../services/LobbyService";
-import { ROLES, SIDES } from "../../../../../TempIsolatedMatchLogic/src/misc/types";
+import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes";
 
 export const LobbyPage = {
     template() {
