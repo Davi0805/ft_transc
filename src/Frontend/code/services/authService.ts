@@ -4,6 +4,7 @@ import { SelfData, getSelfData } from "../api/getSelfDataAPI";
 import { getUserAvatarById } from "../api/getUserAvatarAPI";
 import { webSocketService } from "./webSocketService";
 import { chatWindowControler } from "../components/chatWindow";
+import { router } from "../routes/router"
 
 export class AuthService {
   private protectedRoutes: string[];
@@ -96,6 +97,7 @@ export class AuthService {
       this.sidebar.deleteSideBar();
       this.sidebar = null;
     }
+    router.navigateTo("/");
   }
 
   getToken(): string | null {

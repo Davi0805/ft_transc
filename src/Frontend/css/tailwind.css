@@ -53,6 +53,9 @@
 }
 
 @layer components {
+    .settings-active {
+        @apply bg-gray-500/70;
+    }
 }
 
 @layer utilities {

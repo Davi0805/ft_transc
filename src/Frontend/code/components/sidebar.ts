@@ -319,7 +319,7 @@ export class Chat {
   }
 
   deleteFriendRequest(username: string): void {
-    const friendRequestElement = document.querySelector(`.request-wrapper .${username}`);
+    const friendRequestElement = document.querySelector(`.request-wrapper.${username}`);
     if (!(friendRequestElement instanceof HTMLDivElement)) return;
 
     friendRequestElement.remove();

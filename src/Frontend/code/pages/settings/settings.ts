@@ -22,14 +22,14 @@ export const SettingsPage = {
 
                       <!-- NAVBAR -->
                       <div class="navbar mt-4 w-full text-center">
-                        <button id="settings-account" class="active transition- w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 duration-300 ease-in-out hover:bg-gray-500/70 hover:brightness-100">Account</button>
-                        <button id="settings-security" class="w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-500/70 hover:brightness-100">Security</button>
-                        <button id="settings-social" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-500/70 hover:brightness-100">Social</button>
+                        <button id="settings-account" class="transition- w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100 settings-active">Account</button>
+                        <button id="settings-security" class="w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Security</button>
+                        <button id="settings-social" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Social</button>
                       </div>
 
                       <!-- LOGOUT -->
                       <div class="mt-auto w-full">
-                        <button class="logout w-full rounded-sm border-t border-white/20 py-2 brightness-85 transition-all duration-200 ease-in hover:bg-red-500/70 hover:brightness-100">Log Out</button>
+                        <button id="settings-logout" class="w-full rounded-sm border-t border-white/20 py-2 brightness-85 transition-all duration-200 ease-in hover:bg-red-500/70 hover:brightness-100">Log Out</button>
                       </div>
                     </div>
 
@@ -61,21 +61,21 @@ export const SettingsPage = {
                         <span class="text-sm text-gray-400">🔒</span>
                       </div>
 
+                      <!-- Email -->
+                      <div class="email flex items-center space-x-3">
+                        <label for="email" class="w-20 font-semibold">Email</label>
+                        <input id="username" type="text" value="${email}" disabled readonly class="h-11 cursor-not-allowed rounded-3xl border-2 border-white/20 bg-black/20 px-[20px] py-[20px] pr-[45px] text-base font-medium text-white caret-white opacity-60 outline-none" />
+                        <span class="text-sm text-gray-400">🔒</span>
+                      </div>
+                      
                       <!-- Name -->
                       <div class="name flex items-center space-x-3">
                         <label for="name" class="w-20 font-semibold">Name</label>
                         <input id="name" type="text" value="${nickname}" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
                         <span class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</span>
                       </div>
-
-                      <!-- Email -->
-                      <div class="email flex items-center space-x-3">
-                        <label for="email" class="w-20 font-semibold">Email</label>
-                        <input id="email" type="email" value="${email}" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
-                        <button class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</button>
-                      </div>
                     </div>
-
+                      
                     <!-- Save Button positioned at bottom right -->
                     <div id="save-btn" class="mt-auto flex justify-end pt-6">
                       <button class="transform rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white transition-all duration-100 hover:bg-blue-700 active:scale-85">Save</button>
@@ -123,15 +123,6 @@ export const SettingsPage = {
           <h1 class="mb-6 text-4xl font-bold">Settings</h1>
           <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Social</h2>
 
-          <!-- Block Username Form -->
-          <form class="mb-4 flex items-center gap-2">
-            <input type="text" id="block-user" placeholder="Block username"
-                  class="w-64 px-2 py-1 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-sky-400" />
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md font-semibold transition duration-200">
-              Block User
-            </button>
-          </form>
-
           <!-- Blocked Users List -->
           <h3 class="text-lg font-semibold mb-2">Blocked users</h3>
 
@@ -168,9 +159,23 @@ export const SettingsPage = {
     if (SettingsPage.currentSection === section) return;
   
     SettingsPage.currentSection = section;
+    SettingsPage.updateActiveSection();
     SettingsPage.updateContent();
   },
   
+  updateActiveSection() : void {
+    const sidebar = document.getElementById("settings-sidebar");
+    if (!sidebar) return;
+
+     const test= sidebar.querySelector(`.settings-active`)
+     if (!test) return;
+
+     test.classList.toggle("settings-active");
+     const test2=  sidebar.querySelector(`#settings-${SettingsPage.currentSection}`);
+     test2?.classList.toggle("settings-active");
+    
+  },
+
   updateContent(): void {
     const content = document.getElementById("settings-content");
     if (!content) return;
@@ -269,7 +274,8 @@ export const SettingsPage = {
           SettingsPage.setCurretSection("security");
         } else if (target.matches("#settings-social")) {
           SettingsPage.setCurretSection("social");
-        }
+        } else if (target.matches("#settings-logout"))
+          authService.logout();
       });
     }
 
