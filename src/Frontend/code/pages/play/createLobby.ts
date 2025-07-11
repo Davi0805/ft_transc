@@ -3,8 +3,9 @@ import { router } from "../../routes/router";
 import { getSelfData } from "../../api/getSelfDataAPI";
 import { TLobbyCreationConfigs, createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
 import { lobbySocketService } from "../../services/lobbySocketService";
-import { TLobbyType, TMapType, TMatchMode, TMatchDuration } from "./lobbyTyping";
+import { TLobbyType, TMapType, TMatchMode, TMatchDuration, TLobby } from "./lobbyTyping";
 import { lobby } from "../../services/LobbyService";
+import { getMaxPlayersFromMap } from "./utils/helpers";
 
 export const CreateLobbyPage = {
     template() {
@@ -53,8 +54,8 @@ export const CreateLobbyPage = {
         const form = document.getElementById('lobby-creation-form') as HTMLFormElement;
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const hostName = (await getSelfData()).nickname;
+            const selfData = await getSelfData();
+            const hostName = selfData.nickname;
             if (!hostName) { throw Error(); }
             const nameInput = document.getElementById("lobby-name") as HTMLInputElement
             const typeInput = document.getElementById("lobby-type") as HTMLSelectElement
@@ -69,6 +70,7 @@ export const CreateLobbyPage = {
                 mode: matchModeInput.value as TMatchMode,
                 duration: matchDurationInput.value as TMatchDuration
             }
+            
             const lobbyID = await createLobby(lobbySettings);
             lobbySocketService.connect(lobbyID);
             router.navigateTo('/lobby')

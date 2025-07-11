@@ -26,3 +26,11 @@ export function getSlotsFromMap(map: TMapType): TSlots {
         })
     } as TSlots
 }
+
+//TODO: This should be calculated in the backend!!!!!!!
+export function getMaxPlayersFromMap(map: TMapType): number {
+    const [amountStr, type, _size] = map.split("-");
+    const amount = Number(amountStr);
+
+    return (amount * (type === "teams" ? 2 : 1))
+}

@@ -52,7 +52,7 @@ export const PlayPage = {
         const lobbiesBody = document.getElementById('lobbies-body') as HTMLElement;
         lobbiesBody.innerHTML = ""
 
-        const lobbiesInfo = await getLobbySettings();
+        const lobbiesInfo = await getLobbySettings(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
 
         for (let i = 0; i < lobbiesInfo.length; i++) {
             const row = document.createElement("tr");

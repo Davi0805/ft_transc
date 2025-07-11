@@ -64,12 +64,10 @@ export const LobbyLogic = {
         if (!lobbySocketService.lobbyID) {
             throw Error("How can I start a game without a lobby?")
         }
-        const settings = await lobby.getMySettings();
-        if (lobby.staticSettings?.type == "tournament") {
-            LobbyLogic.prepareNextRound(settings);
+        if (lobby.settings.type == "tournament") {
+            LobbyLogic.prepareNextRound(lobby.settings);
         } else {
-            const players = await lobby.getMatchPlayers();
-            const userCustoms = LobbyLogic.buildUserCustoms(settings, players);
+            const userCustoms = LobbyLogic.buildUserCustoms(lobby.settings, lobby.matchPlayers);
             matchService.injectConfigs(userCustoms);
             router.navigateTo("/match");
         }

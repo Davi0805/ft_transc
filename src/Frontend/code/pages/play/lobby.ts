@@ -32,20 +32,18 @@ export const LobbyPage = {
     async init() {
         if (!lobbySocketService.lobbyID) { throw Error("Socket service is not active"); }
         await lobby.initSettings(lobbySocketService.lobbyID)
-        if (!lobby.staticSettings) { throw Error("Settings could not be fetched from backend")}
-        const lobbySettings = await lobby.getMySettings();
 
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
-        titleElement.textContent = lobbySettings.name
+        titleElement.textContent = lobby.settings.name;
         const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
-        switch (lobbySettings.type) {
+        switch (lobby.settings.type) {
             case "friendly": subtitleElement.textContent = "Friendly Match Lobby"; break;
             case "ranked": subtitleElement.textContent = "Ranked Match Lobby"; break;
             case "tournament": subtitleElement. textContent = "Tournament Lobby"; break;
             default: throw new Error("GAVE SHIT");
         }
         
-        if (lobby.staticSettings.type == "tournament") {
+        if (lobby.settings.type == "tournament") {
             await this.renderParticipants();
         } else {
             await this.renderSlots();
@@ -63,10 +61,9 @@ export const LobbyPage = {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         const lobbySettingsListing: TLobby = await getLobbySettingsByID(lobbySocketService.lobbyID)
         
-        if (!lobby.staticSettings) { throw Error("Lobby is not initizlized when it should"); }
         let lobbySettingsHtml = `
             <div id="settings-listing" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(false, lobby.staticSettings?.type, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(false, lobby.settings.type, lobbySettingsListing)}
                 ${getButton("btn-change-settings", "button", "Change lobby settings", false).outerHTML}
             </div>
         `;
@@ -78,10 +75,9 @@ export const LobbyPage = {
 
     renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        if (!lobby.staticSettings) { throw Error("Lobby is not initizlized when it should"); }
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(true, lobby.staticSettings?.type, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(true, lobby.settings.type, lobbySettingsListing)}
                 ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
             </div>
         `;
@@ -112,8 +108,7 @@ export const LobbyPage = {
 
         const readyButton = getButton("btn-ready", "button", "Ready");
         readyButton.addEventListener('click', async () => {
-            const participating = await lobby.amIParticipating();
-            if (!participating) {
+            if (!lobby.participating) {
                 flashButton(readyButton, "You must join first!")
             } else {
                 const state = toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
@@ -126,8 +121,7 @@ export const LobbyPage = {
             const startButton = getButton("btn-start", "button", "Start");
             buttonsDiv.appendChild(startButton);
             startButton.addEventListener('click', async () => {
-                const everyoneReady = await lobby.isEveryoneReady();
-                if (!everyoneReady) {
+                if (!lobby.everyoneReady) {
                     flashButton(startButton, "Not everyone is ready!");
                 } else {
                     LobbyLogic.startLogic();
@@ -137,8 +131,8 @@ export const LobbyPage = {
     },
 
     async renderSlots() {
-        const slots = await lobby.getSlots();
-        const canJoin = !(await lobby.amIParticipating()) || lobby.staticSettings?.type == "friendly";
+        const slots = lobby.getSlots();
+        const canJoin = !(lobby.participating) || lobby.settings.type == "friendly";
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
         teamsElement.innerHTML = "";
@@ -178,7 +172,7 @@ export const LobbyPage = {
                 } else if (canJoin){
                     const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
-                        lobby.staticSettings?.type === "friendly"
+                        lobby.settings.type === "friendly"
                         ? this.slotJoinFriendlyCallback(SIDES[teamName], ROLES[roleName])
                         : this.slotJoinRankedCallback(SIDES[teamName], ROLES[roleName])
                     })
@@ -242,7 +236,6 @@ export const LobbyPage = {
     },
 
     async renderParticipants() {
-        const participants = await lobby.getTournParticipants();
         const participantsElement = document.getElementById('participants') as HTMLElement;
 
         const header = document.createElement("h2");
@@ -253,7 +246,7 @@ export const LobbyPage = {
 
         let participantsTableBody = ""
         let place = 1
-        for (let participant of participants) {
+        for (let participant of lobby.tournPlayers) {
             participantsTableBody += `<tr class="bg-gray-900/${place % 2 === 0 ? "25" : "50"}"><td>${place++}</td>`;
             Object.values(participant).forEach(info => {
                 participantsTableBody += `<td>${info}</td>`
@@ -269,7 +262,7 @@ export const LobbyPage = {
         const participantsTable = getTable("participants", participantsTableHead, participantsTableBody)
         participantsElement.innerHTML += participantsTable.outerHTML;
         
-        const participating = await lobby.amIParticipating();
+        const participating = lobby.participating;
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", participating ? "Withdraw" : "Join", false)
         joinWithdrawButton.addEventListener("click", () => {
             lobby.addTournPlayer()
