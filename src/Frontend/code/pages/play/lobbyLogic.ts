@@ -46,7 +46,7 @@ export const LobbyLogic = {
         const alias = aliasInput.value;
         const paddleIdInput = document.getElementById("player-paddle") as HTMLInputElement;
         const paddleId = Number(paddleIdInput.value)
-        await lobby.addMatchPlayer({
+        lobby.addMatchPlayer({
             userID: null,
             id: null,
             nick: alias,

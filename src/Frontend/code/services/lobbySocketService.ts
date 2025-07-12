@@ -79,7 +79,7 @@ class LobbySocketService {
                 lobby.updateSettings(dto.data.settings);
                 break;
             case "updatePlayers":
-                lobby.updatePlayers(dto.data.matchPlayers, dto.data.participating);
+                lobby.updatePlayers(dto.data.players);
                 break;
             case "startMatch":
                 lobby.startMatch(dto.data.settings, dto.data.players);

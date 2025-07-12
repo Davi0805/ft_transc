@@ -25,8 +25,7 @@ export type OutboundDTOMap = {
         settings: TLobby
     },
     updatePlayers: {
-        matchPlayers: TMatchPlayer[] | TTournPlayer[],
-        participating: boolean
+        players: TMatchPlayer[] | TTournPlayer[],
     },
     startMatch: {
         settings: TLobby,

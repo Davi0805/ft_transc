@@ -2,10 +2,13 @@ import { getSelfData, SelfData } from "../api/getSelfDataAPI";
 import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { LobbyPage } from "../pages/play/lobby";
 //import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
-import { TSlots } from "../pages/play/lobbyLogic";
+import { TSlots, LobbyLogic } from "../pages/play/lobbyLogic";
 import { TDynamicLobbySettings, TLobby, TMatchPlayer, TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
+import { matchService } from "./matchService";
+import { router } from "../routes/router";
+import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
 
 
 class LobbyService {
@@ -27,6 +30,7 @@ class LobbyService {
             duration: "blitz",
             round: 1
         }
+        this._myID = selfData.id;
         this._amIHost = selfData.id === this._settings.hostID
         if (this._settings.type === "tournament") {
             this._tournPlayers = [];
@@ -99,26 +103,46 @@ class LobbyService {
         LobbyPage.renderSettings();
     }
 
-    updatePlayers(players: TMatchPlayer[] | TTournPlayer[], participanting: boolean) {
+    updatePlayers(players: TMatchPlayer[] | TTournPlayer[]) {
         if (this.settings?.type === "tournament") {
             this._tournPlayers = players as TTournPlayer[];
-            this._participating = participanting;
+            this._participating = this._tournPlayers.find(player => player.id === this._myID) ? true : false;
             LobbyPage.renderParticipants()
         } else {
             this._matchPlayers = players as TMatchPlayer[];
-            this._participating = participanting;
+            this._participating = this._matchPlayers.find(player => player.userID === this._myID) ? true : false;
             LobbyPage.renderSlots()
         }
     }
 
-    startMatch(settings: TLobby, players: TMatchPlayer[] | TTournPlayer[]) {
-        
+    startMatch(settings: TLobby, players: TMatchPlayer[] | TTournPlayer[]) { //Is it necessary to send these or can each client pick from the locally saved data?
+        if (lobby.settings.type == "tournament") {
+            LobbyLogic.prepareNextRound(lobby.settings);
+        } else {
+            const userCustoms = LobbyLogic.buildUserCustoms(lobby.settings, [{
+                userID: 0,
+                id: 0,
+                nick: "Fucker",
+                spriteID: 0,
+                team: SIDES.LEFT,
+                role: ROLES.BACK,
+                leftControl: "ArrowLeft",
+                rightControl: "ArrowRight"
+            }]/*lobby.matchPlayers*/);
+            matchService.injectConfigs(userCustoms);
+            router.navigateTo("/match");
+        }
     }
 
     private _settings: TLobby | null = null;
     get settings(): TLobby {
         if (!this._settings) { throw Error("Settings are trying to be accessed when lobby hasn't been initialized yet!"); }
         return this._settings;
+    }
+    private _myID: number | null = null;
+    get myID(): number {
+        if (this._myID === null) { throw Error("myID is not initialized!"); }
+        return this._myID;
     }
     private _amIHost: boolean = false;
     get amIHost(): boolean { return this._amIHost; }
