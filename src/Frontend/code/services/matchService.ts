@@ -8,10 +8,10 @@ import { App } from "../match/system/App";
 class MatchService {
     async injectConfigs(userCustoms: TUserCustoms) {
         const gameConfigs = applyDevCustoms(userCustoms);
-        const userID = 0//(await getSelfData()).id;
-        /* if (!lobbySocketService.ws) {
+        const userID = (await getSelfData()).id;
+        if (!lobbySocketService.ws) {
             throw Error("If the websocket is closed at this point, something is truly wrong lol")
-        } */
+        }
 
         this._configs = buildCAppConfigs(gameConfigs, userID, /*lobbySocketService.ws*/new WebSocket("invalid"));
     }

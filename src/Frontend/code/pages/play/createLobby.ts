@@ -54,8 +54,8 @@ export const CreateLobbyPage = {
         const form = document.getElementById('lobby-creation-form') as HTMLFormElement;
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            //const selfData = await getSelfData();
-            const hostName = "lol" //TODO: selfData.nickname;
+            const selfData = await getSelfData();
+            const hostName = selfData.nickname;
             if (!hostName) { throw Error(); }
             const nameInput = document.getElementById("lobby-name") as HTMLInputElement
             const typeInput = document.getElementById("lobby-type") as HTMLSelectElement
@@ -71,8 +71,20 @@ export const CreateLobbyPage = {
                 duration: matchDurationInput.value as TMatchDuration
             }
             
-            //const lobbyID = await createLobby(lobbySettings);
-            //lobbySocketService.connect(/*lobbyID*/0); //TODO
+            const lobbyID = await createLobby(lobbySettings);
+            lobbySocketService.connect(lobbyID);
+            lobby.initSettings(selfData, {
+                id: lobbyID,
+                hostID: selfData.id,
+                name: lobbySettings.name,
+                host: lobbySettings.host,
+                type: lobbySettings.type,
+                capacity: { taken: 0, max: 0 }, //TODO: Make calculating function
+                map: lobbySettings.map,
+                mode: lobbySettings.mode,
+                duration: lobbySettings.duration,
+                round: 1
+            })
             router.navigateTo('/lobby')
         })
         console.log('Create Friendly page loaded!')

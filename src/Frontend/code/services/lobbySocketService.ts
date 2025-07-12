@@ -1,6 +1,7 @@
 import { InboundDTOMap, InboundDTO, OutboundDTO, OutboundDTOMap } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
 import { lobby } from "./LobbyService";
+import { matchService } from "./matchService";
 
 class LobbySocketService {
     constructor() {
@@ -76,7 +77,7 @@ class LobbySocketService {
     private _handleMessage(dto: OutboundDTO) {
         switch (dto.requestType) {
             case "updateSettings":
-                lobby.updateSettings(dto.data.settings);
+                lobby.updateSettingsOutbound(dto.data.settings);
                 break;
             case "updatePlayers":
                 lobby.updatePlayers(dto.data.players);
@@ -84,6 +85,8 @@ class LobbySocketService {
             case "startMatch":
                 lobby.startMatchOutbound(dto.data.settings, dto.data.players);
                 break;
+            case "updateGame":
+                break
             default:
                 throw Error("A message came in with a non registered type!!")
         }

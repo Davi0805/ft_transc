@@ -1,5 +1,5 @@
 import { lobbySocketService } from "../../services/lobbySocketService";
-import { updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
+//import { updateLobby } from "../../api/lobbyMatchAPI/updateLobbyAPI";
 import { TLobby, TMapType, TMatchDuration, TMatchMode, TMatchPlayer, TTournPlayer } from "./lobbyTyping";
 import { TournamentService} from "../../services/TournamentService";
 import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes"
@@ -30,7 +30,7 @@ export const LobbyLogic = {
         const map = (document.getElementById('match-map') as HTMLSelectElement).value;
         const mode = (document.getElementById('match-mode') as HTMLSelectElement).value;
         const duration = (document.getElementById('match-duration') as HTMLSelectElement).value;
-        await updateLobby(lobbySocketService.lobbyID, {
+        lobby.updateSettingsInbound({
             map: map as TMapType,
             mode: mode as TMatchMode,
             duration: duration as TMatchDuration

@@ -3,7 +3,7 @@ import { flashButton, getButton, getTable, toggleButton } from "./utils/stylingC
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { TLobby } from "./lobbyTyping";
 import { TDynamicLobbySettings } from "./lobbyTyping";
-import { getLobbySettingsByID} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+//import { getLobbySettingsByID} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { lobbySocketService } from "../../services/lobbySocketService";
 import { LobbyLogic, TSlots } from "./lobbyLogic";
 import { lobby } from "../../services/LobbyService";
@@ -30,9 +30,6 @@ export const LobbyPage = {
     },
 
     async init() {
-        if (lobbySocketService.lobbyID === null) { throw Error("Socket service is not active"); }
-        await lobby.initSettings(lobbySocketService.lobbyID)
-
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
         titleElement.textContent = lobby.settings.name;
         const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;

@@ -1,7 +1,11 @@
+import { CGameDTO, SGameDTO } from "../../match/matchSharedDependencies/dtos"
 import { TUserCustoms } from "../../match/matchSharedDependencies/SetupDependencies"
 import { SIDES, ROLES } from "../../match/matchSharedDependencies/sharedTypes"
 
 export type InboundDTOMap = {
+    updateSettings: {
+        settings: TDynamicLobbySettings
+    }
     inviteUserToLobby: {
         userID: number
     }
@@ -11,11 +15,16 @@ export type InboundDTOMap = {
     addMatchPlayer: {
         player: TMatchPlayer
     },
-    removeMatchPlayer: null, //TODO: Backend needs to know which player to remove
+    removeMatchPlayer: {
+        playerID: number
+    }, //TODO: Backend needs to know which player to remove
     addTournPlayer: null,
     withdrawTournPlayer: null,
     leaveLobby: null,
-    startGame: null
+    startGame: null,
+    
+    //Game dto:
+    updateGame: CGameDTO
 }
 
 export type OutboundDTOMap = {
@@ -28,7 +37,10 @@ export type OutboundDTOMap = {
     startMatch: {
         settings: TLobby,
         players: TMatchPlayer[] | TTournPlayer[]
-    }
+    },
+
+    //Game dto:
+    updateGame: SGameDTO
 }
 
 export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {

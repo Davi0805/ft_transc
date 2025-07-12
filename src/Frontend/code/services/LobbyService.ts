@@ -1,9 +1,7 @@
 import { getSelfData, SelfData } from "../api/getSelfDataAPI";
-import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { LobbyPage } from "../pages/play/lobby";
-//import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TSlots, LobbyLogic } from "../pages/play/lobbyLogic";
-import { TLobby, TMatchPlayer, TTournPlayer } from "../pages/play/lobbyTyping";
+import { TDynamicLobbySettings, TLobby, TMatchPlayer, TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
 import { matchService } from "./matchService";
@@ -11,10 +9,8 @@ import { router } from "../routes/router";
 
 
 class LobbyService {
-    async initSettings(lobbyID: number) {
-        //It is important to get this from the backend on demand. This way nothing is written by the client whatsoever and there is no desync or common responsibilities
-        const selfData: SelfData = await getSelfData();
-        this._settings = await getLobbySettingsByID(lobbyID);
+    initSettings(selfData: SelfData, settings: TLobby) {
+        this._settings = settings;
         this._myID = selfData.id;
         this._amIHost = selfData.id === this._settings.hostID
         if (this._settings.type === "tournament") {
@@ -56,6 +52,10 @@ class LobbyService {
     }
 
     //inbound
+    updateSettingsInbound(settings: TDynamicLobbySettings) {
+        lobbySocketService.send("updateSettings", { settings: settings })
+    }
+
     updateMyReadiness(ready: boolean) {
         lobbySocketService.send("updateMyReadiness", { ready: ready });
     }
@@ -64,8 +64,8 @@ class LobbyService {
         lobbySocketService.send("addMatchPlayer", { player: player });
     }
 
-    removeMatchPlyer() {
-        lobbySocketService.send("removeMatchPlayer", null); //TODO: need to know which player to remove
+    removeMatchPlyer(playerID: number) {
+        lobbySocketService.send("removeMatchPlayer", { playerID: playerID }); //TODO: need to know which player to remove
     }
 
     addTournPlayer() {
@@ -93,13 +93,13 @@ class LobbyService {
 
 
     //outbound
-    updateSettings(settings: TLobby) {
+    updateSettingsOutbound(settings: TLobby) {
         this._settings = settings
         LobbyPage.renderSettings();
     }
 
     updatePlayers(players: TMatchPlayer[] | TTournPlayer[]) {
-        if (this.settings?.type === "tournament") {
+        if (this.settings.type === "tournament") {
             this._tournPlayers = players as TTournPlayer[];
             this._participating = this._tournPlayers.find(player => player.id === this._myID) ? true : false;
             this._everyoneReady = this._tournPlayers.find(player => player.ready === false) ? false : true
