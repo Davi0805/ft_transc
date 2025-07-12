@@ -82,7 +82,7 @@ class LobbySocketService {
                 lobby.updatePlayers(dto.data.players);
                 break;
             case "startMatch":
-                lobby.startMatch(dto.data.settings, dto.data.players);
+                lobby.startMatchOutbound(dto.data.settings, dto.data.players);
                 break;
             default:
                 throw Error("A message came in with a non registered type!!")

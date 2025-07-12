@@ -81,6 +81,10 @@ class LobbyService {
         this._amIHost = false;
     }
 
+    startMatchInbound() {
+        lobbySocketService.send("startGame", null);
+    }
+
 
     //outbound
     updateSettings(settings: TLobby) {
@@ -102,7 +106,7 @@ class LobbyService {
         }
     }
 
-    startMatch(settings: TLobby, players: TMatchPlayer[] | TTournPlayer[]) { //Is it necessary to send these or can each client pick from the locally saved data?
+    startMatchOutbound(settings: TLobby, players: TMatchPlayer[] | TTournPlayer[]) { //Is it necessary to send these or can each client pick from the locally saved data?
         if (settings.type == "tournament") {
             LobbyLogic.prepareNextRound(settings);
         } else {

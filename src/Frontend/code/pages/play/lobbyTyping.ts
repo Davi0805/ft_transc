@@ -15,9 +15,7 @@ export type InboundDTOMap = {
     addTournPlayer: null,
     withdrawTournPlayer: null,
     leaveLobby: null,
-    startGame: {
-        settings: TUserCustoms,
-    }
+    startGame: null
 }
 
 export type OutboundDTOMap = {

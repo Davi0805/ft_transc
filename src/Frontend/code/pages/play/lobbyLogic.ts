@@ -61,17 +61,6 @@ export const LobbyLogic = {
         console.log(`Player added to team ${team} and role ${role}!`)
     },
 
-
-    startLogic: async () => {
-        if (lobby.settings.type == "tournament") {
-            LobbyLogic.prepareNextRound(lobby.settings);
-        } else {
-            const userCustoms = LobbyLogic.buildUserCustoms(lobby.settings, lobby.matchPlayers);
-            matchService.injectConfigs(userCustoms);
-            router.navigateTo("/match");
-        }
-    },
-
     prepareNextRound: async (settings: TLobby) => {
         //const participants = await LobbyLogic.getParticipants();
         //const pairings = TournamentService.getNextRoundPairings(participants);
