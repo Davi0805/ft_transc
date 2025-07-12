@@ -7,11 +7,6 @@ import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
 
 
-
-
-
-//IMPORTANT TODO: DOUBLE CHECK WHICH OF THESE SHOULD BE TRIGGERED BY FRONT END, BUT WHICH SHOULD BE SENT AS EVENTS FROM BACKEND!!!!
-//Next, isolate the common components in game
 class LobbyService {
     async initSettings(lobbyID: number) {
         //It is important to get this from the backend on demand. This way nothing is written by the client whatsoever and there is no desync or common responsibilities
@@ -47,7 +42,7 @@ class LobbyService {
             if (mapSlots[player.team] === undefined || mapSlots[player.team]![player.role] === undefined) {
                 throw Error("Fuck everything about this bullshit")
             }
-            if (!player.id || !player.spriteID) {
+            if (player.id === null || player.spriteID === null) {
                 throw Error("Player should have been initialized by backend at this point!")
             }
             if (mapSlots[player.team]![player.role] === null) {
@@ -61,124 +56,39 @@ class LobbyService {
         return mapSlots
     }
 
-    async updateMyReadiness(ready: boolean) {
-        //await lobbySocketService.sendRequest("POSTupdateMyReadiness", ready);
+    updateMyReadiness(ready: boolean) {
+        lobbySocketService.send("updateMyReadiness", { ready: ready });
     }
 
-    async addMatchPlayer(player: TMatchPlayer) {
-        //await lobbySocketService.sendRequest("POSTaddMatchPlayer", player);
+    addMatchPlayer(player: TMatchPlayer) {
+        lobbySocketService.send("addMatchPlayer", { player: player });
     }
 
-    async addTournPlayer() {
+    removeMatchPlyer() {
+        lobbySocketService.send("removeMatchPlayer", null); //TODO: need to know which player to remove
+    }
+
+    addTournPlayer() {
         //This request does not need any payload because every info is either taken from auth or has default values
         //Must add a TTournPlayer to the participating list. See the type definition for details
-        //await lobbySocketService.sendRequest("POSTaddTournPlayer", null);
+        lobbySocketService.send("addTournPlayer", null);
+    }
+    withdrawTournPlayer() {
+        lobbySocketService.send("withdrawTournPlayer", null);
     }
 
-    async inviteUserToLobby(userID: number): Promise<void> {
-        //await lobbySocketService.sendRequest("POSTinviteUserToLobby", userID);
+    inviteUserToLobby(userID: number) {
+        lobbySocketService.send("inviteUserToLobby", { userID: userID });
     }
 
-    async leave() {
-        //await lobbySocketService.sendRequest("POSTleaveLobby", null);
+    leave() {
+        lobbySocketService.send("leaveLobby", null);
         //TODO: tell db that player is not participating anymore! (Davi)
         //TODO: ADD COMM TO DB THAT PLAYER LEFT (Davi)
         lobbySocketService.disconnect();
         this._settings = null;
         this._amIHost = false;
     }
-
-
-    /* async getMySettings(): Promise<TLobby> {
-        return await lobbySocketService.sendRequest("GETmySettings", null);
-    }
-
-    async updateLobbySettings(settings: TDynamicLobbySettings): Promise<void> {
-        await lobbySocketService.sendRequest("POSTupdateLobby", settings);
-    }
-
-    async inviteUserToLobby(userID: number): Promise<void> {
-        await lobbySocketService.sendRequest("POSTinviteUserToLobby", userID);
-    }
-
-    async amIParticipating(): Promise<boolean> {
-        return await lobbySocketService.sendRequest("GETamIParticipating", null)
-    }
-
-    async isEveryoneReady(): Promise<boolean> {
-        return await lobbySocketService.sendRequest("GETisEveryoneReady", null);
-    }
-
-    async updateMyReadiness(ready: boolean) {
-        await lobbySocketService.sendRequest("POSTupdateMyReadiness", ready);
-    }
-
-    async getMatchPlayers(): Promise<TMatchPlayer[]> {
-        return await lobbySocketService.sendRequest("GETmatchPlayers", null);
-    }
-
-    async getSlots(): Promise<TSlots> {
-        const mapSlots = getSlotsFromMap(await lobbySocketService.sendRequest("GETselectedMap", null))
-        const participatingPlayers = await this.getMatchPlayers();
-        participatingPlayers.forEach(player => {
-            if (mapSlots[player.team] === undefined || mapSlots[player.team]![player.role] === undefined) {
-                throw Error("Fuck everything about this bullshit")
-            }
-            if (!player.id || !player.spriteID) {
-                throw Error("Player should have been initialized by backend at this point!")
-            }
-            if (mapSlots[player.team]![player.role] === null) {
-                mapSlots[player.team]![player.role] = {
-                    id: player.id,
-                    spriteID: player.spriteID
-                }
-            }
-            mapSlots[player.team]
-        })
-        return mapSlots
-    }
-
-    async addMatchPlayer(player: TMatchPlayer) {
-        await lobbySocketService.sendRequest("POSTaddMatchPlayer", player);
-    }
-
-    async addTournPlayer() {
-        //This request does not need any payload because every info is either taken from auth or has default values
-        //Must add a TTournPlayer to the participating list. See the type definition for details
-        await lobbySocketService.sendRequest("POSTaddTournPlayer", null);
-    }
-
-    async removeTournPlayer() {
-        //Sets participating to false, so it does not get paired, but does not remove it from the db, so it still gets in the final classification table
-        await lobbySocketService.sendRequest("POSTwithdrawTournPlayer", null);
-    }
-
-    async getTournParticipants(): Promise<TTournPlayer[]> {
-        return await lobbySocketService.sendRequest("GETtournPlayers", null);
-    }
-
-    async getCurrentRoundNumber(): Promise<number> {
-        return await lobbySocketService.sendRequest("GETcurrentRoundNo", null);
-    }
-
-    async leave() {
-        await lobbySocketService.sendRequest("POSTleaveLobby", null);
-        //TODO: tell db that player is not participating anymore! (Davi)
-        //TODO: ADD COMM TO DB THAT PLAYER LEFT (Davi)
-        lobbySocketService.disconnect();
-        this._staticSettings = null;
-        this._amIHost = false;
-    }
-
-
-    async startGame(userCustoms: TUserCustoms) {
-        await lobbySocketService.sendRequest("POSTstartGame", userCustoms);
-    } */
-
-    /* private _staticSettings: TStaticLobbySettings | null = null;
-    get staticSettings(): TStaticLobbySettings | null { return this._staticSettings; }
-    private _amIHost: boolean = false;
-    get amIHost(): boolean { return this._amIHost; } */
 
     private _settings: TLobby | null = null;
     get settings(): TLobby {

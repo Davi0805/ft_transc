@@ -1,79 +1,29 @@
 import { TUserCustoms } from "../../match/matchSharedDependencies/SetupDependencies"
 import { SIDES, ROLES } from "../../match/matchSharedDependencies/sharedTypes"
 
-export type RequestResponseMap = {
-    GETmySettings: {
-        request: null,
-        response: TLobby
+export type InboundDTOMap = {
+    inviteUserToLobby: {
+        userID: number
     }
-    GETamIParticipating: {
-        request: null
-        response: boolean
+    updateMyReadiness: {
+        ready: boolean 
     },
-    GETisEveryoneReady: {
-        request: null,
-        response: boolean
+    addMatchPlayer: {
+        player: TMatchPlayer
     },
-    GETmatchPlayers: {
-        request: null,
-        response: TMatchPlayer[]
-    },
-    GETtournPlayers: {
-        request: null,
-        response: TTournPlayer[]
-    }
-    GETselectedMap: {
-        request: null,
-        response: TMapType
-    },
-    GETcurrentRoundNo: {
-        request: null,
-        response: number
-    },
-    POSTupdateLobby: {
-        request: TDynamicLobbySettings,
-        response: null
-    },
-    POSTinviteUserToLobby: {
-        request: number,
-        response: null
-    }
-    POSTupdateMyReadiness: {
-        request: boolean,
-        response: null
-    },
-    POSTaddMatchPlayer: {
-        request: TMatchPlayer,
-        response: null
-    },
-    POSTaddTournPlayer: {
-        request: null,
-        response: null
-    },
-    POSTwithdrawTournPlayer: {
-        request: null,
-        response: null
-    }
-    POSTleaveLobby: {
-        request: null,
-        response: null
-    },
-    POSTstartGame: {
-        request: TUserCustoms,
-        response: null
+    removeMatchPlayer: null, //TODO: Backend needs to know which player to remove
+    addTournPlayer: null,
+    withdrawTournPlayer: null,
+    leaveLobby: null,
+    startGame: {
+        settings: TUserCustoms,
     }
 }
 
-export type lobbyRequestDTO<T extends keyof RequestResponseMap = keyof RequestResponseMap> = {
+export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {
     requestType: T,
     lobbyID: number,
-    requestID: number,
-    data: RequestResponseMap[T]['request']
-}
-
-export type lobbyResponseDTO<T extends keyof RequestResponseMap = keyof RequestResponseMap> = {
-    requestID: number,
-    data: RequestResponseMap[T]['response']
+    data: InboundDTOMap[T]
 }
 
 

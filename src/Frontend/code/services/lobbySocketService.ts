@@ -1,4 +1,4 @@
-import { lobbyRequestDTO, lobbyResponseDTO, RequestResponseMap } from "../pages/play/lobbyTyping";
+import { InboundDTOMap, InboundDTO } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
 
 class LobbySocketService {
@@ -22,12 +22,7 @@ class LobbySocketService {
         
         this._ws.onmessage = (ev: MessageEvent) => {
             try {
-                const data = JSON.parse(ev.data) as lobbyResponseDTO;
-                const resolver = this._pendingRequests.get(data.requestID) 
-                if (resolver) {
-                    resolver(data.data); //Not 100% typesafe, but fuck it, gotta trust backend at some point
-                    this._pendingRequests.delete(data.requestID);
-                }
+                const data = JSON.parse(ev.data);
                 
             } catch (error) {
                 console.error("Error parsing websocket message");
@@ -52,30 +47,14 @@ class LobbySocketService {
         }
     }
 
-    async sendRequest<K extends keyof RequestResponseMap>(
-        type: K,
-        data: RequestResponseMap[K]['request']
-    ): Promise<RequestResponseMap[K]['response']> {
-        const currentLobbyID = this._lobbyID;
-        if (currentLobbyID === null) {
-            throw Error("Websocket not connected!!")
-        }
-        const uid = this._uid++;
-        return new Promise((resolve) => {
-            this._pendingRequests.set(uid, resolve);
-            this.send({
-                requestType: type,
-                lobbyID: currentLobbyID,
-                requestID: uid,
-                data: data
-            })
-        })
-    }
-
-    send(data: lobbyRequestDTO) {
+    send<T extends keyof InboundDTOMap>(type: T, data: InboundDTOMap[T]) {
         if (this._ws && this._ws.readyState === WebSocket.OPEN) {
-
-            this._ws.send(JSON.stringify(data));
+            const dto: InboundDTO = {
+                requestType: type,
+                lobbyID: lobbySocketService.lobbyID,
+                data: data
+            }
+            this._ws.send(JSON.stringify(dto));
             return true;
         } else {
             console.log("DEBUG: WebSocket not connected, message not sent!");
@@ -92,9 +71,6 @@ class LobbySocketService {
         }
         return this._lobbyID;
     }
-    
-    private _pendingRequests = new Map<number, (response: any) => void>(); //TODO how to type response?
-    private _uid: number = 0;
 
     private _handleMessage(data: unknown /*TODO*/) {
 
