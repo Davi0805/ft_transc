@@ -24,6 +24,15 @@ class LobbyService {
         }
     }
 
+    nullify() {
+        this._settings = null;
+        this._myID = null;
+        this._amIHost = false;
+        this._everyoneReady = false;
+        this._tournPlayers = null;
+        this._matchPlayers = null;
+    }
+
     getSlots(): TSlots {
         if (!this._settings) { throw Error("getSlots should not be called before lobby is initialized!")}
         
@@ -74,11 +83,8 @@ class LobbyService {
 
     leave() {
         lobbySocketService.send("leaveLobby", null);
-        //TODO: tell db that player is not participating anymore! (Davi)
-        //TODO: ADD COMM TO DB THAT PLAYER LEFT (Davi)
         lobbySocketService.disconnect();
-        this._settings = null;
-        this._amIHost = false;
+        this.nullify();
     }
 
     startMatchInbound() {
