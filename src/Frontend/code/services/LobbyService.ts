@@ -3,33 +3,18 @@ import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { LobbyPage } from "../pages/play/lobby";
 //import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TSlots, LobbyLogic } from "../pages/play/lobbyLogic";
-import { TDynamicLobbySettings, TLobby, TMatchPlayer, TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
+import { TLobby, TMatchPlayer, TTournPlayer } from "../pages/play/lobbyTyping";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
 import { matchService } from "./matchService";
 import { router } from "../routes/router";
-import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
 
 
 class LobbyService {
     async initSettings(lobbyID: number) {
         //It is important to get this from the backend on demand. This way nothing is written by the client whatsoever and there is no desync or common responsibilities
-        const selfData: SelfData = { //await getSelfData(); TODO: uncomment
-            id: 0,
-            nickname: "Fucker McDickFace"
-        }
-        this._settings = { //await getLobbySettingsByID(lobbyID); TODO: Uncomment
-            id: 0,
-            hostID: 0,
-            name: "fdp",
-            host: "lolada",
-            type: "ranked",
-            capacity: { taken: 0, max: 4 },
-            map: "4-players-big",
-            mode: "classic",
-            duration: "blitz",
-            round: 1
-        }
+        const selfData: SelfData = await getSelfData();
+        this._settings = await getLobbySettingsByID(lobbyID);
         this._myID = selfData.id;
         this._amIHost = selfData.id === this._settings.hostID
         if (this._settings.type === "tournament") {
@@ -107,28 +92,21 @@ class LobbyService {
         if (this.settings?.type === "tournament") {
             this._tournPlayers = players as TTournPlayer[];
             this._participating = this._tournPlayers.find(player => player.id === this._myID) ? true : false;
+            this._everyoneReady = this._tournPlayers.find(player => player.ready === false) ? false : true
             LobbyPage.renderParticipants()
         } else {
             this._matchPlayers = players as TMatchPlayer[];
             this._participating = this._matchPlayers.find(player => player.userID === this._myID) ? true : false;
+            this._everyoneReady = this._matchPlayers.find(player => player.ready === false) ? false : true
             LobbyPage.renderSlots()
         }
     }
 
     startMatch(settings: TLobby, players: TMatchPlayer[] | TTournPlayer[]) { //Is it necessary to send these or can each client pick from the locally saved data?
-        if (lobby.settings.type == "tournament") {
-            LobbyLogic.prepareNextRound(lobby.settings);
+        if (settings.type == "tournament") {
+            LobbyLogic.prepareNextRound(settings);
         } else {
-            const userCustoms = LobbyLogic.buildUserCustoms(lobby.settings, [{
-                userID: 0,
-                id: 0,
-                nick: "Fucker",
-                spriteID: 0,
-                team: SIDES.LEFT,
-                role: ROLES.BACK,
-                leftControl: "ArrowLeft",
-                rightControl: "ArrowRight"
-            }]/*lobby.matchPlayers*/);
+            const userCustoms = LobbyLogic.buildUserCustoms(settings, lobby.matchPlayers);
             matchService.injectConfigs(userCustoms);
             router.navigateTo("/match");
         }
@@ -146,9 +124,9 @@ class LobbyService {
     }
     private _amIHost: boolean = false;
     get amIHost(): boolean { return this._amIHost; }
-    private _participating: boolean = false; //TODO: needs an update function from socket
+    private _participating: boolean = false;
     get participating(): boolean { return this._participating; }
-    private _everyoneReady: boolean = true; //TODO: needs an update function from socket
+    private _everyoneReady: boolean = false;
     get everyoneReady(): boolean { return this._everyoneReady; }
 
     //These should definitely be children of some parent class lol. Fuck it

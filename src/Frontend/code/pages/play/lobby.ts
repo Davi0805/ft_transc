@@ -227,7 +227,8 @@ export const LobbyPage = {
             team: team,
             role: role,
             leftControl: leftControl,
-            rightControl: rightControl
+            rightControl: rightControl,
+            ready: false
         });
         this.renderSlots();
     },

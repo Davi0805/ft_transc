@@ -82,7 +82,8 @@ export type TMatchPlayer = {
     team: SIDES,
     role: ROLES,
     leftControl: string,
-    rightControl: string
+    rightControl: string,
+    ready: boolean
 }
 
 export type TTournPlayer = {
@@ -94,4 +95,5 @@ export type TTournPlayer = {
     teamDist: number //default: 0
     participating: boolean //default: true
     //TODO: IN TOURNAMENT SERVICE, ONLY PAIR PLAYERS THAT HAVE THIS FLAG SET TO TRUE!!!!
+    ready: boolean
 }

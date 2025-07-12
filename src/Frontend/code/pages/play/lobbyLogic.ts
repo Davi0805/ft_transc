@@ -54,7 +54,8 @@ export const LobbyLogic = {
             team: team,
             role: role,
             leftControl: "LeftArrow", //TODO: must add choice of controls to UI
-            rightControl: "RightArrow"
+            rightControl: "RightArrow",
+            ready: false
         });
         console.log(`Player saved with alias ${alias} and paddle id ${paddleId}`)
         console.log(`Player added to team ${team} and role ${role}!`)
@@ -65,16 +66,7 @@ export const LobbyLogic = {
         if (lobby.settings.type == "tournament") {
             LobbyLogic.prepareNextRound(lobby.settings);
         } else {
-            const userCustoms = LobbyLogic.buildUserCustoms(lobby.settings, [{
-                userID: 0,
-                id: 0,
-                nick: "Fucker",
-                spriteID: 0,
-                team: SIDES.LEFT,
-                role: ROLES.BACK,
-                leftControl: "ArrowLeft",
-                rightControl: "ArrowRight"
-            }]/*lobby.matchPlayers*/);
+            const userCustoms = LobbyLogic.buildUserCustoms(lobby.settings, lobby.matchPlayers);
             matchService.injectConfigs(userCustoms);
             router.navigateTo("/match");
         }
