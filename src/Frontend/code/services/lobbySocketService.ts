@@ -1,5 +1,6 @@
-import { InboundDTOMap, InboundDTO } from "../pages/play/lobbyTyping";
+import { InboundDTOMap, InboundDTO, OutboundDTO, OutboundDTOMap } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
+import { lobby } from "./LobbyService";
 
 class LobbySocketService {
     constructor() {
@@ -22,8 +23,8 @@ class LobbySocketService {
         
         this._ws.onmessage = (ev: MessageEvent) => {
             try {
-                const data = JSON.parse(ev.data);
-                
+                const data = JSON.parse(ev.data) as OutboundDTO;
+                this._handleMessage(data)
             } catch (error) {
                 console.error("Error parsing websocket message");
             }
@@ -72,11 +73,21 @@ class LobbySocketService {
         return this._lobbyID;
     }
 
-    private _handleMessage(data: unknown /*TODO*/) {
-
+    private _handleMessage(dto: OutboundDTO) {
+        switch (dto.requestType) {
+            case "updateSettings":
+                lobby.updateSettings(dto.data.settings);
+                break;
+            case "updatePlayers":
+                lobby.updatePlayers(dto.data.matchPlayers, dto.data.participating);
+                break;
+            case "startMatch":
+                lobby.startMatch(dto.data.settings, dto.data.players);
+                break;
+            default:
+                throw Error("A message came in with a non registered type!!")
+        }
     }
-
-    
 }
 
 export const lobbySocketService = new LobbySocketService();

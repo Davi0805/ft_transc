@@ -1,5 +1,6 @@
 import { getSelfData, SelfData } from "../api/getSelfDataAPI";
 import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { LobbyPage } from "../pages/play/lobby";
 //import { getLobbySettingsByID } from "../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { TSlots } from "../pages/play/lobbyLogic";
 import { TDynamicLobbySettings, TLobby, TMatchPlayer, TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
@@ -20,7 +21,7 @@ class LobbyService {
             name: "fdp",
             host: "lolada",
             type: "ranked",
-            capacity: { taken: 0, max: 8 },
+            capacity: { taken: 0, max: 4 },
             map: "4-players-big",
             mode: "classic",
             duration: "blitz",
@@ -56,6 +57,7 @@ class LobbyService {
         return mapSlots
     }
 
+    //inbound
     updateMyReadiness(ready: boolean) {
         lobbySocketService.send("updateMyReadiness", { ready: ready });
     }
@@ -88,6 +90,29 @@ class LobbyService {
         lobbySocketService.disconnect();
         this._settings = null;
         this._amIHost = false;
+    }
+
+
+    //outbound
+    updateSettings(settings: TLobby) {
+        this._settings = settings
+        LobbyPage.renderSettings();
+    }
+
+    updatePlayers(players: TMatchPlayer[] | TTournPlayer[], participanting: boolean) {
+        if (this.settings?.type === "tournament") {
+            this._tournPlayers = players as TTournPlayer[];
+            this._participating = participanting;
+            LobbyPage.renderParticipants()
+        } else {
+            this._matchPlayers = players as TMatchPlayer[];
+            this._participating = participanting;
+            LobbyPage.renderSlots()
+        }
+    }
+
+    startMatch(settings: TLobby, players: TMatchPlayer[] | TTournPlayer[]) {
+        
     }
 
     private _settings: TLobby | null = null;

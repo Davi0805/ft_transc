@@ -20,11 +20,32 @@ export type InboundDTOMap = {
     }
 }
 
+export type OutboundDTOMap = {
+    updateSettings: {
+        settings: TLobby
+    },
+    updatePlayers: {
+        matchPlayers: TMatchPlayer[] | TTournPlayer[],
+        participating: boolean
+    },
+    startMatch: {
+        settings: TLobby,
+        players: TMatchPlayer[] | TTournPlayer[]
+    }
+}
+
 export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {
     requestType: T,
     lobbyID: number,
     data: InboundDTOMap[T]
 }
+
+export type OutboundDTO = {
+    [K in keyof OutboundDTOMap]: {
+        requestType: K,
+        data: OutboundDTOMap[K]
+    }
+}[keyof OutboundDTOMap]
 
 
 
