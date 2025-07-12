@@ -1,7 +1,7 @@
-import { getSelfData, SelfData } from "../api/getSelfDataAPI";
+import { SelfData } from "../api/getSelfDataAPI";
 import { LobbyPage } from "../pages/play/lobby";
 import { TSlots, LobbyLogic } from "../pages/play/lobbyLogic";
-import { TDynamicLobbySettings, TLobby, TMatchPlayer, TStaticLobbySettings, TTournPlayer } from "../pages/play/lobbyTyping";
+import { TDynamicLobbySettings, TLobby, TMatchPlayer, TTournPlayer } from "../pages/play/lobbyTyping";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
 import { matchService } from "./matchService";
@@ -112,11 +112,14 @@ class LobbyService {
         }
     }
 
-    startMatchOutbound(settings: TLobby, players: TMatchPlayer[] | TTournPlayer[]) { //Is it necessary to send these or can each client pick from the locally saved data?
+    startMatchOutbound(settings: TLobby, players: TMatchPlayer[] | TTournPlayer[]) {
+        this._settings = settings;
         if (settings.type == "tournament") {
+            this._tournPlayers = players as TTournPlayer[];
             LobbyLogic.prepareNextRound(settings);
         } else {
-            const userCustoms = LobbyLogic.buildUserCustoms(settings, lobby.matchPlayers);
+            this._matchPlayers = players as TMatchPlayer[];
+            const userCustoms = LobbyLogic.buildUserCustoms(settings, this._matchPlayers);
             matchService.injectConfigs(userCustoms);
             router.navigateTo("/match");
         }
