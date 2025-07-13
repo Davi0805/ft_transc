@@ -3,9 +3,7 @@ import { flashButton, getButton, getTable, toggleButton } from "./utils/stylingC
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { TLobby } from "./lobbyTyping";
 import { TDynamicLobbySettings } from "./lobbyTyping";
-//import { getLobbySettingsByID} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
-import { lobbySocketService } from "../../services/lobbySocketService";
-import { LobbyLogic, TSlots } from "./lobbyLogic";
+import { LobbyLogic } from "./lobbyLogic";
 import { lobby } from "../../services/LobbyService";
 import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes";
 
@@ -102,23 +100,23 @@ export const LobbyPage = {
 
         const readyButton = getButton("btn-ready", "button", "Ready");
         readyButton.addEventListener('click', async () => {
-            if (!lobby.participating) {
+            if (!lobby.amIParticipating()) {
                 flashButton(readyButton, "You must join first!")
             } else {
                 const state = toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
-                lobby.updateMyReadiness(state);
+                lobby.updateReadinessIN(state);
             }
         });
         buttonsDiv.appendChild(readyButton);
 
-        if (lobby.amIHost) {
+        if (lobby.amIHost()) {
             const startButton = getButton("btn-start", "button", "Start");
             buttonsDiv.appendChild(startButton);
             startButton.addEventListener('click', async () => {
-                if (!lobby.everyoneReady) {
+                if (!lobby.isEveryoneReady()) {
                     flashButton(startButton, "Not everyone is ready!");
                 } else {
-                    lobby.startMatchInbound();
+                    lobby.startMatchIN();
                 }
             })
         }
@@ -126,7 +124,7 @@ export const LobbyPage = {
 
     async renderSlots() {
         const slots = lobby.getSlots();
-        const canJoin = !(lobby.participating) || lobby.settings.type == "friendly";
+        const canJoin = !(lobby.amIParticipating()) || lobby.settings.type == "friendly";
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
         teamsElement.innerHTML = "";
@@ -214,20 +212,14 @@ export const LobbyPage = {
     },
 
     async slotJoinRankedCallback(team: SIDES, role: ROLES) {
+        //TODO: check how to save the controls. Maybe on lobby Service? Maybe only at the start of the match?
         const leftControl: string = "LeftArrow" //TODO: calculate from team
         const rightControl: string = "RightArrow" //TODO: calculate from team
-        lobby.addMatchPlayer({
-            userID: null,
-            id: null,
-            nick: null,
-            spriteID: null,
+        lobby.addRankedPlayerIN({
             team: team,
-            role: role,
-            leftControl: leftControl,
-            rightControl: rightControl,
-            ready: false
+            role: role
         });
-        this.renderSlots();
+        //this.renderSlots(); This should probably only happen when everyone is updated
     },
 
     async renderParticipants() {
@@ -241,7 +233,7 @@ export const LobbyPage = {
 
         let participantsTableBody = ""
         let place = 1
-        for (let participant of lobby.tournPlayers) {
+        for (let participant of lobby.getTournPlayers()) {
             participantsTableBody += `<tr class="bg-gray-900/${place % 2 === 0 ? "25" : "50"}"><td>${place++}</td>`;
             Object.values(participant).forEach(info => {
                 participantsTableBody += `<td>${info}</td>`
@@ -257,10 +249,10 @@ export const LobbyPage = {
         const participantsTable = getTable("participants", participantsTableHead, participantsTableBody)
         participantsElement.innerHTML += participantsTable.outerHTML;
         
-        const participating = lobby.participating;
+        const participating = lobby.amIParticipating();
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", participating ? "Withdraw" : "Join", false)
         joinWithdrawButton.addEventListener("click", () => {
-            lobby.addTournPlayer()
+            lobby.addTournPlayerIN()
         })
         //TODO: callback for this button is missing!
         joinWithdrawButton.classList.add("w-full");

@@ -77,13 +77,10 @@ class LobbySocketService {
     private _handleMessage(dto: OutboundDTO) {
         switch (dto.requestType) {
             case "updateSettings":
-                lobby.updateSettingsOutbound(dto.data.settings);
+                lobby.updateSettingsOUT(dto.data.settings);
                 break;
-            case "updatePlayers":
-                lobby.updatePlayers(dto.data.players);
-                break;
-            case "startMatch":
-                lobby.startMatchOutbound(dto.data.settings, dto.data.players);
+            case "updateReadiness":
+                lobby.updateReadinessOUT(dto.data.userID, dto.data.ready)
                 break;
             case "updateGame":
                 break
