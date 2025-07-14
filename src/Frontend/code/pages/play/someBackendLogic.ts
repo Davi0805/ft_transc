@@ -1,5 +1,31 @@
-import { TMatchDuration, TMapType, TLobby, TMatchPlayer } from "./lobbyTyping"
-import { TUserCustoms } from "../../match/matchSharedDependencies/SetupDependencies"
+import { TMatchDuration, TMapType, TLobby, TMatchPlayer, TUser, TLobbyType, TFriendlyPlayer, TRankedPlayer } from "./lobbyTyping"
+import { TUserCustoms, TGameConfigs, TControls } from "../../match/matchSharedDependencies/SetupDependencies"
+import { point, SIDES, ROLES, TWindow, TPaddle } from "../../match/matchSharedDependencies/sharedTypes"
+import { AppConfigs } from "../../match/system/framework/Application"
+import { CGameSceneConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
+
+export type CAppConfigs = {
+    appConfigs: AppConfigs,
+    gameSceneConfigs: CGameSceneConfigs
+}
+
+export type SGameConfigs = {
+    window: Pick<TWindow, "size">,
+    matchLength: number
+    teams: {
+        side: SIDES,
+        score: number
+    }[]
+    humans: {
+        id: number,
+        paddleID: number,
+    }[]
+    bots: {
+        paddleID: number,
+        difficulty: number
+    }[],
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
+}
 
 export function getSecondsFromDuration(duration: TMatchDuration) {
     const durationToSeconds: Record<TMatchDuration, number> = {
@@ -82,4 +108,229 @@ export function buildUserCustoms(settings: TLobby, players: TMatchPlayer[]): TUs
     //TODO: Have to find a way to build bots into empty slots
 
     return userCustoms
+}
+
+export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
+
+    const out: TGameConfigs = {
+        field: userCustoms.field,
+        matchLength: userCustoms.matchLength,
+        teams: [],
+        paddles: [],
+        clients: userCustoms.clients,
+        bots: userCustoms.bots,
+        startingScore: 0
+    }
+
+    // Apply dev customs for each individual paddle and team
+    userCustoms.paddles.forEach(paddle => {
+        let scorePos: point;
+        let paddlePos: point;
+        const scoreOffset = 140
+        const paddleOffset = (paddle.role === ROLES.BACK ? 40 : 80);
+        switch (paddle.side) {
+            case (SIDES.LEFT): {
+                scorePos = { x: scoreOffset, y: userCustoms.field.size.y / 2}
+                paddlePos = { x: paddleOffset, y: userCustoms.field.size.y / 2 };
+                break;
+            }
+            case (SIDES.RIGHT): {
+                scorePos = { x: userCustoms.field.size.x - scoreOffset, y: userCustoms.field.size.y / 2 }
+                paddlePos = { x: userCustoms.field.size.x - paddleOffset, y: userCustoms.field.size.y / 2 }
+                break; 
+            }
+            case (SIDES.TOP): {
+                scorePos = { x: userCustoms.field.size.x / 2, y: scoreOffset };
+                paddlePos = { x: userCustoms.field.size.x / 2, y: paddleOffset };
+                break;
+            }
+            case (SIDES.BOTTOM): {
+                scorePos = { x: userCustoms.field.size.x / 2, y: userCustoms.field.size.y - scoreOffset}
+                paddlePos = { x: userCustoms.field.size.x / 2, y: userCustoms.field.size.y - paddleOffset}
+            }
+        }
+
+        if (out.teams.find(team => team.side === paddle.side) === undefined) {
+            out.teams.push({
+                side: paddle.side,
+                score: {
+                    score: 100,
+                    pos: scorePos
+                }
+            })
+        }
+        out.paddles.push({
+            id: paddle.id,
+            side: paddle.side,
+            role: paddle.role,
+            spriteID: paddle.spriteID,
+            pos: paddlePos,
+            size: { x: 32, y: 128 },
+            speed: 400
+        })
+    })
+
+    return out;
+}
+
+function getMatchPlayers(users: TUser[], lobbyType: TLobbyType): TMatchPlayer[] {
+    const out: TMatchPlayer[] = []
+    if (lobbyType === "friendly") {
+        users.forEach(user => {
+            if (user.participating) {
+                const players = user.player as TFriendlyPlayer[]
+                players.forEach(player => {
+                    out.push({
+                        userID: user.id,
+                        id: player.id,
+                        nickname: player.nickname,
+                        spriteID: player.spriteID,
+                        team: player.team,
+                        role: player.role,
+                        ready: user.ready
+                    })
+                })
+            }
+        })
+    } else if (lobbyType === "ranked") {
+        users.forEach(user => {
+            if (user.participating) {
+                const player = user.player as TRankedPlayer;
+                out.push({
+                    userID: user.id,
+                    id: user.id,
+                    nickname: user.nickname,
+                    spriteID: user.spriteID,
+                    team: player.team,
+                    role: player.role,
+                    ready: user.ready
+                })
+            }
+        })
+    } else {
+        //TODO put here the tournament logic
+    }
+    return out;
+}
+/* function getTournPlayers(): TTournPlayer[] {
+    if (!this._isLobbyOfType("tournament")) {throw Error("Function called in wrong lobby type")}
+
+    const out: TTournPlayer[] = [];
+    this._users.forEach(user => {
+        const player = user.player as TTournamentPlayer;
+        if (player.applied) {
+            out.push({
+                id: user.id,
+                nick: user.nickname,
+                score: player.score,
+                rating: user.rating,
+                prevOpponents: player.prevOpponents,
+                teamDist: player.teamDist,
+                participating: user.participating,
+                ready: user.ready
+            })
+        }
+    })
+    return out
+} */
+
+export function buildCAppConfigs(gameConfigs: TGameConfigs, 
+  clientID: number): CAppConfigs {
+    console.log(gameConfigs.clients)
+    const humansInClient = gameConfigs.clients.find(client => client.id == clientID)?.humans;
+    if (humansInClient === undefined) {
+      throw new Error(`The clientID ${clientID} has no controls saved in gameConfigs!`)
+    }
+    const controlsMap = new Map<number, TControls>;
+    humansInClient.forEach(human => {
+      controlsMap.set(human.id, human.controls);
+    })
+    
+    const out: CAppConfigs = {
+      appConfigs: {
+        width: gameConfigs.field.size.x,
+        height: gameConfigs.field.size.y
+      },
+      gameSceneConfigs: {
+        fieldSize: gameConfigs.field.size,
+        controls: controlsMap,
+        gameInitialState: {
+          teams: [],
+          paddles: [],
+          gameLength: gameConfigs.matchLength
+        }
+      }
+    }
+
+    for (let team of gameConfigs.teams) {
+      out.gameSceneConfigs.gameInitialState.teams.push({
+        side: team.side,
+        score: {
+          score: team.score.score,
+          pos: team.score.pos
+        },
+      })
+    }
+    for (let paddle of gameConfigs.paddles) {
+      out.gameSceneConfigs.gameInitialState.paddles.push({
+        id: paddle.id,
+        side: paddle.side,
+        size: paddle.size,
+        speed: paddle.speed,
+        pos: paddle.pos,
+        spriteID: paddle.spriteID
+      })
+    }
+
+    return out;
+}
+
+export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
+  const out: SGameConfigs = {
+    window: {
+      size: gameConfigs.field.size
+    },
+    matchLength: gameConfigs.matchLength,
+    teams: [],
+    humans: [],
+    bots: [],
+    paddles: []
+  }
+  gameConfigs.teams.forEach(team => {
+    out.teams.push({
+      side: team.side,
+      score: team.score.score
+    })
+  })
+  gameConfigs.clients.forEach(client => {
+    client.humans.forEach(human => {
+      out.humans.push(human)
+    })
+  })
+  out.bots = gameConfigs.bots
+  gameConfigs.paddles.forEach(paddle => {
+    out.paddles.push({
+      id: paddle.id,
+      size: paddle.size,
+      pos: paddle.pos,
+      side: paddle.side,
+      speed: paddle.speed
+    })
+  })
+
+  return out;
+}
+
+function startMatch(lobbySettings: TLobby, users: TUser[]) {
+    const matchPlayers: TMatchPlayer[] = getMatchPlayers(users, lobbySettings.type);
+    const userCustoms: TUserCustoms = buildUserCustoms(lobbySettings, matchPlayers);
+    const gameSettings: TGameConfigs = applyDevCustoms(userCustoms);
+    const serverSettings: SGameConfigs = buildSGameConfigs(gameSettings);
+
+    const userIDs: number[] = [] //TODO: put here user ids
+    userIDs.forEach(userID => {
+        const clientSettings: CAppConfigs = buildCAppConfigs(gameSettings, userID);
+        //TODO: send clientSettings to each corresponding userID
+    })
+    //TODO: start game in backend with serverSettings
 }

@@ -3,7 +3,7 @@ import Assets from './framework/Assets';
 import { ScenesManager } from './ScenesManager';
 import { EventBus } from './EventBus';
 import { Adto } from '../matchSharedDependencies/dtos';
-import { CAppConfigs } from '../setup';
+import { CAppConfigs } from '../matchSharedDependencies/SetupDependencies';
 import { assetsManifest, scenesManifest } from '../game/Manifests';
 
 class FtApplication {

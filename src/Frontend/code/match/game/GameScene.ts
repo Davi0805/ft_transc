@@ -2,7 +2,7 @@ import AScene from "../system/AScene";
 import Point from "../matchSharedDependencies/Point";
 import Assets from "../system/framework/Assets";
 import { SIDES } from "../matchSharedDependencies/sharedTypes";
-import { CGameSceneConfigs } from "../setup";
+import { CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies";
 import { SGameDTO } from "../matchSharedDependencies/dtos";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";

@@ -1,5 +1,5 @@
 import { AssetsManifest } from "../system/framework/Assets"
-import { CGameSceneConfigs } from "../setup"
+import { CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies"
 
 import AScene from "../system/AScene"
 import GameScene from "./GameScene"

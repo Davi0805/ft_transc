@@ -4,7 +4,6 @@ import { TSlots } from "../pages/play/utils/helpers";
 import { TDynamicLobbySettings, TFriendlyPlayer, TLobby, TLobbyType, TMatchPlayer, TRankedPlayer, TTournamentPlayer, TTournPlayer, TUser } from "../pages/play/lobbyTyping";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
-import { matchService } from "./matchService";
 import { router } from "../routes/router";
 
 
@@ -168,8 +167,6 @@ class LobbyService {
         
     }
 
-
-
     getMatchPlayers(): TMatchPlayer[] {
         const out: TMatchPlayer[] = []
         if (this._isLobbyOfType("friendly")) {
@@ -188,7 +185,6 @@ class LobbyService {
                         })
                     })
                 }
-                
             })
         } else if (this._isLobbyOfType("ranked")) {
             this._users.forEach(user => {
