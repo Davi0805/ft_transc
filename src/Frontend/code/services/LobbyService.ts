@@ -1,6 +1,6 @@
 import { SelfData } from "../api/getSelfDataAPI";
 import { LobbyPage } from "../pages/play/lobby";
-import { TSlots } from "../pages/play/lobbyLogic";
+import { TSlots } from "../pages/play/utils/helpers";
 import { TDynamicLobbySettings, TFriendlyPlayer, TLobby, TLobbyType, TMatchPlayer, TRankedPlayer, TTournamentPlayer, TTournPlayer, TUser } from "../pages/play/lobbyTyping";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
@@ -116,6 +116,7 @@ class LobbyService {
         const user = this._findUserByID(userID);
         (user.player as TFriendlyPlayer[]).push(player) // This is safe becuase the check is done above
         user.participating = true;
+        LobbyPage.renderSlots();
     }
     removeFriendlyPlayerOUT(playerID: number) {
         if (!this._isLobbyOfType("friendly")) { return; }
@@ -130,6 +131,7 @@ class LobbyService {
                 if (players.length === 0) {
                     user.participating = false;
                 }
+                LobbyPage.renderSlots();
                 return ;
             }
         }
@@ -141,22 +143,26 @@ class LobbyService {
         const user = this._findUserByID(userID);
         user.player = player;
         user.participating = true;
+        LobbyPage.renderSlots();
     }
     removeRankedPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("ranked")) { return; }
         const user = this._findUserByID(userID);
         user.participating = false;
+        LobbyPage.renderSlots();
     }
     addTournamentPlayer(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         user.participating = true;
         (user.player as TTournamentPlayer).applied = true;
+        LobbyPage.renderParticipants();
     }
     removeTournamentPlayer(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         (user.player as TTournamentPlayer).applied = false;
+        LobbyPage.renderParticipants();
     }
     startMatchOUT() {
         
