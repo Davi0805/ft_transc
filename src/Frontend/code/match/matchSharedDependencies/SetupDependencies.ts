@@ -12,6 +12,7 @@ export type TUserCustoms = {
         backgroundSpriteID: number
     },
     matchLength: number,
+    startingScore: number,
     paddles: {
         id: number
         side: SIDES,
@@ -31,7 +32,7 @@ export type TUserCustoms = {
     bots: {
         paddleID: number,
         difficulty: number
-    }[]
+    }[],
 }
 
 export type TGameConfigs = {
@@ -64,7 +65,7 @@ export type TGameConfigs = {
 }
 
 
-export const UserCustoms: TUserCustoms = { //TODO: DELETE THIS ONCE IT IS RECEIVED FROM SETTINGS
+/* export const UserCustoms: TUserCustoms = { //TODO: DELETE THIS ONCE IT IS RECEIVED FROM SETTINGS
     field: {
         size: { x: 800, y: 800 },
         backgroundSpriteID: 0 //NOT USED YET
@@ -95,12 +96,12 @@ export const UserCustoms: TUserCustoms = { //TODO: DELETE THIS ONCE IT IS RECEIV
             role: ROLES.BACK,
             spriteID: 0
         },
-        /* {
+        {
             id: 4,
             side: SIDES.LEFT,
             role: ROLES.FRONT,
             spriteID: 0
-        } */
+        }
     ],
     // Clients are the sockets. Each one can have a different human playing. This allows for couch coop
     clients: [
@@ -116,7 +117,7 @@ export const UserCustoms: TUserCustoms = { //TODO: DELETE THIS ONCE IT IS RECEIV
                         pause: " "
                     }
                 },
-                /* {
+                {
                     id: 2,
                     paddleID: 1,
                     controls: {
@@ -124,10 +125,10 @@ export const UserCustoms: TUserCustoms = { //TODO: DELETE THIS ONCE IT IS RECEIV
                         right: "k",
                         pause: " "
                     }
-                } */
+                }
             ]
         },
-        /* {
+        {
             id: 1,
             humans: [
                 {
@@ -140,13 +141,13 @@ export const UserCustoms: TUserCustoms = { //TODO: DELETE THIS ONCE IT IS RECEIV
                     }
                 }
             ]
-        } */
+        } 
     ],
     bots: [
-        /* {
+        {
             paddleID: 0,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
-        }, */
+        },
         {
             paddleID: 1,
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
@@ -160,7 +161,7 @@ export const UserCustoms: TUserCustoms = { //TODO: DELETE THIS ONCE IT IS RECEIV
             difficulty: 1 // Number of seconds between predictions (1 is hardest and also minimum!!)
         },
     ]
-}
+} */
 
 
 export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
