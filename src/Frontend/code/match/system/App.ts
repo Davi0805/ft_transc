@@ -7,9 +7,9 @@ import { CAppConfigs } from '../matchSharedDependencies/SetupDependencies';
 import { assetsManifest, scenesManifest } from '../game/Manifests';
 
 class FtApplication {
-    async init(gameConfigs: CAppConfigs, rootElement: HTMLElement) {
+    async init(gameConfigs: CAppConfigs, rootElement: HTMLElement, websocket: WebSocket) {
         // Socket setup
-        this._socket = gameConfigs.websocket;
+        this._socket = websocket;
         
         // And when a message needs to be sent, the scene will send it as a signal, and the App will catch it
         // and forward it to the socket. This avoids the scenes to hold references to higher objects in the tree

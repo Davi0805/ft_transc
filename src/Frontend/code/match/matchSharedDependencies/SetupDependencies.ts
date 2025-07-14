@@ -84,7 +84,6 @@ export type CGameSceneConfigs = {
 
 
 export type CAppConfigs = {
-    websocket: WebSocket,
     appConfigs: { width: number, height: number },
     gameSceneConfigs: CGameSceneConfigs
 }

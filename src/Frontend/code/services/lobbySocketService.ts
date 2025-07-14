@@ -65,7 +65,10 @@ class LobbySocketService {
     }
 
     private _ws: WebSocket | null;
-    get ws(): WebSocket | null { return this._ws; }
+    get ws(): WebSocket {
+        if (!this._ws) { throw Error("Socket was accessed but was not initialized!")}
+        return this._ws;
+    }
     private _lobbyID: number | null;
     get lobbyID(): number {
         if (this._lobbyID === null) {

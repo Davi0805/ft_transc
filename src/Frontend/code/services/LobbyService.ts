@@ -5,6 +5,8 @@ import { TDynamicLobbySettings, TFriendlyPlayer, TLobby, TLobbyType, TMatchPlaye
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
 import { router } from "../routes/router";
+import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies";
+import { matchService } from "./matchService";
 
 
 class LobbyService {
@@ -163,8 +165,9 @@ class LobbyService {
         (user.player as TTournamentPlayer).applied = false;
         LobbyPage.renderParticipants();
     }
-    startMatchOUT() {
-        
+    startMatchOUT(configs: CAppConfigs) {
+        matchService.init(configs);
+        router.navigateTo("/match")
     }
 
     getMatchPlayers(): TMatchPlayer[] {

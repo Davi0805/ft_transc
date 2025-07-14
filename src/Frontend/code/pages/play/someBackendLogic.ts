@@ -208,7 +208,7 @@ function getMatchPlayers(users: TUser[], lobbyType: TLobbyType): TMatchPlayer[] 
             }
         })
     } else {
-        //TODO put here the tournament logic
+        //TODO put here the tournament logic (nuno)
     }
     return out;
 }
