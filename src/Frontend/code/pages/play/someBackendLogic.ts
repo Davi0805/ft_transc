@@ -1,6 +1,7 @@
-import { TMatchDuration, TMapType, TLobby, TMatchPlayer, TUser, TLobbyType, TFriendlyPlayer, TRankedPlayer } from "./lobbyTyping"
+import { TMatchDuration, TMapType, TLobby, TMatchPlayer, TUser, TLobbyType, TFriendlyPlayer, TRankedPlayer, TTournPlayer, TTournamentPlayer } from "./lobbyTyping"
 import { TUserCustoms, TGameConfigs, TControls, CGameSceneConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
 import { point, SIDES, ROLES, TWindow, TPaddle } from "../../match/matchSharedDependencies/sharedTypes"
+import { TournamentService } from "../../services/TournamentService"
 
 export type CAppConfigs = {
     appConfigs: { width: number, height: number },
@@ -185,7 +186,6 @@ function getMatchPlayers(users: TUser[], lobbyType: TLobbyType): TMatchPlayer[] 
                         spriteID: player.spriteID,
                         team: player.team,
                         role: player.role,
-                        ready: user.ready
                     })
                 })
             }
@@ -201,20 +201,26 @@ function getMatchPlayers(users: TUser[], lobbyType: TLobbyType): TMatchPlayer[] 
                     spriteID: user.spriteID,
                     team: player.team,
                     role: player.role,
-                    ready: user.ready
                 })
             }
         })
     } else {
-        //TODO put here the tournament logic (nuno)
+        for (let i = 0; i < users.length; i++) {
+            out.push({
+                userID: users[i].id,
+                id: users[i].id,
+                nickname: users[i].nickname,
+                spriteID: users[i].spriteID,
+                team: i === 0 ? SIDES.LEFT : SIDES.RIGHT,
+                role: ROLES.BACK,
+            })
+        }
     }
     return out;
 }
-/* function getTournPlayers(): TTournPlayer[] {
-    if (!this._isLobbyOfType("tournament")) {throw Error("Function called in wrong lobby type")}
-
+function getTournPlayers(users: TUser[]): TTournPlayer[] {
     const out: TTournPlayer[] = [];
-    this._users.forEach(user => {
+    users.forEach(user => {
         const player = user.player as TTournamentPlayer;
         if (player.applied) {
             out.push({
@@ -230,7 +236,7 @@ function getMatchPlayers(users: TUser[], lobbyType: TLobbyType): TMatchPlayer[] 
         }
     })
     return out
-} */
+}
 
 export function buildCAppConfigs(gameConfigs: TGameConfigs, 
   clientID: number): CAppConfigs {
@@ -319,16 +325,42 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
   return out;
 }
 
-function startMatch(lobbySettings: TLobby, users: TUser[]) {
-    const matchPlayers: TMatchPlayer[] = getMatchPlayers(users, lobbySettings.type);
-    const userCustoms: TUserCustoms = buildUserCustoms(lobbySettings, matchPlayers);
-    const gameSettings: TGameConfigs = applyDevCustoms(userCustoms);
-    const serverSettings: SGameConfigs = buildSGameConfigs(gameSettings);
 
-    const userIDs: number[] = [] //TODO: put here user ids
-    userIDs.forEach(userID => {
-        const clientSettings: CAppConfigs = buildCAppConfigs(gameSettings, userID);
-        //TODO: send clientSettings to each corresponding userID
+
+
+type TMatch = TUser[];
+
+function buildMatches(lobbySettings: TLobby, users: TUser[]): TMatch[] {
+    const out: TMatch[] = [];
+    if (lobbySettings.type !== "tournament") {
+        out.push(users);
+        return out;
+    }
+
+    const participants: TTournPlayer[] = getTournPlayers(users);
+    const pairings = TournamentService.getNextRoundPairings(participants);
+    pairings.forEach(pair => {
+        const player1 = users.find(user => user.id === pair[0]);
+        const player2 = users.find(user => user.id === pair[1]);
+        if (!player1 || !player2) { throw Error("GAVE GIGANTIC SHIT"); }
+        out.push([player1, player2]);
     })
-    //TODO: start game in backend with serverSettings
+    return out
+}
+
+function startMatch(lobbySettings: TLobby, users: TUser[]) {
+    const matches: TMatch[] = buildMatches(lobbySettings, users);
+    matches.forEach(match => {
+        const matchPlayers: TMatchPlayer[] = getMatchPlayers(match, lobbySettings.type);
+        const userCustoms: TUserCustoms = buildUserCustoms(lobbySettings, matchPlayers);
+        const gameSettings: TGameConfigs = applyDevCustoms(userCustoms);
+        const serverSettings: SGameConfigs = buildSGameConfigs(gameSettings);
+
+        const userIDs: number[] = [] //TODO: put here user ids
+        userIDs.forEach(userID => {
+            const clientSettings: CAppConfigs = buildCAppConfigs(gameSettings, userID);
+            //TODO: send clientSettings to each corresponding userID
+        })
+        //TODO: start game in backend with serverSettings
+    })
 }

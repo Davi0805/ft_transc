@@ -120,7 +120,7 @@ export  type TMatchPlayer = {
     role: ROLES,
     //leftControl: string,
     //rightControl: string,
-    ready: boolean
+    //ready: boolean
 }
 
 export type TTournPlayer = {

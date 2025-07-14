@@ -184,7 +184,6 @@ class LobbyService {
                             spriteID: player.spriteID,
                             team: player.team,
                             role: player.role,
-                            ready: user.ready
                         })
                     })
                 }
@@ -200,7 +199,6 @@ class LobbyService {
                         spriteID: user.spriteID,
                         team: player.team,
                         role: player.role,
-                        ready: user.ready
                     })
                 }
             })
