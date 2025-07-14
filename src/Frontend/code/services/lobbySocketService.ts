@@ -53,7 +53,6 @@ class LobbySocketService {
         if (this._ws && this._ws.readyState === WebSocket.OPEN) {
             const dto: InboundDTO = {
                 requestType: type,
-                lobbyID: lobbySocketService.lobbyID,
                 data: data
             }
             this._ws.send(JSON.stringify(dto));

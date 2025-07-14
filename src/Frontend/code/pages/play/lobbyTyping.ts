@@ -77,7 +77,6 @@ export type OutboundDTOMap = {
 
 export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {
     requestType: T,
-    lobbyID: number,
     data: InboundDTOMap[T]
 }
 

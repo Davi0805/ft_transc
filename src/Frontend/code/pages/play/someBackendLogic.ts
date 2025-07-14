@@ -1,11 +1,9 @@
 import { TMatchDuration, TMapType, TLobby, TMatchPlayer, TUser, TLobbyType, TFriendlyPlayer, TRankedPlayer } from "./lobbyTyping"
-import { TUserCustoms, TGameConfigs, TControls } from "../../match/matchSharedDependencies/SetupDependencies"
+import { TUserCustoms, TGameConfigs, TControls, CGameSceneConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
 import { point, SIDES, ROLES, TWindow, TPaddle } from "../../match/matchSharedDependencies/sharedTypes"
-import { AppConfigs } from "../../match/system/framework/Application"
-import { CGameSceneConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
 
 export type CAppConfigs = {
-    appConfigs: AppConfigs,
+    appConfigs: { width: number, height: number },
     gameSceneConfigs: CGameSceneConfigs
 }
 
