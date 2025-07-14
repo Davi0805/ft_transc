@@ -1,4 +1,3 @@
-
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE match (
@@ -36,6 +35,12 @@ CREATE TABLE user_customs (
     paddle_sprite INTEGER
 );
 
+CREATE TABLE maps (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(20) NOT NULL,
+    max_slots INTEGER NOT NULL
+);
+
 -- Insert mock matches
 INSERT INTO match (score_team_1, score_team_2, score_team_3, score_team_4, tournament_id) VALUES
 (3, 2, NULL, NULL, NULL),
@@ -59,3 +64,18 @@ INSERT INTO player_matches (team_id, user_id, match_id) VALUES
 (2, 302, 3),
 (2, 303, 3),
 (3, 304, 3);
+
+-- Insert maps
+INSERT INTO maps (name, max_slots) VALUES
+("2-players-small", 2),
+("2-players-medium", 2),
+("2-players-big", 2),
+("4-players-small", 4),
+("4-players-medium", 4),
+("4-players-big", 4),
+("2-teams-small", 4),
+("2-teams-medium", 4),
+("2-teams-big", 4),
+("4-teams-small", 8),
+("4-teams-medium", 8),
+("4-teams-big", 8);

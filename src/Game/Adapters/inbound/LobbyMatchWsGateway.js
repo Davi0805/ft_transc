@@ -1,6 +1,8 @@
 const lobbyRepo = require('../outbound/LobbyDataRepository');
 const exception = require('../../Infrastructure/config/CustomException');
 const redisService = require('../../Application/Services/RedisService');
+const msgHandler = require('../../Application/Services/MessageHandler');
+const connectedUsersRepository = require('../outbound/ConnectedUsersRepository');
 
 class LobbyMatchWsGateway {
 
@@ -28,12 +30,23 @@ class LobbyMatchWsGateway {
             return;
         }
 
-        const lobbyData = await lobbyRepo.get(req.params.lobbyId);
+        let lobbyData = await lobbyRepo.get(req.params.lobbyId);
         console.log('JSON = ' + JSON.stringify(lobbyData));
         if (Object.keys(lobbyData).length == 0) socket.close();
+        lobbyData = await lobbyRepo.addUser(req.params.lobbyId, {user_id: session.user_id});
+        connectedUsersRepository.addUser(req.params.lobbyId, session.user_id, socket);
+        socket.send(JSON.stringify(lobbyData));
 
-        lobbyRepo.addUser(req.params.lobbyId, {user_id: session.user_id});
-        
+        socket.on('message', async message => {
+            msgHandler.process(message, req.params.lobbyId, session.user_id);
+        });
+
+        // please decouple this after cause this is really ugly code
+        socket.on('close', async () => {
+            connectedUsersRepository.deleteUser(req.params.lobbyId, session.user_id);
+            connectedUsersRepository.broadcastToLobby(req.params.lobbyId, {type: "user_left_event",
+                                                                        user_id: session.user_id});
+        })
     }
 
 }

@@ -1,5 +1,5 @@
 const redis = require('../../Infrastructure/config/Redis');
-
+const connectedUsersRepository = require('../outbound/ConnectedUsersRepository');
 
 
 /* 
@@ -9,7 +9,6 @@ const redis = require('../../Infrastructure/config/Redis');
 *    "mode": "modern",
 *    "duration": 120,
 *    "map": "2v2-small",
-*    "map_usr_min": 2,
 *    "map_usr_max": 4,
 *    "users": []
 *   }
@@ -26,8 +25,9 @@ class LobbyDataRepository {
         redis.hSet(`lobby:${lobby_id}`, 'mode', data.mode);
         redis.hSet(`lobby:${lobby_id}`, 'duration', data.duration);
         redis.hSet(`lobby:${lobby_id}`, 'map', data.map);
-        redis.hSet(`lobby:${lobby_id}`, 'map_usr_min', data.map_usr_min);
+        redis.hSet(`lobby:${lobby_id}`, 'slots_taken', data.slots_taken);
         redis.hSet(`lobby:${lobby_id}`, 'map_usr_max', data.map_usr_max);
+        redis.hSet(`lobby:${lobby_id}`, 'round', data.round);
 
         redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify([]));
 
@@ -52,8 +52,25 @@ class LobbyDataRepository {
     {
         const lobby = await this.get(lobby_id);
         if (lobby) this.isTemp(lobby_id);
-        lobby.users.push({id: data.user_id, ready: false});
+        if (lobby.users.length == 0) lobby.users.push({id: data.user_id, ready: false, host: true});
+        else lobby.users.push({id: data.user_id, ready: false, host: false});
         await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(lobby.users));
+        return lobby;
+    }
+
+    // todo: make verifications on the service and decouple everything with the services
+    async setPlayerPosition(lobby_id, user_id, data)
+    {
+        const lobby = await this.get(lobby_id);
+        const user = lobby.users.find(u => u.id == user_id);
+        user.team = data.team;
+        user.role = data.role;
+        await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(lobby.users));
+
+        // todo: this is reallyy coupled
+        connectedUsersRepository.broadcastToLobby(lobby_id, {type: "position_update_event",
+                                                            user_id: user_id, team: data.team,
+                                                            role: data.role})
     }
 
     async removeUser(lobby_id, user_id)
@@ -67,11 +84,49 @@ class LobbyDataRepository {
         const user = lobby.users.find(u => u.id == user_id);
         user.ready = ready_state;
         await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(lobby.users));
+        // todo: this is reallyy coupled
+        connectedUsersRepository.broadcastToLobby(lobby_id, {type: "ready_state_update_event",
+                                                            user_id: user_id, ready: ready_state});
     }
 
     async setUserPosition(lobby_id, position)
     {
 
+    }
+
+    async getHostIdByLobbyId(lobby_id)
+    {
+        const lobby = await this.get(lobby_id);
+        const host = lobby.users.find(u => u.host == true);
+        return host.id;
+    }
+
+
+    /*
+    export type TLobby = {
+    id: number,
+    hostID: number,
+    name: string,
+    host: string,
+    type: TLobbyType, ok
+    capacity: TMatchCapacity, ok
+    map: TMapType, ok
+    mode: TMatchMode, ok
+    duration: TMatchDuration,
+    round: number
+    }*/
+    async getLobbyToGameBuild(lobby_id)
+    {
+        const lobby = await this.get(lobby_id);
+        const hostId = await this.getHostIdByLobbyId(lobby_id);
+        return ({hostID: hostId,
+                type: lobby.type,
+                capacity: {taken: lobby.slots_taken, max: lobby.map_usr_max},
+                map: lobby.map,
+                mode: lobby.mode,
+                duration: lobby.duration,
+                round: lobby.round
+        })
     }
 
     async get(lobby_id)
