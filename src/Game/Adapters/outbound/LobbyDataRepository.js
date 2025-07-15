@@ -119,7 +119,9 @@ class LobbyDataRepository {
     {
         const lobby = await this.get(lobby_id);
         const hostId = await this.getHostIdByLobbyId(lobby_id);
-        return ({hostID: hostId,
+        return ({id: lobby_id,
+                name: lobby.name,
+                hostID: hostId,
                 type: lobby.type,
                 capacity: {taken: lobby.slots_taken, max: lobby.map_usr_max},
                 map: lobby.map,
