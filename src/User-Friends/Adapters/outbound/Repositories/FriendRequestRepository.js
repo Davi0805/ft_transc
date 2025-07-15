@@ -37,6 +37,13 @@ class FriendRequestRepository {
         }
     }
 
+    async getPendingRequestCounter(user_id)
+    {
+        return await db.raw('SELECT COUNT() AS pendingRequestsCounter'
+                            +' FROM friend_requests WHERE to_user_id = ? AND status = ?'
+                            , [user_id, 'PENDING']);
+    }
+
     async rejectRequest(request_id, user_id)
     {
         return await db.raw('UPDATE friend_requests '+
