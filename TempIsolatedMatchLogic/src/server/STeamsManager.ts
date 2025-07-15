@@ -1,4 +1,4 @@
-import { SIDES } from "../misc/types";
+import { SIDES } from "../shared/sharedTypes.js";
 import STeam from "./STeam.js";
 
 export default class STeamsManager {

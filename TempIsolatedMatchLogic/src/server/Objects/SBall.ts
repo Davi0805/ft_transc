@@ -1,23 +1,10 @@
-import Point from "../../misc/Point.js";
-import SObject from "../../abstracts/SObject.js";
-import { TBall } from "../../misc/types.js";
+import Point from "../../shared/Point.js";
+import { BALL_TYPES } from "../../shared/sharedTypes.js";
+import SObject from "./SObject.js";
+import { TBall } from "../../shared/sharedTypes.js";
 
 export type TSBallConfigs = Pick<TBall, "type" | "size" | "pos" |"direction" | "speed" | "damage">
 export type SBallState = Pick<SBall, "id" | "pos" | "direction" | "speed">
-
-export enum BALL_TYPES {
-    BASIC,
-    EXPAND,
-    SHRINK,
-    SPEED_UP,
-    SLOW_DOWN,
-    EXTRA_BALL,
-    RESTORE,
-    DESTROY,
-    MASSIVE_DAMAGE,
-    MYSTERY,
-    BALL_TYPE_AM
-}
 
 // Represents the ball from the Server's perspective
 export default class SBall extends SObject {

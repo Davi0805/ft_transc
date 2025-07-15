@@ -1,4 +1,4 @@
-import { SIDES } from "../../../misc/types";
+import { SIDES } from "../../../shared/sharedTypes";
 import CNumbersText from "./CNumbersText";
 
 export default class CTeam {

@@ -1,7 +1,7 @@
-import { App } from './scripts/system/App';
-import { buildCAppConfigs } from '../misc/buildGameOptions';
-import { applyDevCustoms, UserCustoms } from '../misc/gameOptions';
-import { Adto } from '../misc/types';
+import { App } from './scripts/system/App.js';
+import { buildCAppConfigs } from './setup.js';
+import { applyDevCustoms, UserCustoms } from '../shared/SetupDependencies.js';
+import { Adto } from '../shared/dtos.js';
 
 // This websocket is the client's connection (which has been probably open way before)
 const websocket = new WebSocket(`ws://${window.location.hostname}:3000/ws`);
@@ -23,7 +23,7 @@ async function onInitMessage(event: MessageEvent<any>) {
 
         // UserCustoms will be the object that will be generated at runtime
         const gameConfigs = applyDevCustoms(UserCustoms);
-        const clientGameConfigs = buildCAppConfigs(gameConfigs, clientID, websocket)
+        const clientGameConfigs = buildCAppConfigs(gameConfigs, clientID, websocket, document.body) // 
         await App.init(clientGameConfigs);
     }
     
