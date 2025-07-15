@@ -12,7 +12,12 @@ export const LoginPage = {
         <form id="login-form">
           <h1 class="title" data-i18n="login-title">Login</h1>
           <div class="input-box">
-            <input id="username" type="text" name="username" data-i18n-placeholder="login-place-username" required/>
+            <input id="username" type="text" name="username" 
+            data-i18n-placeholder="login-place-username" 
+            required
+            pattern="^[a-zA-Z0-9_\\-]{3,15}$" 
+            title="Username must be 3-15 characters long and can include letters, numbers, '_' or '-'" 
+            />
             <img src="../Assets/icons/user.svg" draggable="false"/>
           </div>
           <div class="input-box">
