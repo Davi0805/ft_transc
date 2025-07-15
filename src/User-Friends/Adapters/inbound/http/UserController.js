@@ -6,7 +6,6 @@ const fs = require('fs');
 const mime = require('mime-types');
 const path = require('path');
 const exception = require('../../../Infrastructure/config/CustomException');
-const { save } = require('../../outbound/Repositories/UserRepository');
 
 class UserController {
 
