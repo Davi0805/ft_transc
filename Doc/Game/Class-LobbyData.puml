@@ -1,0 +1,16 @@
+@startuml
+
+class LobbyData {
+    name (string)
+    type (string)
+    mode (string)
+    length_time (int) // maybe change with a timestamp
+
+    map (string)
+    map_usr_min (int)
+    map_usr_max (int)
+
+    users (vetor<>)
+}
+
+@enduml
