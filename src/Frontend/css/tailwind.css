@@ -53,14 +53,37 @@
 }
 
 @layer components {
+    .content {
+        @apply bg-gradient-to-b from-blue-500 via-blue-800 to-neutral-900 shadow-2xl shadow-black border-y border-black text-myWhite rounded-xl p-8;
+    }
+
     .settings-active {
         background-color: rgba(107, 114, 128, 0.7);
     }
+
+    .title {
+        @apply text-4xl font-bold text-center;
+    }
+ 
+    .input-box {
+        @apply w-full h-[50px] my-7 relative;
+    }
+
+    .input-box input {
+        @apply w-full h-[50px] bg-black/40 border-none outline-none text-myWhite text-base font-medium border-2 border-white/20
+        p-5 pr-[45px] caret-myWhite rounded-3xl;
+    }
+
+
 }
 
 @layer utilities {
     dialog::backdrop {
         background-color: rgba(20, 20, 20, 0.85);
+    }
+
+    .w-420 {
+        width: 420px;
     }
 }
     

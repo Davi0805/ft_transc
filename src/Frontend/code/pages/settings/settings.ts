@@ -9,7 +9,7 @@ export const SettingsPage = {
     const avatar = authService.userAvatar;
 
     return `
-            <div id="settings-wrapper" class="relative flex w-[800px] h-[450px] rounded-xl bg-gradient-to-b from-blue-500 to-neutral-900 shadow-2xl shadow-black border-y border-black text-white">
+            <div id="settings-wrapper" class="relative flex w-[800px] h-[450px] rounded-xl bg-gradient-to-b from-blue-500 via-blue-800 to-neutral-900 shadow-2xl shadow-black border-y border-black text-white">
               <!-- SIDEBAR -->
               <div id="settings-sidebar" class=" flex w-52 min-w-32 flex-col items-center border-white/20 pt-4 text-white">
                 <!-- INFO USER -->
@@ -263,7 +263,7 @@ export const SettingsPage = {
           <div class="requests-container"></div>
          `;
 
-  }
+  },
 
   initSecurityEvents(): void {
     const form = document.querySelector("security-form");
