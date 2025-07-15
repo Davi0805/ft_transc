@@ -54,11 +54,13 @@
 
 @layer components {
     .settings-active {
-        @apply bg-gray-500/70;
+        background-color: rgba(107, 114, 128, 0.7);
     }
 }
 
 @layer utilities {
-    
+    dialog::backdrop {
+        background-color: rgba(20, 20, 20, 0.85);
+    }
 }
     
