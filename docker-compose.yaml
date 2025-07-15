@@ -6,35 +6,43 @@ services:
     networks:
       - net
 
-  #prometheus:
-  #  build: ./Prometheus
-  #  ports:
-  #    - "9090:9090"
-  #  depends_on:
-  #    - user-backend
-  #  networks:
-  #    - net
-  #
-  #grafana:
-  #  image: grafana/grafana-enterprise
-  #  container_name: grafana
-  #  restart: unless-stopped
-  #  ports:
-  #   - '3000:3000'
-  #  networks:
-  #    - net
-  #
-  #node_exporter:
-  #  image: quay.io/prometheus/node-exporter:latest
-  #  container_name: node_exporter
-  #  command:
-  #    - '--path.rootfs=/host'
-  #  pid: host
-  #  restart: unless-stopped
-  #  volumes:
-  #    - '/:/host:ro,rslave'
-  #  networks:
-  #    - net
+  # prometheus:
+  #   build: ./Prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   depends_on:
+  #     - user-backend
+  #   networks:
+  #     - net
+  # prometheus:
+  #   build: ./Prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   depends_on:
+  #     - user-backend
+  #   networks:
+  #     - net
+  
+  # grafana:
+  #   image: grafana/grafana-enterprise
+  #   container_name: grafana
+  #   restart: unless-stopped
+  #   ports:
+  #    - '3000:3000'
+  #   networks:
+  #     - net
+  
+  # node_exporter:
+  #   image: quay.io/prometheus/node-exporter:latest
+  #   container_name: node_exporter
+  #   command:
+  #     - '--path.rootfs=/host'
+  #   pid: host
+  #   restart: unless-stopped
+  #   volumes:
+  #     - '/:/host:ro,rslave'
+  #   networks:
+  #     - net
   
   user-backend:
     build: ./src/User-Friends
@@ -84,8 +92,8 @@ services:
   nginx-modsecurity:
       build: ./nginx
       ports:
-        - "80:80"
-        - "443:8443"
+        - "8888:80"
+        - "8443:8443"
       volumes:
         - ./src/Frontend:/usr/share/nginx/html:ro
         

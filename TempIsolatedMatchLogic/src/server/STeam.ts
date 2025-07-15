@@ -1,4 +1,4 @@
-import { SIDES } from "../misc/types";
+import { SIDES } from "../shared/sharedTypes.js";
 
 // Represents a set of players defending one of the sides of the field
 export default class STeam {

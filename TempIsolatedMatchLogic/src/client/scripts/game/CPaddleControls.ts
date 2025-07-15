@@ -1,5 +1,7 @@
 import { EventBus } from "../system/EventBus";
-import { TControls, TControlsState, CGameDTO } from "../../../misc/types";
+import { TControls } from "../../../shared/SetupDependencies";
+import { TControlsState } from "../../../shared/sharedTypes";
+import { CGameDTO } from "../../../shared/dtos";
 
 
 export default class CPaddleControls {
