@@ -1,7 +1,3 @@
-.loggin-wrapper {
-  width: 420px;
-}
-
 #login-error {
   color: #bb1515;
   font-weight: 600;
@@ -9,23 +5,7 @@
   margin-bottom: 15px;
 }
 
-.loggin-wrapper .forgot {
-  display: flex;
-  justify-content: flex-end;
-  font-size: 14.5px;
-  margin: -15px 0 15px;
-}
-
-.forgot a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.forgot a:hover {
-  text-decoration: underline;
-}
-
-.loggin-wrapper .button {
+#login-form .button {
   width: 100%;
   height: 45px;
   background-color: #fff;
@@ -39,7 +19,7 @@
   background-color: #bdbdbd;
 }
 
-.loggin-wrapper .register-link {
+#login-form .register-link {
   font-size: 14.5px;
   text-align: center;
   margin: 20px 0 15px;

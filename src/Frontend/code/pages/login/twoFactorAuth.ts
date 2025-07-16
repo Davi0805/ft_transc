@@ -20,7 +20,7 @@ export const TwoFactorAuth = {
             <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
             <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
           </div>
-          <div id="2facode-error" aria-live="polite" hidden></div>
+          <div id="twofacode-error" aria-live="polite" hidden></div>
           <button type="submit" class="button" data-i18n="2fa-btn">Verify</button>
         </form>
       </div>
@@ -63,7 +63,7 @@ export const TwoFactorAuth = {
         router.navigateTo(redirectPath);
       } catch (error) {
         if ((error as any).status == 401) {
-          const loginError = document.getElementById('2facode-error') as HTMLElement;
+          const loginError = document.getElementById('twofacode-error') as HTMLElement;
           loginError.textContent = "Verification code is incorrect!"
           loginError.hidden = false;
           console.error("DEBUG 2FA code wrong");
