@@ -122,6 +122,13 @@ class FriendRequestController {
         const count = await friendRequest.countPendingRequests(req.session.user_id);
         return reply.send(count);
     }
+
+
+    async getAllMyBlockedFriends(req, reply)
+    {
+        const result = await friendRequest.getAllMyBlockedFriends(req.session.user_id);
+        return reply.send(result);
+    }
 }
 
 module.exports = new FriendRequestController();

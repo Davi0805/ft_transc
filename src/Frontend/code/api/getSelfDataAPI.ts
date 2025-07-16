@@ -3,6 +3,8 @@ import { authService } from "../services/authService";
 export interface SelfData {
   id: number; // userID
   nickname: string | null;
+  username: string | null;
+  email: string | null;
 }
 
 /**

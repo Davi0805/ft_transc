@@ -2,7 +2,7 @@ export const HomePage = {
     template() {
         return `
             <div class="flex flex-dir-col flex-center content">
-                <h1>Home</h1>
+                <h1 class="title">Home</h1>
                 <p>This is the Home Page</p>
             </div>
         `;

@@ -30,7 +30,7 @@ class UserController {
     async getMyData(req, reply)
     {
         const users = await userService.findById(req.session.user_id);
-        return reply.send({id: users[0].user_id, nickname: users[0].name});
+        return reply.send({id: users[0].user_id, nickname: users[0].name, username: users[0].username, email: users[0].email});
     }
 
 
@@ -169,7 +169,7 @@ class UserController {
         const user = await userService.findById(req.session.user_id);
         if (user.twofa_enabled) throw exception('2FA already activated', 400);
         const twofa = await twofaService.generateSecret();
-        await twofaService.saveTempTwoFa(req.session.user_id, twofa);
+        await twofaService.saveTempTwoFa(req.session.user_id, twofa.secret);
         return reply.send({qrcode: twofa.qrCodeUrl});
     }
 

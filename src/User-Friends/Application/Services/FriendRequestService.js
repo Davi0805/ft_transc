@@ -129,6 +129,15 @@ class FriendRequestService {
             
         }
     }
+
+    async getAllMyBlockedFriends(user_id)
+    {
+        try {
+            return await friendRequestRepo.getAllMyBlockedFriends(user_id);
+        } catch (error) {
+            throw exception('Failed to retrieve', 400);
+        }
+    }
 }
 
 module.exports = new FriendRequestService();

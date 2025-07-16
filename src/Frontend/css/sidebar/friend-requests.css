@@ -20,10 +20,6 @@
     color: #eee;
 }
 
-.friend-requests-wrapper::backdrop {
-    background: rgba(20, 20, 20, 0.85);
-}
-
 .friend-request-header {
     font-size: 24px;
     font-weight: 600;

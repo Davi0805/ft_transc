@@ -1,8 +1,8 @@
 export interface UserData {
-  user_id: 1;
-  name: "Artur";
-  username: "artuda-s";
-  email: "artur@example.com";
+  user_id: number | string;
+  name: string;
+  username: string;
+  email: string;
 }
 
 /**
