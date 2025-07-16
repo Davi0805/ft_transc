@@ -86,6 +86,11 @@ class FriendRequestRepository {
                             ['ACCEPTED', user_id, user_id]);
     }
 
+    async getAllMyBlockedFriends(user_id)
+    {
+        return await db.raw('SELECT * FROM friend_requests WHERE status = ? AND blocked_by = ?', ['BLOCKED', user_id]);
+    }
+
 
 }
 
