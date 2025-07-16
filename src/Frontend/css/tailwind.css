@@ -16,21 +16,28 @@
         display: flex;
         flex-direction: column;
         min-height: 100vh;
-        background: url("../Assets/bg.jpeg") no-repeat;
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
+  
     }
+
+    .video-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -9999;
+    }
+
     
     #header {
         display: flex;
         height: 60px;
         padding: 8px 24px;
     
-        background: rgba(20, 20, 20, 0.6);
-        backdrop-filter: blur(50px);
+        background: #172332;
         
-        border: 2px solid rgba(0, 0, 0, 0.4);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.4);
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
         border-radius: 0;
         
