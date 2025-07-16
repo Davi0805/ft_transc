@@ -74,6 +74,21 @@ services:
     networks:
       - net
 
+  game-backend:
+    init: true
+    build: ./src/Game
+    ports:
+      - "8084:8084"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./src/Game:/app
+      - /app/node_modules
+    depends_on:
+      - redis
+    networks:
+      - net
+
   nginx-modsecurity:
       build: ./nginx
       ports:
