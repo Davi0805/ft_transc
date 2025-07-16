@@ -42,11 +42,16 @@ class UserService {
     */
     async findByUsername(username)
     {
-        const users = await userRepository.findByUsername(username);
-        if (!users || users.length === 0) throw exception('Data not found!, 404');
-        return {user_id: users[0].user_id,
-                username: users[0].username,
-                user_image: users[0].user_image};
+        try {
+            const users = await userRepository.findByUsername(username);
+            if (!users || users.length === 0) throw exception('Data not found!, 404');
+            return {user_id: users[0].user_id,
+                    username: users[0].username,
+                    user_image: users[0].user_image};    
+        } catch (error) {
+            throw exception('Failed to create a friendship!', 400);
+        }
+        
     }
 
 

@@ -28,6 +28,11 @@ async function userRoutes(fastify, options) {
       preHandler: authMiddleware,
       handler: userController.activateTwoFactorAuth
     });
+
+    fastify.post('/twofa/activate/confirm', {
+      preHandler: authMiddleware,
+      handler: userController.confirmTwoFactorAuthActivation
+    });
     
     fastify.get('/users/username/:username', {
       handler: userController.getByUsername

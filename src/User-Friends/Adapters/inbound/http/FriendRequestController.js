@@ -111,6 +111,24 @@ class FriendRequestController {
         const friends = await friendRequest.getAllFriends(req.session.user_id);
         return reply.send(friends);   
     }
+
+
+    /*
+    *    Endpoint to retrieve the count of pending requests
+    *    GET -  localhost:8080/friend_requests/pending/count
+    */
+    async getPendingRequestsCount(req, reply)
+    {
+        const count = await friendRequest.countPendingRequests(req.session.user_id);
+        return reply.send(count);
+    }
+
+
+    async getAllMyBlockedFriends(req, reply)
+    {
+        const result = await friendRequest.getAllMyBlockedFriends(req.session.user_id);
+        return reply.send(result);
+    }
 }
 
 module.exports = new FriendRequestController();

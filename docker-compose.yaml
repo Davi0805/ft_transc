@@ -14,6 +14,14 @@ services:
   #     - user-backend
   #   networks:
   #     - net
+  # prometheus:
+  #   build: ./Prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   depends_on:
+  #     - user-backend
+  #   networks:
+  #     - net
   
   # grafana:
   #   image: grafana/grafana-enterprise
@@ -38,6 +46,7 @@ services:
   
   user-backend:
     build: ./src/User-Friends
+    init: true
     ports:
       - "8080:8080"
     environment:
@@ -51,6 +60,7 @@ services:
       - net
 
   chat-backend:
+    init: true
     build: ./src/Chat
     ports:
       - "8081:8081"
@@ -64,19 +74,34 @@ services:
     networks:
       - net
 
-  # nginx-modsecurity:
-  #     build: ./nginx
-  #     ports:
-  #       - "80:80"
-  #       - "443:8443"
-  #     volumes:
-  #       - ./src/Frontend:/usr/share/nginx/html:ro
+  game-backend:
+    init: true
+    build: ./src/Game
+    ports:
+      - "8084:8084"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./src/Game:/app
+      - /app/node_modules
+    depends_on:
+      - redis
+    networks:
+      - net
+
+  nginx-modsecurity:
+      build: ./nginx
+      ports:
+        - "8888:80"
+        - "8443:8443"
+      volumes:
+        - ./src/Frontend:/usr/share/nginx/html:ro
         
-  #     depends_on:
-  #       - user-backend
-  #       - chat-backend
-  #     networks:
-  #       - net
+      depends_on:
+        - user-backend
+        - chat-backend
+      networks:
+        - net
 
 networks:
   net:

@@ -20,7 +20,7 @@ export class AuthService {
   public sidebar: Chat | null;
 
   constructor() {
-    this.protectedRoutes = ["/play", "/profile"];
+    this.protectedRoutes = [/*"/play",*/ "/profile"];
     this.userID = null;
     this.userNick = null;
     this.userAvatar = null;
