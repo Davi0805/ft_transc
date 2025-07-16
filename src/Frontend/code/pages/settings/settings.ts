@@ -58,14 +58,16 @@ export const SettingsPage = {
                       <!-- Username -->
                       <div class="flex items-center space-x-3">
                         <label for="settings-username" class="w-20 font-semibold">Username</label>
-                        <input id="settings-username" type="text" value="${username}" disabled readonly class="h-11 cursor-not-allowed rounded-3xl border-2 border-white/20 bg-black/20 px-[20px] py-[20px] pr-[45px] text-base font-medium text-white caret-white opacity-60 outline-none" />
+                        <input id="settings-username" type="text" value="${username}" disabled readonly 
+                        class="input-settings-disable" />
                         <span class="text-sm text-gray-400">🔒</span>
                       </div>
 
                       <!-- Email -->
                       <div class="flex items-center space-x-3">
                         <label for="settings-email" class="w-20 font-semibold">Email</label>
-                        <input id="settings-email" type="text" value="${email}" disabled readonly class="h-11 cursor-not-allowed rounded-3xl border-2 border-white/20 bg-black/20 px-[20px] py-[20px] pr-[45px] text-base font-medium text-white caret-white opacity-60 outline-none" />
+                        <input id="settings-email" type="text" value="${email}" disabled readonly 
+                        class="input-settings-disable" />
                         <span class="text-sm text-gray-400">🔒</span>
                       </div>
                       
@@ -77,7 +79,7 @@ export const SettingsPage = {
                             pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
                             required
                             title="Name must be 2–40 characters long and can include letters and spaces"
-                            class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
+                            class="input-settings" />
                           <span class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</span>
                         </div>
                       </div>
