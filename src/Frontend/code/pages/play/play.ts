@@ -25,6 +25,7 @@ export const PlayPage = {
     },
 
     init() {
+        console.log("wtfffff")
         const lobbiesHead = document.getElementById('lobbies-head') as HTMLElement;
         lobbiesHead.innerHTML = this.getLobbyCategoriesHtml();
 
