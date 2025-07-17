@@ -88,7 +88,7 @@ class LobbySocketService {
                 lobby.joinLobbyOUT(dto.data.lobby, dto.data.users);
                 break;
             case "updateSettings":
-                lobby.updateSettingsOUT(dto.data.settings);
+                lobby.updateSettingsOUT(dto.data.settings, dto.data.updateSlots);
                 break;
             case "updateReadiness":
                 lobby.updateReadinessOUT(dto.data.userID, dto.data.ready)

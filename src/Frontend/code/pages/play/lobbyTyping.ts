@@ -46,6 +46,7 @@ export type OutboundDTOMap = {
     }
     updateSettings: {
         settings: TLobby
+        updateSlots: boolean
     },
     updateReadiness: {
         userID: number,

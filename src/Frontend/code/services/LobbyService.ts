@@ -127,10 +127,13 @@ class LobbyService {
         this.init(selfData, settings);
     }
 
-    updateSettingsOUT(settings: TLobby) {
+    updateSettingsOUT(settings: TLobby, updateSlots: boolean) {
         console.log("Is this being called?")
         this._settings = settings
         LobbyPage.renderSettings();
+        if (updateSlots && settings.type !== "tournament") {
+            LobbyPage.renderSlots()
+        }
     }
     updateReadinessOUT(id: number, ready: boolean) {
         const user = this._findUserByID(id);

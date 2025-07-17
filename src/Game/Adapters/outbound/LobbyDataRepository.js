@@ -58,6 +58,18 @@ class LobbyDataRepository {
         return lobby;
     }
 
+    async updateSettings(lobby_id, new_settings) {
+        const prevSettings = await this.get(lobby_id);
+        redis.hSet(`lobby:${lobby_id}`, 'map', new_settings.map)
+        redis.hSet(`lobby:${lobby_id}`, 'mode', new_settings.mode)
+        redis.hSet(`lobby:${lobby_id}`, 'duration', new_settings.duration)
+        const settings = await this.getLobbyToGameBuild(lobby_id)
+        connectedUsersRepository.broadcastToLobby(lobby_id, {
+            requestType: "updateSettings",
+            data: { settings: settings, updateSlots: prevSettings.map != settings.map }
+        })
+    }
+
     // todo: make verifications on the service and decouple everything with the services
     async setPlayerPosition(lobby_id, user_id, data)
     {

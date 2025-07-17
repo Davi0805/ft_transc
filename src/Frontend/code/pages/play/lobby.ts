@@ -63,6 +63,8 @@ export const LobbyPage = {
 
         const buttonChangeSettings = document.getElementById('btn-change-settings') as HTMLElement;
         buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
+
+
     },
 
     renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
