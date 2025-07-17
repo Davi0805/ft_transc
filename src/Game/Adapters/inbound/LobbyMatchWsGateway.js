@@ -35,7 +35,19 @@ class LobbyMatchWsGateway {
         if (Object.keys(lobbyData).length == 0) socket.close();
         lobbyData = await lobbyRepo.addUser(req.params.lobbyId, {user_id: session.user_id});
         connectedUsersRepository.addUser(req.params.lobbyId, session.user_id, socket);
-        socket.send(JSON.stringify(lobbyData));
+
+        const tlobby = await lobbyRepo.getLobbyToGameBuild(req.params.lobbyId)
+        const users = lobbyData.users
+
+
+        const dto = {
+            requestType: "joinLobby",
+            data: {
+                lobby: tlobby,
+                users: users
+            }
+        }
+        socket.send(JSON.stringify(dto));
 
         socket.on('message', async message => {
             msgHandler.process(message, req.params.lobbyId, session.user_id);

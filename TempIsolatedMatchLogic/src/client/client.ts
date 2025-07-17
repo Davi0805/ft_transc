@@ -23,8 +23,8 @@ async function onInitMessage(event: MessageEvent<any>) {
 
         // UserCustoms will be the object that will be generated at runtime
         const gameConfigs = applyDevCustoms(UserCustoms);
-        const clientGameConfigs = buildCAppConfigs(gameConfigs, clientID, websocket, document.body) // 
-        await App.init(clientGameConfigs);
+        const clientGameConfigs = buildCAppConfigs(gameConfigs, clientID, websocket) // 
+        await App.init(clientGameConfigs, document.body);
     }
     
 }

@@ -10,7 +10,8 @@ class LobbyController {
         const body = req.body;
         const id = Math.floor(Math.random() * 99999);
 
-        console.log('Lobby Id = ' + id + ' | Lobby Body = ' + JSON.stringify(req.body));
+        
+        console.log('Lobby Id = ' + id + ' | Lobby Body = ' + JSON.stringify(body));
 
         const map_data = await mapRepo.getByName(body.map);
 

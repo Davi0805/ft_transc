@@ -429,6 +429,8 @@ export const SettingsPage = {
       name: "panela",
       username: "aaa-s",
       email: "a@example.com",
+      spriteID: 0,
+      rating: 1500
     };
 
     let user2: UserData = {
@@ -436,6 +438,8 @@ export const SettingsPage = {
       name: "puta",
       username: "www-s",
       email: "a@example.com",
+      spriteID: 0,
+      rating: 1600
     };
 
     let user3: UserData = {
@@ -443,6 +447,8 @@ export const SettingsPage = {
       name: "pariu",
       username: "qweqwe-s",
       email: "a@example.com",
+      spriteID: 0,
+      rating: 1700
     };
 
     let avatar =

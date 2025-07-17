@@ -1,16 +1,9 @@
+import { TTournPlayer } from "../pages/play/lobbyTyping";
 var blossom = require('edmonds-blossom')
-
-export type Player = {
-    id: number
-    score: number
-    rating: number
-    prevOpponents: number[]
-    teamDist: number
-}
 
 type Match = [number, number]
 
-type PlayerGraph = [Player, Player][]
+type PlayerGraph = [TTournPlayer, TTournPlayer][]
 
 type GraphEdge = [number, number, number];
 type WeightedGraph = GraphEdge[];
@@ -19,7 +12,7 @@ type WeightedGraph = GraphEdge[];
 export class TournamentService {
     constructor() {}
 
-    getNextRoundPairings(players: Player[]): Match[] {
+    static getNextRoundPairings(players: TTournPlayer[]): Match[] {
 
         const normalizedPlayers = structuredClone(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
@@ -39,7 +32,7 @@ export class TournamentService {
         return pairings;
     }
 
-    getClassificationTable(players: Player[]): Player[] {
+    static getClassificationTable(players: TTournPlayer[]): TTournPlayer[] {
         const classificationTable = Array.from(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
             else { //put here tiebreaks
@@ -50,11 +43,13 @@ export class TournamentService {
         return classificationTable
     }
 
-    private _generatePlayerGraph(players: Player[]): PlayerGraph {
+    private static _generatePlayerGraph(players: TTournPlayer[]): PlayerGraph {
         const playerGraph: PlayerGraph = [];
         for (let i: number = 0; i < players.length - 1; i++) {
             for (let j: number = i + 1; j < players.length; j++) {
-                if (!players[i].prevOpponents.includes(players[j].id)
+                const possibleOpponent = players[j];
+                if (!possibleOpponent.id) { throw Error("Player not initialized when it should")}
+                if (!players[i].prevOpponents.includes(possibleOpponent.id)
                     && players[i].teamDist + players[j].teamDist < 4) {
 
                     playerGraph.push([players[i], players[j]]);
@@ -64,7 +59,7 @@ export class TournamentService {
         return playerGraph;
     }
 
-    private _generateWeightedGraph(
+    private static _generateWeightedGraph(
         playerGraph: PlayerGraph,
         scoreGroupSizes: Map<number, number>): WeightedGraph {
         //console.log("GRAPH: ")
@@ -86,7 +81,7 @@ export class TournamentService {
         return weightedGraph
     }
 
-    private _calculateEdgeWeight(p1: Player, p2: Player, scoreGroupSize: number): number {
+    private static _calculateEdgeWeight(p1: TTournPlayer, p2: TTournPlayer, scoreGroupSize: number): number {
         const ratingWeight = Math.abs(p1.rating - p2.rating); // rating is rank
         const weightMiddleScoreGroup = Math.abs((scoreGroupSize / 2) - ratingWeight);
         const dutchWeight: number = -Math.pow(weightMiddleScoreGroup, 1.01)
@@ -97,7 +92,7 @@ export class TournamentService {
         );
     }
 
-    private _getScoreGroupSizes(scores: number[]): Map<number, number> {
+    private static _getScoreGroupSizes(scores: number[]): Map<number, number> {
         const map = new Map<number, number>;
         for (const score of scores) {
             map.set(score, (map.get(score) ?? 0) + 1);
@@ -105,7 +100,7 @@ export class TournamentService {
         return map
     }
 
-    private _convertToPairings(normalizedPlayers: Player[], pairingsIndexes: number[]): Match[] {
+    private static _convertToPairings(normalizedPlayers: TTournPlayer[], pairingsIndexes: number[]): Match[] {
         const pairings: Match[] = []
         const usedIDs: number [] = [];
         for (let i = 0; i < pairingsIndexes.length; i++) {
@@ -114,6 +109,7 @@ export class TournamentService {
             const player1 = normalizedPlayers.find(player => player.rating - 1 === i);
             const player2 = normalizedPlayers.find(player => player.rating - 1 === pairingsIndexes[i])
             if (player1 && player2) {
+                if (!player1.id || !player2.id) { throw Error("Player not initialized when it should!"); }
                 pairings.push([
                     player1.id,
                     player2.id
