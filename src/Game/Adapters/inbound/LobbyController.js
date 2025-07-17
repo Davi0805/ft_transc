@@ -13,11 +13,6 @@ class LobbyController {
         
         console.log('Lobby Id = ' + id + ' | Lobby Body = ' + JSON.stringify(body));
 
-
-        console.log("----------------------------------\n\n\n\n\n\n")
-        console.log(body);
-        console.log(body.map);
-        console.log("----------------------------------\n\n\n\n\n\n")
         const map_data = await mapRepo.getByName(body.map);
 
         console.log(JSON.stringify(map_data));

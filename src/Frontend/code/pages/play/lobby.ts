@@ -108,6 +108,7 @@ export const LobbyPage = {
         });
         buttonsDiv.appendChild(readyButton);
 
+        console.log(lobby.amIHost())
         if (lobby.amIHost()) {
             const startButton = getButton("btn-start", "button", "Start");
             buttonsDiv.appendChild(startButton);
@@ -124,6 +125,7 @@ export const LobbyPage = {
     async renderSlots() {
         const slots = lobby.getSlots();
         const canJoin = !(lobby.amIParticipating()) || lobby.settings.type == "friendly";
+        console.log("can join: " + canJoin)
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
         teamsElement.innerHTML = "";
@@ -140,9 +142,11 @@ export const LobbyPage = {
             teamElement.appendChild(teamNameElement);
             slotsTable.appendChild(teamElement);
             
+            console.log("Team: ")
+            console.log(team);
             for (const roleName of (Object.keys(team) as (keyof typeof ROLES)[])) {
                 const player = team[roleName]
-                if (!player) { continue; }
+                if (player === undefined) { continue; }
 
                 const slotElement = document.createElement("tr");
                 slotElement.className = "border-b border-gray-900/50"
@@ -161,6 +165,7 @@ export const LobbyPage = {
                     playerElement.textContent = player.toString();
                     slotSpaceElement.appendChild(playerElement);
                 } else if (canJoin){
+                    console.log("maybe")
                     const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
                         lobby.settings.type === "friendly"

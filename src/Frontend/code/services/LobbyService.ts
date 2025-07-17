@@ -108,8 +108,6 @@ class LobbyService {
 
     //outbound
     async joinLobbyOUT(settings: TLobby, users: {id: number, ready: boolean, host: boolean}[]) {
-        console.log("This is fucking ridiculous.")
-        console.log(users)
         const selfData = await getSelfData();
         for (const user in users) {
             const userData = await getUserDataById(selfData.id);
@@ -130,6 +128,7 @@ class LobbyService {
     }
 
     updateSettingsOUT(settings: TLobby) {
+        console.log("Is this being called?")
         this._settings = settings
         LobbyPage.renderSettings();
     }
@@ -274,7 +273,7 @@ class LobbyService {
     }
 
     amIHost(): boolean {
-        return this.myID === this.settings.hostID
+        return this.myID == this.settings.hostID
     }
     isEveryoneReady(): boolean {
         return this._users.find(user => (user.participating === true && user.ready === false)) ? false : true
