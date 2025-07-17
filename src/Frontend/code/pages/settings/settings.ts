@@ -261,7 +261,13 @@ export const SettingsPage = {
     });
   },
 
-  initEnable2FAEventListeners(content: HTMLElement): void {
+  initEnable2FAEventListeners(): void {
+    const content = document.getElementById("settings-content");
+    if (!content) {
+      console.error("DEUBG: No content container at show2FAActivation");
+      return;
+    }
+
     const inputs = document.querySelectorAll<HTMLInputElement>('.otp-input');
 
     inputs.forEach((input, idx) => {
@@ -293,6 +299,10 @@ export const SettingsPage = {
           loginError.hidden = false;
           console.error("DEBUG 2FA code wrong");
         }
+        else {
+          console.error("DEBUG: Unexpeted error", error);
+          authService.logout()
+        }
       }
     });
     return;
@@ -300,7 +310,11 @@ export const SettingsPage = {
 
   show2FAActivation(qrcode: string): void {
     const content = document.getElementById("settings-content");
-    if (!content) return;
+    if (!content) {
+      console.error("DEUBG: No content container at show2FAActivation");
+      return;
+    }
+
 
     content.innerHTML = `
       <h1 class="mb-6 text-4xl font-bold">Settings</h1>
@@ -335,8 +349,7 @@ export const SettingsPage = {
         </form>
       </div>
     `;
-
-    this.initEnable2FAEventListeners(content);
+    return ;
   },
 
   initSecurityEvents(): void {
@@ -389,10 +402,11 @@ export const SettingsPage = {
             // todo disable twofa
           }
           else {
-            // todo activate twofa
             try {
               const qrcode = await enableTwoFactor();
               this.show2FAActivation(qrcode);
+              this.initEnable2FAEventListeners();
+
             } catch (error) {
               console.warn("DEBUG: Error enabling 2fa", error);
               authService.logout();
