@@ -114,7 +114,7 @@ class Header {
       }
 
       if (loggedOut) return;
-      loggedOut = this.createElement("div", "log-reg", "log-reg flex gap-24");
+      loggedOut = this.createElement("div", "log-reg", "log-reg flex gap-6");
 
       loggedOut.innerHTML = `
         <a id="login-link" class="nav-link" href="/login" data-link data-i18n="header-login">Login</a>
@@ -136,7 +136,7 @@ class Header {
       }
       if (loggedIn) return;
 
-      loggedIn = this.createElement("div", "user-in", "user-in flex gap-16");
+      loggedIn = this.createElement("div", "user-in", "user-in flex gap-4");
 
       loggedIn.innerHTML = `
         <div class="profile-container flex flex-center gap-8">

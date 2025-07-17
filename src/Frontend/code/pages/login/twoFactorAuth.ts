@@ -6,9 +6,7 @@ import { router } from "../../routes/router";
 export const TwoFactorAuth = {
   renderHTML(): string {
     return `
-      <div id="twofa-wrapper" class="twofa-wrapper">
-      <div class = content>
-
+      <div id="twofa-wrapper" class="w-420 content">
         <h1 class="title" data-i18n="2fa-title">Two-Factor Authentication</h1>
         <p class="text text-center" data-i18n="2fa-text">Enter the verification code to continue</p>
         <form id="twofa-form">
@@ -21,16 +19,18 @@ export const TwoFactorAuth = {
             <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
           </div>
           <div id="twofacode-error" aria-live="polite" hidden></div>
-          <button type="submit" class="button" data-i18n="2fa-btn">Verify</button>
+          <div class="flex justify-center">
+            <button type="submit" class="button" data-i18n="2fa-btn">Verify</button>
+          </div>
         </form>
-      </div>
       </div>
     `;
   },
 
   async show(token: string): Promise<void> {
-    const container = document.getElementById("log-wrapper");
+    const container = document.querySelector("main");
     if (!container) return;
+
     container.innerHTML = this.renderHTML();
     translator.apply();
     
