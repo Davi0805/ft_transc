@@ -12,12 +12,14 @@ export async function createLobby(lobbySettings: TLobbyCreationConfigs): Promise
       throw error;
     }
 
+    console.log(lobbySettings)
     const response = await fetch(
       `http://localhost:8084/lobby`,
       {
         method: "POST",
         headers: {
           Authorization: `Bearer ${authService.getToken()}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(lobbySettings)
       }

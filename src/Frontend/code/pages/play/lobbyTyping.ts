@@ -36,6 +36,14 @@ export type InboundDTOMap = {
 }
 
 export type OutboundDTOMap = {
+    joinLobby: {
+        lobby: TLobby,
+        users: {
+            id: number,
+            ready: boolean,
+            host: boolean
+        }[]
+    }
     updateSettings: {
         settings: TLobby
     },
@@ -44,7 +52,9 @@ export type OutboundDTOMap = {
         ready: boolean
     }
     addLobbyUser: {
-        user: TUser
+        id: number,
+        ready: boolean,
+        host: boolean
     },
     removeLobbyUser: {
         id: number
@@ -169,3 +179,4 @@ export type TTournamentPlayer = {
     prevOpponents: number[],
     teamDist: number,
 }
+

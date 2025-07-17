@@ -9,37 +9,43 @@ class LobbySocketService {
         this._lobbyID = 0; //TODO change to null
     }
 
-    connect(lobbyID: number) {
-        if (this._ws && this._ws.readyState === WebSocket.OPEN) {
-            console.log("DEBUG: lobbySocket already connected");
-            return;
-        }
-
-        this._ws = new WebSocket(`ws://localhost:8084/ws/${lobbyID}`, [`Bearer.${authService.getToken()}`]);
-        this._lobbyID = lobbyID;
-
-        this._ws.onopen = (ev: Event) => {
-            console.log("DEBUG: lobbySocket connected");
-        }
-        
-        this._ws.onmessage = (ev: MessageEvent) => {
-            try {
-                const data = JSON.parse(ev.data) as OutboundDTO;
-                this._handleMessage(data)
-            } catch (error) {
-                console.error("Error parsing websocket message");
+    connect(lobbyID: number): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (this._ws && this._ws.readyState === WebSocket.OPEN) {
+                console.log("DEBUG: lobbySocket already connected");
+                resolve();
+                return;
             }
-        }
 
-        this._ws.onclose = (ev: CloseEvent) => {
-            console.log("DEBUG: websocket closed:", ev.code, ev.reason);
-            this._ws = null;
-            this._lobbyID = null;
-        };
+            this._ws = new WebSocket(`ws://localhost:8084/ws/${lobbyID}`, [`Bearer.${authService.getToken()}`]);
+            this._lobbyID = lobbyID;
 
-        this._ws.onerror = (error: Event) => {
-            console.error("DEBUG: WebSocket error:", error);
-        };
+            this._ws.onopen = (ev: Event) => {
+                console.log("DEBUG: lobbySocket connected");
+                resolve();
+            }
+            
+            this._ws.onmessage = (ev: MessageEvent) => {
+                console.log("Message received: " + ev.data)
+                try {
+                    const data = JSON.parse(ev.data) as OutboundDTO;
+                    this._handleMessage(data)
+                } catch (error) {
+                    console.error("Error parsing websocket message");
+                }
+            }
+
+            this._ws.onclose = (ev: CloseEvent) => {
+                console.log("DEBUG: websocket closed:", ev.code, ev.reason);
+                this._ws = null;
+                this._lobbyID = null;
+            };
+
+            this._ws.onerror = (error: Event) => {
+                console.error("DEBUG: WebSocket error:", error);
+            };
+        })
+        
     }
 
     disconnect() {
@@ -78,14 +84,20 @@ class LobbySocketService {
 
     private _handleMessage(dto: OutboundDTO) {
         switch (dto.requestType) {
+            case "joinLobby":
+                lobby.joinLobbyOUT(dto.data.lobby, dto.data.users);
+                break;
             case "updateSettings":
                 lobby.updateSettingsOUT(dto.data.settings);
                 break;
             case "updateReadiness":
                 lobby.updateReadinessOUT(dto.data.userID, dto.data.ready)
                 break;
+            case "addLobbyUser":
+                lobby.addLobbyUserOUT(dto.data.id)
+                break;
             case "updateGame":
-                break
+                break;
             default:
                 throw Error("A message came in with a non registered type!!")
         }

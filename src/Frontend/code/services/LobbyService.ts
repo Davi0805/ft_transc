@@ -1,4 +1,4 @@
-import { SelfData } from "../api/getSelfDataAPI";
+import { getSelfData, SelfData } from "../api/getSelfDataAPI";
 import { LobbyPage } from "../pages/play/lobby";
 import { TSlots } from "../pages/play/utils/helpers";
 import { TDynamicLobbySettings, TFriendlyPlayer, TLobby, TLobbyType, TMatchPlayer, TRankedPlayer, TTournamentPlayer, TTournPlayer, TUser } from "../pages/play/lobbyTyping";
@@ -7,19 +7,31 @@ import { lobbySocketService } from "./lobbySocketService";
 import { router } from "../routes/router";
 import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies";
 import { matchService } from "./matchService";
+import { getUserDataById } from "../api/getUserDataAPI";
+import { ROLES, SIDES } from "../match/matchSharedDependencies/sharedTypes";
 
 
 class LobbyService {
-    initSettings(selfData: SelfData, settings: TLobby) {
+    init(selfData: SelfData, settings: TLobby) {
         this._settings = settings;
         this._myID = selfData.id;
-        
+        this._isInit = true;
+        dispatchEvent(new Event("lobbyInitialized"))
+    }
+
+    waitForInit(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (this._isInit) { resolve(); }
+            addEventListener("lobbyInitialized", () => resolve())
+        })
     }
 
     nullify() {
         this._settings = null;
         this._myID = null;
     }
+
+
 
     getSlots(): TSlots {
         if (!this._settings) { throw Error("getSlots should not be called before lobby is initialized!")}
@@ -95,6 +107,28 @@ class LobbyService {
 
 
     //outbound
+    async joinLobbyOUT(settings: TLobby, users: {id: number, ready: boolean, host: boolean}[]) {
+        console.log("This is fucking ridiculous.")
+        console.log(users)
+        const selfData = await getSelfData();
+        for (const user in users) {
+            const userData = await getUserDataById(selfData.id);
+            const player = settings.type === "friendly" ? []
+                            : settings.type === "ranked" ? { team: SIDES.LEFT, role: ROLES.BACK }
+                            : { applied: false, score: 0, prevOpponents: [], teamDist: 0 } //TODO: SHOULDNT THIS SHIT BE GENERATED IN BACKEND??
+            this._users.push({
+                id: Number(userData.user_id),
+                nickname: userData.username,
+                spriteID: userData.spriteID,
+                rating: userData.rating,
+                ready: false,
+                participating: false,
+                player: player
+            });
+        }
+        this.init(selfData, settings);
+    }
+
     updateSettingsOUT(settings: TLobby) {
         this._settings = settings
         LobbyPage.renderSettings();
@@ -103,8 +137,20 @@ class LobbyService {
         const user = this._findUserByID(id);
         user.ready = ready;
     }
-    addLobbyUserOUT(user: TUser) {
-        this._users.push(user);
+    async addLobbyUserOUT(userID: number) {
+        const userData = await getUserDataById(userID);
+        const player = this.settings.type === "friendly" ? []
+                        : this.settings.type === "ranked" ? { team: SIDES.LEFT, role: ROLES.BACK }
+                        : { applied: false, score: 0, prevOpponents: [], teamDist: 0 } //TODO: SHOULDNT THIS SHIT BE GENERATED IN BACKEND??
+        this._users.push({
+            id: Number(userData.user_id),
+            nickname: userData.username,
+            spriteID: userData.spriteID,
+            rating: userData.rating,
+            ready: false,
+            participating: false,
+            player: player
+        });
     }
     removeLobbyUserOUT(id: number) {
         const user = this._findUserByID(id);
@@ -234,11 +280,16 @@ class LobbyService {
         return this._users.find(user => (user.participating === true && user.ready === false)) ? false : true
     }
     amIParticipating(): boolean {
+        this._users.forEach(user => {
+            console.log("User nick: " + user.nickname)
+        })
+        console.log(`MyID from lobby is: ${this.myID} and the lobby list of users is ${this._users}`)
         const me = this._users.find(user => user.id == this.myID);
         if (!me) {throw Error("How can't I be in the lobby???"); }
         return me.participating;
     }
 
+    private _isInit: boolean = false;
     private _settings: TLobby | null = null;
     get settings(): TLobby {
         if (!this._settings) { throw Error("Settings are trying to be accessed when lobby hasn't been initialized yet!"); }

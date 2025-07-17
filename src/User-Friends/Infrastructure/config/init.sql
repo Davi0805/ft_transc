@@ -11,6 +11,8 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     user_image VARCHAR(255),
+    sprite_id INTEGER NOT NULL,
+    rating INTEGER NOT NULL,
     twofa_secret TEXT,
     twofa_enabled BOOLEAN DEFAULT FALSE
 );
@@ -40,11 +42,11 @@ CREATE INDEX idx_friend_requests_status ON friend_requests(status);
 
 
 -- TODO MOCK DATA USERS
-INSERT INTO users (name, username, email, password_hash, user_image, twofa_secret, twofa_enabled) VALUES
-('Artur', 'artuda-s', 'artur@example.com', 'pass123', NULL, NULL, 0),
-('Maria', 'maria42', 'maria@example.com', 'pass123', NULL, NULL, 0),
-('João', 'joaozin', 'joao@example.com', 'pass123', NULL, NULL, 0),
-('Ana', 'aninha', 'ana@example.com', 'pass123', NULL, NULL, 0);
+INSERT INTO users (name, username, email, password_hash, user_image, sprite_id, rating, twofa_secret, twofa_enabled) VALUES
+('Artur', 'artuda-s', 'artur@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
+('Maria', 'maria42', 'maria@example.com', 'pass123', NULL, 0, 1600, NULL, 0),
+('João', 'joaozin', 'joao@example.com', 'pass123', NULL, 0, 1700, NULL, 0),
+('Ana', 'aninha', 'ana@example.com', 'pass123', NULL, 0, 1800, NULL, 0);
 
 -- MOCK DATA FRIEND REQUESTS
 

@@ -13,6 +13,7 @@ class MapRepository {
 
     async getByName(map_name)
     {
+        console.log(map_name)
         return await db.raw('SELECT * FROM maps WHERE name = ?', [map_name]);
     }
 }

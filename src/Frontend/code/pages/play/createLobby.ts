@@ -72,8 +72,9 @@ export const CreateLobbyPage = {
             }
             
             const lobbyID = await createLobby(lobbySettings);
-            lobbySocketService.connect(lobbyID);
-            lobby.initSettings(selfData, {
+            console.log("Waiting for websocket to connect...")
+            await lobbySocketService.connect(lobbyID);
+            /* lobby.init(selfData, {
                 id: lobbyID,
                 hostID: selfData.id,
                 name: lobbySettings.name,
@@ -85,6 +86,8 @@ export const CreateLobbyPage = {
                 duration: lobbySettings.duration,
                 round: 1
             })
+            await lobby.addLobbyUserOUT(selfData.id); */
+            await lobby.waitForInit()
             router.navigateTo('/lobby')
         })
         console.log('Create Friendly page loaded!')
