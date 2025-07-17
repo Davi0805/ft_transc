@@ -167,7 +167,7 @@ export class Chat {
           await createFriendRequestByUsername(username);
         } catch (error) {
           //TODO
-          console.log(`DEBUG: Could not create friend request`, error);
+          console.error(`DEBUG: Could not create friend request\n`, error);
         }
         popoverInput.value = '';
         popover.classList.add('hidden');
@@ -242,8 +242,6 @@ export class Chat {
         const friendData = await getUserDataById(friendID);
         const friendAvatarURL = await getUserAvatarById(friendID);
   
-        console.log("with friend:", friendData.name, " got: ", conv.unread_count);
-      
         this.friends.push({
           convID: conv.id,
           friendID: friendID,
