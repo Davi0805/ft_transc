@@ -1,6 +1,9 @@
 import { UserData } from "../../api/getUserDataAPI";
 import { authService } from "../../services/authService";
 import { updateName } from "../../api/updateNameAPI";
+import { updatePassword } from "../../api/updatePasswordAPI";
+import { enableTwoFactor } from "../../api/enableTwoFactorAPI";
+import { confirmTwoFactorCode } from "../../api/confirmEnableTwoFactorAPI"
 
 export const SettingsPage = {
   template() {
@@ -86,7 +89,7 @@ export const SettingsPage = {
                         
                       <!-- Save Button positioned at bottom right -->
                       <div class="mt-auto flex justify-end pt-6">
-                        <button id="save-btn" type="submit" class="transform rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white transition-all duration-100 hover:bg-blue-700 active:scale-85">Save</button>
+                        <button id="save-btn" type="submit" class="btn-settings ">Save</button>
                       </div>
                     </form>
                   `;
@@ -100,29 +103,33 @@ export const SettingsPage = {
           <form id="security-form" class="flex flex-col flex-1 space-y-6">
             <!-- Old Password -->
             <div class="old-pass flex items-center space-x-3">
-              <label for="old-pass" class="w-20 font-semibold text-center">Current password</label>
-              <input id="old-pass" type="password" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
+              <label for="old-pass" class="w-20 font-semibold text-center">Current password*</label>
+              <input id="old-pass" type="password" required class="input-settings"
+               />
             </div>
 
             <!-- New Password -->
             <div class="flex items-center space-x-3">
               <label for="new-pass" class="w-20 font-semibold text-center">New password</label>
-              <input id="new-pass" type="password" class="h-11 rounded-3xl border-2 border-white/20 bg-white px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" />
+              <input id="new-pass" type="password" class="input-settings" 
+              pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*._\\-+=?])[A-Za-z\\d!@#$%^&*._\\-+=?]{8,}$"
+              title="Must contain at least one digit, one uppercase and lowercase letter and one special character (!@#$%^&*.\\-_+=?)" data-i18n-title="register-title-pass"
+              />
             </div>
 
             <div class="flex items-center">
               <h3 class="mr-6 text-l font-semibold">Enable/Disable 2FA</h3>
               <label class="relative inline-block w-[60px] h-[34px]">
-                <input id="two-fac" type="checkbox" class="peer sr-only" ${
-                  authService.getHas2FA() ? "checked" : ""
-                }>
+                <input id="two-fac" type="checkbox" class="peer sr-only" 
+                ${ authService.getHas2FA() ? "checked" : ""}
+                >
                 <span class="block bg-gray-500 peer-checked:bg-myWhite w-full h-full rounded-full transition-all duration-300"></span>
                 <span class="absolute left-[3px] bottom-[3px] bg-blue-600 w-[28px] h-[28px] rounded-full transition-transform duration-300 peer-checked:translate-x-[26px]"></span>
               </label>
             </div>
 
             <div id="save-btn" class="mt-auto flex justify-end ">
-             <button type="submit" class="rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white transition-all duration-100 hover:bg-blue-700 active:scale-85">Save</button>
+             <button type="submit" class="btn-settings">Save</button>
             </div>
           </form>
 
@@ -167,7 +174,9 @@ export const SettingsPage = {
   currentSection: "account" as "account" | "security" | "social",
 
   setCurretSection(section: "account" | "security" | "social"): void {
-    if (SettingsPage.currentSection === section) return;
+    if (SettingsPage.currentSection === section) {
+      return;
+    }
 
     SettingsPage.currentSection = section;
     SettingsPage.updateActiveSection();
@@ -221,13 +230,13 @@ export const SettingsPage = {
       try {
         const nameInput = form.querySelector<HTMLInputElement>("#settings-name");
         if (!nameInput) {
-          console.warn("DEBUG: Name input not found.");
+          console.error("DEBUG: Name input not found.");
           return;
         }
 
         const newName = nameInput.value.trim();
         if (newName === authService.userNick) {
-          console.log("DEBUG: Name unchanged.");
+          console.warn("DEBUG: Name unchanged.");
           return;
         }
 
@@ -252,49 +261,125 @@ export const SettingsPage = {
     });
   },
 
-  createQRCodeDialog(qrCodeSrc: string): void {
-    const newElement = document.createElement("dialog") as HTMLDialogElement;
-    newElement.classList = `friend-requests-wrapper `;
-    newElement.innerHTML = `
-          <button class="close-dialog-btn">&times;</button> <!-- onclick="closeDialog()" -->
+  initEnable2FAEventListeners(content: HTMLElement): void {
+    const inputs = document.querySelectorAll<HTMLInputElement>('.otp-input');
 
-          <h1 class="title friend-request-header">Two Factor Authentication</h1>
+    inputs.forEach((input, idx) => {
+      input.addEventListener('input', () => {
+        const val = input.value;
+        if (val.length === 1 && idx < inputs.length - 1)
+            inputs[idx + 1].focus();
+      });
 
-          <p> Read the following QR Code with Google Authenticator app to activate
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && input.value === '' && idx > 0)
+          inputs[idx - 1].focus();
+      })
+    });
 
-          <div class="requests-container"></div>
-         `;
+    content.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
+      const code = Array.from(inputs).map(input => input.value).join('');
+      try {
+        await confirmTwoFactorCode(code);
+        // success
+        authService.setHas2FA(true);
+        this.updateContent();
+      } catch (error) {
+        if ((error as any).status == 401) {
+          const loginError = document.getElementById('twofacode-error') as HTMLElement;
+          loginError.textContent = "Verification code is incorrect!"
+          loginError.hidden = false;
+          console.error("DEBUG 2FA code wrong");
+        }
+      }
+    });
+    return;
+  },
+
+  show2FAActivation(qrcode: string): void {
+    const content = document.getElementById("settings-content");
+    if (!content) return;
+
+    content.innerHTML = `
+      <h1 class="mb-6 text-4xl font-bold">Settings</h1>
+
+      <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Two Factor Authentication</h2>
+
+      <p class="mb-6 text-sm text-white/90 max-w-lg">
+        Read the following QR code on your Google Authenticator app and enter the verification code to activate 2FA.
+      </p>
+
+      <div class="flex items-center justify-center gap-16">
+        <!-- QR Code -->
+        <img src="${qrcode}" alt="qrcode" class="w-[100px] h-[100px] border border-white/20" />
+
+        <!-- Form -->
+        <form id="twofa-form" class="flex flex-col">
+          <h4 class="mb-2 text-lg font-medium text-center">Verification Code</h4>
+          <div id="otp-container" class="flex gap-2">
+            <input type="text" placeholder="X" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" autofocus />
+            <input type="text" placeholder="X" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+            <input type="text" placeholder="X" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+            <input type="text" placeholder="X" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+            <input type="text" placeholder="X" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+            <input type="text" placeholder="X" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
+          </div>
+
+          <div id="twofacode-error" aria-live="polite" hidden class="text-sm text-red-500 mt-2"></div>
+          
+          <div class="mt-auto flex justify-center ">
+            <button type="submit" class="btn-settings mt-4">Verify</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    this.initEnable2FAEventListeners(content);
   },
 
   initSecurityEvents(): void {
-    const form = document.querySelector("security-form");
+    const form = document.querySelector("#security-form");
     if (!(form instanceof HTMLFormElement)) {
       console.warn("DEBUG: Form element not found or incorrect.");
       return;
     }
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       try {
         event.preventDefault();
 
         const oldPass = form.querySelector<HTMLInputElement>("#old-pass");
-        if (!oldPass) {
+        if (!oldPass || !oldPass.value) {
           console.warn("DEBUG: No old password.");
+          return;
         }
         
         const newPass = form.querySelector<HTMLInputElement>("#new-pass");
         if (!newPass) {
-          console.log("DEBUG: No new password.");
+          console.warn("DEBUG: No new password.");
+          return;
         }
       
         const twoFactor = form.querySelector<HTMLInputElement>("#two-fac");
         if (!twoFactor) {
-          console.log("DEBUG: No two factor checkbox.");
+          console.warn("DEBUG: No two factor checkbox.");
+          return;
         }       
 
         // update password
-        if (oldPass || newPass){
-
+        if (newPass.value){
+          try {
+            updatePassword(oldPass.value, newPass.value);
+          } catch (error: any) {
+            if (error && (error.status === 401)) {
+              console.warn("DEBUG: Unauthorized (401) error.");
+              // todo error message that shows that the password was wrong
+            } else {
+              console.error("DEBUG: Error updating password:", error);
+            }
+            return ;
+          }
         }
 
         if (twoFactor) {
@@ -304,10 +389,16 @@ export const SettingsPage = {
             // todo disable twofa
           }
           else {
-
+            // todo activate twofa
+            try {
+              const qrcode = await enableTwoFactor();
+              this.show2FAActivation(qrcode);
+            } catch (error) {
+              console.warn("DEBUG: Error enabling 2fa", error);
+              authService.logout();
+            }
           }
         }
-
       } catch (error) {
         
       }
@@ -372,6 +463,7 @@ export const SettingsPage = {
   },
 
   init(): void {
+    SettingsPage.currentSection = "account";
     SettingsPage.initAccountEvents();
 
     // Event listener delegations
@@ -381,13 +473,16 @@ export const SettingsPage = {
       container.addEventListener("click", (event: MouseEvent) => {
         const target = event.target as HTMLElement;
 
+
         if (target.matches("#settings-account")) {
           SettingsPage.setCurretSection("account");
         } else if (target.matches("#settings-security")) {
           SettingsPage.setCurretSection("security");
         } else if (target.matches("#settings-social")) {
           SettingsPage.setCurretSection("social");
-        } else if (target.matches("#settings-logout")) authService.logout();
+        } else if (target.matches("#settings-logout")){
+          authService.logout();
+        }
       });
     }
 
