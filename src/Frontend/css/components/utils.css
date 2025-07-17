@@ -13,13 +13,6 @@
   text-align: center;
 } */
 
-.text-center {
-  text-align: center;
-}
-
-.flex {
-  display: flex;
-}
 
 .flex-dir-col {
   flex-direction: column;
@@ -29,18 +22,7 @@
   align-items: center;
   justify-content: center;
 }
-.gap-8 {
-  gap: 8px;
-}
-.gap-16 {
-  gap: 16px;
-}
-.gap-24 {
-  gap: 24px;
-}
-.rounded {
-  border-radius: 100%;
-}
+
 .shadow {
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 }
@@ -78,16 +60,4 @@
   top: 50%;
   transform: translateY(-50%);
   fill: #000;
-}
-
-.button {
-  border: none;
-  outline: none;
-  border-radius: 40px;
-  box-shadow: 0 1 10px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.button:active {
-  transform: scale(0.95);
 }

@@ -7,7 +7,7 @@ import { router } from "../../routes/router";
 export const LoginPage = {
   template(): string {
     return `
-        <div class ="w-420 content">
+        <div id="log-wrapper" class ="w-420 content">
           <form id="login-form">
             <h1 class="title" data-i18n="login-title">Login</h1>
             <div class="input-box">
@@ -40,7 +40,6 @@ export const LoginPage = {
   },
 
   init(): void {
-    console.log("DEUBG: Login Page loaded!");
 
     togglePasswordVisibility();
 

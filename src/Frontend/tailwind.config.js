@@ -7,12 +7,17 @@ module.exports = {
   ],
   theme: {
     extend: {
-      'poppins': ['Poppins', 'sans-serif'],
-      'sans': ['Poppins', 'sans-serif'],
-      'colors': {
+      fontFamily: {
+        'poppins': ['Poppins', 'sans-serif'],
+        'sans': ['Poppins', 'sans-serif'],
+      },
+      colors: {
         myWhite: '#fff',
-        myBlack: '#141414',
-      }
+        myBlack: '#333',
+      },
+      scale: {
+        '85': '0.85',
+      },
     },
   },
   plugins: [],
