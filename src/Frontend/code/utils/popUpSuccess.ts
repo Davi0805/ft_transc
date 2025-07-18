@@ -4,7 +4,7 @@ import { PopupBase } from "./popUpBase"
 export class SuccessPopup extends PopupBase {
     create(title: string, description: string, autoClose: boolean = true): void {
         const popup = document.createElement('div');
-        popup.classList = `success-popup`;
+        popup.classList = `popup bg-popup-success-bg border-popup-success-border`;
 
         popup.innerHTML = `
                         <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center font-bold text-base text-white bg-[#28a745]">✓</div>
