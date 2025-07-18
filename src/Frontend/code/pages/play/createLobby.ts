@@ -64,7 +64,7 @@ export const CreateLobbyPage = {
             const matchDurationInput = document.getElementById("match-duration") as HTMLSelectElement
             const lobbySettings: TLobbyCreationConfigs = {
                 name: nameInput.value,
-                host: hostName,
+                host: hostName, //THis is not necessary!! Can be taken from socket
                 type: typeInput.options[typeInput.selectedIndex].id as TLobbyType,
                 map: matchMapInput.value as TMapType,
                 mode: matchModeInput.value as TMatchMode,

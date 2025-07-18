@@ -1,4 +1,7 @@
 import { SIDES, ROLES } from "../../match/matchSharedDependencies/sharedTypes"
+import { CGameDTO, SGameDTO } from "../../match/matchSharedDependencies/dtos"
+
+//TYPES REPRESENTATIVE OF THE ENTITIES
 
 type TLobbyType = "friendly" | "ranked" | "tournament"
 type TMap = "2-players-small" | "2-players-medium" | "2-players-big" | "4-players-small" | "4-players-medium" | "4-players-big"
@@ -68,7 +71,7 @@ type TLobby = {
     type: TLobbyType,
     //Map of the lobby. Dictates how many and which slots exist (the capacity can be taken from crossing this info with the users' position)
     map: TMap,
-    //Mode of lobby (see above for options)
+    //Mode of lobby (see above for options). Tells if powerups will be present
     mode: TMode,
     //Duration of the matches (See above for options). Better saved as string and only convert to number when the match starts
     duration: TDuration,
@@ -77,3 +80,148 @@ type TLobby = {
     //The users present in the lobby. 
     users: TLobbyUser[] //Def: [host]
 }
+
+
+
+//TYPES TO BE SENT
+
+//GetLobbiesList()
+type LobbiesListDTO = {
+    //The lobby id. Allows a user to click on the lobby and go to it
+    id: number 
+    //Name of the lobby.
+    name: string,
+    //Username of the host. Can be gotten from TLobby.hostID
+    host: string
+    //Lobby Type
+    type: TLobbyType,
+    //The current capacity of the lobby. Takes into account participating users, not users in lobby.
+    //taken can be deduceb by the amount of users with their players !== null and max can be deduced from map.
+    capacity: { taken: number, max: number },
+
+    map: TMap,
+    mode: TMode,
+    duration: TDuration
+}[]
+
+//CreateLobby()
+//Although this is a POST, IT SHOULD RETURN A TLOBBY WITH THE CONFIGS AND THE CREATOR AS ITS ONLY USER INSTEAD OF ONLY THE LOBBY_ID!
+//This allows the creation page to fully init the LobbyService before changing page
+type LobbyCreationConfigsDTO = {
+    name: string,
+    type: TLobbyType,
+    map: TMap,
+    mode: TMode,
+    duration: TDuration
+}
+
+
+type TDynamicLobbySettings = Pick<TLobby, "map" | "mode" | "duration">
+
+//server will receive these when...
+type InboundDTOMap = {
+    //host updates the settings
+    updateSettings: {
+        settings: TDynamicLobbySettings
+    }
+    //user invites a new user to this lobby
+    inviteUserToLobby: {
+        userID: number
+    }
+    //user updates its ready state
+    updateReadiness: {
+        ready: boolean 
+    },
+    //user chooses a slot in a friendly lobby
+    addFriendlyPlayer: {
+        player: TFriendlyPlayer
+    },
+    //user removes a player from a slot
+    removeFriendlyPlayer: {
+        playerID: number //Note: This is the id of the player, NOT the user!
+    }
+    //user chooses a slot in a ranked lobby
+    addRankedPlayer: {
+        player: TRankedPlayer
+    },
+    //user removes itself from the picked slot
+    removeRankedPlayer: {
+        id: number 
+    }
+    //user applies to the tournament of the lobby
+    addTournamentPlayer: null //None of the member variables are chosen by the user
+    //user withdraws from the tournament
+    removeTournamentPlayer: null
+    //user leaves lobby
+    leaveLobby: null,
+    //host starts the game
+    startGame: null,
+    
+    //Game dto:
+    updateGame: CGameDTO //Dealt with in game
+}
+
+//server should broadcast these after...
+type OutboundDTOMap = {
+    //host updates the settings. If map changes, users should be filled with the current users so slots can be updated accordingly
+    updateSettings: {
+        settings: TDynamicLobbySettings
+        users: TLobbyUser[] | null
+    },
+    //user updates its ready state
+    updateReadiness: {
+        userID: number,
+        ready: boolean
+    }
+    //user is added to the lobby
+    addLobbyUser: {
+        user: TLobbyUser
+    },
+    //user leaves a lobby
+    removeLobbyUser: {
+        id: number
+    }
+    //user chooses a slot in a friendly lobby
+    addFriendlyPlayer: {
+        userID: number
+        player: TFriendlyPlayer
+    },
+    //user removes one of its players from slot in a friendly lobby
+    removeFriendlyPlayer: {
+        playerID: number
+    }
+    //user chooses a slot in a ranked lobby
+    addRankedPlayer: {
+        userID: number
+        player: TRankedPlayer
+    },
+    //user removes itself from slot in a ranked lobby
+    removeRankedPlayer: {
+        id: number 
+    }
+    //user applies to a tournament
+    addTournamentPlayer: {
+        userID: number
+    }
+    //user withdraws from tournament
+    removeTournamentPlayer: {
+        id: number
+    }
+    //host starts the match
+    startMatch: null
+
+    //Game dto:
+    updateGame: SGameDTO //Dealt with in game
+}
+
+export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {
+    requestType: T,
+    data: InboundDTOMap[T]
+}
+
+export type OutboundDTO = {
+    [K in keyof OutboundDTOMap]: {
+        requestType: K,
+        data: OutboundDTOMap[K]
+    }
+}[keyof OutboundDTOMap]
