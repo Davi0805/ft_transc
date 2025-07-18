@@ -26,7 +26,7 @@ export class SuccessPopup extends PopupBase {
 
         this.addPopup(popup);
 
-        // Entrada
+        // Entry animation
         setTimeout(() => {
             popup.style.opacity = '1';
             popup.style.transform = 'translateX(0)';
