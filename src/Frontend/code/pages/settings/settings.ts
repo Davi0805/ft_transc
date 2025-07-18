@@ -4,6 +4,7 @@ import { updateName } from "../../api/updateNameAPI";
 import { updatePassword } from "../../api/updatePasswordAPI";
 import { enableTwoFactor } from "../../api/enableTwoFactorAPI";
 import { confirmTwoFactorCode } from "../../api/confirmEnableTwoFactorAPI"
+import { uploadAvatar } from "../../api/uploadAvatarAPI"
 
 export const SettingsPage = {
   template() {
@@ -17,8 +18,25 @@ export const SettingsPage = {
               <div id="settings-sidebar" class=" flex w-52 min-w-32 flex-col items-center border-white/20 pt-4 text-white">
                 <!-- INFO USER -->
                 <div class="user flex flex-col items-center">
-                  <img id="user-avatar" class="mb-2 h-16 w-16 rounded-full border-2 border-sky-300" src="${avatar}" alt="User avatar" />
-                  <div class="text-center text-base">
+                  <!-- Profile image -->
+                  <label for="avatar-upload" class="relative group cursor-pointer">
+                    <img
+                      id="user-avatar"
+                      class="h-16 w-16 rounded-full border-2 border-sky-300 object-cover transition duration-300 group-hover:brightness-75"
+                      src="${avatar}"
+                      alt="User avatar"
+                    />
+                    <!-- Overlay -->
+                    <div class="absolute inset-0 flex items-center justify-center rounded-full bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z" />
+                      </svg>
+                    </div>
+                  </label>
+                  <input type="file" id="avatar-upload" class="hidden" accept="image/*" />
+
+                  <!-- User -->
+                  <div class="mt-2 text-center text-base">
                     <p id="user-name" class="font-bold">${nickname}</p>
                     <p id="user-username" class="text-gray-400">${username}</p>
                   </div>
@@ -482,8 +500,71 @@ export const SettingsPage = {
     // btn unblock has data-username="${userData.user_id} so we can use that
   },
 
+  initChangeAvatarEventListener(): void {
+    const input = document.getElementById("avatar-upload") as HTMLInputElement | null;
+    const avatarImg = document.getElementById("user-avatar") as HTMLImageElement | null;
+    const headerAvatarImg = document.querySelector(".profile-container .profile-avatar") as HTMLImageElement | null;
+
+    if (input && avatarImg) {
+      input.addEventListener("change", (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        const file = target.files?.[0];
+
+        if (!file) {
+          console.warn("No file selected.");
+          return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+          console.error("Selected file is not an image.");
+          return;
+        }
+
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+        if (file.size > MAX_FILE_SIZE) {
+          console.error("DEBUG: File is too large. Maximum size is 10MB.");
+          // TODO SHOW ERROR
+          return;
+        }
+
+
+        const reader = new FileReader();
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          const result = e.target?.result;
+          if (typeof result === "string") {
+            avatarImg.src = result;
+            if (headerAvatarImg) {
+              headerAvatarImg.src = result;
+            }
+
+            uploadAvatar(file);
+          } else {
+            console.error("Unexpected result type from FileReader.");
+          }
+        };
+
+        reader.onerror = (e: ProgressEvent<FileReader>) => {
+          console.error("DEBUG: Error reading file:", e.target?.error);
+        };
+
+        try {
+          reader.readAsDataURL(file);
+        } catch (err) {
+          console.error("DEBUG: Failed to read file:", err);
+        }
+      });
+    } else {
+      console.error("DEBUG: Input or avatar image element not found in DOM.");
+    }
+  },
+
   init(): void {
     SettingsPage.currentSection = "account";
+
+    SettingsPage.initChangeAvatarEventListener();
+
     SettingsPage.initAccountEvents();
 
     // Event listener delegations
