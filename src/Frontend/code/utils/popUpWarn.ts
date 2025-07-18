@@ -1,5 +1,10 @@
 import { PopupBase } from "./popUpBase"
 
+/* USAGE
+const popup = new WarningPopup();
+popup.create(title, description, autoClose?)
+*/
+
 export class WarningPopup extends PopupBase {
     create(title: string, description: string, autoClose: boolean = true): void {
         const popup = document.createElement('div');

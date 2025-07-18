@@ -1,5 +1,9 @@
 import { PopupBase } from "./popUpBase"
 
+/* USAGE
+const popup = new SuccessPopup();
+popup.create(title, description, autoClose?)
+*/
 
 export class SuccessPopup extends PopupBase {
     create(title: string, description: string, autoClose: boolean = true): void {
