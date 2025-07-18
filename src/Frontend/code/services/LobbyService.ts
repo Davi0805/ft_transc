@@ -140,7 +140,7 @@ class LobbyService {
         user.ready = ready;
     }
     async addLobbyUserOUT(userID: number) {
-        const userData = await getUserDataById(userID);
+        const userData = await getUserDataById(userID); //TODO: will use a different funcion, that gets the info from game database 
         const player = this.settings.type === "friendly" ? []
                         : this.settings.type === "ranked" ? { team: SIDES.LEFT, role: ROLES.BACK }
                         : { applied: false, score: 0, prevOpponents: [], teamDist: 0 } //TODO: SHOULDNT THIS SHIT BE GENERATED IN BACKEND??
@@ -220,6 +220,7 @@ class LobbyService {
 
     getMatchPlayers(): TMatchPlayer[] {
         const out: TMatchPlayer[] = []
+
         if (this._isLobbyOfType("friendly")) {
             this._users.forEach(user => {
                 if (user.participating) {
@@ -311,7 +312,6 @@ class LobbyService {
     }
     _isLobbyOfType(desiredType: TLobbyType) {
         if (this.settings.type !== desiredType) {
-            console.error("This lobby's type is not the expected one!");
             return false;
         }
         return true
