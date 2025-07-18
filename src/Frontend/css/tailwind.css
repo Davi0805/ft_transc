@@ -67,6 +67,12 @@
                 opacity-0 transform translate-x-full transition-all duration-300 ease-in-out relative
                 bg-[#d4edda] border-l-4 border-[#28a745];
     }
+
+    .error-popup {
+        @apply  flex items-start gap-3 p-4 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.15)]
+                opacity-0 transform translate-x-full transition-all duration-300 ease-in-out relative
+                bg-[#f8d7da] border-l-4 border-[#dc3545];
+    }
 }
 
 @layer components {
