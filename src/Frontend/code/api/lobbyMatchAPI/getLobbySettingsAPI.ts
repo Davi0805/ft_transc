@@ -1,6 +1,7 @@
 import { authService } from "../../services/authService";
 import { TLobby } from "../../pages/play/lobbyTyping";
 
+
 export async function getLobbySettings(): Promise<TLobby[]> {
     try {
         if (!authService.isUserAuthenticated()) {
@@ -8,7 +9,7 @@ export async function getLobbySettings(): Promise<TLobby[]> {
             const error: Error = new Error(errorMessage);
             throw error;
         }
-        const response = await fetch(`http://localhost:8084/lobby`, { // TODO: create the endpoint
+        const response = await fetch(`http://localhost:8084/lobby`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${authService.getToken()}`
@@ -21,7 +22,8 @@ export async function getLobbySettings(): Promise<TLobby[]> {
             (error as any).status = response.status;
             throw error;
         }
-        console.log(response)
+        console.log("Response:")
+        console.log(await response.json())
 
         return (await response.json()) as TLobby[];
     } catch (error) {

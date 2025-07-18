@@ -25,7 +25,6 @@ export const PlayPage = {
     },
 
     init() {
-        console.log("wtfffff")
         const lobbiesHead = document.getElementById('lobbies-head') as HTMLElement;
         lobbiesHead.innerHTML = this.getLobbyCategoriesHtml();
 
@@ -55,12 +54,15 @@ export const PlayPage = {
 
         const lobbiesInfo = await getLobbySettings(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
 
+        console.log("Lobbies info: ")
+        console.log(lobbiesInfo);
         for (let i = 0; i < lobbiesInfo.length; i++) {
             const row = document.createElement("tr");
             const bgBrightness = i % 2 === 0 ? "bg-gray-900/0" : "bg-gray-900/25";
             row.className = `${bgBrightness} hover:bg-gray-900/90 active:bg-gray-900/25`
             
             Object.values(lobbiesInfo[i]).forEach(item => {
+                console.log(`Current Item: ${item}`)
                 const tdata = document.createElement('td');
                 tdata.className = `px-6 py-2 wrap-anywhere`;
                 tdata.textContent = item.toString();

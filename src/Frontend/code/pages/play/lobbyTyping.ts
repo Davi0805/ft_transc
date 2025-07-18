@@ -180,4 +180,3 @@ export type TTournamentPlayer = {
     prevOpponents: number[],
     teamDist: number,
 }
-
