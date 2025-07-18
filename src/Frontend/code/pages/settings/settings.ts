@@ -17,8 +17,25 @@ export const SettingsPage = {
               <div id="settings-sidebar" class=" flex w-52 min-w-32 flex-col items-center border-white/20 pt-4 text-white">
                 <!-- INFO USER -->
                 <div class="user flex flex-col items-center">
-                  <img id="user-avatar" class="mb-2 h-16 w-16 rounded-full border-2 border-sky-300" src="${avatar}" alt="User avatar" />
-                  <div class="text-center text-base">
+                  <!-- Profile image -->
+                  <label for="avatar-upload" class="relative group cursor-pointer">
+                    <img
+                      id="user-avatar"
+                      class="h-16 w-16 rounded-full border-2 border-sky-300 object-cover transition duration-300 group-hover:brightness-75"
+                      src="${avatar}"
+                      alt="User avatar"
+                    />
+                    <!-- Overlay -->
+                    <div class="absolute inset-0 flex items-center justify-center rounded-full bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z" />
+                      </svg>
+                    </div>
+                  </label>
+                  <input type="file" id="avatar-upload" class="hidden" accept="image/*" />
+
+                  <!-- User -->
+                  <div class="mt-2 text-center text-base">
                     <p id="user-name" class="font-bold">${nickname}</p>
                     <p id="user-username" class="text-gray-400">${username}</p>
                   </div>
