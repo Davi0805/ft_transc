@@ -18,6 +18,15 @@ module.exports = {
       scale: {
         '85': '0.85',
       },
+      keyframes: {
+        progressBar: {
+          'from': { width: '100%' },
+          'to': { width: '0%' },
+        }
+      },
+      animation: {
+        progressBar: 'progressBar 5s linear forwards',
+      }
     },
   },
   plugins: [],
