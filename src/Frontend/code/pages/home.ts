@@ -160,7 +160,7 @@ export const HomePage = {
                         <td class="leaderboard-td-win">33</td>
                         <td class="leaderboard-td-losses">41</td>
                         </tr>
-                        <tr class="transition-colors hover:bg-blue-500/10">
+                        <tr class="leaderboard-tr">
                         <td class="leaderboard-td-position">10</td>
                         <td class="leaderboard-td-name">Kelson</td>
                         <td class="leaderboard-td-points">389</td>
