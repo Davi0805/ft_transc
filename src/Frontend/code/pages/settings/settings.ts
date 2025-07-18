@@ -494,8 +494,71 @@ export const SettingsPage = {
     // btn unblock has data-username="${userData.user_id} so we can use that
   },
 
+  initChangeAvatarEventListener(): void {
+    const input = document.getElementById("avatar-upload") as HTMLInputElement | null;
+    const avatarImg = document.getElementById("user-avatar") as HTMLImageElement | null;
+    const headerAvatarImg = document.querySelector(".profile-container .profile-avatar") as HTMLImageElement | null;
+
+    if (input && avatarImg) {
+      input.addEventListener("change", (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        const file = target.files?.[0];
+
+        if (!file) {
+          console.warn("No file selected.");
+          return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+          console.error("Selected file is not an image.");
+          return;
+        }
+
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+        if (file.size > MAX_FILE_SIZE) {
+          console.error("DEBUG: File is too large. Maximum size is 10MB.");
+          // TODO SHOW ERROR
+          return;
+        }
+
+
+        const reader = new FileReader();
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          const result = e.target?.result;
+          if (typeof result === "string") {
+            avatarImg.src = result;
+            if (headerAvatarImg) {
+              headerAvatarImg.src = result;
+            }
+
+            uploadAvatar(file);
+          } else {
+            console.error("Unexpected result type from FileReader.");
+          }
+        };
+
+        reader.onerror = (e: ProgressEvent<FileReader>) => {
+          console.error("DEBUG: Error reading file:", e.target?.error);
+        };
+
+        try {
+          reader.readAsDataURL(file);
+        } catch (err) {
+          console.error("DEBUG: Failed to read file:", err);
+        }
+      });
+    } else {
+      console.error("DEBUG: Input or avatar image element not found in DOM.");
+    }
+  },
+
   init(): void {
     SettingsPage.currentSection = "account";
+
+    SettingsPage.initChangeAvatarEventListener();
+
     SettingsPage.initAccountEvents();
 
     // Event listener delegations
