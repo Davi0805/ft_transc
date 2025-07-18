@@ -4,6 +4,7 @@ import { updateName } from "../../api/updateNameAPI";
 import { updatePassword } from "../../api/updatePasswordAPI";
 import { enableTwoFactor } from "../../api/enableTwoFactorAPI";
 import { confirmTwoFactorCode } from "../../api/confirmEnableTwoFactorAPI"
+import { uploadAvatar } from "../../api/uploadAvatarAPI"
 
 export const SettingsPage = {
   template() {
