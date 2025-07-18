@@ -1,14 +1,5 @@
 import { authService } from "../services/authService";
 
-export interface PopupConfig {
-    title: string;
-    description: string;
-    autoClose?: boolean;
-}
-
-export type PopupType = "success" | "error" | "warning";
-
-
 export class PopupBase {
     private container: HTMLElement;
 
