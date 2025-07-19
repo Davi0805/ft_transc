@@ -1,13 +1,13 @@
 import { TTournPlayer } from "../pages/play/lobbyTyping";
 var blossom = require('edmonds-blossom')
 
+
 type Match = [number, number]
 
 type PlayerGraph = [TTournPlayer, TTournPlayer][]
 
 type GraphEdge = [number, number, number];
 type WeightedGraph = GraphEdge[];
-
 
 export class TournamentService {
     constructor() {}

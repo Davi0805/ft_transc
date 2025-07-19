@@ -1,4 +1,4 @@
-import { TMatchDuration, TMapType, TLobby, TMatchPlayer, TUser, TLobbyType, TFriendlyPlayer, TRankedPlayer, TTournPlayer, TTournamentPlayer } from "./lobbyTyping"
+import { TDuration, TMap, TLobby, TLobbyType, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TTournPlayer, TMatchPlayer, TLobbyUser} from "./lobbyTyping"
 import { TUserCustoms, TGameConfigs, TControls, CGameSceneConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
 import { point, SIDES, ROLES, TWindow, TPaddle } from "../../match/matchSharedDependencies/sharedTypes"
 import { TournamentService } from "../../services/TournamentService"
@@ -26,8 +26,8 @@ export type SGameConfigs = {
     paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 }
 
-export function getSecondsFromDuration(duration: TMatchDuration) {
-    const durationToSeconds: Record<TMatchDuration, number> = {
+export function getSecondsFromDuration(duration: TDuration) {
+    const durationToSeconds: Record<TDuration, number> = {
         "blitz": 60,
         "rapid": 90,
         "classical": 120,
@@ -37,8 +37,8 @@ export function getSecondsFromDuration(duration: TMatchDuration) {
     return durationToSeconds[duration]
 }
 
-export function getStartingScoreFromDuration(duration: TMatchDuration) {
-    const durationToScore: Record<TMatchDuration, number> = {
+export function getStartingScoreFromDuration(duration: TDuration) {
+    const durationToScore: Record<TDuration, number> = {
         "blitz": 100,
         "rapid": 150,
         "classical": 200,
@@ -48,7 +48,7 @@ export function getStartingScoreFromDuration(duration: TMatchDuration) {
     return durationToScore[duration]
 }
 
-export function getSizeFromMap(map: TMapType) {
+export function getSizeFromMap(map: TMap) {
     const [_amountStr, _type, size] = map.split("-");
     switch (size) {
         case "small": return { x: 500, y: 500 }
@@ -172,11 +172,11 @@ export function applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
     return out;
 }
 
-function getMatchPlayers(users: TUser[], lobbyType: TLobbyType): TMatchPlayer[] {
+function getMatchPlayers(users: TLobbyUser[], lobbyType: TLobbyType): TMatchPlayer[] {
     const out: TMatchPlayer[] = []
     if (lobbyType === "friendly") {
         users.forEach(user => {
-            if (user.participating) {
+            if (user.player) {
                 const players = user.player as TFriendlyPlayer[]
                 players.forEach(player => {
                     out.push({
@@ -192,12 +192,12 @@ function getMatchPlayers(users: TUser[], lobbyType: TLobbyType): TMatchPlayer[] 
         })
     } else if (lobbyType === "ranked") {
         users.forEach(user => {
-            if (user.participating) {
+            if (user.player) {
                 const player = user.player as TRankedPlayer;
                 out.push({
                     userID: user.id,
                     id: user.id,
-                    nickname: user.nickname,
+                    nickname: user.username,
                     spriteID: user.spriteID,
                     team: player.team,
                     role: player.role,
@@ -209,7 +209,7 @@ function getMatchPlayers(users: TUser[], lobbyType: TLobbyType): TMatchPlayer[] 
             out.push({
                 userID: users[i].id,
                 id: users[i].id,
-                nickname: users[i].nickname,
+                nickname: users[i].username,
                 spriteID: users[i].spriteID,
                 team: i === 0 ? SIDES.LEFT : SIDES.RIGHT,
                 role: ROLES.BACK,
@@ -218,19 +218,19 @@ function getMatchPlayers(users: TUser[], lobbyType: TLobbyType): TMatchPlayer[] 
     }
     return out;
 }
-function getTournPlayers(users: TUser[]): TTournPlayer[] {
+function getTournPlayers(users: TLobbyUser[]): TTournPlayer[] {
     const out: TTournPlayer[] = [];
     users.forEach(user => {
         const player = user.player as TTournamentPlayer;
-        if (player.applied) {
+        if (player.participating) {
             out.push({
                 id: user.id,
-                nick: user.nickname,
+                nick: user.username,
                 score: player.score,
                 rating: user.rating,
                 prevOpponents: player.prevOpponents,
-                teamDist: player.teamDist,
-                participating: user.participating,
+                teamDist: player.teamPref,
+                participating: player.participating,
                 ready: user.ready
             })
         }
@@ -328,9 +328,9 @@ export function buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
 
 
 
-type TMatch = TUser[];
+type TMatch = TLobbyUser[];
 
-function buildMatches(lobbySettings: TLobby, users: TUser[]): TMatch[] {
+function buildMatches(lobbySettings: TLobby, users: TLobbyUser[]): TMatch[] {
     const out: TMatch[] = [];
     if (lobbySettings.type !== "tournament") {
         out.push(users);
@@ -348,7 +348,7 @@ function buildMatches(lobbySettings: TLobby, users: TUser[]): TMatch[] {
     return out
 }
 
-function startMatch(lobbySettings: TLobby, users: TUser[]) {
+function startMatch(lobbySettings: TLobby, users: TLobbyUser[]) {
     const matches: TMatch[] = buildMatches(lobbySettings, users);
     matches.forEach(match => {
         const matchPlayers: TMatchPlayer[] = getMatchPlayers(match, lobbySettings.type);

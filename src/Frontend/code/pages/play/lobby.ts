@@ -1,8 +1,7 @@
 import { router } from "../../routes/router";
 import { flashButton, getButton, getTable, toggleButton } from "./utils/stylingComponents";
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
-import { TLobby } from "./lobbyTyping";
-import { TDynamicLobbySettings, TMapType, TMatchDuration, TMatchMode } from "./lobbyTyping";
+import { TLobby, TDynamicLobbySettings, TMap, TDuration, TMode } from "./lobbyTyping";
 //import { LobbyLogic } from "./lobbyLogic";
 import { lobby } from "../../services/LobbyService";
 import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes";
@@ -101,7 +100,7 @@ export const LobbyPage = {
 
         const readyButton = getButton("btn-ready", "button", "Ready");
         readyButton.addEventListener('click', async () => {
-            if (!lobby.amIParticipating()) {
+            if (!lobby.isUserParticipating(lobby.myID)) {
                 flashButton(readyButton, "You must join first!")
             } else {
                 const state = toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
@@ -126,7 +125,7 @@ export const LobbyPage = {
 
     async renderSlots() {
         const slots = lobby.getSlots();
-        const canJoin = !(lobby.amIParticipating()) || lobby.settings.type == "friendly";
+        const canJoin = !(lobby.isUserParticipating(lobby.myID)) || lobby.settings.type == "friendly";
         console.log("can join: " + canJoin)
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
@@ -255,7 +254,7 @@ export const LobbyPage = {
         const participantsTable = getTable("participants", participantsTableHead, participantsTableBody)
         participantsElement.innerHTML += participantsTable.outerHTML;
         
-        const participating = lobby.amIParticipating();
+        const participating = lobby.isUserParticipating(lobby.myID);
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", participating ? "Withdraw" : "Join", false)
         joinWithdrawButton.addEventListener("click", () => {
             lobby.addTournPlayerIN()
@@ -272,9 +271,9 @@ export const LobbyPage = {
         const mode = (document.getElementById('match-mode') as HTMLSelectElement).value;
         const duration = (document.getElementById('match-duration') as HTMLSelectElement).value;
         lobby.updateSettingsIN({
-            map: map as TMapType,
-            mode: mode as TMatchMode,
-            duration: duration as TMatchDuration
+            map: map as TMap,
+            mode: mode as TMode,
+            duration: duration as TDuration
         })
         console.log("New settings applied!")
     },

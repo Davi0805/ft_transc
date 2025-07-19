@@ -1,4 +1,4 @@
-import { TMapType } from "../lobbyTyping";
+import { TMap } from "../lobbyTyping";
 import { SIDES, ROLES } from "../../../match/matchSharedDependencies/sharedTypes";
 
 type TPlayerInSlot = {
@@ -15,7 +15,7 @@ export type TSlots = {
 }
 
 
-export function getSlotsFromMap(map: TMapType): TSlots {
+export function getSlotsFromMap(map: TMap): TSlots {
     const [amount, type, _size] = map.split("-");
     const fourPlayers = amount === "4";
     const teams = type === "teams";
@@ -42,7 +42,7 @@ export function getSlotsFromMap(map: TMapType): TSlots {
 }
 
 //TODO: This should be calculated in the backend!!!!!!!
-export function getMaxPlayersFromMap(map: TMapType): number {
+export function getMaxPlayersFromMap(map: TMap): number {
     const [amountStr, type, _size] = map.split("-");
     const amount = Number(amountStr);
 

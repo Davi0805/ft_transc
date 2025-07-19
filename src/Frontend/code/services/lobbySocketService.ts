@@ -84,17 +84,14 @@ class LobbySocketService {
 
     private _handleMessage(dto: OutboundDTO) {
         switch (dto.requestType) {
-            case "joinLobby":
-                lobby.joinLobbyOUT(dto.data.lobby, dto.data.users);
-                break;
             case "updateSettings":
-                lobby.updateSettingsOUT(dto.data.settings, dto.data.updateSlots);
+                lobby.updateSettingsOUT(dto.data.settings, dto.data.users);
                 break;
             case "updateReadiness":
                 lobby.updateReadinessOUT(dto.data.userID, dto.data.ready)
                 break;
             case "addLobbyUser":
-                lobby.addLobbyUserOUT(dto.data.id)
+                lobby.addLobbyUserOUT(dto.data.user)
                 break;
             case "updateGame":
                 break;

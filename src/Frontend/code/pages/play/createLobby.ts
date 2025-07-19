@@ -1,9 +1,9 @@
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { router } from "../../routes/router";
 import { getSelfData } from "../../api/getSelfDataAPI";
-import { TLobbyCreationConfigs, createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
+import { createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
 import { lobbySocketService } from "../../services/lobbySocketService";
-import { TLobbyType, TMapType, TMatchMode, TMatchDuration, TLobby } from "./lobbyTyping";
+import { TLobbyType, TMap, TMode, TDuration, TLobby, LobbyCreationConfigsDTO } from "./lobbyTyping";
 import { lobby } from "../../services/LobbyService";
 import { getMaxPlayersFromMap } from "./utils/helpers";
 
@@ -62,32 +62,18 @@ export const CreateLobbyPage = {
             const matchMapInput = document.getElementById("match-map") as HTMLSelectElement
             const matchModeInput = document.getElementById("match-mode") as HTMLSelectElement
             const matchDurationInput = document.getElementById("match-duration") as HTMLSelectElement
-            const lobbySettings: TLobbyCreationConfigs = {
+            const lobbySettings: LobbyCreationConfigsDTO = {
                 name: nameInput.value,
-                host: hostName, //THis is not necessary!! Can be taken from socket
                 type: typeInput.options[typeInput.selectedIndex].id as TLobbyType,
-                map: matchMapInput.value as TMapType,
-                mode: matchModeInput.value as TMatchMode,
-                duration: matchDurationInput.value as TMatchDuration
+                map: matchMapInput.value as TMap,
+                mode: matchModeInput.value as TMode,
+                duration: matchDurationInput.value as TDuration
             }
             
-            const lobbyID = await createLobby(lobbySettings);
+            const requestedLobby: TLobby = await createLobby(lobbySettings);
+            lobby.init(selfData, requestedLobby)
             console.log("Waiting for websocket to connect...")
-            await lobbySocketService.connect(lobbyID);
-            /* lobby.init(selfData, {
-                id: lobbyID,
-                hostID: selfData.id,
-                name: lobbySettings.name,
-                host: lobbySettings.host,
-                type: lobbySettings.type,
-                capacity: { taken: 0, max: 0 }, //TODO: Make calculating function
-                map: lobbySettings.map,
-                mode: lobbySettings.mode,
-                duration: lobbySettings.duration,
-                round: 1
-            })
-            await lobby.addLobbyUserOUT(selfData.id); */
-            await lobby.waitForInit()
+            await lobbySocketService.connect(requestedLobby.id);
             router.navigateTo('/lobby')
         })
         console.log('Create Friendly page loaded!')
