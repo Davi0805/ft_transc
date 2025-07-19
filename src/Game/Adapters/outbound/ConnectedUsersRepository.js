@@ -23,6 +23,18 @@ class ConnectedUsersRepository {
         }
     }
 
+    async broadcastToOtherLobbyUsers(lobby_id, message, user_id)
+    {
+        const lobby = this.lobbies.get(lobby_id);
+        if (lobby)
+        {
+            lobby.forEach(u => {
+                if (u.user_id != user_id)
+                    u.socket.send(JSON.stringify(message));
+            });
+        }
+    }
+
     async getAllValues()
     {
         return this.lobbies.entries();

@@ -1,5 +1,6 @@
 const lobbyRepo = require('../outbound/LobbyDataRepository');
 const mapRepo = require('../outbound/MapRepository');
+const lobbyService = require('../../Application/Services/LobbyService');
 
 class LobbyController {
 
@@ -7,35 +8,20 @@ class LobbyController {
     // todo: maybe later implement a builder pattern to lobby
     async createLobby(req, reply)
     {
-        const body = req.body;
-        const id = Math.floor(Math.random() * 99999);
-
-        console.log('Lobby Id = ' + id + ' | Lobby Body = ' + JSON.stringify(req.body));
-
-        const map_data = await mapRepo.getByName(body.map);
-
-        console.log(JSON.stringify(map_data));
-
-        await lobbyRepo.save(id,
-                {name: body.name, type: body.type,
-                 mode: body.mode, duration: body.duration,
-                 map: body.map,
-                 slots_taken: 0,
-                 map_usr_max: map_data[0].max_slots,
-                round: 0});
-        return reply.send({lobby_id: id});
+        const lobby = await lobbyService.createLobby(req.body, 1);
+        return reply.send(lobby);
     }
 
     async getLobby(req, reply)
     {
-        const data = await lobbyRepo.get(req.params.lobbyId);
-        return reply.send(data);
+        const lobby = await lobbyService.getLobbyById(req.params.lobbyId);
+        return reply.send(lobby);
     }
 
     async getAllLobbies(req, reply)
     {
-        const data = await lobbyRepo.getAllLobbies();
-        return reply.send(data);
+        const lobby = await lobbyService.getAllLobbies();
+        return reply.send(lobby);
     }
 
     // When i want to test something, i just put it here
