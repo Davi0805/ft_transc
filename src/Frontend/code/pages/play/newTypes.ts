@@ -201,7 +201,8 @@ type OutboundDTOMap = {
     }
     //user applies to a tournament
     addTournamentPlayer: {
-        userID: number
+        userID: number,
+        player: TTournamentPlayer
     }
     //user withdraws from tournament
     removeTournamentPlayer: {
