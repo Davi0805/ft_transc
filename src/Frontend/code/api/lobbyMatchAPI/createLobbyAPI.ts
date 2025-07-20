@@ -1,7 +1,6 @@
 import { authService } from "../../services/authService";
 import { LobbyCreationConfigsDTO, TLobby } from "../../pages/play/lobbyTyping";
 
-type CreationResultData = {lobby_id: number}
 
 export async function createLobby(lobbySettings: LobbyCreationConfigsDTO): Promise<TLobby> {
   try {

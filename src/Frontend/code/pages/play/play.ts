@@ -1,7 +1,10 @@
-import { getLobbySettings} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { router } from "../../routes/router";
-import { lobbySocketService } from "../../services/lobbySocketService";
+//import { lobbySocketService } from "../../services/lobbySocketService";
+import { lobbySocketService } from "../../testServices/testLobySocketService";
+//import { getLobbySettings} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
+import { getAllLobbies } from "../../testServices/testLobbyAPI";
 import { getTable } from "./utils/stylingComponents";
+import { LobbiesListDTO } from "./lobbyTyping";
 
 export const PlayPage = {
     template() {
@@ -52,20 +55,26 @@ export const PlayPage = {
         const lobbiesBody = document.getElementById('lobbies-body') as HTMLElement;
         lobbiesBody.innerHTML = ""
 
-        const lobbiesInfo = await getLobbySettings(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
+        const lobbiesInfo = await getAllLobbies(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
 
         console.log("Lobbies info: ")
         console.log(lobbiesInfo);
+        const categories = ["name", "host", "type", "capacity", "mode", "map", "duration"] as const
+
         for (let i = 0; i < lobbiesInfo.length; i++) {
+            console.log(lobbiesInfo[i])
             const row = document.createElement("tr");
             const bgBrightness = i % 2 === 0 ? "bg-gray-900/0" : "bg-gray-900/25";
             row.className = `${bgBrightness} hover:bg-gray-900/90 active:bg-gray-900/25`
             
-            Object.values(lobbiesInfo[i]).forEach(item => {
-                console.log(`Current Item: ${item}`)
+            const lobby = lobbiesInfo[i]
+            
+            
+            categories.forEach(category => {
                 const tdata = document.createElement('td');
                 tdata.className = `px-6 py-2 wrap-anywhere`;
-                tdata.textContent = item.toString();
+                
+                tdata.textContent = lobby[category].toString();
                 row.appendChild(tdata);
             })
             row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].id))

@@ -1,0 +1,57 @@
+import Fastify from 'fastify'
+import FastifyWebsocket from '@fastify/websocket'
+import cors from '@fastify/cors';
+import { testLobbyRepository } from './testLobbyRepository.js'
+import { InboundDTO, LobbyCreationConfigsDTO } from './dependencies/lobbyTyping.js';
+import { WebSocket } from 'ws';
+import { lobbySocketService } from './testLobbySocketService.js';
+
+const fastify = Fastify()
+fastify.register(FastifyWebsocket)
+await fastify.register(cors); //This just allows a different domain to receive responses from this server
+
+fastify.get('/getAllLobbies', (_req, _res) => {
+    return testLobbyRepository.getLobbiesList()
+})
+fastify.post('/createLobby', (req, _res) => {
+    const dto = req.body as { 
+        lobbySettings: LobbyCreationConfigsDTO,
+        selfData: { id: number, username: string }
+    }
+    return testLobbyRepository.createLobby(dto.lobbySettings, dto.selfData)
+})
+
+
+
+fastify.register(async (fastify) => {
+    fastify.get<{ Params: {lobbyID: string} }> ('/ws/:lobbyID', {websocket: true}, (socket, req) => {
+        const lobbyID: number = Number(req.params.lobbyID)
+        lobbySocketService.addSocket(socket);
+
+        socket.onopen = () => {
+            console.log(`connected! LobbyID: ${lobbyID}`)
+        }
+
+        socket.onmessage = (ev: WebSocket.MessageEvent) => {
+            const dto: InboundDTO = JSON.parse(ev.data.toString()) as InboundDTO
+            console.log(`Message received: ${dto}`)
+            switch (dto.requestType) {
+                case "updateSettings":
+                    lobbySocketService.updateSettings(lobbyID, dto.data.settings)
+                    break
+                default:
+                    throw Error("dto type not found!")
+            }
+            lobbySocketService
+        }
+    })
+})
+
+
+try {
+    await fastify.listen({ port: 6969, host: '127.0.0.1'})
+    console.log("server has started")
+} catch (err) {
+    fastify.log.error(err)
+    process.exit(1)
+}

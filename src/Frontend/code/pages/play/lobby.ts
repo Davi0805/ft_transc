@@ -2,8 +2,7 @@ import { router } from "../../routes/router";
 import { flashButton, getButton, getTable, toggleButton } from "./utils/stylingComponents";
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { TLobby, TDynamicLobbySettings, TMap, TDuration, TMode } from "./lobbyTyping";
-//import { LobbyLogic } from "./lobbyLogic";
-import { lobby } from "../../services/LobbyService";
+import { lobbyService } from "../../services/LobbyService";
 import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes";
 
 export const LobbyPage = {
@@ -28,16 +27,16 @@ export const LobbyPage = {
 
     async init() {
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
-        titleElement.textContent = lobby.settings.name;
+        titleElement.textContent = lobbyService.lobby.name;
         const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
-        switch (lobby.settings.type) {
+        switch (lobbyService.lobby.type) {
             case "friendly": subtitleElement.textContent = "Friendly Match Lobby"; break;
             case "ranked": subtitleElement.textContent = "Ranked Match Lobby"; break;
             case "tournament": subtitleElement. textContent = "Tournament Lobby"; break;
             default: throw new Error("GAVE SHIT");
         }
         
-        if (lobby.settings.type == "tournament") {
+        if (lobbyService.lobby.type == "tournament") {
             await this.renderParticipants();
         } else {
             await this.renderSlots();
@@ -50,11 +49,11 @@ export const LobbyPage = {
 
     async renderSettings() {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        const lobbySettingsListing: TLobby = lobby.settings;
+        const lobbySettingsListing: TLobby = lobbyService.lobby;
         
         let lobbySettingsHtml = `
             <div id="settings-listing" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(false, lobby.settings.type, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing)}
                 ${getButton("btn-change-settings", "button", "Change lobby settings", false).outerHTML}
             </div>
         `;
@@ -70,7 +69,7 @@ export const LobbyPage = {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(true, lobby.settings.type, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(true, lobbyService.lobby.type, lobbySettingsListing)}
                 ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
             </div>
         `;
@@ -88,44 +87,46 @@ export const LobbyPage = {
         const buttonsDiv = document.getElementById("lobby-buttons") as HTMLElement;
 
         const inviteButton = getButton("btn-invite", "button", "Invite");
-        inviteButton.addEventListener('click', () => { lobby.inviteUserToLobby(1); }) //TODO: "1" is hardcoded. Find a way to invite specific user
+        inviteButton.addEventListener('click', () => { lobbyService.inviteUserToLobby(1); }) //TODO: "1" is hardcoded. Find a way to invite specific user
         buttonsDiv.appendChild(inviteButton);
 
         const leaveButton = getButton("btn-leave", "button", "Leave");
         leaveButton.addEventListener('click', () => {
-            lobby.leave()
+            lobbyService.leave()
             router.navigateTo('/play')
         })
         buttonsDiv.appendChild(leaveButton);
 
         const readyButton = getButton("btn-ready", "button", "Ready");
         readyButton.addEventListener('click', async () => {
-            if (!lobby.isUserParticipating(lobby.myID)) {
+            if (!lobbyService.isUserParticipating(lobbyService.myID)) {
                 flashButton(readyButton, "You must join first!")
             } else {
                 const state = toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
-                lobby.updateReadinessIN(state);
+                lobbyService.updateReadinessIN(state);
             }
         });
         buttonsDiv.appendChild(readyButton);
 
-        console.log(lobby.amIHost())
-        if (lobby.amIHost()) {
+        console.log(lobbyService.amIHost())
+        if (lobbyService.amIHost()) {
             const startButton = getButton("btn-start", "button", "Start");
             buttonsDiv.appendChild(startButton);
             startButton.addEventListener('click', async () => {
-                if (!lobby.isEveryoneReady()) {
+                if (!lobbyService.isEveryoneReady()) {
                     flashButton(startButton, "Not everyone is ready!");
                 } else {
-                    lobby.startMatchIN();
+                    lobbyService.startMatchIN();
                 }
             })
         }
     },
 
     async renderSlots() {
-        const slots = lobby.getSlots();
-        const canJoin = !(lobby.isUserParticipating(lobby.myID)) || lobby.settings.type == "friendly";
+        const slots = lobbyService.getSlots();
+        console.log("LOLOLOl")
+        console.log(lobbyService.myID)
+        const canJoin = !(lobbyService.isUserParticipating(lobbyService.myID)) || lobbyService.lobby.type == "friendly";
         console.log("can join: " + canJoin)
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
@@ -169,7 +170,7 @@ export const LobbyPage = {
                     console.log("maybe")
                     const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
-                        lobby.settings.type === "friendly"
+                        lobbyService.lobby.type === "friendly"
                         ? this.slotJoinFriendlyCallback(SIDES[teamName], ROLES[roleName])
                         : this.slotJoinRankedCallback(SIDES[teamName], ROLES[roleName])
                     })
@@ -220,7 +221,7 @@ export const LobbyPage = {
         //TODO: check how to save the controls. Maybe on lobby Service? Maybe only at the start of the match?
         const leftControl: string = "LeftArrow" //TODO: calculate from team
         const rightControl: string = "RightArrow" //TODO: calculate from team
-        lobby.addRankedPlayerIN({
+        lobbyService.addRankedPlayerIN({
             team: team,
             role: role
         });
@@ -238,7 +239,7 @@ export const LobbyPage = {
 
         let participantsTableBody = ""
         let place = 1
-        for (let participant of lobby.getTournPlayers()) {
+        for (let participant of lobbyService.getTournPlayers()) {
             participantsTableBody += `<tr class="bg-gray-900/${place % 2 === 0 ? "25" : "50"}"><td>${place++}</td>`;
             Object.values(participant).forEach(info => {
                 participantsTableBody += `<td>${info}</td>`
@@ -254,10 +255,10 @@ export const LobbyPage = {
         const participantsTable = getTable("participants", participantsTableHead, participantsTableBody)
         participantsElement.innerHTML += participantsTable.outerHTML;
         
-        const participating = lobby.isUserParticipating(lobby.myID);
+        const participating = lobbyService.isUserParticipating(lobbyService.myID);
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", participating ? "Withdraw" : "Join", false)
         joinWithdrawButton.addEventListener("click", () => {
-            lobby.addTournPlayerIN()
+            lobbyService.addTournPlayerIN()
         })
         //TODO: callback for this button is missing!
         joinWithdrawButton.classList.add("w-full");
@@ -270,7 +271,7 @@ export const LobbyPage = {
         const map = (document.getElementById('match-map') as HTMLSelectElement).value;
         const mode = (document.getElementById('match-mode') as HTMLSelectElement).value;
         const duration = (document.getElementById('match-duration') as HTMLSelectElement).value;
-        lobby.updateSettingsIN({
+        lobbyService.updateSettingsIN({
             map: map as TMap,
             mode: mode as TMode,
             duration: duration as TDuration
@@ -286,7 +287,7 @@ export const LobbyPage = {
         const alias = aliasInput.value;
         const spriteIdInput = document.getElementById("player-paddle") as HTMLInputElement;
         const spriteID = Number(spriteIdInput.value)
-        lobby.addFriendlyPlayerIN({
+        lobbyService.addFriendlyPlayerIN({
             id: -1, //This is supposed to be generated by backend
             nickname: alias,
             spriteID: spriteID,

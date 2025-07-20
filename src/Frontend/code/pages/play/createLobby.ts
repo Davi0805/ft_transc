@@ -1,11 +1,12 @@
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { router } from "../../routes/router";
 import { getSelfData } from "../../api/getSelfDataAPI";
-import { createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
-import { lobbySocketService } from "../../services/lobbySocketService";
+//import { createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
+import { createLobby } from "../../testServices/testLobbyAPI";
+//import { lobbySocketService } from "../../services/lobbySocketService";
+import { lobbySocketService } from "../../testServices/testLobySocketService";
 import { TLobbyType, TMap, TMode, TDuration, TLobby, LobbyCreationConfigsDTO } from "./lobbyTyping";
-import { lobby } from "../../services/LobbyService";
-import { getMaxPlayersFromMap } from "./utils/helpers";
+import { lobbyService } from "../../services/LobbyService";
 
 export const CreateLobbyPage = {
     template() {
@@ -55,8 +56,6 @@ export const CreateLobbyPage = {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const selfData = await getSelfData();
-            const hostName = selfData.nickname;
-            if (!hostName) { throw Error(); }
             const nameInput = document.getElementById("lobby-name") as HTMLInputElement
             const typeInput = document.getElementById("lobby-type") as HTMLSelectElement
             const matchMapInput = document.getElementById("match-map") as HTMLSelectElement
@@ -70,8 +69,10 @@ export const CreateLobbyPage = {
                 duration: matchDurationInput.value as TDuration
             }
             
-            const requestedLobby: TLobby = await createLobby(lobbySettings);
-            lobby.init(selfData, requestedLobby)
+            //TESTING
+            const requestedLobby: TLobby = await createLobby(lobbySettings, {id: selfData.id, username: selfData.username}) //UserID in production is not necessary
+            //const requestedLobby: TLobby = await createLobby(lobbySettings);
+            lobbyService.init(requestedLobby.hostID, requestedLobby)
             console.log("Waiting for websocket to connect...")
             await lobbySocketService.connect(requestedLobby.id);
             router.navigateTo('/lobby')
