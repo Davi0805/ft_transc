@@ -45,3 +45,5 @@ coverage/
 *.swp
 
 test
+
+./tests/package-lock.json
