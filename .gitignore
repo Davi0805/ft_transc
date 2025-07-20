@@ -46,4 +46,4 @@ coverage/
 
 test
 
-./tests/package-lock.json
+tests/package-lock.json
