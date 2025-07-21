@@ -108,7 +108,6 @@ export const LobbyPage = {
         });
         buttonsDiv.appendChild(readyButton);
 
-        console.log(lobbyService.amIHost())
         if (lobbyService.amIHost()) {
             const startButton = getButton("btn-start", "button", "Start");
             buttonsDiv.appendChild(startButton);
@@ -124,10 +123,7 @@ export const LobbyPage = {
 
     async renderSlots() {
         const slots = lobbyService.getSlots();
-        console.log("LOLOLOl")
-        console.log(lobbyService.myID)
         const canJoin = !(lobbyService.isUserParticipating(lobbyService.myID)) || lobbyService.lobby.type == "friendly";
-        console.log("can join: " + canJoin)
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
         teamsElement.innerHTML = "";
@@ -143,9 +139,7 @@ export const LobbyPage = {
             teamNameElement.textContent = teamName;
             teamElement.appendChild(teamNameElement);
             slotsTable.appendChild(teamElement);
-            
-            console.log("Team: ")
-            console.log(team);
+  
             for (const roleName of (Object.keys(team) as (keyof typeof ROLES)[])) {
                 const player = team[roleName]
                 if (player === undefined) { continue; }
@@ -167,7 +161,6 @@ export const LobbyPage = {
                     playerElement.textContent = player.toString();
                     slotSpaceElement.appendChild(playerElement);
                 } else if (canJoin){
-                    console.log("maybe")
                     const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
                         lobbyService.lobby.type === "friendly"

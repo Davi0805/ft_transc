@@ -6,10 +6,10 @@ class TestLobbySocketService {
     constructor() {}
 
     updateSettings(lobbyID: number, newSettings: TDynamicLobbySettings) {
-        testLobbyRepository.updateSettings(lobbyID, newSettings);
+        const updatedUsers = testLobbyRepository.updateSettings(lobbyID, newSettings);
         this.broadcast("updateSettings", {
             settings: newSettings,
-            users: null
+            users: updatedUsers
         })
     }
 

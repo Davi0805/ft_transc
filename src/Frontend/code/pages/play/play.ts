@@ -62,7 +62,6 @@ export const PlayPage = {
         const categories = ["name", "host", "type", "capacity", "mode", "map", "duration"] as const
 
         for (let i = 0; i < lobbiesInfo.length; i++) {
-            console.log(lobbiesInfo[i])
             const row = document.createElement("tr");
             const bgBrightness = i % 2 === 0 ? "bg-gray-900/0" : "bg-gray-900/25";
             row.className = `${bgBrightness} hover:bg-gray-900/90 active:bg-gray-900/25`
@@ -74,7 +73,11 @@ export const PlayPage = {
                 const tdata = document.createElement('td');
                 tdata.className = `px-6 py-2 wrap-anywhere`;
                 
-                tdata.textContent = lobby[category].toString();
+                if (category === "capacity") {
+                    tdata.textContent = `${lobby["capacity"].taken}/${lobby["capacity"].max}`
+                } else {
+                    tdata.textContent = lobby[category].toString();
+                }
                 row.appendChild(tdata);
             })
             row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].id))

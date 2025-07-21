@@ -47,3 +47,4 @@ coverage/
 test
 
 tests/package-lock.json
+tests/*.js

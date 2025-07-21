@@ -1,4 +1,5 @@
-import { LobbiesListDTO, LobbyCreationConfigsDTO, TDynamicLobbySettings, TLobby } from "./dependencies/lobbyTyping.js";
+import { LobbiesListDTO, LobbyCreationConfigsDTO, TDynamicLobbySettings, TLobby, TLobbyUser } from "./dependencies/lobbyTyping.js";
+import { getMaxPlayersFromMap, getParticipantsAm } from "./helpers.js";
 
 type TUser = {
     id: number,
@@ -23,8 +24,8 @@ class LobbyRepository {
                 host: this._getUserByID(lobby.hostID).username,
                 type: lobby.type,
                 capacity: {
-                    taken: 0, //TODO
-                    max: 0, //TODO
+                    taken: getParticipantsAm(lobby.users),
+                    max: getMaxPlayersFromMap(lobby.map)
                 },
                 map: lobby.map,
                 mode: lobby.mode,
@@ -74,11 +75,22 @@ class LobbyRepository {
 
 
 
-    updateSettings(lobbyID: number, settings: TDynamicLobbySettings) {
+    updateSettings(lobbyID: number, settings: TDynamicLobbySettings): TLobbyUser[] | null { //returns whether users must be updated in broadcast
         const lobby = this._getLobbyByID(lobbyID);
+        let updateUsers = lobby.map !== settings.map && lobby.type !== "tournament"
+        console.log(updateUsers)
         lobby.map = settings.map;
         lobby.mode = settings.mode;
         lobby.duration = settings.duration
+        if (updateUsers) {
+            lobby.users.forEach(user => {
+                user.player = null;
+            })
+            return lobby.users
+        } else {
+            return null
+        }
+        
     }
 
     _getLobbyByID(lobbyID: number) {

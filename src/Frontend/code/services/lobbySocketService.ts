@@ -1,6 +1,6 @@
 import { InboundDTOMap, InboundDTO, OutboundDTO, OutboundDTOMap } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
-import { lobby } from "./LobbyService";
+import { lobbyService } from "./LobbyService";
 import { matchService } from "./matchService";
 
 class LobbySocketService {
@@ -85,13 +85,13 @@ class LobbySocketService {
     private _handleMessage(dto: OutboundDTO) {
         switch (dto.requestType) {
             case "updateSettings":
-                lobby.updateSettingsOUT(dto.data.settings, dto.data.users);
+                lobbyService.updateSettingsOUT(dto.data.settings, dto.data.users);
                 break;
             case "updateReadiness":
-                lobby.updateReadinessOUT(dto.data.userID, dto.data.ready)
+                lobbyService.updateReadinessOUT(dto.data.userID, dto.data.ready)
                 break;
             case "addLobbyUser":
-                lobby.addLobbyUserOUT(dto.data.user)
+                lobbyService.addLobbyUserOUT(dto.data.user)
                 break;
             case "updateGame":
                 break;

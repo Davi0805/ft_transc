@@ -242,7 +242,6 @@ class LobbyService {
         return this.lobby.users.find(user => (this.isUserParticipating(user.id) && !user.ready)) ? false : true
     }
     isUserParticipating(userID: number): boolean {
-        console.log(this.lobby.users)
         const me = this.lobby.users.find(user => user.id == userID);
         if (!me) {throw Error("How can't I be in the lobby???"); }
         if (!me.player) {
