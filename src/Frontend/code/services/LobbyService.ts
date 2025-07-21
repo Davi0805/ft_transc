@@ -33,15 +33,22 @@ class LobbyService {
         const matchPlayers = this.getMatchPlayers()
 
         matchPlayers.forEach(player => {
-            if (mapSlots[player.team] === undefined || mapSlots[player.team]![player.role] === undefined) {
+            console.log(mapSlots["LEFT"])
+            const team: keyof typeof SIDES = SIDES[player.team] as keyof typeof SIDES
+            const role: keyof typeof ROLES = ROLES[player.role] as keyof typeof ROLES 
+            console.log(team)
+            console.log(mapSlots[team])
+
+            if (mapSlots[team] === undefined || mapSlots[team][role] === undefined) {
                 throw Error("Fuck everything about this bullshit")
             }
             if (player.id === null || player.spriteID === null) {
                 throw Error("Player should have been initialized by backend at this point!")
             }
-            if (mapSlots[player.team]![player.role] === null) {
-                mapSlots[player.team]![player.role] = {
+            if (mapSlots[team][role] === null) {
+                mapSlots[team][role] = {
                     id: player.id,
+                    nickname: player.nickname ? player.nickname : "null",
                     spriteID: player.spriteID
                 }
             }
@@ -75,12 +82,12 @@ class LobbyService {
         lobbySocketService.send("removeRankedPlayer", null)
     }
 
-    addTournPlayerIN() {
+    addTournamentPlayerIN() {
         //This request does not need any payload because every info is either taken from auth or has default values
         //Must add a TTournPlayer to the participating list. See the type definition for details
         lobbySocketService.send("addTournamentPlayer", null);
     }
-    removeTournPlayerIN() {
+    removeTournamentPlayerIN() {
         lobbySocketService.send("removeTournamentPlayer", null);
     }
 
@@ -161,12 +168,12 @@ class LobbyService {
         user.player = null
         LobbyPage.renderSlots();
     }
-    addTournamentPlayer(userID: number) {
+    addTournamentPlayerOUT(userID: number) { //TODO This is definitely not complete. Fix
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         LobbyPage.renderParticipants();
     }
-    removeTournamentPlayer(userID: number) {
+    removeTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         (user.player as TTournamentPlayer).participating = false;

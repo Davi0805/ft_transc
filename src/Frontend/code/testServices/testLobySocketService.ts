@@ -106,6 +106,8 @@ class LobbySocketService {
             case "removeRankedPlayer":
                 lobbyService.removeRankedPlayerOUT(dto.data.id);
                 break;
+            case "addTournamentPlayer":
+                lobbyService.addTournamentPlayerOUT(dto.data.userID)
             case "updateGame":
                 break;
             default:

@@ -3,6 +3,7 @@ import { SIDES, ROLES } from "../../../match/matchSharedDependencies/sharedTypes
 
 type TPlayerInSlot = {
     id: number,
+    nickname: string,
     spriteID: number
 }
 

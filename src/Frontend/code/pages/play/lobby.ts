@@ -158,7 +158,7 @@ export const LobbyPage = {
                     //TODO should find a way to identify if player is current user and add a withdraw button
                     const playerElement = document.createElement("p");
                     playerElement.className = "text-xl p-2"
-                    playerElement.textContent = player.toString();
+                    playerElement.textContent = player.nickname.toString();
                     slotSpaceElement.appendChild(playerElement);
                 } else if (canJoin){
                     const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
@@ -251,7 +251,7 @@ export const LobbyPage = {
         const participating = lobbyService.isUserParticipating(lobbyService.myID);
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", participating ? "Withdraw" : "Join", false)
         joinWithdrawButton.addEventListener("click", () => {
-            lobbyService.addTournPlayerIN()
+            lobbyService.addTournamentPlayerIN()
         })
         //TODO: callback for this button is missing!
         joinWithdrawButton.classList.add("w-full");
