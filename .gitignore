@@ -46,6 +46,8 @@ coverage/
 
 test
 
+tests/node_modules/
 tests/package-lock.json
+tests/**/*.js
 tests/*.js
 tests/*cjs
