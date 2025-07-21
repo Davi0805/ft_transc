@@ -13,6 +13,13 @@ await fastify.register(cors); //This just allows a different domain to receive r
 fastify.get('/getAllLobbies', (_req, _res) => {
     return testLobbyRepository.getLobbiesList()
 })
+fastify.post<{ Params: {lobbyID: string} }>('/enterLobby/:lobbyID', (req, _res) => {
+    const lobbyID = Number(req.params.lobbyID)
+    const selfData = req.body as { id: number, username: string }
+    testLobbyRepository.addUserToLobby(lobbyID, selfData)
+    const lobby = testLobbyRepository.getLobbyByID(lobbyID)
+    return lobby
+})
 fastify.post('/createLobby', (req, _res) => {
     const dto = req.body as { 
         lobbySettings: LobbyCreationConfigsDTO,
@@ -26,7 +33,7 @@ fastify.post('/createLobby', (req, _res) => {
 fastify.register(async (fastify) => {
     fastify.get<{ Params: {lobbyID: string} }> ('/ws/:lobbyID', {websocket: true}, (socket, req) => {
         const lobbyID: number = Number(req.params.lobbyID)
-        lobbySocketService.addSocket(socket);
+        lobbySocketService.addSocketToLobby(lobbyID, socket);
 
         socket.onopen = () => {
             console.log(`connected! LobbyID: ${lobbyID}`)

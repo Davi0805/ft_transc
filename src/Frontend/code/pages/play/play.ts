@@ -2,9 +2,11 @@ import { router } from "../../routes/router";
 //import { lobbySocketService } from "../../services/lobbySocketService";
 import { lobbySocketService } from "../../testServices/testLobySocketService";
 //import { getLobbySettings} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
-import { getAllLobbies } from "../../testServices/testLobbyAPI";
+import { enterLobby, getAllLobbies } from "../../testServices/testLobbyAPI";
 import { getTable } from "./utils/stylingComponents";
-import { LobbiesListDTO } from "./lobbyTyping";
+import { LobbiesListDTO, TLobby } from "./lobbyTyping";
+import { getSelfData } from "../../api/getSelfDataAPI";
+import { lobbyService } from "../../services/LobbyService";
 
 export const PlayPage = {
     template() {
@@ -87,8 +89,11 @@ export const PlayPage = {
         console.log("Lobby list updated!")
     },
 
-    async goToLobby(id: number) {
-        lobbySocketService.connect(id);
+    async goToLobby(lobbyId: number) {
+        const selfData = await getSelfData();
+        const requestedLobby: TLobby = await enterLobby(lobbyId, {id: selfData.id, username: selfData.username}) //second arg in production is not necessary
+        lobbyService.init(selfData.id, requestedLobby)
+        lobbySocketService.connect(lobbyId);
         router.navigateTo('/lobby')
     }
 }

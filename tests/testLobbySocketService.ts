@@ -7,7 +7,7 @@ class TestLobbySocketService {
 
     updateSettings(lobbyID: number, newSettings: TDynamicLobbySettings) {
         const updatedUsers = testLobbyRepository.updateSettings(lobbyID, newSettings);
-        this.broadcast("updateSettings", {
+        this.broadcast(lobbyID, "updateSettings", {
             settings: newSettings,
             users: updatedUsers
         })
@@ -15,18 +15,27 @@ class TestLobbySocketService {
 
 
     
-    private _wsArray: WebSocket[] = []
-    addSocket(ws: WebSocket) {
-        this._wsArray.push(ws)
+    private _wsMap: Map<number, WebSocket[]> = new Map<number, WebSocket[]>
+    addSocketToLobby(lobbyID: number,  ws: WebSocket) {
+        const lobbySockets = this._wsMap.get(lobbyID)
+        if (!lobbySockets) {
+            this._wsMap.set(lobbyID, [ws])
+        } else {
+            lobbySockets.push(ws)
+        }
     }
-    broadcast<T extends keyof OutboundDTOMap>(type: T, data: OutboundDTOMap[T]) {
-        this._wsArray.forEach(ws => {
-            const dto: OutboundDTO = {
-                requestType: type,
-                data: data
-            }
-            ws.send(JSON.stringify(dto))
-        })
+    broadcast<T extends keyof OutboundDTOMap>(lobbyID: number, reqType: T, data: OutboundDTOMap[T]) {
+        console.log("Start broadcasting")
+        const lobbySockets = this._wsMap.get(lobbyID);
+        if (lobbySockets) {
+            lobbySockets.forEach(ws => {
+                const dto: OutboundDTO = {
+                    requestType: reqType,
+                    data: data
+                }
+                ws.send(JSON.stringify(dto))
+            })
+        }
     }
 }
 

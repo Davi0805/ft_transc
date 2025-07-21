@@ -70,8 +70,7 @@ export const CreateLobbyPage = {
             }
             
             //TESTING
-            const requestedLobby: TLobby = await createLobby(lobbySettings, {id: selfData.id, username: selfData.username}) //UserID in production is not necessary
-            //const requestedLobby: TLobby = await createLobby(lobbySettings);
+            const requestedLobby: TLobby = await createLobby(lobbySettings, {id: selfData.id, username: selfData.username}) //second arg in production is not necessary
             lobbyService.init(requestedLobby.hostID, requestedLobby)
             console.log("Waiting for websocket to connect...")
             await lobbySocketService.connect(requestedLobby.id);

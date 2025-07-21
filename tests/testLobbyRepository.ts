@@ -1,5 +1,6 @@
 import { LobbiesListDTO, LobbyCreationConfigsDTO, TDynamicLobbySettings, TLobby, TLobbyUser } from "./dependencies/lobbyTyping.js";
 import { getMaxPlayersFromMap, getParticipantsAm } from "./helpers.js";
+import { lobbySocketService } from "./testLobbySocketService.js";
 
 type TUser = {
     id: number,
@@ -13,9 +14,6 @@ class LobbyRepository {
     constructor() {}
 
     getLobbiesList(): LobbiesListDTO {
-        console.log("getAllLobbies called")
-        console.log(`Lobbies: ${this._lobbies}`)
-
         const out: LobbiesListDTO = []
         this._lobbies.forEach(lobby => {
             out.push({
@@ -34,19 +32,13 @@ class LobbyRepository {
         })
         return out
     }
-
+    getLobbyByID(lobbyID: number) {
+        const correctLobby = this._lobbies.find(lobby => lobby.id === lobbyID)
+        if (!correctLobby) {throw Error("Lobby requested does not exist!")}
+        return correctLobby
+    }
     createLobby(configs: LobbyCreationConfigsDTO, selfData: {id: number, username: string}): TLobby {
-        let userInfo = this._users.find(user => user.id === selfData.id)
-        if (!userInfo) {
-            userInfo = {
-                id: selfData.id,
-                username: selfData.username,
-                spriteID: 0,
-                rating: 1500
-            }
-            this._users.push(userInfo)
-        }
-
+        let userInfo = this._getUserByID(selfData.id, selfData.username)
 
         const newLobby: TLobby = {
             id: this._currentLobbyID++,
@@ -70,13 +62,27 @@ class LobbyRepository {
         
         return newLobby
     }
-
+    //Second argument should not be neccessary. Or at least only id is necessary, username is only to register user if it does not exist, which in production always should
+    addUserToLobby(lobbyID: number, userData: {id: number, username: string}) {
+        const lobby = this.getLobbyByID(lobbyID);
+        const userInfo = this._getUserByID(userData.id, userData.username);
+        const user = {
+            id: userInfo.id,
+            username: userInfo.username,
+            spriteID: userInfo.spriteID,
+            rating: userInfo.rating,
+            ready: false,
+            player: null
+        }
+        lobby.users.push(user)
+        lobbySocketService.broadcast(lobbyID, "addLobbyUser", { user: user })
+    }
 
 
 
 
     updateSettings(lobbyID: number, settings: TDynamicLobbySettings): TLobbyUser[] | null { //returns whether users must be updated in broadcast
-        const lobby = this._getLobbyByID(lobbyID);
+        const lobby = this.getLobbyByID(lobbyID);
         let updateUsers = lobby.map !== settings.map && lobby.type !== "tournament"
         console.log(updateUsers)
         lobby.map = settings.map;
@@ -92,16 +98,23 @@ class LobbyRepository {
         }
         
     }
-
-    _getLobbyByID(lobbyID: number) {
-        const correctLobby = this._lobbies.find(lobby => lobby.id === lobbyID)
-        if (!correctLobby) {throw Error("Lobby requested does not exist!")}
-        return correctLobby
-    }
-    _getUserByID(userID: number) {
-        const correctUser = this._users.find(user => user.id === userID)
-        if (!correctUser) {throw Error("Lobby requested does not exist!")}
-        return correctUser
+    
+    
+    
+    _getUserByID(userID: number, username: string | null = null) {
+        let userInfo = this._users.find(user => user.id === userID)
+        if (!userInfo) {
+            //This substitutes the register system
+            if (!username) {throw Error("user should have been init by now")}
+            userInfo = {
+                id: userID,
+                username: username,
+                spriteID: 0,
+                rating: 1500
+            }
+            this._users.push(userInfo)
+        }
+        return userInfo
     }
 
     private _lobbies: TLobby[] = []
