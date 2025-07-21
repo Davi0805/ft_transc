@@ -31,8 +31,9 @@ fastify.post('/createLobby', (req, _res) => {
 
 
 fastify.register(async (fastify) => {
-    fastify.get<{ Params: {lobbyID: string} }> ('/ws/:lobbyID', {websocket: true}, (socket, req) => {
+    fastify.get<{ Params: {lobbyID: string, userID: string} }> ('/ws/:lobbyID/:userID', {websocket: true}, (socket, req) => {
         const lobbyID: number = Number(req.params.lobbyID)
+        const senderID: number = Number(req.params.userID)
         lobbySocketService.addSocketToLobby(lobbyID, socket);
 
         socket.onopen = () => {
@@ -42,14 +43,7 @@ fastify.register(async (fastify) => {
         socket.onmessage = (ev: WebSocket.MessageEvent) => {
             const dto: InboundDTO = JSON.parse(ev.data.toString()) as InboundDTO
             console.log(`Message received: ${dto}`)
-            switch (dto.requestType) {
-                case "updateSettings":
-                    lobbySocketService.updateSettings(lobbyID, dto.data.settings)
-                    break
-                default:
-                    throw Error("dto type not found!")
-            }
-            lobbySocketService
+            lobbySocketService.handleMessage(lobbyID, senderID, dto)
         }
     })
 })

@@ -146,9 +146,7 @@ export type InboundDTOMap = {
         player: TRankedPlayer
     },
     //user removes itself from the picked slot
-    removeRankedPlayer: {
-        id: number 
-    }
+    removeRankedPlayer: null
     //user applies to the tournament of the lobby
     addTournamentPlayer: null //None of the member variables are chosen by the user
     //user withdraws from the tournament

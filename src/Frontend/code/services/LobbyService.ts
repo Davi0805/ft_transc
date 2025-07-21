@@ -72,7 +72,7 @@ class LobbyService {
     }
 
     removeRankedPlayerIN(playerID: number) {
-        lobbySocketService.send("removeRankedPlayer", { id: playerID})
+        lobbySocketService.send("removeRankedPlayer", null)
     }
 
     addTournPlayerIN() {

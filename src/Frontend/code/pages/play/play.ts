@@ -93,7 +93,7 @@ export const PlayPage = {
         const selfData = await getSelfData();
         const requestedLobby: TLobby = await enterLobby(lobbyId, {id: selfData.id, username: selfData.username}) //second arg in production is not necessary
         lobbyService.init(selfData.id, requestedLobby)
-        lobbySocketService.connect(lobbyId);
+        lobbySocketService.connect(lobbyId, selfData.id);
         router.navigateTo('/lobby')
     }
 }

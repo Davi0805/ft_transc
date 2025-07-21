@@ -1,4 +1,4 @@
-import { LobbiesListDTO, LobbyCreationConfigsDTO, TDynamicLobbySettings, TLobby, TLobbyUser } from "./dependencies/lobbyTyping.js";
+import { LobbiesListDTO, LobbyCreationConfigsDTO, TDynamicLobbySettings, TFriendlyPlayer, TLobby, TLobbyUser, TRankedPlayer, TTournamentPlayer } from "./dependencies/lobbyTyping.js";
 import { getMaxPlayersFromMap, getParticipantsAm } from "./helpers.js";
 import { lobbySocketService } from "./testLobbySocketService.js";
 
@@ -84,7 +84,6 @@ class LobbyRepository {
     updateSettings(lobbyID: number, settings: TDynamicLobbySettings): TLobbyUser[] | null { //returns whether users must be updated in broadcast
         const lobby = this.getLobbyByID(lobbyID);
         let updateUsers = lobby.map !== settings.map && lobby.type !== "tournament"
-        console.log(updateUsers)
         lobby.map = settings.map;
         lobby.mode = settings.mode;
         lobby.duration = settings.duration
@@ -95,16 +94,79 @@ class LobbyRepository {
             return lobby.users
         } else {
             return null
-        }
-        
+        } 
+    }
+
+    updateReadiness(lobbyID: number, userID: number, ready: boolean) {
+        const lobby = this.getLobbyByID(lobbyID);
+        const user = this._getLobbyUserByID(lobby, userID);
+        user.ready = ready
     }
     
+    addFriendlyPlayer(lobbyID: number, userID: number, player: TFriendlyPlayer) {
+        const lobby = this.getLobbyByID(lobbyID)
+        const user = this._getLobbyUserByID(lobby, userID)
+        if (!user.player) {
+            user.player = [player]
+        } else {
+            (user.player as TFriendlyPlayer[]).push(player)
+        }
+    }
+    removeFriendlyPlayer(lobbyID: number, userID: number, playerID: number) {
+        const lobby = this.getLobbyByID(lobbyID)
+        const user = this._getLobbyUserByID(lobby, userID)
+        if (!user.player) {throw Error()}
+        user.player = (user.player as TFriendlyPlayer[]).filter(player => player.id !== playerID)
+        if (user.player.length === 0) { user.player = null}
+    }
     
-    
+    addRankedPlayer(lobbyID: number, userID: number, player: TRankedPlayer) {
+        const lobby = this.getLobbyByID(lobbyID)
+        const user = this._getLobbyUserByID(lobby, userID)
+        user.player = player
+    }
+    removeRankedPlayer(lobbyID: number, userID: number) {
+        const lobby = this.getLobbyByID(lobbyID)
+        const user = this._getLobbyUserByID(lobby, userID)
+        user.player = null
+    }
+
+    addTournamentPlayer(lobbyID: number, userID: number): TTournamentPlayer {
+        const lobby = this.getLobbyByID(lobbyID)
+        const user = this._getLobbyUserByID(lobby, userID)
+        if (user.player) {
+            (user.player as TTournamentPlayer).participating = true
+        } else {
+            user.player = {
+                participating: true,
+                score: 0,
+                prevOpponents: [],
+                teamPref: 0
+            } as TTournamentPlayer
+        }
+        return (user.player as TTournamentPlayer)
+    }
+    removeTournamentPlayer(lobbyID: number, userID: number) {
+        const lobby = this.getLobbyByID(lobbyID)
+        const user = this._getLobbyUserByID(lobby, userID);
+        (user.player as TTournamentPlayer).participating = false
+    }
+
+    leaveLobby(lobbyID: number, userID: number) {
+        const lobby = this.getLobbyByID(lobbyID)
+        lobby.users = lobby.users.filter(user => user.id === userID)
+    }
+    //TODO startgame
+
+    _getLobbyUserByID(lobby: TLobby, userID: number): TLobbyUser {
+        const user = lobby.users.find(user => user.id === userID);
+        if (!user) {throw Error("user does not exist")}
+        return user
+    }
     _getUserByID(userID: number, username: string | null = null) {
         let userInfo = this._users.find(user => user.id === userID)
         if (!userInfo) {
-            //This substitutes the register system
+            //This substitutes the register system. Should not be done in production
             if (!username) {throw Error("user should have been init by now")}
             userInfo = {
                 id: userID,

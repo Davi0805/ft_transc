@@ -7,7 +7,7 @@ class LobbySocketService {
         this._lobbyID = 0; //TODO change to null
     }
 
-    connect(lobbyID: number): Promise<void> {
+    connect(lobbyID: number, userID: number): Promise<void> {
         return new Promise((resolve, reject) => {
             if (this._ws && this._ws.readyState === WebSocket.OPEN) {
                 console.log("DEBUG: lobbySocket already connected");
@@ -15,7 +15,7 @@ class LobbySocketService {
                 return;
             }
 
-            this._ws = new WebSocket(`ws://localhost:6969/ws/${lobbyID}`);
+            this._ws = new WebSocket(`ws://localhost:6969/ws/${lobbyID}/${userID}`);
             this._lobbyID = lobbyID;
 
             this._ws.onopen = (ev: Event) => {
@@ -90,6 +90,21 @@ class LobbySocketService {
                 break;
             case "addLobbyUser":
                 lobbyService.addLobbyUserOUT(dto.data.user)
+                break;
+            case "removeLobbyUser":
+                lobbyService.removeLobbyUserOUT(dto.data.id)
+                break;
+            case "addFriendlyPlayer":
+                lobbyService.addFriendlyPlayerOUT(dto.data.userID, dto.data.player)
+                break;
+            case "removeFriendlyPlayer":
+                lobbyService.removeFriendlyPlayerOUT(dto.data.playerID);
+                break;
+            case "addRankedPlayer":
+                lobbyService.addRankedPlayerOUT(dto.data.userID, dto.data.player)
+                break;
+            case "removeRankedPlayer":
+                lobbyService.removeRankedPlayerOUT(dto.data.id);
                 break;
             case "updateGame":
                 break;
