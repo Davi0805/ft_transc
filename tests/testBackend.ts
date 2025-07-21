@@ -34,7 +34,7 @@ fastify.register(async (fastify) => {
     fastify.get<{ Params: {lobbyID: string, userID: string} }> ('/ws/:lobbyID/:userID', {websocket: true}, (socket, req) => {
         const lobbyID: number = Number(req.params.lobbyID)
         const senderID: number = Number(req.params.userID)
-        lobbySocketService.addSocketToLobby(lobbyID, socket);
+        lobbySocketService.addSocketToLobby(lobbyID, senderID, socket);
 
         socket.onopen = () => {
             console.log(`connected! LobbyID: ${lobbyID}`)

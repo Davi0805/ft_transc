@@ -1,4 +1,4 @@
-import { point, BALL_TYPES, SIDES, TControlsState } from "../game/shared/sharedTypes.js"
+import { point, BALL_TYPES, SIDES, TControlsState } from "./sharedTypes.js"
 
 // DTO type
 export type Adto = | { type: "AssignID", dto: DTOAssignID }

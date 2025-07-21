@@ -1,6 +1,8 @@
 import { WebSocket } from "ws";
 import { InboundDTO, InboundDTOMap, OutboundDTO, OutboundDTOMap, TDynamicLobbySettings, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer } from "./dependencies/lobbyTyping.js";
 import { testLobbyRepository } from "./testLobbyRepository.js";
+import { testMatchService } from "./testMatchService.js";
+import { CGameDTO } from "./dependencies/dtos.js";
 
 class TestLobbySocketService {
     constructor() {}
@@ -34,18 +36,26 @@ class TestLobbySocketService {
             case "removeTournamentPlayer":
                 this.removeTournamentPlayer(lobbyID, senderID)
                 break;
+            case "startGame":
+                this.startGame(lobbyID, senderID)
+                break;
+            case "updateGame":
+                this.updateGame(senderID, dto.data);
+                break;
             default:
                 throw Error("dto type not found!")
         }
     }
     
-    private _wsMap: Map<number, WebSocket[]> = new Map<number, WebSocket[]>
-    addSocketToLobby(lobbyID: number,  ws: WebSocket) {
+    private _wsMap: Map<number, Map<number, WebSocket> > = new Map<number, Map<number, WebSocket>>()
+    addSocketToLobby(lobbyID: number, userID: number, ws: WebSocket) {
         const lobbySockets = this._wsMap.get(lobbyID)
         if (!lobbySockets) {
-            this._wsMap.set(lobbyID, [ws])
+            const map = new Map<number, WebSocket>()
+            map.set(userID, ws);
+            this._wsMap.set(lobbyID, map)
         } else {
-            lobbySockets.push(ws)
+            lobbySockets.set(userID, ws)
         }
     }
     broadcast<T extends keyof OutboundDTOMap>(lobbyID: number, reqType: T, data: OutboundDTOMap[T]) {
@@ -60,6 +70,13 @@ class TestLobbySocketService {
                 ws.send(JSON.stringify(dto))
             })
         }
+    }
+    getWsFromUserID(userID: number): WebSocket {
+        this._wsMap.forEach(lobbySockets => {
+            const ws = lobbySockets.get(userID);
+            if (ws) { return ws; }
+        })
+        throw Error("This userID is not present in any lobby!!")
     }
 
 
@@ -121,6 +138,15 @@ class TestLobbySocketService {
         this.broadcast(lobbyID, "removeTournamentPlayer", {
             id: senderID
         })
+    }
+    startGame(lobbyID: number, senderID: number) {
+        //TODO
+        const lobby = testLobbyRepository.getLobbyByID(lobbyID)
+        testMatchService.startMatch(lobby)
+    }
+
+    updateGame(senderID: number, controlsDTO: CGameDTO) {
+        testMatchService.updateControlsState(senderID, controlsDTO)
     }
 }
 

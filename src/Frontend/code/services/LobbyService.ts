@@ -33,11 +33,8 @@ class LobbyService {
         const matchPlayers = this.getMatchPlayers()
 
         matchPlayers.forEach(player => {
-            console.log(mapSlots["LEFT"])
             const team: keyof typeof SIDES = SIDES[player.team] as keyof typeof SIDES
             const role: keyof typeof ROLES = ROLES[player.role] as keyof typeof ROLES 
-            console.log(team)
-            console.log(mapSlots[team])
 
             if (mapSlots[team] === undefined || mapSlots[team][role] === undefined) {
                 throw Error("Fuck everything about this bullshit")

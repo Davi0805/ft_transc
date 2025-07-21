@@ -1,5 +1,6 @@
 import { SIDES, ROLES } from "../../match/matchSharedDependencies/sharedTypes"
 import { CGameDTO, SGameDTO } from "../../match/matchSharedDependencies/dtos"
+import { CAppConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
 
 //TYPES REPRESENTATIVE OF THE ENTITIES
 
@@ -208,7 +209,9 @@ export type OutboundDTOMap = {
         id: number
     }
     //host starts the match
-    startMatch: null
+    startMatch: {
+        configs: CAppConfigs
+    }
 
     //Game dto:
     updateGame: SGameDTO //Dealt with in game

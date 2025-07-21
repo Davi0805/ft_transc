@@ -1,4 +1,5 @@
-import { TTournPlayer } from "../pages/play/lobbyTyping";
+import { TTournPlayer } from "./dependencies/lobbyTyping.js";
+//import * as blossom from 'edmonds-blossom'
 var blossom = require('edmonds-blossom')
 
 

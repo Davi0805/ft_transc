@@ -1,4 +1,5 @@
-import { SIDES, ROLES } from "./sharedTypes.js"
+import { CAppConfigs } from "../game/shared/SetupDependencies.js"
+import { SIDES, ROLES } from "../game/shared/sharedTypes.js"
 import { CGameDTO, SGameDTO } from "./dtos.js"
 
 //TYPES REPRESENTATIVE OF THE ENTITIES
@@ -207,8 +208,9 @@ export type OutboundDTOMap = {
         id: number
     }
     //host starts the match
-    startMatch: null
-
+    startMatch: {
+        configs: CAppConfigs
+    }
     //Game dto:
     updateGame: SGameDTO //Dealt with in game
 }
@@ -243,7 +245,7 @@ export type TTournPlayer = {
 }
 
 export type TMatchPlayer = {
-    userID: number | null //Same as userID
+    userID: number// | null //Same as userID
     id: number | null, //To be generated.
     nickname: string | null //If null, take the nick from userid
     spriteID: number | null, //If null, take spriteID from settings of userid
