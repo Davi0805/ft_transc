@@ -47,7 +47,7 @@ export async function enterLobby(lobbyID: number, selfData: {
 
 export async function createLobby(lobbySettings: LobbyCreationConfigsDTO, selfData: {
     id: number, username: string | null
-}): Promise<TLobby> {
+}): Promise<number> {
   try {
     const body = {
         lobbySettings: lobbySettings,
@@ -71,7 +71,7 @@ export async function createLobby(lobbySettings: LobbyCreationConfigsDTO, selfDa
       throw error;
     }
 
-    const data = (await response.json()) as TLobby;
+    const data: number = (await response.json()).id;
     return data;
   } catch (error) {
     throw error;

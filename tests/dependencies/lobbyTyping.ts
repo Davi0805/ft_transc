@@ -162,6 +162,7 @@ export type InboundDTOMap = {
 
 //server should broadcast these after...
 export type OutboundDTOMap = {
+    lobby: TLobby,
     //host updates the settings. If map changes, users should be filled with the current users so slots can be updated accordingly
     updateSettings: {
         settings: TDynamicLobbySettings

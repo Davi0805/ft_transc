@@ -1,5 +1,5 @@
 import { lobbyService } from "../services/LobbyService";
-import { InboundDTO, OutboundDTO, InboundDTOMap } from "../pages/play/lobbyTyping";
+import { InboundDTO, OutboundDTO, InboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
 import { App } from "../match/system/App";
 
 class LobbySocketService {
@@ -8,31 +8,38 @@ class LobbySocketService {
         this._lobbyID = 0; //TODO change to null
     }
 
-    connect(lobbyID: number, userID: number): Promise<void> {
+    connect(lobbyID: number, userID: number): Promise<TLobby | null> { //TODO: this should return TLobby, so people who connect to it get the info
         return new Promise((resolve, reject) => {
             if (this._ws && this._ws.readyState === WebSocket.OPEN) {
                 console.log("DEBUG: lobbySocket already connected");
-                resolve();
+                resolve(null);
                 return;
             }
 
             this._ws = new WebSocket(`ws://localhost:6969/ws/${lobbyID}/${userID}`);
             this._lobbyID = lobbyID;
-
-            this._ws.onopen = (ev: Event) => {
-                console.log("DEBUG: lobbySocket connected");
-                resolve();
-            }
             
             this._ws.onmessage = (ev: MessageEvent) => {
                 try {
+                    //Add a parser for the initial info that RESOLVES THE PROMISE
                     const data = JSON.parse(ev.data) as OutboundDTO;
-                    this._handleMessage(data)
+                    console.log("Received data")
+                    console.log(data)
+                    if (data.requestType === "lobby") {
+                        resolve(data.data);
+                    } else {
+                        this._handleMessage(data)
+                    }
                 } catch (error) {
                     console.error("Error parsing websocket message");
                 }
             }
 
+            this._ws.onopen = (ev: Event) => {
+                console.log("DEBUG: lobbySocket connected");
+                //resolve(); //TODO get this out
+            }
+            
             this._ws.onclose = (ev: CloseEvent) => {
                 console.log("DEBUG: websocket closed:", ev.code, ev.reason);
                 this._ws = null;

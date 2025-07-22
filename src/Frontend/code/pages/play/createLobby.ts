@@ -70,10 +70,10 @@ export const CreateLobbyPage = {
             }
             
             //TESTING
-            const requestedLobby: TLobby = await createLobby(lobbySettings, {id: selfData.id, username: selfData.username}) //second arg in production is not necessary
-            lobbyService.init(requestedLobby.hostID, requestedLobby)
-            console.log("Waiting for websocket to connect...")
-            await lobbySocketService.connect(requestedLobby.id, selfData.id);
+            const lobbyID = await createLobby(lobbySettings, {id: selfData.id, username: selfData.username}) //second arg in production is not necessary
+            const lobby = await lobbySocketService.connect(lobbyID, selfData.id);
+            if (!lobby) {throw Error("Socket was already connected somehow!")}
+            lobbyService.init(selfData.id, lobby)
             router.navigateTo('/lobby')
         })
         console.log('Create Friendly page loaded!')

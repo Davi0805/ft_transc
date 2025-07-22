@@ -37,11 +37,11 @@ class LobbyRepository {
         if (!correctLobby) {throw Error("Lobby requested does not exist!")}
         return correctLobby
     }
-    createLobby(configs: LobbyCreationConfigsDTO, selfData: {id: number, username: string}): TLobby {
+    createLobby(configs: LobbyCreationConfigsDTO, selfData: {id: number, username: string}): number {
         let userInfo = this._getUserByID(selfData.id, selfData.username)
 
         const newLobby: TLobby = {
-            id: this._currentLobbyID++,
+            id: this._currentLobbyID,
             hostID: selfData.id,
             name: configs.name,
             type: configs.type,
@@ -60,7 +60,7 @@ class LobbyRepository {
         }
         this._lobbies.push(newLobby)
         
-        return newLobby
+        return this._currentLobbyID++
     }
     //Second argument should not be neccessary. Or at least only id is necessary, username is only to register user if it does not exist, which in production always should
     addUserToLobby(lobbyID: number, userData: {id: number, username: string}) {

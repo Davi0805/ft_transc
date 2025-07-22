@@ -49,12 +49,16 @@ class TestLobbySocketService {
     
     private _wsMap: Map<number, Map<number, WebSocket> > = new Map<number, Map<number, WebSocket>>()
     addSocketToLobby(lobbyID: number, userID: number, ws: WebSocket) {
+        console.log("lobby adds")
         const lobbySockets = this._wsMap.get(lobbyID)
         if (!lobbySockets) {
+            console.log("lobby creates")
             const map = new Map<number, WebSocket>()
             map.set(userID, ws);
             this._wsMap.set(lobbyID, map)
         } else {
+            console.log("Lobby exists")
+            testLobbyRepository.addUserToLobby(lobbyID, {id: userID, username: "lol"})
             lobbySockets.set(userID, ws)
         }
     }

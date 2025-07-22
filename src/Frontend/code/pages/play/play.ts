@@ -91,9 +91,9 @@ export const PlayPage = {
 
     async goToLobby(lobbyId: number) {
         const selfData = await getSelfData();
-        const requestedLobby: TLobby = await enterLobby(lobbyId, {id: selfData.id, username: selfData.username}) //second arg in production is not necessary
-        lobbyService.init(selfData.id, requestedLobby)
-        lobbySocketService.connect(lobbyId, selfData.id);
+        const lobby = await lobbySocketService.connect(lobbyId, selfData.id);
+        if (!lobby) {throw Error("Socket was already connected somehow!")}
+        lobbyService.init(selfData.id, lobby)
         router.navigateTo('/lobby')
     }
 }

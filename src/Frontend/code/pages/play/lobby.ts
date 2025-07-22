@@ -26,6 +26,7 @@ export const LobbyPage = {
     },
 
     async init() {
+        console.log(lobbyService.lobby)
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
         titleElement.textContent = lobbyService.lobby.name;
         const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;

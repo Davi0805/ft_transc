@@ -2,7 +2,7 @@ import Fastify from 'fastify'
 import FastifyWebsocket from '@fastify/websocket'
 import cors from '@fastify/cors';
 import { testLobbyRepository } from './testLobbyRepository.js'
-import { InboundDTO, LobbyCreationConfigsDTO } from './dependencies/lobbyTyping.js';
+import { InboundDTO, LobbyCreationConfigsDTO, OutboundDTO } from './dependencies/lobbyTyping.js';
 import { WebSocket } from 'ws';
 import { lobbySocketService } from './testLobbySocketService.js';
 
@@ -13,19 +13,20 @@ await fastify.register(cors); //This just allows a different domain to receive r
 fastify.get('/getAllLobbies', (_req, _res) => {
     return testLobbyRepository.getLobbiesList()
 })
-fastify.post<{ Params: {lobbyID: string} }>('/enterLobby/:lobbyID', (req, _res) => {
+/* fastify.post<{ Params: {lobbyID: string} }>('/enterLobby/:lobbyID', (req, _res) => {
     const lobbyID = Number(req.params.lobbyID)
     const selfData = req.body as { id: number, username: string }
     testLobbyRepository.addUserToLobby(lobbyID, selfData)
     const lobby = testLobbyRepository.getLobbyByID(lobbyID)
     return lobby
-})
+}) */
 fastify.post('/createLobby', (req, _res) => {
     const dto = req.body as { 
         lobbySettings: LobbyCreationConfigsDTO,
         selfData: { id: number, username: string }
     }
-    return testLobbyRepository.createLobby(dto.lobbySettings, dto.selfData)
+    const lobbyID = testLobbyRepository.createLobby(dto.lobbySettings, dto.selfData)
+    return { id: lobbyID }
 })
 
 
@@ -36,9 +37,15 @@ fastify.register(async (fastify) => {
         const senderID: number = Number(req.params.userID)
         lobbySocketService.addSocketToLobby(lobbyID, senderID, socket);
 
-        socket.onopen = () => {
+        //socket.onopen = () => {
             console.log(`connected! LobbyID: ${lobbyID}`)
-        }
+            const lobby = testLobbyRepository.getLobbyByID(lobbyID)
+            const dto: OutboundDTO = {
+                requestType: "lobby",
+                data: lobby
+            };
+            socket.send(JSON.stringify(dto));
+        //}
 
         socket.onmessage = (ev: WebSocket.MessageEvent) => {
             const dto: InboundDTO = JSON.parse(ev.data.toString()) as InboundDTO
