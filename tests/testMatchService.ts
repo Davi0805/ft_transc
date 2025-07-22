@@ -34,6 +34,7 @@ class TestMatchService {
     startMatch(lobbySettings: TLobby) {
         const matches: TMatch[] = this._buildMatches(lobbySettings);
         matches.forEach(match => {
+            console.log("How many times does this run?")
             const matchPlayers: TMatchPlayer[] = this._getMatchPlayers(match, lobbySettings.type);
             const userCustoms: TUserCustoms = this._buildUserCustoms(lobbySettings, matchPlayers);
             const gameSettings: TGameConfigs = this._applyDevCustoms(userCustoms);
@@ -45,22 +46,24 @@ class TestMatchService {
                 const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings, player.userID);
                 lobbySocketService.sendToUser(player.userID, "startMatch", { configs: clientSettings })
             })
-            
+
+            const game = new ServerGame(serverSettings);
             this._currentMatches.push({
                 id: this._currentMatchID++,
-                game: new ServerGame(serverSettings),
+                game: game,
                 playerIDs: playerIDs
             })
 
-            const game = new ServerGame(serverSettings);
+            
 
             //Broadcast that was previously in game but got moved out to match lobbySocket conditions for send()
             const loop = new LoopController(90);
-            /* loop.start(() => {
+            loop.start(() => {
                 //The following only works if there is only one game going on on the lobby, which is not true for tournaments!!
                 //TODO: Must do a function that broadcasts for a single game
                 lobbySocketService.broadcast(lobbySettings.id, "updateGame", game.getGameDTO())
-            }) */
+            })
+            game.startGameLoop();
         })
     }
 
@@ -161,7 +164,7 @@ class TestMatchService {
             bots: []
         }
 
-        const paddleID = 0;
+        let paddleID = 0;
         players.forEach(player => {
             if (player.userID === null || player.id === null || player.spriteID === null) {
                 throw Error("This player is not initialized!!");
@@ -192,7 +195,7 @@ class TestMatchService {
                     humans: [human]
                 })
             }
-            
+            paddleID++
         })
         //TODO: Have to find a way to build bots into empty slots
 
@@ -340,6 +343,7 @@ class TestMatchService {
                 },
             })
         }
+        //console.log(gameConfigs.paddles)
         for (let paddle of gameConfigs.paddles) {
             out.gameSceneConfigs.gameInitialState.paddles.push({
                 id: paddle.id,

@@ -22,7 +22,9 @@ export default abstract class SPlayer {
         }
     
         private _controls: TControlsState;
-        set controls(controls: TControlsState) { this._controls = controls; }
+        set controls(controls: TControlsState) {
+            this._controls = controls;
+        }
         get controls(): TControlsState { return this._controls; }
     
         private _paddle: SPaddle;

@@ -56,6 +56,7 @@ export default class ServerGame {
             dto.controlsState.humanID,
             dto.controlsState.controlsState
         );
+        //console.log("After processing dto: " + this._humansManager.humans[0].controls.left.pressed)
     }
 
     private _windowSize: point;
@@ -89,6 +90,7 @@ export default class ServerGame {
 
     private _matchLoop(loop: LoopController) {
         // Movement decision by players
+        //console.log("Before update: " + this._humansManager.humans[0].controls.left.pressed)
         this._humansManager.update()
         this._botsManager.update(loop, this._ballsManager.balls)
         

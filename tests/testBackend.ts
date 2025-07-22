@@ -42,7 +42,6 @@ fastify.register(async (fastify) => {
 
         socket.onmessage = (ev: WebSocket.MessageEvent) => {
             const dto: InboundDTO = JSON.parse(ev.data.toString()) as InboundDTO
-            console.log(`Message received: ${dto}`)
             lobbySocketService.handleMessage(lobbyID, senderID, dto)
         }
     })

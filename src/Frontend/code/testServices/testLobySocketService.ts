@@ -1,5 +1,6 @@
 import { lobbyService } from "../services/LobbyService";
 import { InboundDTO, OutboundDTO, InboundDTOMap } from "../pages/play/lobbyTyping";
+import { App } from "../match/system/App";
 
 class LobbySocketService {
     constructor() {
@@ -24,7 +25,6 @@ class LobbySocketService {
             }
             
             this._ws.onmessage = (ev: MessageEvent) => {
-                console.log("Message received: " + ev.data)
                 try {
                     const data = JSON.parse(ev.data) as OutboundDTO;
                     this._handleMessage(data)
@@ -116,7 +116,7 @@ class LobbySocketService {
                 lobbyService.startMatchOUT(dto.data.configs);
                 break;
             case "updateGame":
-                console.log("Update received. Function to deal with it still missing")
+                App.severUpdate(dto.data)
                 break;
             default:
                 throw Error("A message came in with a non registered type!!")

@@ -35,7 +35,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 )
             ))
         })
-        gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
+        gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => {
             this.paddles.set(
                 paddleConf.id,  
                 new CPaddle(paddleConf, this._root),
