@@ -21,6 +21,7 @@ class LobbyDataRepository {
         console.log('Lobby id = ' + lobby_id + ' | Data = ' + data);
 
         // TODO: later find the documentation to send it all at once
+        redis.hSet(`lobby:${lobby_id}`, 'id', data.id);
         redis.hSet(`lobby:${lobby_id}`, 'name', data.name);
         redis.hSet(`lobby:${lobby_id}`, 'type', data.type);
         redis.hSet(`lobby:${lobby_id}`, 'mode', data.mode);

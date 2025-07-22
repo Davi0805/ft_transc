@@ -16,7 +16,7 @@ class LobbyMapper {
                 });
     }
 
-
+    //!! WHAT TO DO WHEN THE DATA IS NOT DEFINED YET?
     /*
     export type TLobby = {
     id: number,
@@ -28,10 +28,12 @@ class LobbyMapper {
     map: TMapType, ok
     mode: TMatchMode, ok
     duration: TMatchDuration,
-    round: number
+    round: number,
+    users: TLobbyUser
     }*/
     lobbyDataToTLobby(lobbyData)
     {
+        if (!lobbyData.users) lobbyData.users = [];
         return ({id: parseInt(lobbyData.id),
                 name: lobbyData.name,
                 hostID: parseInt(lobbyData.hostID),
@@ -42,7 +44,8 @@ class LobbyMapper {
                 map: lobbyData.map,
                 mode: lobbyData.mode,
                 duration: lobbyData.duration,
-                round: lobbyData.round
+                round: lobbyData.round,
+                users: this.lobbyUsersBuilder(lobbyData.users, lobbyData.type)
                 });
     }
 
@@ -79,6 +82,58 @@ class LobbyMapper {
     player: TFriendlyPlayer[] | TRankedPlayer | TTournamentPlayer //Depends on the type of lobby
     }
     */
+   lobbyUsersBuilder(users, lobbyType)
+   {
+        const TUsers = [];
+        for (const u of users) {
+            TUsers.push({
+                id: u.id,
+                //nickname: await eventBus.getNicknamesByUserId(u.id),
+                nickname: 'mockNickname',
+                spriteID: 1, //!!!! LEMBRAR DE TIRAR ESSE HARDCODED
+                rating: 2, //!!! FAZ PARTE DO USER SERVICE INTER SERVIÇO
+                ready: u.ready,
+                player: (u.team && u.role) ? this.playerDataBuilder(u, lobbyType) : null
+            });
+        }
+        return TUsers;
+   }
+
+    playerDataBuilder(userData, lobbyType)
+    {
+        switch (lobbyType) {
+            case "friendly":
+                return this.friendlyPlayerBuilder(userData);
+            case "ranked":
+                return this.rankedPlayerBuilder(userData);
+            case "tournament":
+                return this.tournamentPlayerBuilder(userData);
+            default:
+                break;
+        }
+    }
+
+    tournamentPlayerBuilder(userData)
+    {
+        return {participating: userData.participating,
+                score: (userData.score) ? userData.score : 0, 
+                prevOpponents: (userData.prevOpponents) ? userData.prevOpponents : 0,
+                teamPref: (userData.teamPref) ? userData.teamPref : 0
+        }
+    }    
+
+    friendlyPlayerBuilder(userData)
+    {
+        return {id: userData.playerId, nickname: userData.playerNickname,
+                spriteID: 1, team: userData.team, role: userData.role
+                };
+    }
+
+    rankedPlayerBuilder(userData)
+    {
+        return {team: userData.team, role: userData.role};
+    }
+
 };
 
 module.exports = new LobbyMapper();

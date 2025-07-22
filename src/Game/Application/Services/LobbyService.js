@@ -30,16 +30,25 @@ class LobbyService {
     *    that joined the lobby
          TODO: remove the TTL CHECK FROM ADD USER REPO METHOD 
     */
-    async addUserToLobby(lobbyId, user_id)
+    async addUserToLobby(lobbyId, user_id, socket)
     {
         const lobby = await lobbyRepo.addUser(lobbyId, user_id);
+        connPlyrsRepo.addUser(lobbyId, user_id, socket);
         // todo: create a service or a message builder, no need to await
         connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, {type: "user_joined_event",
                                                             user_id: user_id}, user_id);
-        return mapper.lobbyDataToTLobby(lobby);
+        socket.send(JSON.stringify(mapper.lobbyDataToTLobby(lobby)));
     }
 
-    //TODO: Metodo que retorna apenas usuario e metodo que atualiza apenas o usuario de um lobby
+    async removeUserFromLobby(lobbyId, userId)
+    {
+        connPlyrsRepo.deleteUser(lobbyId, userId);
+        connPlyrsRepo.broadcastToLobby(lobbyId, {type: "user_left_event",
+                                                user_id: userId});
+        let lobbyUsers = await lobbyRepo.getLobbyUsers(lobbyId);
+        lobbyUsers = lobbyUsers.filter(u => u.id != userId);
+        await lobbyRepo.updateUsers(lobbyId, lobbyUsers);
+    }
 
     async setUserState(lobbyId, user_id, readyState)
     {
@@ -54,14 +63,23 @@ class LobbyService {
     async setPlayerPosition(lobbyId, user_id, data)
     {
         const lobbyUsers = await lobbyRepo.getLobbyUsers(lobbyId);
-        const user = lobbyUsers.find(u => u.id == user_id);
+        // todo: validation to check if someone is already there or the map allows
+        const user = await lobbyUsers.find(u => u.id == parseInt(user_id));
         user.team = data.team;
         user.role = data.role;
         await lobbyRepo.updateUsers(lobbyId, lobbyUsers);
-        connectedUsersRepository.broadcastToLobby(lobbyId, {type: "position_update_event",
+        connPlyrsRepo.broadcastToLobby(lobbyId, {type: "position_update_event",
                                                             user_id: user_id, team: data.team,
                                                             role: data.role});
     }
+
+    async validateLobbyEntry(lobbyId, socket)
+    {
+        let lobbyData = await lobbyRepo.get(lobbyId);
+        if (Object.keys(lobbyData).length == 0) socket.close();
+    }
+
+    //async setMap(lobbyId, userId, )
 
     async getAllLobbies()
     {
