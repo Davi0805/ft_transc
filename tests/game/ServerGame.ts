@@ -39,19 +39,14 @@ export default class ServerGame {
         })
     }
 
-    //Starts the broadcasting of the game to all the websockets in the array that is passed to it as argument
-    startBroadcast(clients: WebSocket[]) {
-        const loop = new LoopController(90);
-        loop.start(() => {
-            const message: Adto = {
-                type: "SGameDTO",
-                dto: this._getGameDTO()
-            }
-            const data = JSON.stringify(message);
-            for (var client of clients) {
-                client.send(data)
-            }
-        })
+    getGameDTO(): SGameDTO {
+        const out: SGameDTO = {
+            balls: this._ballsManager.getBallsDTO(),
+            teams: this._teamsManager.getTeamsDTO(),
+            paddles: this._paddlesManager.getPaddlesDTO(),
+            timeLeft: this._timeLeft
+        }
+        return out
     }
 
     //This should be called whenever a message is received by one of the clients. 
@@ -79,15 +74,7 @@ export default class ServerGame {
     private _paddlesManager: SPaddlesManager;
 
 
-    private _getGameDTO(): SGameDTO {
-        const out: SGameDTO = {
-            balls: this._ballsManager.getBallsDTO(),
-            teams: this._teamsManager.getTeamsDTO(),
-            paddles: this._paddlesManager.getPaddlesDTO(),
-            timeLeft: this._timeLeft
-        }
-        return out
-    }
+    
 
     private _countdownLoop(loop: LoopController) {
         if (loop.isEventTime(1)) {

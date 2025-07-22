@@ -1,11 +1,12 @@
 import { WebSocket } from "ws";
 import { CGameDTO } from "./dependencies/dtos.js";
-import { TDuration, TMap, TLobby, TLobbyType, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TTournPlayer, TMatchPlayer, TLobbyUser} from "./dependencies/lobbyTyping.js"
+import { TDuration, TMap, TLobby, TLobbyType, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TTournPlayer, TMatchPlayer, TLobbyUser, OutboundDTO} from "./dependencies/lobbyTyping.js"
 import ServerGame from "./game/ServerGame.js";
 import { TUserCustoms, TGameConfigs, TControls, CAppConfigs } from "./game/shared/SetupDependencies.js"
 import { point, SIDES, ROLES, TWindow, TPaddle } from "./game/shared/sharedTypes.js"
 import { lobbySocketService } from "./testLobbySocketService.js";
 import { TournamentService } from "./TournamentService.cjs";
+import LoopController from "./game/LoopController.js";
 
 type TMatch = TLobbyUser[];
 
@@ -42,7 +43,7 @@ class TestMatchService {
             matchPlayers.forEach(player => {
                 playerIDs.push(player.userID)
                 const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings, player.userID);
-                lobbySocketService.broadcast(lobbySettings.id, "startMatch", { configs: clientSettings })
+                lobbySocketService.sendToUser(player.userID, "startMatch", { configs: clientSettings })
             })
             
             this._currentMatches.push({
@@ -51,12 +52,15 @@ class TestMatchService {
                 playerIDs: playerIDs
             })
 
-            const socketsInMatch: WebSocket[] = []
-            playerIDs.forEach(playerID => {
-                socketsInMatch.push(lobbySocketService.getWsFromUserID(playerID))
-            })
             const game = new ServerGame(serverSettings);
-            game.startBroadcast(socketsInMatch)
+
+            //Broadcast that was previously in game but got moved out to match lobbySocket conditions for send()
+            const loop = new LoopController(90);
+            /* loop.start(() => {
+                //The following only works if there is only one game going on on the lobby, which is not true for tournaments!!
+                //TODO: Must do a function that broadcasts for a single game
+                lobbySocketService.broadcast(lobbySettings.id, "updateGame", game.getGameDTO())
+            }) */
         })
     }
 
@@ -294,15 +298,22 @@ class TestMatchService {
     }
 
     _buildCAppConfigs(gameConfigs: TGameConfigs, clientID: number): CAppConfigs {
-        console.log(gameConfigs.clients)
+        //console.log(gameConfigs.clients)
         const humansInClient = gameConfigs.clients.find(client => client.id == clientID)?.humans;
         if (humansInClient === undefined) {
         throw new Error(`The clientID ${clientID} has no controls saved in gameConfigs!`)
         }
-        const controlsMap = new Map<number, TControls>;
+        const controls: {
+            humanID: number,
+            controls: TControls
+        }[] = [];
         humansInClient.forEach(human => {
-        controlsMap.set(human.id, human.controls);
+            controls.push({
+                humanID: human.id, 
+                controls: human.controls
+            })
         })
+
         
         const out: CAppConfigs = {
             appConfigs: {
@@ -311,7 +322,7 @@ class TestMatchService {
             },
             gameSceneConfigs: {
                 fieldSize: gameConfigs.field.size,
-                controls: controlsMap,
+                controls: controls,
                 gameInitialState: {
                 teams: [],
                 paddles: [],

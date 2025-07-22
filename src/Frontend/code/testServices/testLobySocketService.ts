@@ -107,8 +107,16 @@ class LobbySocketService {
                 lobbyService.removeRankedPlayerOUT(dto.data.id);
                 break;
             case "addTournamentPlayer":
-                lobbyService.addTournamentPlayerOUT(dto.data.userID)
+                lobbyService.addTournamentPlayerOUT(dto.data.userID);
+                break;
+            case "removeTournamentPlayer":
+                lobbyService.removeTournamentPlayerOUT(dto.data.id);
+                break;
+            case "startMatch":
+                lobbyService.startMatchOUT(dto.data.configs);
+                break;
             case "updateGame":
+                console.log("Update received. Function to deal with it still missing")
                 break;
             default:
                 throw Error("A message came in with a non registered type!!")

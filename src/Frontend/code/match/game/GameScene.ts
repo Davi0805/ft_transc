@@ -2,7 +2,7 @@ import AScene from "../system/AScene";
 import Point from "../matchSharedDependencies/Point";
 import Assets from "../system/framework/Assets";
 import { SIDES } from "../matchSharedDependencies/sharedTypes";
-import { CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies";
+import { CGameSceneConfigs, TControls } from "../matchSharedDependencies/SetupDependencies";
 import { SGameDTO } from "../matchSharedDependencies/dtos";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
@@ -41,8 +41,9 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 new CPaddle(paddleConf, this._root),
             )
         })
-        gameSceneConfigs.controls.forEach( (controls, humanID) => {
-            this._controls.set(humanID, new CPaddleControls(humanID, controls))
+
+        gameSceneConfigs.controls.forEach( human => {
+            this._controls.set(human.humanID, new CPaddleControls(human.humanID, human.controls))
         })
     }
 

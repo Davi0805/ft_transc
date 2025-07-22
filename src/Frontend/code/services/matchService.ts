@@ -1,6 +1,7 @@
 import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies";
 import { App } from "../match/system/App";
-import { lobbySocketService } from "./lobbySocketService";
+//import { lobbySocketService } from "./lobbySocketService";
+import { lobbySocketService } from "../testServices/testLobySocketService";
 
 class MatchService {
     init(configs: CAppConfigs) {
@@ -8,7 +9,7 @@ class MatchService {
     }
 
     async start(root: HTMLElement) {
-        await App.init(this.configs, document.body, lobbySocketService.ws);
+        await App.init(this.configs, root, lobbySocketService.ws);
     } 
 
     private _configs: CAppConfigs | null = null;

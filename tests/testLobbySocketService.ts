@@ -58,8 +58,15 @@ class TestLobbySocketService {
             lobbySockets.set(userID, ws)
         }
     }
+    sendToUser<T extends keyof OutboundDTOMap>(userID: number, reqType: T, data: OutboundDTOMap[T]) {
+        const ws = this.getWsFromUserID(userID);
+        const dto: OutboundDTO = {
+            requestType: reqType,
+            data: data
+        }
+        ws.send(JSON.stringify(dto))
+    }
     broadcast<T extends keyof OutboundDTOMap>(lobbyID: number, reqType: T, data: OutboundDTOMap[T]) {
-        console.log("Start broadcasting")
         const lobbySockets = this._wsMap.get(lobbyID);
         if (lobbySockets) {
             lobbySockets.forEach(ws => {
@@ -72,10 +79,10 @@ class TestLobbySocketService {
         }
     }
     getWsFromUserID(userID: number): WebSocket {
-        this._wsMap.forEach(lobbySockets => {
+        for (const lobbySockets of this._wsMap.values()) {
             const ws = lobbySockets.get(userID);
             if (ws) { return ws; }
-        })
+        }
         throw Error("This userID is not present in any lobby!!")
     }
 

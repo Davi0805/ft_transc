@@ -78,7 +78,11 @@ export type CGameState = {
 
 export type CGameSceneConfigs = {
     fieldSize: point
-    controls: Map<number, TControls>
+    //controls: Map<number, TControls>
+    controls: {
+        humanID: number,
+        controls: TControls
+    }[]
     gameInitialState: CGameState
 }
 
