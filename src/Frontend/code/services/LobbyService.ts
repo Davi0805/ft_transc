@@ -6,7 +6,7 @@ import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "../testServices/testLobySocketService"; //TEST
 import { router } from "../routes/router";
 import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies";
-import { matchService } from "./matchService";
+import { matchService} from "./matchService";
 import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournPlayer, TMatchPlayer } from "../pages/play/lobbyTyping";
 import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
 

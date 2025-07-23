@@ -4,6 +4,7 @@ import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { TLobby, TDynamicLobbySettings, TMap, TDuration, TMode } from "./lobbyTyping";
 import { lobbyService } from "../../services/LobbyService";
 import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes";
+import { matchService } from "../../services/matchService";
 
 export const LobbyPage = {
     template() {
@@ -171,6 +172,7 @@ export const LobbyPage = {
                     if (player.userID === lobbyService.myID) {
                         const withdrawButton = getButton("btn-withdraw", "button", "X", false);
                         withdrawButton.addEventListener("click", () => {
+                            matchService.removeControls(player.id);
                             lobbyService.lobby.type === "friendly"
                             ? lobbyService.removeFriendlyPlayerIN(player.id)
                             : lobbyService.removeRankedPlayerIN(player.id)
@@ -195,6 +197,10 @@ export const LobbyPage = {
         teamsElement.appendChild(slotsTable);
     },
 
+
+    //TODO: Next thing is add configuration for controls.
+    //Also, I need potatoes ASAP
+    //Ranked should be preset, and friendly shoud be chosen somehow
     async slotJoinFriendlyCallback(team: SIDES, role: ROLES) {
         const settingsDialog = document.createElement('dialog');
         settingsDialog.className = "fixed m-auto overflow-hidden rounded-lg"
@@ -230,9 +236,13 @@ export const LobbyPage = {
     },
 
     async slotJoinRankedCallback(team: SIDES, role: ROLES) {
-        //TODO: check how to save the controls. Maybe on lobby Service? Maybe only at the start of the match?
-        const leftControl: string = "LeftArrow" //TODO: calculate from team
-        const rightControl: string = "RightArrow" //TODO: calculate from team
+        const defaultControlsRecord: Record<SIDES, {left: string, right: string}> = {
+            [SIDES.LEFT]: {left: "ArrowUp", right: "ArrowDown"},
+            [SIDES.TOP]: {left: "ArrowRight", right: "ArrowLeft"},
+            [SIDES.RIGHT]: {left: "ArrowDown", right: "ArrowUp"},
+            [SIDES.BOTTOM]: {left: "ArrowLeft", right: "ArrowRight"}
+        }   
+        matchService.addControls(lobbyService.myID, defaultControlsRecord[team])
         lobbyService.addRankedPlayerIN({
             team: team,
             role: role

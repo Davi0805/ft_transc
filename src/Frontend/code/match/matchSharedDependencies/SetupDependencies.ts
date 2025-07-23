@@ -3,7 +3,6 @@ import { SIDES, ROLES, point, TPaddle } from "./sharedTypes"
 export type TControls = {
     left: string,
     right: string,
-    pause: string
 }
 
 export type TUserCustoms = {
@@ -24,7 +23,6 @@ export type TUserCustoms = {
         humans: {
             id: number,
             paddleID: number,
-            controls: TControls
         }[],
     }[]
     // For now, there are no user customs for team. If added, an array for team should be added here
@@ -54,7 +52,6 @@ export type TGameConfigs = {
         humans: {
             id: number,
             paddleID: number,
-            controls: TControls
         }[],
     }[]
     bots: {
@@ -81,7 +78,7 @@ export type CGameSceneConfigs = {
     controls: {
         humanID: number,
         controls: TControls
-    }[]
+    }[] | null
     gameInitialState: CGameState
 }
 

@@ -3,7 +3,6 @@ import { SIDES, ROLES, point, TPaddle } from "./sharedTypes.js"
 export type TControls = {
     left: string,
     right: string,
-    pause: string
 }
 
 export type TUserCustoms = {
@@ -24,7 +23,6 @@ export type TUserCustoms = {
         humans: {
             id: number,
             paddleID: number,
-            controls: TControls
         }[],
     }[]
     // For now, there are no user customs for team. If added, an array for team should be added here
@@ -54,7 +52,6 @@ export type TGameConfigs = {
         humans: {
             id: number,
             paddleID: number,
-            controls: TControls
         }[],
     }[]
     bots: {
@@ -78,11 +75,10 @@ export type CGameState = {
 
 export type CGameSceneConfigs = {
     fieldSize: point
-    //controls: Map<number, TControls>
     controls: {
         humanID: number,
         controls: TControls
-    }[]
+    }[] | null //Server sets them to null, and client sets it later
     gameInitialState: CGameState
 }
 

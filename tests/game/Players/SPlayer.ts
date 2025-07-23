@@ -6,7 +6,6 @@ export default abstract class SPlayer {
             this._controls = {
                 left: { pressed: false },
                 right: { pressed: false },
-                pause: { pressed: false }
             };
             this._paddle = paddle;
         }

@@ -43,9 +43,10 @@ class TestMatchService {
             const playerIDs: number[] = []
             matchPlayers.forEach(player => {
                 playerIDs.push(player.userID)
-                const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings, player.userID);
-                lobbySocketService.sendToUser(player.userID, "startMatch", { configs: clientSettings })
             })
+
+            const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings);
+            lobbySocketService.broadcast(lobbySettings.id, "startMatch", {configs: clientSettings})
 
             const game = new ServerGame(serverSettings);
             this._currentMatches.push({
@@ -283,7 +284,7 @@ class TestMatchService {
         })
         gameConfigs.clients.forEach(client => {
             client.humans.forEach(human => {
-            out.humans.push(human)
+                out.humans.push(human)
             })
         })
         out.bots = gameConfigs.bots
@@ -300,10 +301,10 @@ class TestMatchService {
         return out;
     }
 
-    _buildCAppConfigs(gameConfigs: TGameConfigs, clientID: number): CAppConfigs {
+    _buildCAppConfigs(gameConfigs: TGameConfigs/*, clientID: number*/): CAppConfigs {
         //console.log(gameConfigs.clients)
-        const humansInClient = gameConfigs.clients.find(client => client.id == clientID)?.humans;
-        if (humansInClient === undefined) {
+        //const humansInClient = gameConfigs.clients.find(client => client.id == clientID)?.humans;
+        /* if (humansInClient === undefined) {
         throw new Error(`The clientID ${clientID} has no controls saved in gameConfigs!`)
         }
         const controls: {
@@ -315,7 +316,7 @@ class TestMatchService {
                 humanID: human.id, 
                 controls: human.controls
             })
-        })
+        }) */
 
         
         const out: CAppConfigs = {
@@ -325,7 +326,7 @@ class TestMatchService {
             },
             gameSceneConfigs: {
                 fieldSize: gameConfigs.field.size,
-                controls: controls,
+                controls: null,
                 gameInitialState: {
                 teams: [],
                 paddles: [],

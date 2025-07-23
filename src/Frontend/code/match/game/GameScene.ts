@@ -42,6 +42,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             )
         })
 
+        if (gameSceneConfigs.controls === null) { throw Error("controls were not initialized!") }
         gameSceneConfigs.controls.forEach( human => {
             this._controls.set(human.humanID, new CPaddleControls(human.humanID, human.controls))
         })

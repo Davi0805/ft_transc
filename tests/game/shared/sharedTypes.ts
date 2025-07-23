@@ -58,8 +58,5 @@ export type TControlsState = {
     },
     right: {
         pressed: boolean;
-    },
-    pause: {
-        pressed: boolean;
     }
 }
