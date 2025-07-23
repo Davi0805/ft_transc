@@ -2,6 +2,7 @@ import { authService } from "../services/authService";
 import { translator } from "../services/translationService";
 import { router } from "../routes/router";
 import { LanguageCode } from "../languages/languages";
+import { WarningPopup } from "../utils/popUpWarn";
 
 /**
  * @class Header
@@ -30,7 +31,11 @@ class Header {
    * Logs the user out via the authentication service and redirects to the homepage.
    */
   logOutEventListener(): void {
-    if (!this.navBarElement) return;
+    if (!this.navBarElement) {
+      const warnPopup = new WarningPopup;
+      warnPopup.create("Something is strange...", "Seems like the header could not be found...");
+      return;
+    }
     this.navBarElement.addEventListener("click", (event: Event) => {
       event.preventDefault();
       const target = event.target as HTMLElement;
@@ -47,7 +52,11 @@ class Header {
   languageSelectorDisplayEventListener(): void {
     const dropDown = document.querySelector(".current-language") as HTMLElement;
     const langList = document.querySelector(".lang-options") as HTMLElement;
-    if (!dropDown || !langList) return;
+    if (!dropDown || !langList) {
+      const warnPopup = new WarningPopup;
+      warnPopup.create("Something is strange...", "Seems like the language selector could not be found...");
+      return;
+    } 
 
     dropDown.addEventListener("click", (e: Event) => {
       e.preventDefault();
