@@ -2,6 +2,7 @@ import { ReadEvent, webSocketService } from "../services/webSocketService";
 import { getMessagesByConvID, Message } from "../api/getConversationMessagesAPI";
 import { authService } from "../services/authService";
 import { Friend } from "./sidebar";
+import { WarningPopup } from "../utils/popUpWarn";
 
 export interface ChatWindowMessage {
   convID: number;
@@ -166,7 +167,11 @@ class ChatWindow {
     const messageInput = this.element.querySelector(".message-input") as HTMLInputElement;
     const message = messageInput.value.trim();
 
-    if (!message) return;
+    if (!message) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the message could not be sent...");
+      return;
+    }
 
     if (webSocketService.sendChatMessage(authService.userID, message)) {
       this.addMessage({
@@ -175,6 +180,8 @@ class ChatWindow {
       } as ChatWindowMessage);
       messageInput.value = ""; // clear
     } else {
+      const errPopup = new WarningPopup();
+      errPopup.create("Error Sending Message", "Message was not able to be sent. Please refresh the page and try again.");
       console.log("DEBUG: Could not send message. Try again");
     }
   }
@@ -196,9 +203,13 @@ class ChatWindow {
   }
 
   addMessage(messageData: ChatWindowMessage): void {
-    if (!this.element) return;
-    const messageContainer = this.element.querySelector(".chat-messages");
-    if (!messageContainer) return;
+    const messageContainer = this.element?.querySelector(".chat-messages");
+    if (!this.element || !messageContainer){
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the message window could not be found...");
+      return;
+    } 
+
     const newMessage = document.createElement("div");
     newMessage.classList.add("message");
 
