@@ -79,6 +79,7 @@ export const LoginPage = {
         console.error("DEBUG Pass ou user wrong");
       } else {
         console.error("DEBUG: Something went wrong:", (error as any)?.message);
+       
         const errPopup = new ErrorPopup();
         errPopup.create("Error Logging In", "Something went wrong while trying to log in. Refresh and try again.");
       }
