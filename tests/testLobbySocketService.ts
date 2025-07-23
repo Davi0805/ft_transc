@@ -58,9 +58,17 @@ class TestLobbySocketService {
             this._wsMap.set(lobbyID, map)
         } else {
             console.log("Lobby exists")
-            testLobbyRepository.addUserToLobby(lobbyID, {id: userID, username: "lol"})
+            testLobbyRepository.addUserToLobby(lobbyID, userID)
             lobbySockets.set(userID, ws)
         }
+    }
+    removeSocketFromLobby(lobbyID: number, userID: number) {
+        console.log("lobby removes")
+        const lobbySockets = this._wsMap.get(lobbyID);
+        if (!lobbySockets) { throw Error("How are you trying to exit a lobby that does not exist??") }
+
+        testLobbyRepository.removeUserFromLobby(lobbyID, userID)
+        lobbySockets.delete(userID)
     }
     sendToUser<T extends keyof OutboundDTOMap>(userID: number, reqType: T, data: OutboundDTOMap[T]) {
         const ws = this.getWsFromUserID(userID);
@@ -99,11 +107,9 @@ class TestLobbySocketService {
             users: updatedUsers
         })
     }
-
     inviteUserToLobby(lobbyID: number, inviteeID: number) {
         //TODO
     }
-
     updateReadiness(lobbyID: number, senderID: number, ready: boolean) {
         testLobbyRepository.updateReadiness(lobbyID, senderID, ready);
         this.broadcast(lobbyID, "updateReadiness", {

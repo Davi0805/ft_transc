@@ -37,12 +37,12 @@ class LobbyRepository {
         if (!correctLobby) {throw Error("Lobby requested does not exist!")}
         return correctLobby
     }
-    createLobby(configs: LobbyCreationConfigsDTO, selfData: {id: number, username: string}): number {
-        let userInfo = this._getUserByID(selfData.id, selfData.username)
+    createLobby(configs: LobbyCreationConfigsDTO, userID: number): number {
+        let userInfo = this._getUserByID(userID)
 
         const newLobby: TLobby = {
             id: this._currentLobbyID,
-            hostID: selfData.id,
+            hostID: userID,
             name: configs.name,
             type: configs.type,
             map: configs.map,
@@ -63,9 +63,9 @@ class LobbyRepository {
         return this._currentLobbyID++
     }
     //Second argument should not be neccessary. Or at least only id is necessary, username is only to register user if it does not exist, which in production always should
-    addUserToLobby(lobbyID: number, userData: {id: number, username: string}) {
+    addUserToLobby(lobbyID: number, userID: number) {
         const lobby = this.getLobbyByID(lobbyID);
-        const userInfo = this._getUserByID(userData.id, userData.username);
+        const userInfo = this._getUserByID(userID);
         const user = {
             id: userInfo.id,
             username: userInfo.username,
@@ -78,7 +78,18 @@ class LobbyRepository {
         lobbySocketService.broadcast(lobbyID, "addLobbyUser", { user: user })
     }
 
-
+    removeUserFromLobby(lobbyID: number, userID: number) {
+        const lobby = this.getLobbyByID(lobbyID)
+        lobby.users = lobby.users.filter(user => user.id !== userID)
+        lobbySocketService.broadcast(lobbyID, "removeLobbyUser", { id: userID })
+        //If lobby has no users, clean it up
+        console.log(lobby.users)
+        console.log(lobby.users.length)
+        if (lobby.users.length === 0) {
+            console.log("lobby was supposedly deleted")
+            this._lobbies = this._lobbies.filter(lobby => lobby.id !== lobbyID)
+        }
+    }
 
 
     updateSettings(lobbyID: number, settings: TDynamicLobbySettings): TLobbyUser[] | null { //returns whether users must be updated in broadcast
@@ -163,14 +174,13 @@ class LobbyRepository {
         if (!user) {throw Error("user does not exist")}
         return user
     }
-    _getUserByID(userID: number, username: string | null = null) {
+    _getUserByID(userID: number) {
         let userInfo = this._users.find(user => user.id === userID)
         if (!userInfo) {
             //This substitutes the register system. Should not be done in production
-            if (!username) {throw Error("user should have been init by now")}
             userInfo = {
                 id: userID,
-                username: username,
+                username: `User${userID}`,
                 spriteID: 0,
                 rating: 1500
             }

@@ -2,7 +2,7 @@ import { router } from "../../routes/router";
 //import { lobbySocketService } from "../../services/lobbySocketService";
 import { lobbySocketService } from "../../testServices/testLobySocketService";
 //import { getLobbySettings} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
-import { enterLobby, getAllLobbies } from "../../testServices/testLobbyAPI";
+import { getAllLobbies } from "../../testServices/testLobbyAPI";
 import { getTable } from "./utils/stylingComponents";
 import { LobbiesListDTO, TLobby } from "./lobbyTyping";
 import { getSelfData } from "../../api/getSelfDataAPI";

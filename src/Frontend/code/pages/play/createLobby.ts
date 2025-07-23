@@ -70,7 +70,7 @@ export const CreateLobbyPage = {
             }
             
             //TESTING
-            const lobbyID = await createLobby(lobbySettings, {id: selfData.id, username: selfData.username}) //second arg in production is not necessary
+            const lobbyID = await createLobby(lobbySettings, selfData.id) //second arg in production is not necessary
             const lobby = await lobbySocketService.connect(lobbyID, selfData.id);
             if (!lobby) {throw Error("Socket was already connected somehow!")}
             lobbyService.init(selfData.id, lobby)

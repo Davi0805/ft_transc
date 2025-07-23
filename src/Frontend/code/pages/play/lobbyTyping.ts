@@ -152,8 +152,6 @@ export type InboundDTOMap = {
     addTournamentPlayer: null //None of the member variables are chosen by the user
     //user withdraws from the tournament
     removeTournamentPlayer: null
-    //user leaves lobby
-    leaveLobby: null,
     //host starts the game
     startGame: null,
     

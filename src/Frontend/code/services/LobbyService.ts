@@ -93,7 +93,6 @@ class LobbyService {
     }
 
     leave() {
-        lobbySocketService.send("leaveLobby", null);
         lobbySocketService.disconnect();
         this.nullify();
     }

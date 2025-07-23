@@ -21,7 +21,6 @@ class LobbySocketService {
             
             this._ws.onmessage = (ev: MessageEvent) => {
                 try {
-                    //Add a parser for the initial info that RESOLVES THE PROMISE
                     const data = JSON.parse(ev.data) as OutboundDTO;
                     console.log("Received data")
                     console.log(data)
@@ -37,7 +36,6 @@ class LobbySocketService {
 
             this._ws.onopen = (ev: Event) => {
                 console.log("DEBUG: lobbySocket connected");
-                //resolve(); //TODO get this out
             }
             
             this._ws.onclose = (ev: CloseEvent) => {

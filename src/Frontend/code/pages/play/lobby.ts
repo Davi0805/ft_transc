@@ -15,7 +15,7 @@ export const LobbyPage = {
                     <div id="participants" class="flex flex-col min-w-[300px] border-2 rounded-2xl border-gray-900/75 min-h-0 overflow-hidden">
                     </div>
                     <div id="lobby-settings-and-buttons" class="flex flex-col justify-between gap-6">
-                        <div id="lobby-settings">
+                        <div id="lobby-settings" class="flex flex-col gap-1">
                         </div>
                         <div id="lobby-buttons" class="flex flex-col gap-1">
                         </div>
@@ -52,18 +52,22 @@ export const LobbyPage = {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         const lobbySettingsListing: TLobby = lobbyService.lobby;
         
-        let lobbySettingsHtml = `
+        //const lobbySettingsDiv = document.createElement("div");
+        lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing)
+
+        /* let lobbySettingsHtml = `
             <div id="settings-listing" class="flex flex-col gap-1">
                 ${getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing)}
                 ${getButton("btn-change-settings", "button", "Change lobby settings", false).outerHTML}
             </div>
-        `;
-        lobbySettingsElement.innerHTML = lobbySettingsHtml;
+        `; */
+        //lobbySettingsElement.innerHTML = lobbySettingsHtml;
 
-        const buttonChangeSettings = document.getElementById('btn-change-settings') as HTMLElement;
-        buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
-
-
+        if (lobbyService.amIHost()) {
+            const buttonChangeSettings = getButton("btn-change-settings", "button", "Change lobby settings", false);
+            buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
+            lobbySettingsElement.appendChild(buttonChangeSettings);
+        }
     },
 
     renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
@@ -156,11 +160,25 @@ export const LobbyPage = {
                 const slotSpaceElement = document.createElement("td");
                 slotSpaceElement.className = "text-center"
                 if (player !== null) {
-                    //TODO should find a way to identify if player is current user and add a withdraw button
+                    const playerDiv = document.createElement("div");
+                    playerDiv.className = "flex flex-row"
+                    
                     const playerElement = document.createElement("p");
-                    playerElement.className = "text-xl p-2"
+                    playerElement.className = "w-full text-xl p-2"
                     playerElement.textContent = player.nickname.toString();
-                    slotSpaceElement.appendChild(playerElement);
+                    playerDiv.appendChild(playerElement);
+
+                    if (player.id === lobbyService.myID) {
+                        const withdrawButton = getButton("btn-withdraw", "button", "X", false);
+                        withdrawButton.addEventListener("click", () => {
+                            lobbyService.lobby.type === "friendly"
+                            ? lobbyService.removeFriendlyPlayerIN(player.id)
+                            : lobbyService.removeRankedPlayerIN(player.id)
+                        })
+                        playerDiv.appendChild(withdrawButton);
+                    }
+                    
+                    slotSpaceElement.appendChild(playerDiv);
                 } else if (canJoin){
                     const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
