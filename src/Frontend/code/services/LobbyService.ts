@@ -39,12 +39,13 @@ class LobbyService {
             if (mapSlots[team] === undefined || mapSlots[team][role] === undefined) {
                 throw Error("Fuck everything about this bullshit")
             }
-            if (player.id === null || player.spriteID === null) {
+            if (player.userID === null || player.id === null || player.spriteID === null) {
                 throw Error("Player should have been initialized by backend at this point!")
             }
             if (mapSlots[team][role] === null) {
                 mapSlots[team][role] = {
                     id: player.id,
+                    userID: player.userID,
                     nickname: player.nickname ? player.nickname : "null",
                     spriteID: player.spriteID
                 }
@@ -127,9 +128,13 @@ class LobbyService {
     }
     addFriendlyPlayerOUT(userID: number, player: TFriendlyPlayer) {
         if (!this._isLobbyOfType("friendly")) { return; }
-        
         const user = this._findUserByID(userID);
-        (user.player as TFriendlyPlayer[]).push(player) // This is safe becuase the check is done above
+        if (user.player === null) {
+            user.player = [player]
+        } else {
+            (user.player as TFriendlyPlayer[]).push(player)
+        }
+        
         LobbyPage.renderSlots();
     }
     removeFriendlyPlayerOUT(playerID: number) {

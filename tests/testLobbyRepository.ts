@@ -41,7 +41,7 @@ class LobbyRepository {
         let userInfo = this._getUserByID(userID)
 
         const newLobby: TLobby = {
-            id: this._currentLobbyID,
+            id: this._currentUID,
             hostID: userID,
             name: configs.name,
             type: configs.type,
@@ -60,7 +60,7 @@ class LobbyRepository {
         }
         this._lobbies.push(newLobby)
         
-        return this._currentLobbyID++
+        return this._currentUID++
     }
     //Second argument should not be neccessary. Or at least only id is necessary, username is only to register user if it does not exist, which in production always should
     addUserToLobby(lobbyID: number, userID: number) {
@@ -117,11 +117,14 @@ class LobbyRepository {
     addFriendlyPlayer(lobbyID: number, userID: number, player: TFriendlyPlayer) {
         const lobby = this.getLobbyByID(lobbyID)
         const user = this._getLobbyUserByID(lobby, userID)
+        player.id = this._currentUID++;
         if (!user.player) {
             user.player = [player]
         } else {
             (user.player as TFriendlyPlayer[]).push(player)
         }
+        console.log("friendly player added. players are now: ")
+        console.log(user.player)
     }
     removeFriendlyPlayer(lobbyID: number, userID: number, playerID: number) {
         const lobby = this.getLobbyByID(lobbyID)
@@ -129,6 +132,8 @@ class LobbyRepository {
         if (!user.player) {throw Error()}
         user.player = (user.player as TFriendlyPlayer[]).filter(player => player.id !== playerID)
         if (user.player.length === 0) { user.player = null}
+        console.log("friendly player removed. players are now: ")
+        console.log(user.player)
     }
     
     addRankedPlayer(lobbyID: number, userID: number, player: TRankedPlayer) {
@@ -190,7 +195,7 @@ class LobbyRepository {
     }
 
     private _lobbies: TLobby[] = []
-    private _currentLobbyID: number = 0;
+    private _currentUID: number = 0;
     
     private _users: TUser[] = []
 }

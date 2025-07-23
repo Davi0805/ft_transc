@@ -168,7 +168,7 @@ export const LobbyPage = {
                     playerElement.textContent = player.nickname.toString();
                     playerDiv.appendChild(playerElement);
 
-                    if (player.id === lobbyService.myID) {
+                    if (player.userID === lobbyService.myID) {
                         const withdrawButton = getButton("btn-withdraw", "button", "X", false);
                         withdrawButton.addEventListener("click", () => {
                             lobbyService.lobby.type === "friendly"
