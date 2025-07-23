@@ -1,7 +1,9 @@
 import { togglePasswordVisibility } from "../utils/domUtils";
-import { RegisterCredentials, register } from "../api/registerAPI";
+import { register } from "../api/registerAPI";
 import { translator } from "../services/translationService";
 import { router } from "../routes/router";
+import { ErrorPopup } from "../utils/popUpError";
+import { WarningPopup } from "../utils/popUpWarn";
 
 export const RegisterPage = {
   template(): string {
@@ -62,7 +64,13 @@ export const RegisterPage = {
   renderSuccessHTML(): void {
     const wrapper: HTMLElement | null =
       document.getElementById("register-wrapper");
-    if (!wrapper) return;
+    if (!wrapper){
+      console.error("DEBUG: No register container");
+             
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly. Please refresh and try again.");
+      return;
+    } 
     wrapper.innerHTML = `
       <div class="registration-success">
         <h1 class="title" data-i18n="register-success-title">Success!</h1>
@@ -129,8 +137,17 @@ export const RegisterPage = {
         return;
       } catch (error) {
         if ((error as any).status == 400) {
+          console.log("DEBUG: Error at register credentials");
+
           takenError.textContent = translator.get("register-taken-error");
           takenError.hidden = false;
+        }
+        else {
+          console.log("DEBUG: Error at register api call");
+          
+          const errPopup = new ErrorPopup();
+          errPopup.create("Something is strange...", "Seems like the page was not loaded correctly. Please refresh and try again.");
+          return;
         }
       }
     });
