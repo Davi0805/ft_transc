@@ -208,9 +208,9 @@ export const LobbyPage = {
                 <div id="choose-paddle" class="flex flex-row gap-3">
                     <label for="player-paddle" class="text-xl">Paddle:</label>
                     <select id="player-paddle" name="player-alias" class="bg-gray-900/50 rounded-2xl px-4 text-center">
+                        <option>0</option>
                         <option>1</option>
                         <option>2</option>
-                        <option>3</option>
                     </select>
                 </div>
 
@@ -237,7 +237,6 @@ export const LobbyPage = {
             team: team,
             role: role
         });
-        //this.renderSlots(); This should probably only happen when everyone is updated
     },
 
     async renderParticipants() {

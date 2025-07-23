@@ -9,6 +9,8 @@ class MatchService {
     }
 
     async start(root: HTMLElement) {
+        console.log("Match about to start!")
+        console.log(this.configs)
         await App.init(this.configs, root, lobbySocketService.ws);
     } 
 

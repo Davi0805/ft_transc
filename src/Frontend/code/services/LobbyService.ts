@@ -272,7 +272,6 @@ class LobbyService {
         if (this._myID === null) { throw Error("myID is not initialized!"); }
         return this._myID;
     }
-    //private _users: TLobbyUser[] = [];
 
     _findUserByID(userID: number): TLobbyUser {
         const user = this.lobby.users.find(user => user.id === userID);

@@ -123,8 +123,6 @@ class LobbyRepository {
         } else {
             (user.player as TFriendlyPlayer[]).push(player)
         }
-        console.log("friendly player added. players are now: ")
-        console.log(user.player)
     }
     removeFriendlyPlayer(lobbyID: number, userID: number, playerID: number) {
         const lobby = this.getLobbyByID(lobbyID)
@@ -132,8 +130,6 @@ class LobbyRepository {
         if (!user.player) {throw Error()}
         user.player = (user.player as TFriendlyPlayer[]).filter(player => player.id !== playerID)
         if (user.player.length === 0) { user.player = null}
-        console.log("friendly player removed. players are now: ")
-        console.log(user.player)
     }
     
     addRankedPlayer(lobbyID: number, userID: number, player: TRankedPlayer) {
@@ -172,7 +168,6 @@ class LobbyRepository {
         const lobby = this.getLobbyByID(lobbyID)
         lobby.users = lobby.users.filter(user => user.id === userID)
     }
-    //TODO startgame
 
     _getLobbyUserByID(lobby: TLobby, userID: number): TLobbyUser {
         const user = lobby.users.find(user => user.id === userID);
