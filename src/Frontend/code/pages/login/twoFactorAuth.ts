@@ -2,6 +2,8 @@ import { verifyTwoFactorCode } from "../../api/twoFactorAPI";
 import { authService } from "../../services/authService";
 import { translator } from "../../services/translationService"
 import { router } from "../../routes/router";
+import { ErrorPopup } from "../../utils/popUpError";
+import { WarningPopup } from "../../utils/popUpWarn";
 
 export const TwoFactorAuth = {
   renderHTML(): string {
@@ -29,7 +31,11 @@ export const TwoFactorAuth = {
 
   async show(token: string): Promise<void> {
     const container = document.querySelector("main");
-    if (!container) return;
+    if (!container) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly...");
+      return;
+    }
 
     container.innerHTML = this.renderHTML();
     translator.apply();
@@ -67,6 +73,11 @@ export const TwoFactorAuth = {
           loginError.textContent = "Verification code is incorrect!"
           loginError.hidden = false;
           console.error("DEBUG 2FA code wrong");
+        }
+        else {
+          console.error("DEBUG: Something went wrong:", (error as any)?.message);
+          const errPopup = new ErrorPopup();
+          errPopup.create("Error Logging In", "Something went wrong while trying to log in. Refresh and try again.");
         }
       }
     });
