@@ -5,6 +5,8 @@ import { updatePassword } from "../../api/updatePasswordAPI";
 import { enableTwoFactor } from "../../api/enableTwoFactorAPI";
 import { confirmTwoFactorCode } from "../../api/confirmEnableTwoFactorAPI"
 import { uploadAvatar } from "../../api/uploadAvatarAPI"
+import { WarningPopup } from "../../utils/popUpWarn";
+import { ErrorPopup } from "../../utils/popUpError";
 
 export const SettingsPage = {
   template() {
@@ -103,14 +105,13 @@ export const SettingsPage = {
                             class="input-settings" />
                           <span class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</span>
                         </div>
-                      </div>
                         
-                      <!-- Save Button positioned at bottom right -->
-                      <div class="mt-auto flex justify-end pt-6">
-                        <button id="save-btn" type="submit" class="btn-settings ">Save</button>
-                      </div>
-                    </form>
-                  `;
+                        <!-- Save button -->
+                        <div class="mt-auto flex justify-end pt-6">
+                          <button id="save-btn" type="submit" class="btn-settings ">Save</button>
+                        </div>
+                      </form>
+                     `;
   },
 
   getSecurityHTML(): string {
@@ -166,8 +167,6 @@ export const SettingsPage = {
             <!-- Will insert blocked users dynamically -->
             
           </div>
-
-
     `;
   },
 
@@ -203,10 +202,18 @@ export const SettingsPage = {
 
   updateActiveSection(): void {
     const sidebar = document.getElementById("settings-sidebar");
-    if (!sidebar) return;
+    if (!sidebar) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly. Please refresh and try again.");
+      return;
+    } 
 
     const test = sidebar.querySelector(`.settings-active`);
-    if (!test) return;
+    if (!test) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly. Please refresh and try again.");
+      return;
+    } 
 
     test.classList.toggle("settings-active");
     const test2 = sidebar.querySelector(
@@ -217,7 +224,11 @@ export const SettingsPage = {
 
   updateContent(): void {
     const content = document.getElementById("settings-content");
-    if (!content) return;
+    if (!content){
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly. Please refresh and try again.");
+      return;
+    } 
 
     switch (SettingsPage.currentSection) {
       case "account":
@@ -236,30 +247,46 @@ export const SettingsPage = {
   },
 
   async initAccountEvents(): Promise<void> {
+    console.log("initAccountEvents called"); // Add this line
+
     const form = document.querySelector("form");
     if (!(form instanceof HTMLFormElement)) {
       console.warn("DEBUG: Form element not found or incorrect.");
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly...");
       return;
     }
 
-    form.addEventListener("submit", (event) => {
+
+    console.log("About to attach event listener"); // Add this line
+
+    form.addEventListener("submit", async (event) => {
+      console.log("submit")
+
       event.preventDefault();
 
       try {
         const nameInput = form.querySelector<HTMLInputElement>("#settings-name");
         if (!nameInput) {
           console.error("DEBUG: Name input not found.");
+
+          const warnPopup = new WarningPopup();
+          warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly...");
           return;
         }
 
         const newName = nameInput.value.trim();
         if (newName === authService.userNick) {
           console.warn("DEBUG: Name unchanged.");
+          const warnPopup = new WarningPopup();
+          warnPopup.create("Nickname Not Updated...", "Seems like your new nickname is the same as the old one...");
           return;
         }
 
         // Update backend and local auth state
-        updateName(newName);
+        console.log("vou tentar aqui")
+        await updateName(newName);
+        console.log("tentei")
         authService.userNick = newName;
 
         // Update UI
@@ -275,14 +302,23 @@ export const SettingsPage = {
 
       } catch (error) {
         console.error("DEBUG: Exception during account save:", error);
+        
+        const errPopup = new ErrorPopup();
+        errPopup.create("Error Updating Account settings", "Seems like there was an error updating your informatiom. Please refresh and try again");
+        return;
       }
     });
+
+      console.log("Event listener attached successfully"); // Add this line
   },
 
   initEnable2FAEventListeners(): void {
     const content = document.getElementById("settings-content");
     if (!content) {
       console.error("DEUBG: No content container at show2FAActivation");
+
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly...");
       return;
     }
 
@@ -312,13 +348,17 @@ export const SettingsPage = {
         this.updateContent();
       } catch (error) {
         if ((error as any).status == 401) {
+          console.error("DEBUG 2FA code wrong");
+          
           const loginError = document.getElementById('twofacode-error') as HTMLElement;
           loginError.textContent = "Verification code is incorrect!"
           loginError.hidden = false;
-          console.error("DEBUG 2FA code wrong");
         }
         else {
           console.error("DEBUG: Unexpeted error", error);
+
+          const warnPopup = new WarningPopup();
+          warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly...");
           authService.logout()
         }
       }
@@ -330,6 +370,9 @@ export const SettingsPage = {
     const content = document.getElementById("settings-content");
     if (!content) {
       console.error("DEUBG: No content container at show2FAActivation");
+
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly...");
       return;
     }
 
@@ -374,6 +417,9 @@ export const SettingsPage = {
     const form = document.querySelector("#security-form");
     if (!(form instanceof HTMLFormElement)) {
       console.warn("DEBUG: Form element not found or incorrect.");
+      
+      const warnPopup = new WarningPopup();
+      warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly...");
       return;
     }
     form.addEventListener("submit", async (event) => {
@@ -381,40 +427,44 @@ export const SettingsPage = {
         event.preventDefault();
 
         const oldPass = form.querySelector<HTMLInputElement>("#old-pass");
-        if (!oldPass || !oldPass.value) {
-          console.warn("DEBUG: No old password.");
+        const newPass = form.querySelector<HTMLInputElement>("#new-pass");
+        const twoFactor = form.querySelector<HTMLInputElement>("#two-fac");
+
+
+        if (!oldPass || !oldPass.value ||
+            !newPass ||
+            !twoFactor) {
+          console.warn("DEBUG: Security page error.");
+          
+          const warnPopup = new WarningPopup();
+          warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly...");
           return;
         }
         
-        const newPass = form.querySelector<HTMLInputElement>("#new-pass");
-        if (!newPass) {
-          console.warn("DEBUG: No new password.");
-          return;
-        }
-      
-        const twoFactor = form.querySelector<HTMLInputElement>("#two-fac");
-        if (!twoFactor) {
-          console.warn("DEBUG: No two factor checkbox.");
-          return;
-        }       
-
         // update password
         if (newPass.value){
           try {
-            updatePassword(oldPass.value, newPass.value);
+            await updatePassword(oldPass.value, newPass.value);
           } catch (error: any) {
             if (error && (error.status === 401)) {
               console.warn("DEBUG: Unauthorized (401) error.");
-              // todo error message that shows that the password was wrong
+              
+              const errPopup = new ErrorPopup();
+              errPopup.create("Error Updating Password...", "Password was not updated. Please make sure to type your correct old password.");
             } else {
               console.error("DEBUG: Error updating password:", error);
+              
+              const errPopup = new ErrorPopup();
+              errPopup.create("Something Went Wrong...", "Seems like something went wrong while updating your password. Please refresh and try again.");
             }
             return ;
           }
         }
 
         if (twoFactor) {
-          if (twoFactor.checked === authService.getHas2FA()) return;
+          if (twoFactor.checked === authService.getHas2FA()){
+              return;
+          } 
 
           if (authService.getHas2FA()) {
             // todo disable twofa
@@ -427,6 +477,9 @@ export const SettingsPage = {
 
             } catch (error) {
               console.warn("DEBUG: Error enabling 2fa", error);
+
+              const errPopup = new ErrorPopup();
+              errPopup.create("Error Updating Password...", "Password was not updated. Please make sure to type your correct old password.");
               authService.logout();
             }
           }
@@ -564,7 +617,6 @@ export const SettingsPage = {
     SettingsPage.currentSection = "account";
 
     SettingsPage.initChangeAvatarEventListener();
-
     SettingsPage.initAccountEvents();
 
     // Event listener delegations
