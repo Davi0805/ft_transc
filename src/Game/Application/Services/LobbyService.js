@@ -3,6 +3,7 @@ const mapRepo = require('../../Adapters/outbound/MapRepository');
 const mapper = require('../../Infrastructure/Mappers/LobbyMapper');
 const connPlyrsRepo = require('../../Adapters/outbound/ConnectedUsersRepository'); 
 const exception = require('../../Infrastructure/config/CustomException');
+const broadcast = require('./LobbyBroadcastService');
 
 class LobbyService {
 
@@ -43,8 +44,8 @@ class LobbyService {
     async removeUserFromLobby(lobbyId, userId)
     {
         connPlyrsRepo.deleteUser(lobbyId, userId);
-        connPlyrsRepo.broadcastToLobby(lobbyId, {type: "user_left_event",
-                                                user_id: userId});
+        //connPlyrsRepo.broadcastToLobby(lobbyId, {type: "user_left_event",
+        //                                        user_id: userId});
         let lobbyUsers = await lobbyRepo.getLobbyUsers(lobbyId);
         lobbyUsers = lobbyUsers.filter(u => u.id != userId);
         await lobbyRepo.updateUsers(lobbyId, lobbyUsers);
@@ -56,10 +57,28 @@ class LobbyService {
         const user = lobbyUsers.find(u => u.id == user_id);
         user.ready = readyState;
         await lobbyRepo.updateUsers(lobbyId, lobbyUsers);
-        connPlyrsRepo.broadcastToLobby(lobbyId, {type: "ready_state_update_event",
-                                                user_id: user_id, ready: readyState});
+        broadcast.updateReadiness(lobbyId, user_id, readyState);
     }
 
+    async updateLobbySettings(lobbyId, userId, newLobbySettings)
+    {
+        const lobby = await lobbyRepo.get(lobbyId);
+        if (userId != lobby.hostID) return;
+        try {
+            await this.validateDuration(newLobbySettings.duration);
+            await this.validateMode(newLobbySettings.mode);
+            await this.validateMap(newLobbySettings.map);
+        } catch (error) {
+            return ; //todo: broadcast an error to host
+        }
+        lobby.map = newLobbySettings.map;
+        lobby.mode = newLobbySettings.mode;
+        lobby.duration = newLobbySettings.duration;
+        await lobbyRepo.updateSettings(lobbyId, lobby);
+    }
+
+    // this 2 are more focused first in the ranked but then will be created
+    // a more scalable solution to all modes
     async setPlayerPosition(lobbyId, user_id, data)
     {
         const lobbyUsers = await lobbyRepo.getLobbyUsers(lobbyId);
@@ -68,9 +87,19 @@ class LobbyService {
         user.team = data.team;
         user.role = data.role;
         await lobbyRepo.updateUsers(lobbyId, lobbyUsers);
-        connPlyrsRepo.broadcastToLobby(lobbyId, {type: "position_update_event",
-                                                            user_id: user_id, team: data.team,
-                                                            role: data.role});
+        broadcast.addRankedPlayer(lobbyId, user_id, user);
+    }
+
+    async removePlayerPosition(lobbyId, userId)
+    {
+        let lobbyUsers = await lobbyRepo.getLobbyUsers(lobbyId);
+        const user = lobbyUsers.find(u => u.id == userId);
+        if (user) {
+            delete user.team;
+            delete user.role;
+        }
+        await lobbyRepo.updateUsers(lobbyId, lobbyUsers);
+        broadcast.removeRankedPlayer(lobbyId, userId);
     }
 
     async validateLobbyEntry(lobbyId, socket)
@@ -78,8 +107,6 @@ class LobbyService {
         let lobbyData = await lobbyRepo.get(lobbyId);
         if (Object.keys(lobbyData).length == 0) socket.close();
     }
-
-    //async setMap(lobbyId, userId, )
 
     async getAllLobbies()
     {

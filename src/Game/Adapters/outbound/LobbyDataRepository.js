@@ -37,6 +37,13 @@ class LobbyDataRepository {
         await redis.expire(`lobby:${lobby_id}`, 60);
     }
 
+    async updateSettings(lobby_id, data)
+    {
+        redis.hSet(`lobby:${lobby_id}`, 'mode', data.mode);
+        redis.hSet(`lobby:${lobby_id}`, 'duration', data.duration);
+        redis.hSet(`lobby:${lobby_id}`, 'map', data.map);
+    }
+
 
     // TTL - Time To Leave
     // method to check and remove TTL

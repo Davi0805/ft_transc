@@ -6,14 +6,34 @@ class MessageHandler {
     async process(message, lobby_id, user_id)
     {
         const parsedMessage = JSON.parse(message);
-        console.log(message);
 
-        switch (parsedMessage.type) {
-            case 'position_update':
-                lobbyService.setPlayerPosition(lobby_id, user_id, {team: parsedMessage.team, role: parsedMessage.role});
+        switch (parsedMessage.requestType) {
+            case 'addRankedPlayer':
+                lobbyService.setPlayerPosition(lobby_id, user_id, {team: parsedMessage.data.player.team,
+                                                                 role: parsedMessage.data.player.role});
                 break;
-            case 'ready_state_update':
-                lobbyService.setUserState(lobby_id, user_id, parsedMessage.ready);
+            case 'updateReadiness':
+                lobbyService.setUserState(lobby_id, user_id, parsedMessage.data.ready);
+                break;
+            case 'updateSettings':
+                lobbyService.updateLobbySettings(lobby_id, user_id, parsedMessage.data.settings);
+                break;
+            case 'removeRankedPlayer':
+                lobbyService.removePlayerPosition(lobby_id, user_id);
+                break;
+            case 'inviteUserToLobby':
+                break;
+            case 'addFriendlyPlayer':
+                break;
+            case 'removeFriendlyPlayer':
+                break;
+            case 'addTournamentPlayer':
+                break;
+            case 'removeTournamentPlayer':
+                break;
+            case 'startGame':
+                break;
+            case 'updateGame':
                 break;
             default:
                 break;
