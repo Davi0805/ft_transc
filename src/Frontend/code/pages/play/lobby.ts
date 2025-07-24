@@ -53,16 +53,7 @@ export const LobbyPage = {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         const lobbySettingsListing: TLobby = lobbyService.lobby;
         
-        //const lobbySettingsDiv = document.createElement("div");
         lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing)
-
-        /* let lobbySettingsHtml = `
-            <div id="settings-listing" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing)}
-                ${getButton("btn-change-settings", "button", "Change lobby settings", false).outerHTML}
-            </div>
-        `; */
-        //lobbySettingsElement.innerHTML = lobbySettingsHtml;
 
         if (lobbyService.amIHost()) {
             const buttonChangeSettings = getButton("btn-change-settings", "button", "Change lobby settings", false);
@@ -197,10 +188,6 @@ export const LobbyPage = {
         teamsElement.appendChild(slotsTable);
     },
 
-
-    //TODO: Next thing is add configuration for controls.
-    //Also, I need potatoes ASAP
-    //Ranked should be preset, and friendly shoud be chosen somehow
     async slotJoinFriendlyCallback(team: SIDES, role: ROLES) {
         const settingsDialog = document.createElement('dialog');
         settingsDialog.className = "fixed m-auto overflow-hidden rounded-lg"
@@ -236,13 +223,7 @@ export const LobbyPage = {
     },
 
     async slotJoinRankedCallback(team: SIDES, role: ROLES) {
-        const defaultControlsRecord: Record<SIDES, {left: string, right: string}> = {
-            [SIDES.LEFT]: {left: "ArrowUp", right: "ArrowDown"},
-            [SIDES.TOP]: {left: "ArrowRight", right: "ArrowLeft"},
-            [SIDES.RIGHT]: {left: "ArrowDown", right: "ArrowUp"},
-            [SIDES.BOTTOM]: {left: "ArrowLeft", right: "ArrowRight"}
-        }   
-        matchService.addControls(lobbyService.myID, defaultControlsRecord[team])
+        matchService.addDefaultControls(lobbyService.myID, team);
         lobbyService.addRankedPlayerIN({
             team: team,
             role: role
@@ -251,40 +232,60 @@ export const LobbyPage = {
 
     async renderParticipants() {
         const participantsElement = document.getElementById('participants') as HTMLElement;
+        const participantsTableElement = document.createElement("div");
+        participantsTableElement.id = "participants-table";
+        participantsTableElement.className = "h-full"
+        participantsElement.appendChild(participantsTableElement);
 
+        this.renderTournamentTable()
+        
+        const participating = lobbyService.isUserParticipating(lobbyService.myID);
+        const joinWithdrawButton = getButton("btn-join-withdraw", "button", "Join", false)
+        joinWithdrawButton.addEventListener("click", () => {
+            const state = toggleButton(joinWithdrawButton, "Withdraw", "Join")
+            console.log(state)
+            if (state === true) {
+                lobbyService.addTournamentPlayerIN()
+            } else {
+                lobbyService.removeTournamentPlayerIN()
+            }
+        })
+        joinWithdrawButton.classList.add("w-full");
+
+        participantsElement.appendChild(joinWithdrawButton)
+    },
+
+    renderTournamentTable() {
+        const tableElement = document.getElementById("participants-table");
+        if (!tableElement) {throw Error("Tournament table element was not found")}
+        tableElement.innerHTML = ""
+        
         const header = document.createElement("h2");
         header.className = "text-center text-2xl bg-gray-900/75 p-1"
         header.textContent = "Participants";
-        participantsElement.appendChild(header)
+        tableElement.appendChild(header)
 
 
         let participantsTableBody = ""
         let place = 1
+        const categories = ["nick", "rating", "score"] as const
         for (let participant of lobbyService.getTournPlayers()) {
-            participantsTableBody += `<tr class="bg-gray-900/${place % 2 === 0 ? "25" : "50"}"><td>${place++}</td>`;
-            Object.values(participant).forEach(info => {
-                participantsTableBody += `<td>${info}</td>`
+            const opacity = `opacity-${participant.participating ? "100" : "25"}`
+            const bg = `bg-gray-900/${place % 2 === 0 ? "25" : "50"}`;
+            participantsTableBody += `<tr class="${bg} ${opacity}"><td>${place++}</td>`;
+            categories.forEach(category => {
+                participantsTableBody += `<td>${participant[category]}</td>`;
             })
             participantsTableBody += "</tr>";
         }
 
         const participantsTableHead = `
             <tr class="text-xl bg-gray-900/90">
-                <td>Place</td><td>Player</td><td>rank</td><td>score</td>
+                <td>Place</td><td>Player</td><td>Rating</td><td>Score</td>
             </tr>
         `
         const participantsTable = getTable("participants", participantsTableHead, participantsTableBody)
-        participantsElement.innerHTML += participantsTable.outerHTML;
-        
-        const participating = lobbyService.isUserParticipating(lobbyService.myID);
-        const joinWithdrawButton = getButton("btn-join-withdraw", "button", participating ? "Withdraw" : "Join", false)
-        joinWithdrawButton.addEventListener("click", () => {
-            lobbyService.addTournamentPlayerIN()
-        })
-        //TODO: callback for this button is missing!
-        joinWithdrawButton.classList.add("w-full");
-
-        participantsElement.appendChild(joinWithdrawButton)
+        tableElement.innerHTML += participantsTable.outerHTML;
     },
 
     //Settings logic

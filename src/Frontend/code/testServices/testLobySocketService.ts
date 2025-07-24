@@ -22,8 +22,8 @@ class LobbySocketService {
             this._ws.onmessage = (ev: MessageEvent) => {
                 try {
                     const data = JSON.parse(ev.data) as OutboundDTO;
-                    console.log("Received data")
-                    console.log(data)
+                    //console.log("Received data")
+                    //console.log(data)
                     if (data.requestType === "lobby") {
                         resolve(data.data);
                     } else {
@@ -112,13 +112,13 @@ class LobbySocketService {
                 lobbyService.removeRankedPlayerOUT(dto.data.id);
                 break;
             case "addTournamentPlayer":
-                lobbyService.addTournamentPlayerOUT(dto.data.userID);
+                lobbyService.addTournamentPlayerOUT(dto.data.userID, dto.data.player);
                 break;
             case "removeTournamentPlayer":
                 lobbyService.removeTournamentPlayerOUT(dto.data.id);
                 break;
             case "startMatch":
-                lobbyService.startMatchOUT(dto.data.configs);
+                lobbyService.startMatchOUT(dto.data.configs, dto.data.TournMatchTeam);
                 break;
             case "updateGame":
                 App.severUpdate(dto.data)

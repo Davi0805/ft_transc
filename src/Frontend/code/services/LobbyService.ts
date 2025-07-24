@@ -169,18 +169,22 @@ class LobbyService {
         user.player = null
         LobbyPage.renderSlots();
     }
-    addTournamentPlayerOUT(userID: number) { //TODO This is definitely not complete. Fix
+    addTournamentPlayerOUT(userID: number, player: TTournamentPlayer) { //TODO This is definitely not complete. Fix
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
-        LobbyPage.renderParticipants();
+        user.player = player;
+        LobbyPage.renderTournamentTable();
     }
     removeTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         (user.player as TTournamentPlayer).participating = false;
-        LobbyPage.renderParticipants();
+        LobbyPage.renderTournamentTable();
     }
-    startMatchOUT(configs: CAppConfigs) {
+    startMatchOUT(configs: CAppConfigs, tournMatchTeam: SIDES | null) {
+        if (tournMatchTeam) {
+            matchService.addDefaultControls(this.myID, tournMatchTeam);
+        }
         matchService.init(configs);
         router.navigateTo("/match")
     }
@@ -226,8 +230,8 @@ class LobbyService {
 
         const out: TTournPlayer[] = [];
         this.lobby.users.forEach(user => {
-            const player = user.player as TTournamentPlayer;
-            if (this.isUserParticipating(user.id)) {
+            if (user.player) {
+                const player = user.player as TTournamentPlayer;
                 out.push({
                     id: user.id,
                     nick: user.username,

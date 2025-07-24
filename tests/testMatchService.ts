@@ -46,7 +46,15 @@ class TestMatchService {
             })
 
             const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings);
-            lobbySocketService.broadcast(lobbySettings.id, "startMatch", {configs: clientSettings})
+            if (lobbySettings.type !== "tournament") {
+                lobbySocketService.broadcast(lobbySettings.id, "startMatch", {configs: clientSettings, tournMatchTeam: null})
+            } else {
+                matchPlayers.forEach(player => {
+                    if (!player.id) {throw Error("I will one day find out why tf we are allowing this to be null")}
+                    lobbySocketService.sendToUser(player.id, "startMatch", { configs: clientSettings, tournMatchTeam: player.team})
+                })
+            }
+            
 
             const game = new ServerGame(serverSettings);
             this._currentMatches.push({
@@ -58,11 +66,16 @@ class TestMatchService {
             
 
             //Broadcast that was previously in game but got moved out to match lobbySocket conditions for send()
-            const loop = new LoopController(90);
+            const loop = new LoopController(5);
             loop.start(() => {
-                //The following only works if there is only one game going on on the lobby, which is not true for tournaments!!
-                //TODO: Must do a function that broadcasts for a single game
-                lobbySocketService.broadcast(lobbySettings.id, "updateGame", game.getGameDTO())
+                const dto = game.getGameDTO()
+                //option 1
+                playerIDs.forEach(id => {
+                    lobbySocketService.sendToUser(id, "updateGame", dto)
+                })
+
+                //Option 2
+                //lobbySocketService.broadcast(lobbySettings.id, "updateGame", dto)
             })
             game.startGameLoop();
         })
@@ -144,7 +157,7 @@ class TestMatchService {
                     id: users[i].id,
                     nickname: users[i].username,
                     spriteID: users[i].spriteID,
-                    team: i === 0 ? SIDES.LEFT : SIDES.RIGHT,
+                    team: i === 0 ? SIDES.LEFT : SIDES.RIGHT, //Change to taking team preference into account
                     role: ROLES.BACK,
                 })
             }

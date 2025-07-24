@@ -157,7 +157,6 @@ class TestLobbySocketService {
         })
     }
     startGame(lobbyID: number, senderID: number) {
-        //TODO
         const lobby = testLobbyRepository.getLobbyByID(lobbyID)
         testMatchService.startMatch(lobby)
     }

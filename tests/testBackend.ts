@@ -61,7 +61,7 @@ fastify.register(async (fastify) => {
 
 
 try {
-    await fastify.listen({ port: 6969, host: '127.0.0.1'})
+    await fastify.listen({ port: 6969, host: '0.0.0.0'})
     console.log("server has started")
 } catch (err) {
     fastify.log.error(err)

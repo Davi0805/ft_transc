@@ -65,6 +65,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         })
         this.balls.forEach(ball => {
             const ballState = gameDto.balls.ballsState.find(ballState => ball.id === ballState.id);
+            console.log(ballState)
             if (ballState === undefined) {
                 this._root.removeChild(ball.sprite);
                 this.balls.delete(ball.id)

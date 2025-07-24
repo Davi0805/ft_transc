@@ -1,4 +1,5 @@
 import { CAppConfigs, TControls } from "../match/matchSharedDependencies/SetupDependencies";
+import { SIDES } from "../match/matchSharedDependencies/sharedTypes";
 import { App } from "../match/system/App";
 //import { lobbySocketService } from "./lobbySocketService";
 import { lobbySocketService } from "../testServices/testLobySocketService";
@@ -16,6 +17,15 @@ class MatchService {
             humanID: id,
             controls: controls
         })
+    }
+    addDefaultControls(id: number, team: SIDES) {
+        const defaultControlsRecord: Record<SIDES, {left: string, right: string}> = {
+            [SIDES.LEFT]: {left: "ArrowUp", right: "ArrowDown"},
+            [SIDES.TOP]: {left: "ArrowRight", right: "ArrowLeft"},
+            [SIDES.RIGHT]: {left: "ArrowDown", right: "ArrowUp"},
+            [SIDES.BOTTOM]: {left: "ArrowLeft", right: "ArrowRight"}
+        }   
+        this.addControls(id, defaultControlsRecord[team])
     }
     removeControls(id: number) {
         this._controls = this._controls.filter(player => player.humanID !== id)

@@ -59,8 +59,6 @@ export const PlayPage = {
 
         const lobbiesInfo = await getAllLobbies(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
 
-        console.log("Lobbies info: ")
-        console.log(lobbiesInfo);
         const categories = ["name", "host", "type", "capacity", "mode", "map", "duration"] as const
 
         for (let i = 0; i < lobbiesInfo.length; i++) {

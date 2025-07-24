@@ -209,6 +209,7 @@ export type OutboundDTOMap = {
     //host starts the match
     startMatch: {
         configs: CAppConfigs
+        tournMatchTeam: SIDES | null
     }
     //Game dto:
     updateGame: SGameDTO //Dealt with in game
