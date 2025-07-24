@@ -182,7 +182,8 @@ class LobbyService {
         LobbyPage.renderTournamentTable();
     }
     startMatchOUT(configs: CAppConfigs, tournMatchTeam: SIDES | null) {
-        if (tournMatchTeam) {
+        if (tournMatchTeam !== null) {
+
             matchService.addDefaultControls(this.myID, tournMatchTeam);
         }
         matchService.init(configs);

@@ -8,6 +8,7 @@ import { lobbySocketService } from "../testServices/testLobySocketService";
 class MatchService {
 
     init(configs: CAppConfigs) {
+        console.log(this._controls)
         configs.gameSceneConfigs.controls = this._controls;
         this._configs = configs;
     }

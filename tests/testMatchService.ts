@@ -66,7 +66,7 @@ class TestMatchService {
             
 
             //Broadcast that was previously in game but got moved out to match lobbySocket conditions for send()
-            const loop = new LoopController(5);
+            const loop = new LoopController(60);
             loop.start(() => {
                 const dto = game.getGameDTO()
                 //option 1

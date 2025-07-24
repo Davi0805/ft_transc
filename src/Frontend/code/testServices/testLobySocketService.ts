@@ -118,7 +118,7 @@ class LobbySocketService {
                 lobbyService.removeTournamentPlayerOUT(dto.data.id);
                 break;
             case "startMatch":
-                lobbyService.startMatchOUT(dto.data.configs, dto.data.TournMatchTeam);
+                lobbyService.startMatchOUT(dto.data.configs, dto.data.tournMatchTeam);
                 break;
             case "updateGame":
                 App.severUpdate(dto.data)

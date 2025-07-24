@@ -65,7 +65,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         })
         this.balls.forEach(ball => {
             const ballState = gameDto.balls.ballsState.find(ballState => ball.id === ballState.id);
-            console.log(ballState)
             if (ballState === undefined) {
                 this._root.removeChild(ball.sprite);
                 this.balls.delete(ball.id)
@@ -93,7 +92,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
 
     override tickerUpdate(delta: number, counter: number): void {
-        //if (counter % 20 === 0) {console.log(delta)}
         this.teams.forEach(team => {
             team.hp.updateAnimations();
         })
