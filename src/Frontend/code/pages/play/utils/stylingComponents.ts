@@ -1,5 +1,30 @@
 type TButton = "button" | "submit" | "reset"
 
+export function setupKeyCaptureButton(button: HTMLButtonElement) {
+  let isListeningForKey = false;
+
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (!isListeningForKey) return;
+
+    const pressedKey = event.key;
+    button.textContent = pressedKey;
+    isListeningForKey = false;
+
+    // Remove the key listener after capturing
+    window.removeEventListener("keydown", handleKeyPress);
+  };
+
+  button.addEventListener("click", () => {
+    if (isListeningForKey) return; // prevent double click
+
+    button.textContent = "Press a key";
+    isListeningForKey = true;
+
+    // Start listening for key press
+    window.addEventListener("keydown", handleKeyPress);
+  });
+}
+
 export function getButton(id: string, type: TButton, text: string, big = true) {
     const out = document.createElement("button");
     out.id = id;

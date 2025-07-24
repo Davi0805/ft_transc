@@ -1,5 +1,5 @@
 import { router } from "../../routes/router";
-import { flashButton, getButton, getTable, toggleButton } from "./utils/stylingComponents";
+import { flashButton, getButton, getTable, setupKeyCaptureButton, toggleButton } from "./utils/stylingComponents";
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { TLobby, TDynamicLobbySettings, TMap, TDuration, TMode } from "./lobbyTyping";
 import { lobbyService } from "../../services/LobbyService";
@@ -189,6 +189,11 @@ export const LobbyPage = {
     },
 
     async slotJoinFriendlyCallback(team: SIDES, role: ROLES) {
+        const directions = matchService.getDirectionsFromTeam(team);
+
+        const leftKey = "Arrow" + directions.left
+        const rightKey = "Arrow" + directions.right
+
         const settingsDialog = document.createElement('dialog');
         settingsDialog.className = "fixed m-auto overflow-hidden rounded-lg"
         settingsDialog.innerHTML = `
@@ -206,11 +211,27 @@ export const LobbyPage = {
                         <option>2</option>
                     </select>
                 </div>
+                <div id="choose-left-ctr" class="flex flex-row gap-3">
+                    <label for="left-listener" class="text-xl">${directions.left} button:</label>
+                    ${getButton("left-listener", "button", leftKey, false).outerHTML}
+                </div>
+                <div id="choose-right-ctr" class="flex flex-row gap-3">
+                    <label for="right-listener" class="text-xl">${directions.right} button:</label>
+                    ${getButton("right-listener", "button", rightKey, false).outerHTML}
+                </div>
 
                 ${getButton("btn-close-dialog", "submit", "Join", false).outerHTML}
             </form>
         `;
         document.body.appendChild(settingsDialog);
+
+        
+        const leftListener = document.getElementById("left-listener") as HTMLButtonElement
+        const rightListener = document.getElementById("right-listener") as HTMLButtonElement
+        setupKeyCaptureButton(leftListener)
+        setupKeyCaptureButton(rightListener)
+
+
         const closeDialogButton = document.getElementById("btn-close-dialog") as HTMLElement;
         closeDialogButton.addEventListener("click", (e) => {
             e.preventDefault();
@@ -316,6 +337,14 @@ export const LobbyPage = {
             team: team,
             role: role 
         });
+
+        const leftKey = (document.getElementById("left-listener") as HTMLButtonElement).textContent
+        const rightKey = (document.getElementById("right-listener") as HTMLButtonElement).textContent
+        if (!leftKey || !rightKey) {throw Error("tired of this bullshit")}
+        matchService.addControls(-1, {
+            left: leftKey,
+            right: rightKey
+        })
         console.log(`Player saved with alias ${alias} and sprite id ${spriteID}`)
         console.log(`Player added to team ${team} and role ${role}!`)
     },

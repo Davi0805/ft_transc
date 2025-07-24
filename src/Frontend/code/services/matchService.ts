@@ -19,17 +19,28 @@ class MatchService {
             controls: controls
         })
     }
+    updateLatestControlsID(id: number) { //This design is complete and utter shit
+        if (this._controls.length !== 0) {
+            this._controls[this._controls.length - 1].humanID = id;
+        }
+    }
+
     addDefaultControls(id: number, team: SIDES) {
-        const defaultControlsRecord: Record<SIDES, {left: string, right: string}> = {
-            [SIDES.LEFT]: {left: "ArrowUp", right: "ArrowDown"},
-            [SIDES.TOP]: {left: "ArrowRight", right: "ArrowLeft"},
-            [SIDES.RIGHT]: {left: "ArrowDown", right: "ArrowUp"},
-            [SIDES.BOTTOM]: {left: "ArrowLeft", right: "ArrowRight"}
-        }   
-        this.addControls(id, defaultControlsRecord[team])
+        const directions = this.getDirectionsFromTeam(team)
+        this.addControls(id, {left: "Arrow" + directions.left, right: "Arrow" + directions.right})
     }
     removeControls(id: number) {
         this._controls = this._controls.filter(player => player.humanID !== id)
+    }
+
+    getDirectionsFromTeam(team: SIDES): {left: string, right: string} {
+        const teamToDirections: Record<SIDES, {left: string, right: string}> = {
+            [SIDES.LEFT]: {left: "Up", right: "Down"},
+            [SIDES.TOP]: {left: "Right", right: "Left"},
+            [SIDES.RIGHT]: {left: "Down", right: "Up"},
+            [SIDES.BOTTOM]: {left: "Left", right: "Right"}
+        }
+        return (teamToDirections[team])
     }
 
     async start(root: HTMLElement) {

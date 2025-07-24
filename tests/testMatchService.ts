@@ -42,7 +42,9 @@ class TestMatchService {
 
             const playerIDs: number[] = []
             matchPlayers.forEach(player => {
-                playerIDs.push(player.userID)
+                if (!playerIDs.includes(player.userID)) {
+                    playerIDs.push(player.userID)
+                }
             })
 
             const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings);

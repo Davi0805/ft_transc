@@ -127,14 +127,22 @@ class LobbyService {
         this.lobby.users.splice(index, 1); //TODO: For tournament, this does not work!
     }
     addFriendlyPlayerOUT(userID: number, player: TFriendlyPlayer) {
+        console.log(1)
         if (!this._isLobbyOfType("friendly")) { return; }
         const user = this._findUserByID(userID);
+        console.log(2)
+        if (user.id === this.myID) {
+            matchService.updateLatestControlsID(player.id)
+        }
+        console.log(3)
         if (user.player === null) {
+            console.log(4)
             user.player = [player]
         } else {
+            console.log(5);
             (user.player as TFriendlyPlayer[]).push(player)
         }
-        
+        console.log(6)
         LobbyPage.renderSlots();
     }
     removeFriendlyPlayerOUT(playerID: number) {
@@ -149,6 +157,9 @@ class LobbyService {
                 players.splice(index, 1);
                 if (players.length === 0) {
                     user.player = null;
+                }
+                if (user.id === this.myID) {
+                    matchService.removeControls(playerID);
                 }
                 LobbyPage.renderSlots();
                 return ;
