@@ -12,6 +12,11 @@ class ChatMessageService {
         await chatMessageRepo.saveMessage(conversation_id, from_user_id, message_content);
     }
 
+    async saveInviteMessage(conversation_id, from_user_id, lobby_id)
+    {
+        await chatMessageRepo.saveInviteMessage(conversation_id, from_user_id, lobby_id);
+    }
+
     async setMessagesRead(conversation_id, user_id)
     {
         chatMessageRepo.setMessagesRead(conversation_id, user_id);

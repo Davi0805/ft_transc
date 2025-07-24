@@ -1,12 +1,20 @@
 const connPlyrsRepo = require('../../Adapters/outbound/ConnectedUsersRepository');
+const lobbyMapper = require('../../Infrastructure/Mappers/LobbyMapper');
 
 class LobbyBroadcastService {
-    async updateSettings(lobbyId)
+    async updateSettings(lobbyId, lobby)
     {
         const msg = {
             requestType: 'updateSettings',
-            data: {} //TODO:
-        }
+            data: {
+                users: lobbyMapper.lobbyUsersBuilder(lobby.users, lobby.type),
+                settings: {
+                    mode: lobby.mode,
+                    map: lobby.map,
+                    duration: lobby.duration
+                }
+            }
+        };
         connPlyrsRepo.broadcastToLobby(lobbyId, msg);
     }
 
@@ -46,6 +54,28 @@ class LobbyBroadcastService {
             }
         };
         connPlyrsRepo.broadcastToLobby(lobbyId, msg);
+    }
+
+    async userJoined(lobbyId, userId)
+    {
+        const msg = {
+            requestType: 'userJoined',
+            data: {
+                id: userId
+            }
+        };
+        connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, msg);
+    }
+
+    async userLeft(lobbyId, userId)
+    {
+        const msg = {
+            requestType: 'userLeft',
+            data: {
+                id: userId
+            }
+        };
+        connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, msg);
     }
 };
 

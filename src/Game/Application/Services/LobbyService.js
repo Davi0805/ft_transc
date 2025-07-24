@@ -4,6 +4,7 @@ const mapper = require('../../Infrastructure/Mappers/LobbyMapper');
 const connPlyrsRepo = require('../../Adapters/outbound/ConnectedUsersRepository'); 
 const exception = require('../../Infrastructure/config/CustomException');
 const broadcast = require('./LobbyBroadcastService');
+const inviteRepo = require('../../Adapters/outbound/inviteRepository');
 
 class LobbyService {
 
@@ -36,14 +37,16 @@ class LobbyService {
         const lobby = await lobbyRepo.addUser(lobbyId, user_id);
         connPlyrsRepo.addUser(lobbyId, user_id, socket);
         // todo: create a service or a message builder, no need to await
-        connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, {type: "user_joined_event",
-                                                            user_id: user_id}, user_id);
+        broadcast.userJoined(lobbyId, user_id);
+        //connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, {type: "user_joined_event",
+        //                                                    user_id: user_id}, user_id);
         socket.send(JSON.stringify(mapper.lobbyDataToTLobby(lobby)));
     }
 
     async removeUserFromLobby(lobbyId, userId)
     {
         connPlyrsRepo.deleteUser(lobbyId, userId);
+        broadcast.userLeft(lobbyId, userId);
         //connPlyrsRepo.broadcastToLobby(lobbyId, {type: "user_left_event",
         //                                        user_id: userId});
         let lobbyUsers = await lobbyRepo.getLobbyUsers(lobbyId);
@@ -75,6 +78,7 @@ class LobbyService {
         lobby.mode = newLobbySettings.mode;
         lobby.duration = newLobbySettings.duration;
         await lobbyRepo.updateSettings(lobbyId, lobby);
+        broadcast.updateSettings(lobbyId, lobby);
     }
 
     // this 2 are more focused first in the ranked but then will be created
@@ -100,6 +104,11 @@ class LobbyService {
         }
         await lobbyRepo.updateUsers(lobbyId, lobbyUsers);
         broadcast.removeRankedPlayer(lobbyId, userId);
+    }
+
+    async inviteUserToLobby(lobbyId, fromUserId, toUserId)
+    {
+        inviteRepo.publish('lobbyInvites', {lobbyId: lobbyId, from_user: fromUserId, to_user: toUserId});
     }
 
     async validateLobbyEntry(lobbyId, socket)

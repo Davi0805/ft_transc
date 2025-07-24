@@ -9,8 +9,7 @@ class MessageHandler {
 
         switch (parsedMessage.requestType) {
             case 'addRankedPlayer':
-                lobbyService.setPlayerPosition(lobby_id, user_id, {team: parsedMessage.data.player.team,
-                                                                 role: parsedMessage.data.player.role});
+                lobbyService.setPlayerPosition(lobby_id, user_id, parsedMessage.data.player);
                 break;
             case 'updateReadiness':
                 lobbyService.setUserState(lobby_id, user_id, parsedMessage.data.ready);
@@ -38,11 +37,6 @@ class MessageHandler {
             default:
                 break;
         }
-    }
-
-    async eventSelector()
-    {
-        
     }
 
 };
