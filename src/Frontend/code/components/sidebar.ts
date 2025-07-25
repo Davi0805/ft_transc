@@ -1,10 +1,13 @@
-import { getUserDataById, UserData } from "../api/getUserDataAPI";
+import { getUserDataById, UserData } from "../api/userData/getUserDataAPI";
 import { getUserAvatarById } from "../api/getUserAvatarAPI";
 import {
   getSelfConversations,
   Conversation,
-} from "../api/getSelfConversationsAPI";
-import { getFriendRequests, FriendRequest } from "../api/getFriendRequestsAPI";
+} from "../api/friends/chat/getSelfConversationsAPI";
+import {
+  getFriendRequests,
+  FriendRequest,
+} from "../api/friends/getFriendRequestsAPI";
 import { acceptFriendRequest } from "../api/acceptFriendRequestAPI";
 import { rejectFriendRequest } from "../api/rejectFriendRequestAPI";
 import { createFriendRequestByUsername } from "../api/createFriendRequestAPI";
@@ -195,11 +198,10 @@ export class Chat {
 
     popoverSendBtn.addEventListener("click", sendFriendRequest);
 
-    
     popoverInput.addEventListener("keypress", (e: KeyboardEvent) => {
-      console.log("tou aqui")
-      if (e.key === 'Enter') {
-      console.log("tou liaq")
+      console.log("tou aqui");
+      if (e.key === "Enter") {
+        console.log("tou liaq");
         sendFriendRequest();
       }
     });

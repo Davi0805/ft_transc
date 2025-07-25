@@ -1,6 +1,6 @@
 import { togglePasswordVisibility } from "../../utils/domUtils";
 import { TwoFactorAuth } from "./twoFactorAuth";
-import { login, LoginState } from "../../api/loginAPI";
+import { login, LoginState } from "../../api/login/loginAPI";
 import { authService } from "../../services/authService";
 import { router } from "../../routes/router";
 import { ErrorPopup } from "../../utils/popUpError";

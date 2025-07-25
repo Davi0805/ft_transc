@@ -1,5 +1,5 @@
 import { togglePasswordVisibility } from "../utils/domUtils";
-import { register } from "../api/registerAPI";
+import { register } from "../api/register/registerAPI";
 import { translator } from "../services/translationService";
 import { router } from "../routes/router";
 import { ErrorPopup } from "../utils/popUpError";

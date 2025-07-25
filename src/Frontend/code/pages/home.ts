@@ -187,6 +187,29 @@ export const HomePage = {
         `;
   },
 
+
+  /* 
+<tbody>
+    <tr class="leaderboard-tr">
+        <td class="leaderboard-td-position text-yellow-400">1</td>
+        <td class="leaderboard-td-name">Artur</td>
+        <td class="leaderboard-td-points">1247</td>
+        <td class="leaderboard-td-win">89</td>
+        <td class="leaderboard-td-losses">12</td>
+    </tr>
+    <tr class="leaderboard-tr">
+        <td class="leaderboard-td-position text-yellow-400">1</td>
+        <td class="leaderboard-td-name">Artur</td>
+        <td class="leaderboard-td-points">1247</td>
+        <td class="leaderboard-td-win">89</td>
+        <td class="leaderboard-td-losses">12</td>
+    </tr>
+  */
+
+  loadLeaderBoard() {
+
+  },
+
   init() {
     console.log("Home page loaded!");
   },

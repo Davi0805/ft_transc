@@ -1,4 +1,4 @@
-import { authService } from "../services/authService";
+import { authService } from "../../services/authService";
 
 export interface SelfData {
   id: number; // userID

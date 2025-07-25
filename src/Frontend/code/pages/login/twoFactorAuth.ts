@@ -1,4 +1,4 @@
-import { verifyTwoFactorCode } from "../../api/twoFactorAPI";
+import { verifyTwoFactorCode } from "../../api/login/twoFactorAPI";
 import { authService } from "../../services/authService";
 import { translator } from "../../services/translationService"
 import { router } from "../../routes/router";
