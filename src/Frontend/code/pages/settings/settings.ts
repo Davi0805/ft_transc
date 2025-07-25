@@ -7,6 +7,7 @@ import { confirmTwoFactorCode } from "../../api/settings/twoFactorAPIS/confirmEn
 import { uploadAvatar } from "../../api/settings/uploadAvatarAPI";
 import { WarningPopup } from "../../utils/popUpWarn";
 import { ErrorPopup } from "../../utils/popUpError";
+import { SuccessPopup } from "../../utils/popUpSuccess";
 
 export const SettingsPage = {
   template() {
@@ -302,10 +303,13 @@ export const SettingsPage = {
         }
 
         // Update backend and local auth state
-        console.log("vou tentar aqui");
         await updateName(newName);
-        console.log("tentei");
         authService.userNick = newName;
+        
+        { // UI feedback
+          const succPopup = new SuccessPopup();
+          succPopup.create("Name Succesffuly Changed", "Your display name has been successfully updated!");
+        }
 
         // Update UI
         const profileHeaderName = document.getElementById("profile-link");
@@ -371,6 +375,10 @@ export const SettingsPage = {
         // success
         authService.setHas2FA(true);
         this.updateContent();
+
+        //UI feedback
+        const succPopup = new SuccessPopup();
+        succPopup.create("Two Factor Authentication Updated", "Your account two factor authentication has been successfully updated!");
       } catch (error) {
         if ((error as any).status == 401) {
           console.error("DEBUG 2FA code wrong");
@@ -479,6 +487,10 @@ export const SettingsPage = {
         if (newPass.value) {
           try {
             await updatePassword(oldPass.value, newPass.value);
+
+            //UI feedback
+            const succPopup = new SuccessPopup();
+            succPopup.create("Password Changed Successfully", "Your password has been successfully changed!");
           } catch (error: any) {
             if (error && error.status === 401) {
               console.warn("DEBUG: Unauthorized (401) error.");
@@ -518,8 +530,8 @@ export const SettingsPage = {
 
               const errPopup = new ErrorPopup();
               errPopup.create(
-                "Error Updating Password...",
-                "Password was not updated. Please make sure to type your correct old password."
+                "Error Updating 2FA...",
+                "There was an error updating the 2FA status. Please reload and try again."
               );
               authService.logout();
             }
@@ -609,11 +621,15 @@ export const SettingsPage = {
         const file = target.files?.[0];
 
         if (!file) {
+          const warnPopup = new WarningPopup();
+          warnPopup.create("Avatar Not Changed", "Seems like we could not read any file. Please try again");
           console.warn("No file selected.");
           return;
         }
 
         if (!file.type.startsWith("image/")) {
+          const errPopup = new ErrorPopup();
+          errPopup.create("Avatar Not Changed", "Seems like the selected file was not an image. Please try again with an image");
           console.error("Selected file is not an image.");
           return;
         }
@@ -621,25 +637,37 @@ export const SettingsPage = {
         const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
         if (file.size > MAX_FILE_SIZE) {
+          const errPopup = new ErrorPopup();
+          errPopup.create("Avatar Not Changed", "Seems like the file was too large. Please try again with an image less than 10MB");
           console.error("DEBUG: File is too large. Maximum size is 10MB.");
-          // TODO SHOW ERROR
           return;
         }
 
         const reader = new FileReader();
 
-        reader.onload = (e: ProgressEvent<FileReader>) => {
+        reader.onload = async (e: ProgressEvent<FileReader>) => {
           const result = e.target?.result;
-          if (typeof result === "string") {
-            avatarImg.src = result;
-            if (headerAvatarImg) {
-              headerAvatarImg.src = result;
-            }
+          
+            try {
+              if (typeof result !== "string") {
+                console.error("DEBUG: Unexpected result type from FileReader.");
+                throw new Error("Unexpected result type from FileReader.");
+              }
 
-            uploadAvatar(file);
-          } else {
-            console.error("Unexpected result type from FileReader.");
-          }
+              await uploadAvatar(file);
+
+              avatarImg.src = result;
+              if (headerAvatarImg) {
+                headerAvatarImg.src = result;
+              }
+
+              const succPopup = new SuccessPopup();
+              succPopup.create("Avatar Successfully Changed", "Your profile avatar was successfully changed!")
+              return;
+            } catch (error) {
+              const errPopup = new ErrorPopup();
+              errPopup.create("Avatar Not Changed", "Seems like there was an error uploading your avatar. Please refresh the page and try again");
+            }
         };
 
         reader.onerror = (e: ProgressEvent<FileReader>) => {
