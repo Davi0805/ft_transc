@@ -1,5 +1,5 @@
 import { getUserDataById, UserData } from "../api/userData/getUserDataAPI";
-import { getUserAvatarById } from "../api/getUserAvatarAPI";
+import { getUserAvatarById } from "../api/userData/getUserAvatarAPI";
 import {
   getSelfConversations,
   Conversation,
@@ -8,9 +8,9 @@ import {
   getFriendRequests,
   FriendRequest,
 } from "../api/friends/getFriendRequestsAPI";
-import { acceptFriendRequest } from "../api/acceptFriendRequestAPI";
-import { rejectFriendRequest } from "../api/rejectFriendRequestAPI";
-import { createFriendRequestByUsername } from "../api/createFriendRequestAPI";
+import { acceptFriendRequest } from "../api/friends/acceptFriendRequestAPI";
+import { rejectFriendRequest } from "../api/friends/rejectFriendRequestAPI";
+import { createFriendRequestByUsername } from "../api/friends/createFriendRequestAPI";
 import { authService } from "../services/authService";
 import { webSocketService, MessageDTO } from "../services/webSocketService";
 import { chatWindowControler } from "./chatWindow";

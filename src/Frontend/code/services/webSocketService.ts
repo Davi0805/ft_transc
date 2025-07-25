@@ -1,5 +1,5 @@
 import { chatWindowControler } from "../components/chatWindow";
-import { authService } from "./authService";
+import { authService } from "../services/authService";
 
 export interface ChatMessage {
   conversation_id: number;
@@ -13,14 +13,13 @@ export interface ReadEvent {
 
 export type FunctionCallback = (...args: any[]) => void;
 
-
 export interface OnlineUsersEvent {
   online_users: Array<number>;
 }
 
 export interface NewFriendRequestEvent {
   // user_id: string; // sender id
-  event: "new_friend_request"
+  event: "new_friend_request";
 }
 
 export interface MessageDTO {
@@ -44,7 +43,6 @@ class WebSocketService {
   private onlineCallbacks: FunctionCallback[];
   private friendsUpdateCallbacks: FunctionCallback[];
   private newFriendRequestsCallbacks: FunctionCallback[];
-
 
   constructor() {
     this.ws = null;
@@ -83,7 +81,9 @@ class WebSocketService {
     }
 
     this.userID = userID;
-    this.ws = new WebSocket("ws://localhost:8081/ws", [`Bearer.${authService.getToken()}`]);
+    this.ws = new WebSocket("ws://localhost:8081/ws", [
+      `Bearer.${authService.getToken()}`,
+    ]);
 
     this.ws.onopen = (ev: Event) => {
       console.log("DEBUG: WebSocket connected");
@@ -197,31 +197,43 @@ class WebSocketService {
   } 
 
   */
-  isOnlineUsersEvent(data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO): data is OnlineUsersEvent {
+  isOnlineUsersEvent(
+    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO
+  ): data is OnlineUsersEvent {
     return (data as OnlineUsersEvent).online_users !== undefined;
   }
 
-  isNewFriendRequestEvent(data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO): data is NewFriendRequestEvent {
+  isNewFriendRequestEvent(
+    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO
+  ): data is NewFriendRequestEvent {
     return (data as NewFriendRequestEvent).event === "new_friend_request";
   }
 
-  isMessageDTO(data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO): data is MessageDTO {
-    return (data && typeof data === "object" &&
+  isMessageDTO(
+    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO
+  ): data is MessageDTO {
+    return (
+      data &&
+      typeof data === "object" &&
       "conversation_id" in data &&
       "message" in data &&
-      (typeof data.conversation_id === "number") &&
-      (typeof data.message === "string") &&
-      (typeof data.metadata === "string" || data.metadata === null || data.metadata === undefined)
+      typeof data.conversation_id === "number" &&
+      typeof data.message === "string" &&
+      (typeof data.metadata === "string" ||
+        data.metadata === null ||
+        data.metadata === undefined)
     );
   }
 
-  handleMessage(data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO): void {
+  handleMessage(
+    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO
+  ): void {
     /*
       Event for online friends
       {online_users: Array<number> }
     */
     if (this.isOnlineUsersEvent(data)) {
-      this.triggerOnlineUpdate(data.online_users)
+      this.triggerOnlineUpdate(data.online_users);
       return;
     }
 
@@ -240,7 +252,6 @@ class WebSocketService {
             metadata: "newConversation" }
     */
     if (this.isMessageDTO(data)) {
-
       /* 
          Event for new friendship
          Object {  conversation_id: 9,
@@ -301,7 +312,7 @@ class WebSocketService {
       } catch (error) {
         console.log("DEBUG: Error in websocket OnlineUpdate callback:", error);
       }
-    })
+    });
   }
 
   triggerFriendsUpdate(data: MessageDTO): void {
@@ -309,9 +320,12 @@ class WebSocketService {
       try {
         callback(data);
       } catch (error) {
-        console.log("DEBUG: Error in websocket friendsUpdateCallbacks callback:", error);
+        console.log(
+          "DEBUG: Error in websocket friendsUpdateCallbacks callback:",
+          error
+        );
       }
-    })
+    });
   }
 
   triggerNewFriendRequest(): void {
@@ -319,9 +333,12 @@ class WebSocketService {
       try {
         callback();
       } catch (error) {
-        console.log("DEBUG: Error in websocket newFriendRequestsCallbacks callback:", error);
+        console.log(
+          "DEBUG: Error in websocket newFriendRequestsCallbacks callback:",
+          error
+        );
       }
-    })
+    });
   }
 
   /**
@@ -337,7 +354,6 @@ class WebSocketService {
       message: message,
     });
   }
-
 }
 
 export const webSocketService = new WebSocketService();

@@ -1,4 +1,4 @@
-import { authService } from "../services/authService";
+import { authService } from "../../services/authService";
 
 export async function updatePassword(oldPass: string, newPass: string): Promise<void> {
   try {

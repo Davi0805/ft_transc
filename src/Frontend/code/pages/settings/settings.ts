@@ -1,7 +1,7 @@
 import { UserData } from "../../api/userData/getUserDataAPI";
 import { authService } from "../../services/authService";
-import { updateName } from "../../api/updateNameAPI";
-import { updatePassword } from "../../api/updatePasswordAPI";
+import { updateName } from "../../api/settings/updateNameAPI";
+import { updatePassword } from "../../api/settings/updatePasswordAPI";
 import { enableTwoFactor } from "../../api/settings/twoFactorAPIS/enableTwoFactorAPI";
 import { confirmTwoFactorCode } from "../../api/settings/twoFactorAPIS/confirmEnableTwoFactorAPI";
 import { uploadAvatar } from "../../api/settings/uploadAvatarAPI";

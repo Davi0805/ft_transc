@@ -1,8 +1,8 @@
 import { header } from "../components/header";
 import { Chat } from "../components/sidebar";
 import { SelfData, getSelfData } from "../api/userData/getSelfDataAPI";
-import { getUserAvatarById } from "../api/getUserAvatarAPI";
-import { webSocketService } from "./webSocketService";
+import { getUserAvatarById } from "../api/userData/getUserAvatarAPI";
+import { webSocketService } from "../services/webSocketService";
 import { chatWindowControler } from "../components/chatWindow";
 import { router } from "../routes/router";
 

@@ -1,4 +1,4 @@
-import { authService } from "../services/authService";
+import { authService } from "../../services/authService";
 
 export async function updateName(newName: string): Promise<void> {
   try {
