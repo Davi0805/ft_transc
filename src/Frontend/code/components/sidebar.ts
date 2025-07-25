@@ -134,7 +134,7 @@ export class Chat {
 
   renderFriendRequestsHTML(): string {
     return `
-      <dialog class="friend-requests-wrapper" id="friendRequestsDialog" >
+      <dialog class="friend-requests-wrapper scrollbar-hide" id="friendRequestsDialog" >
         <button class="close-dialog-btn">&times;</button> <!-- onclick="closeDialog()" -->
 
         <h1 class="title friend-request-header">Friend Requests</h1>
