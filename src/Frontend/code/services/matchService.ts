@@ -43,6 +43,17 @@ class MatchService {
         return (teamToDirections[team])
     }
 
+    getTeamFromPairings(playerID: number, tournPairings: [number, number][]): SIDES {
+        for (let i =0; i < tournPairings.length; i++) {
+            if (tournPairings[i][0] === playerID) {
+                return SIDES.LEFT
+            } else if (tournPairings[i][1] === playerID) {
+                return SIDES.RIGHT
+            }
+        }
+        throw Error("PlayerID not found in pairings!")
+    }
+
     async start(root: HTMLElement) {
         console.log("Match about to start!")
         console.log(this.configs)

@@ -207,10 +207,14 @@ export type OutboundDTOMap = {
     removeTournamentPlayer: {
         id: number
     }
+    //host clicks start on tournament lobby
+    displayPairings: {
+        pairings: [number, number][]
+    }
     //host starts the match
     startMatch: {
         configs: CAppConfigs
-        tournMatchTeam: SIDES | null 
+        //tournPairings: [number, number][] | null 
     }
 
     //Game dto:

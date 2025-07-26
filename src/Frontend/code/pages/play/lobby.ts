@@ -309,6 +309,54 @@ export const LobbyPage = {
         tableElement.innerHTML += participantsTable.outerHTML;
     },
 
+    renderTournamentPairings(tournPairings: [number, number][]) {
+        const lobbyBody = document.getElementById("lobby-body") as HTMLElement;
+        lobbyBody.innerHTML = ""
+
+        const lobbyPairings = document.createElement("div")
+        lobbyPairings.className = "flex flex-col"
+        const header = document.createElement("h2");
+        header.className = "text-center text-2xl bg-gray-900/75 p-1"
+        header.textContent = "Pairings";
+        lobbyPairings.appendChild(header)
+
+
+        let participantsTableBody = ""
+        let board = 1
+        const participants = lobbyService.getTournPlayers();
+        const categories = ["nick", "rating", "score"] as const
+        tournPairings.forEach(pair => {
+            const bg = `bg-gray-900/${board % 2 === 0 ? "25" : "50"}`;
+            const border = pair.includes(lobbyService.myID) ? "outline-red-500" : ""
+            participantsTableBody += `<tr class="${bg} ${border}"><td>${board++}</td>`;
+            const player1 = participants.find(participant => participant.id === pair[0])
+            const player2 = participants.find(participant => participant.id === pair[1])
+            if (!player1 || !player2) { throw Error("Getting tired of this shit") }
+            
+            categories.forEach(category => {
+                participantsTableBody += `<td>${player1[category]}</td>`;
+            })
+            participantsTableBody += "<td>?</td><td>?</td>"
+            for (let i = categories.length - 1; i >= 0; i--) {
+                participantsTableBody += `<td>${player1[categories[i]]}</td>`;
+            }
+            participantsTableBody += "</tr>";
+        })
+
+        const participantsTableHead = `
+            <tr class="text-xl bg-gray-900/90">
+                <td>Board</td><td>Player</td><td>Rt</td><td>Scr</td><td colspan="2">Result</td><td>Scr</td><td>Rt</td><td>Player</td>
+            </tr>
+        `
+        const pairingsTable = getTable("pairings", participantsTableHead, participantsTableBody)
+        lobbyPairings.innerHTML += pairingsTable.outerHTML;
+        lobbyPairings.innerHTML += `
+            <p>The match will start soon...</p>
+        `
+
+        lobbyBody.appendChild(lobbyPairings)
+    },
+
     //Settings logic
     fetchAndSubmitSettings() {
         const map = (document.getElementById('match-map') as HTMLSelectElement).value;

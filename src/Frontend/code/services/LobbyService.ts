@@ -180,7 +180,7 @@ class LobbyService {
         user.player = null
         LobbyPage.renderSlots();
     }
-    addTournamentPlayerOUT(userID: number, player: TTournamentPlayer) { //TODO This is definitely not complete. Fix
+    addTournamentPlayerOUT(userID: number, player: TTournamentPlayer) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         user.player = player;
@@ -192,11 +192,12 @@ class LobbyService {
         (user.player as TTournamentPlayer).participating = false;
         LobbyPage.renderTournamentTable();
     }
-    startMatchOUT(configs: CAppConfigs, tournMatchTeam: SIDES | null) {
-        if (tournMatchTeam !== null) {
-
-            matchService.addDefaultControls(this.myID, tournMatchTeam);
-        }
+    displayPairingsOUT(tournPairings: [number, number][]) {
+        const side: SIDES = matchService.getTeamFromPairings(this.myID, tournPairings);
+        matchService.addDefaultControls(this.myID, side);
+        LobbyPage.renderTournamentPairings(tournPairings);
+    }
+    startMatchOUT(configs: CAppConfigs) {
         matchService.init(configs);
         router.navigateTo("/match")
     }

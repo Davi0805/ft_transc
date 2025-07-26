@@ -5,7 +5,7 @@ import ServerGame from "./game/ServerGame.js";
 import { TUserCustoms, TGameConfigs, TControls, CAppConfigs } from "./game/shared/SetupDependencies.js"
 import { point, SIDES, ROLES, TWindow, TPaddle } from "./game/shared/sharedTypes.js"
 import { lobbySocketService } from "./testLobbySocketService.js";
-import { TournamentService } from "./TournamentService.cjs";
+import { Pairing, TournamentService } from "./TournamentService.cjs";
 import LoopController from "./game/LoopController.js";
 
 type TMatch = TLobbyUser[];
@@ -32,55 +32,23 @@ class TestMatchService {
     constructor(){}
 
     startMatch(lobbySettings: TLobby) {
-        const matches: TMatch[] = this._buildMatches(lobbySettings);
-        matches.forEach(match => {
-            console.log("How many times does this run?")
-            const matchPlayers: TMatchPlayer[] = this._getMatchPlayers(match, lobbySettings.type);
-            const userCustoms: TUserCustoms = this._buildUserCustoms(lobbySettings, matchPlayers);
-            const gameSettings: TGameConfigs = this._applyDevCustoms(userCustoms);
-            const serverSettings: SGameConfigs = this._buildSGameConfigs(gameSettings);
+        
+        if (lobbySettings.type !== "tournament") {
+            this._runMatch(lobbySettings, lobbySettings.users)
+        } else {
+            const tournMatches: {
+                matches: TMatch[]
+                tournPairings: Pairing[]
+            } = this._buildMatches(lobbySettings);
 
-            const playerIDs: number[] = []
-            matchPlayers.forEach(player => {
-                if (!playerIDs.includes(player.userID)) {
-                    playerIDs.push(player.userID)
-                }
-            })
+            lobbySocketService.broadcast(lobbySettings.id, "displayPairings", { pairings: tournMatches.tournPairings })
 
-            const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings);
-            if (lobbySettings.type !== "tournament") {
-                lobbySocketService.broadcast(lobbySettings.id, "startMatch", {configs: clientSettings, tournMatchTeam: null})
-            } else {
-                matchPlayers.forEach(player => {
-                    if (!player.id) {throw Error("I will one day find out why tf we are allowing this to be null")}
-                    lobbySocketService.sendToUser(player.id, "startMatch", { configs: clientSettings, tournMatchTeam: player.team})
+            /* setTimeout(() => {
+                tournMatches.matches.forEach(match => {
+                    this._runMatch(lobbySettings, match, tournMatches.tournPairings)
                 })
-            }
-            
-
-            const game = new ServerGame(serverSettings);
-            this._currentMatches.push({
-                id: this._currentMatchID++,
-                game: game,
-                playerIDs: playerIDs
-            })
-
-            
-
-            //Broadcast that was previously in game but got moved out to match lobbySocket conditions for send()
-            const loop = new LoopController(60);
-            loop.start(() => {
-                const dto = game.getGameDTO()
-                //option 1
-                playerIDs.forEach(id => {
-                    lobbySocketService.sendToUser(id, "updateGame", dto)
-                })
-
-                //Option 2
-                //lobbySocketService.broadcast(lobbySettings.id, "updateGame", dto)
-            })
-            game.startGameLoop();
-        })
+            }, 10000) */
+        }
     }
 
     updateControlsState(playerID: number, controlsDTO: CGameDTO) {
@@ -98,16 +66,12 @@ class TestMatchService {
 
 
 
-
-
-
-    _buildMatches(lobbySettings: TLobby): TMatch[] {
+    _buildMatches(lobbySettings: TLobby): {
+        matches: TMatch[],
+        tournPairings: Pairing[]
+    } {
         const users = lobbySettings.users
-        const out: TMatch[] = [];
-        if (lobbySettings.type !== "tournament") {
-            out.push(users);
-            return out;
-        }
+        const matches: TMatch[] = [];
 
         const participants: TTournPlayer[] = this._getTournPlayers(users);
         const pairings = TournamentService.getNextRoundPairings(participants);
@@ -115,9 +79,57 @@ class TestMatchService {
             const player1 = users.find(user => user.id === pair[0]);
             const player2 = users.find(user => user.id === pair[1]);
             if (!player1 || !player2) { throw Error("GAVE GIGANTIC SHIT"); }
-            out.push([player1, player2]);
+            matches.push([player1, player2]);
         })
-        return out
+        return {
+            matches: matches,
+            tournPairings: pairings
+        };
+    }
+
+    _runMatch(lobbySettings: TLobby, match: TMatch, tournPairings: Pairing[] | null = null) {
+        const matchPlayers: TMatchPlayer[] = this._getMatchPlayers(match, lobbySettings.type);
+        const userCustoms: TUserCustoms = this._buildUserCustoms(lobbySettings, matchPlayers);
+        const gameSettings: TGameConfigs = this._applyDevCustoms(userCustoms);
+        const serverSettings: SGameConfigs = this._buildSGameConfigs(gameSettings);
+
+        const playerIDs: number[] = []
+        matchPlayers.forEach(player => {
+            if (!playerIDs.includes(player.userID)) {
+                playerIDs.push(player.userID)
+            }
+        })
+
+        const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings);
+        if (lobbySettings.type !== "tournament") {
+            lobbySocketService.broadcast(lobbySettings.id, "startMatch", { configs: clientSettings })
+        } else {
+            playerIDs.forEach(id => {
+                lobbySocketService.sendToUser(id, "startMatch", { configs: clientSettings })
+            })
+        }
+        
+
+        const game = new ServerGame(serverSettings);
+        this._currentMatches.push({
+            id: this._currentMatchID++,
+            game: game,
+            playerIDs: playerIDs
+        })
+
+        //Broadcast that was previously in game but got moved out to match lobbySocket conditions for send()
+        const loop = new LoopController(60);
+        loop.start(() => {
+            const dto = game.getGameDTO()
+            //option 1
+            playerIDs.forEach(id => {
+                lobbySocketService.sendToUser(id, "updateGame", dto)
+            })
+
+            //Option 2
+            //lobbySocketService.broadcast(lobbySettings.id, "updateGame", dto)
+        })
+        game.startGameLoop();
     }
 
     _getMatchPlayers(users: TLobbyUser[], lobbyType: TLobbyType): TMatchPlayer[] {

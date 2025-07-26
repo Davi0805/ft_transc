@@ -1,5 +1,6 @@
 import { CAppConfigs } from "../game/shared/SetupDependencies.js"
 import { SIDES, ROLES } from "../game/shared/sharedTypes.js"
+import { Pairing } from "../TournamentService.cjs"
 import { CGameDTO, SGameDTO } from "./dtos.js"
 
 //TYPES REPRESENTATIVE OF THE ENTITIES
@@ -206,10 +207,14 @@ export type OutboundDTOMap = {
     removeTournamentPlayer: {
         id: number
     }
+    //host clicks start on tournament lobby
+    displayPairings: {
+        pairings: [number, number][]
+    }
     //host starts the match
     startMatch: {
         configs: CAppConfigs
-        tournMatchTeam: SIDES | null
+        //tournPairings: Pairing[] | null
     }
     //Game dto:
     updateGame: SGameDTO //Dealt with in game

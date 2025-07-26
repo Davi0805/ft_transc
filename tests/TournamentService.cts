@@ -3,7 +3,7 @@ import { TTournPlayer } from "./dependencies/lobbyTyping.js";
 var blossom = require('edmonds-blossom')
 
 
-type Match = [number, number]
+export type Pairing = [number, number]
 
 type PlayerGraph = [TTournPlayer, TTournPlayer][]
 
@@ -13,7 +13,7 @@ type WeightedGraph = GraphEdge[];
 export class TournamentService {
     constructor() {}
 
-    static getNextRoundPairings(players: TTournPlayer[]): Match[] {
+    static getNextRoundPairings(players: TTournPlayer[]): Pairing[] {
 
         const normalizedPlayers = structuredClone(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
@@ -28,7 +28,7 @@ export class TournamentService {
         const weightedGraph: WeightedGraph = this._generateWeightedGraph(playerGraph, scoreGroupSizes);
 
         const pairingsIndexes: number[] = blossom(weightedGraph);
-        const pairings: Match[] = this._convertToPairings(normalizedPlayers, pairingsIndexes)
+        const pairings: Pairing[] = this._convertToPairings(normalizedPlayers, pairingsIndexes)
 
         return pairings;
     }
@@ -101,8 +101,8 @@ export class TournamentService {
         return map
     }
 
-    private static _convertToPairings(normalizedPlayers: TTournPlayer[], pairingsIndexes: number[]): Match[] {
-        const pairings: Match[] = []
+    private static _convertToPairings(normalizedPlayers: TTournPlayer[], pairingsIndexes: number[]): Pairing[] {
+        const pairings: Pairing[] = []
         const usedIDs: number [] = [];
         for (let i = 0; i < pairingsIndexes.length; i++) {
             if (usedIDs.includes(i)) continue;

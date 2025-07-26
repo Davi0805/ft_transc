@@ -20,7 +20,7 @@ class LobbySocketService {
             this._lobbyID = lobbyID;
             
             this._ws.onmessage = (ev: MessageEvent) => {
-                try {
+                //try {
                     const data = JSON.parse(ev.data) as OutboundDTO;
                     //console.log("Received data")
                     //console.log(data)
@@ -29,9 +29,9 @@ class LobbySocketService {
                     } else {
                         this._handleMessage(data)
                     }
-                } catch (error) {
-                    console.error("Error parsing websocket message");
-                }
+                //} catch (error) {
+                //    console.error("Error parsing websocket message");
+                //}
             }
 
             this._ws.onopen = (ev: Event) => {
@@ -117,8 +117,11 @@ class LobbySocketService {
             case "removeTournamentPlayer":
                 lobbyService.removeTournamentPlayerOUT(dto.data.id);
                 break;
+            case "displayPairings":
+                lobbyService.displayPairingsOUT(dto.data.pairings);
+                break;
             case "startMatch":
-                lobbyService.startMatchOUT(dto.data.configs, dto.data.tournMatchTeam);
+                lobbyService.startMatchOUT(dto.data.configs);
                 break;
             case "updateGame":
                 App.severUpdate(dto.data)
