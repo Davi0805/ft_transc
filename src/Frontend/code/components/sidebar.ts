@@ -1,13 +1,21 @@
-import { getUserDataById, UserData } from "../api/getUserDataAPI";
-import { getUserAvatarById } from "../api/getUserAvatarAPI";
-import { getSelfConversations, Conversation } from "../api/getSelfConversationsAPI";
-import { getFriendRequests, FriendRequest } from "../api/getFriendRequestsAPI";
-import { acceptFriendRequest } from "../api/acceptFriendRequestAPI";
-import { rejectFriendRequest } from "../api/rejectFriendRequestAPI"
-import { createFriendRequestByUsername } from "../api/createFriendRequestAPI"
+import { getUserDataById, UserData } from "../api/userData/getUserDataAPI";
+import { getUserAvatarById } from "../api/userData/getUserAvatarAPI";
+import {
+  getSelfConversations,
+  Conversation,
+} from "../api/friends/chat/getSelfConversationsAPI";
+import {
+  getFriendRequests,
+  FriendRequest,
+} from "../api/friends/getFriendRequestsAPI";
+import { acceptFriendRequest } from "../api/friends/acceptFriendRequestAPI";
+import { rejectFriendRequest } from "../api/friends/rejectFriendRequestAPI";
+import { createFriendRequestByUsername } from "../api/friends/createFriendRequestAPI";
 import { authService } from "../services/authService";
 import { webSocketService, MessageDTO } from "../services/webSocketService";
 import { chatWindowControler } from "./chatWindow";
+import { SuccessPopup } from "../utils/popUpSuccess";
+import { ErrorPopup } from "../utils/popUpError";
 
 export interface Friend {
   convID: number;
@@ -22,7 +30,6 @@ export interface ContactElement {
   element: HTMLButtonElement;
   handler: () => void;
 }
-
 
 export class Chat {
   private sidebar: HTMLElement;
@@ -127,7 +134,7 @@ export class Chat {
 
   renderFriendRequestsHTML(): string {
     return `
-      <dialog class="friend-requests-wrapper" id="friendRequestsDialog" >
+      <dialog class="friend-requests-wrapper scrollbar-hide" id="friendRequestsDialog" >
         <button class="close-dialog-btn">&times;</button> <!-- onclick="closeDialog()" -->
 
         <h1 class="title friend-request-header">Friend Requests</h1>
@@ -138,39 +145,62 @@ export class Chat {
   }
 
   async addFriendEventListener(): Promise<void> {
-    const addFriendBtn = document.querySelector('.add-friend') as HTMLButtonElement;
-    const popover = document.getElementById('add-friend-popover') as HTMLDivElement;
-    const popoverInput = document.getElementById('friend-username-input') as HTMLInputElement;
-    const popoverSendBtn = document.getElementById('send-friend-request-btn') as HTMLButtonElement;
+    const addFriendBtn = document.querySelector(
+      ".add-friend"
+    ) as HTMLButtonElement;
+    const popover = document.getElementById(
+      "add-friend-popover"
+    ) as HTMLDivElement;
+    const popoverInput = document.getElementById(
+      "friend-username-input"
+    ) as HTMLInputElement;
+    const popoverSendBtn = document.getElementById(
+      "send-friend-request-btn"
+    ) as HTMLButtonElement;
 
-    addFriendBtn.addEventListener('click', (e: MouseEvent) => {
+    addFriendBtn.addEventListener("click", (e: MouseEvent) => {
       e.stopPropagation();
-      popover.classList.toggle('hidden');
-      if (popover.classList.contains('hidden'))
-        popoverInput.value = "";
-      else
-        popoverInput.focus();
+      popover.classList.toggle("hidden");
+      if (popover.classList.contains("hidden")) popoverInput.value = "";
+      else popoverInput.focus();
     });
 
-    document.addEventListener('click', (e: MouseEvent) => {
+    document.addEventListener("click", (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!popover.contains(target) && !addFriendBtn.contains(target)) {
-        popover.classList.add('hidden');
+        popover.classList.add("hidden");
         popoverInput.value = "";
       }
     });
 
-    popoverSendBtn.addEventListener('click', async () => {
+    const sendFriendRequest = async () => {
       const username: string = popoverInput.value.trim();
       if (username) {
         try {
           await createFriendRequestByUsername(username);
+          const sucPopup = new SuccessPopup();
+          sucPopup.create(
+            "Friend Request Sent",
+            "Your friend request has been sent!"
+          );
         } catch (error) {
-          //TODO
           console.error(`DEBUG: Could not create friend request\n`, error);
+          const errPopup = new ErrorPopup();
+          errPopup.create(
+            "Friend Request Error",
+            "Could not find anyone with that username"
+          );
         }
-        popoverInput.value = '';
-        popover.classList.add('hidden');
+        popoverInput.value = "";
+        popover.classList.add("hidden");
+      }
+    };
+
+    popoverSendBtn.addEventListener("click", sendFriendRequest);
+
+    popoverInput.addEventListener("keypress", (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        sendFriendRequest();
       }
     });
   }
@@ -178,25 +208,28 @@ export class Chat {
   searchFriendEventListener(): void {
     const searchInput = document.querySelector(".search-input");
     if (searchInput instanceof HTMLInputElement) {
-      searchInput.addEventListener('input', (e: Event) => {
+      searchInput.addEventListener("input", (e: Event) => {
         e.preventDefault();
 
         this.contactElements.forEach(({ element }) => {
           let value = searchInput.value;
-          if (value === "") { // reset
+          if (value === "") {
+            // reset
             element.style.display = "flex";
             return;
           }
           const username = element.classList[1].slice(2).toLowerCase(); // skip the f- from class name
 
           element.style.display = username.includes(value) ? "flex" : "none";
-        })
+        });
       });
     }
   }
 
   async friendRequestEventListener(): Promise<void> {
-    const friendRequestBtn = document.getElementById("friend-requests-btn") as HTMLButtonElement;
+    const friendRequestBtn = document.getElementById(
+      "friend-requests-btn"
+    ) as HTMLButtonElement;
     if (friendRequestBtn) {
       friendRequestBtn.addEventListener("click", async (e: MouseEvent) => {
         e.preventDefault();
@@ -241,7 +274,7 @@ export class Chat {
       try {
         const friendData = await getUserDataById(friendID);
         const friendAvatarURL = await getUserAvatarById(friendID);
-  
+
         this.friends.push({
           convID: conv.id,
           friendID: friendID,
@@ -249,7 +282,7 @@ export class Chat {
           friendAvatar: friendAvatarURL,
           unreadMsg: conv.unread_count,
           friendOn: false,
-        });  
+        });
 
         // conversationTracker initialization
         webSocketService.conversationTracker.set(conv.id, conv.unread_count);
@@ -257,17 +290,22 @@ export class Chat {
         console.error("Error getting friend on sidebar", error);
         // just skip it. could be improved
       }
-
     }
   }
 
-  createContactElement(friendAvatar: string, friendName: string, unreadMsg: number): HTMLButtonElement {
+  createContactElement(
+    friendAvatar: string,
+    friendName: string,
+    unreadMsg: number
+  ): HTMLButtonElement {
     const newContact = document.createElement("button") as HTMLButtonElement;
     newContact.className = `contact f-${friendName}`;
     newContact.innerHTML = `
                   <img src="${friendAvatar}" width="40px" height="40px">
                   <span>${friendName}</span>
-                  <span class="unread-badge" style="display: ${unreadMsg ? "inline" : "none"};">${unreadMsg}</span>
+                  <span class="unread-badge" style="display: ${
+                    unreadMsg ? "inline" : "none"
+                  };">${unreadMsg}</span>
                   `;
     return newContact;
   }
@@ -278,7 +316,9 @@ export class Chat {
     count.textContent = `${number}`;
   }
 
-  async createFriendRequestElement(friendRequest: FriendRequest): Promise<HTMLDivElement> {
+  async createFriendRequestElement(
+    friendRequest: FriendRequest
+  ): Promise<HTMLDivElement> {
     const newRequest = document.createElement("div") as HTMLDivElement;
     newRequest.classList = `request-wrapper ${friendRequest.sender_username}`;
     const requestAvatar = await getUserAvatarById(friendRequest.sender_id);
@@ -306,8 +346,9 @@ export class Chat {
     const requestsContainer = document.querySelector(".requests-container");
     if (!(requestsContainer instanceof HTMLDivElement)) return;
 
-    requestsContainer.textContent = this.friendRequestCount ?
-      "" : "No friend requests";
+    requestsContainer.textContent = this.friendRequestCount
+      ? ""
+      : "No friend requests";
 
     if (!this.friendRequests) return;
     for (const request of this.friendRequests.values()) {
@@ -317,7 +358,9 @@ export class Chat {
   }
 
   deleteFriendRequest(username: string): void {
-    const friendRequestElement = document.querySelector(`.request-wrapper.${username}`);
+    const friendRequestElement = document.querySelector(
+      `.request-wrapper.${username}`
+    );
     if (!(friendRequestElement instanceof HTMLDivElement)) return;
 
     friendRequestElement.remove();
@@ -325,7 +368,7 @@ export class Chat {
     this.friendRequests?.delete(username);
 
     if (this.friendRequestCount == 0) {
-      const reqContainer = document.querySelector('.requests-container');
+      const reqContainer = document.querySelector(".requests-container");
       if (reqContainer instanceof HTMLDivElement) {
         reqContainer.textContent = "No friend requests";
       }
@@ -390,7 +433,7 @@ export class Chat {
               this.friendRequests.get(username)?.request_id!
             );
           }
-  
+
           this.deleteFriendRequest(username);
         } catch (error) {
           console.error("Error: could not handle friend request action", error);
@@ -421,16 +464,16 @@ export class Chat {
           friend.friendName,
           friend.unreadMsg
         );
-  
+
         const clickHandler = () => {
           chatWindowControler.open(friend);
           this.updateContactUnreadUI(friend.convID, 0);
         };
-  
+
         contactBtn.addEventListener("click", clickHandler);
-  
+
         chatContacts.appendChild(contactBtn);
-  
+
         this.contactElements.set(friend.convID, {
           element: contactBtn,
           handler: clickHandler,
@@ -445,7 +488,7 @@ export class Chat {
       try {
         const friendData: UserData = await getUserDataById(friendID);
         let friendAvatarURL: string = await getUserAvatarById(friendID);
-        
+
         this.friends.push({
           convID: data.conversation_id,
           friendID: friendID,
@@ -454,24 +497,24 @@ export class Chat {
           unreadMsg: 0,
           friendOn: false,
         } as Friend);
-  
+
         const friend = this.friends[this.friends.length - 1];
         const contactBtn = this.createContactElement(
           friend.friendAvatar,
           friend.friendName,
           friend.unreadMsg
         );
-  
+
         const clickHandler = () => {
           chatWindowControler.open(friend);
           this.updateContactUnreadUI(friend.convID, 0);
         };
-  
+
         contactBtn.addEventListener("click", clickHandler);
-  
+
         const chatContacts = document.querySelector(".chat-contacts");
         chatContacts?.appendChild(contactBtn);
-  
+
         this.contactElements.set(friend.convID, {
           element: contactBtn,
           handler: clickHandler,

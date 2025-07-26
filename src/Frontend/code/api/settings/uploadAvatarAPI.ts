@@ -1,16 +1,16 @@
-import { authService } from "../services/authService";
+import { authService } from "../../services/authService";
 
 export async function uploadAvatar(file: File | undefined): Promise<void> {
   try {
     if (!file) {
-        const errorMessage = `DEBUG: Upload file not defined`;
-        const error = new Error(errorMessage);
-        throw error;
+      const errorMessage = `DEBUG: Upload file not defined`;
+      const error = new Error(errorMessage);
+      throw error;
     }
     if (!authService.isUserAuthenticated()) {
-        const errorMessage: string = `DEBUG: No authToken at updatePassword`;
-        const error: Error = new Error(errorMessage);
-        throw error;
+      const errorMessage: string = `DEBUG: No authToken at updatePassword`;
+      const error: Error = new Error(errorMessage);
+      throw error;
     }
 
     const formData = new FormData();

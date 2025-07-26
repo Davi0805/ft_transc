@@ -10,7 +10,7 @@
 
     min-width: 400px;
     max-width: 500px;
-    max-height: 80vh;
+    height: 500px;
 
     background: rgb(20, 20, 20);
     border: 2px solid rgba(255, 255, 255, 0.1);
