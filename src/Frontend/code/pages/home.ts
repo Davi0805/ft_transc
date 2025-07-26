@@ -1,3 +1,6 @@
+import { ErrorPopup } from "../utils/popUpError";
+import { PlayerStats, getTopTen } from "../api/leaderboard/getTopTenAPI";
+
 export const HomePage = {
   template() {
     return `
@@ -206,11 +209,43 @@ export const HomePage = {
     </tr>
   */
 
-  loadLeaderBoard() {
-
+  async loadLeaderBoard() {
+    const leaderboardRows = document.querySelectorAll('.leaderboard-tr');
+    try {
+        const topTen: PlayerStats[] = await getTopTen();
+        leaderboardRows.forEach((row, index) => {
+          const nameCell = row.querySelector('.leaderboard-td-name');
+          const pointsCell = row.querySelector('.leaderboard-td-points');
+          const winCell = row.querySelector('.leaderboard-td-win');
+          const lossesCell = row.querySelector('.leaderboard-td-losses');
+    
+          if (!nameCell || !pointsCell || !winCell || !lossesCell) {
+            const errorPopup = new ErrorPopup();
+            errorPopup.create("Error Loading Leaderboard", "One or more cells are missing in the leaderboard row.");
+            return;
+          }
+    
+          if (topTen.length > index) {
+            const playerData = topTen[index];
+            nameCell.textContent = playerData.username;
+            pointsCell.textContent = playerData.points.toString();
+            winCell.textContent = playerData.wins.toString();
+            lossesCell.textContent = playerData.losses.toString();
+          }
+        });
+    } catch (error) {
+        const errorPopup = new ErrorPopup();
+        errorPopup.create("Error Loading Leaderboard", "Failed to fetch the top ten players. Please try again later.");
+        console.error("DEBUG:Error fetching top ten players:", error);
+    }
   },
 
   init() {
     console.log("Home page loaded!");
+
+    this.loadLeaderBoard();
+
+    // cada nome uma anchor para o perfil do jogador no nameCell. adicionar href para o sitio correto
+    
   },
 } as const;
