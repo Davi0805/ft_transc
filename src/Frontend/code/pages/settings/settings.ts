@@ -308,7 +308,7 @@ export const SettingsPage = {
         
         { // UI feedback
           const succPopup = new SuccessPopup();
-          succPopup.create("Name Succesffuly Changed", "Your display name has been successfully updated!");
+          succPopup.create("Name Successfully Changed", "Your display name has been successfully updated!");
         }
 
         // Update UI
