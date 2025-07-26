@@ -199,9 +199,7 @@ export class Chat {
     popoverSendBtn.addEventListener("click", sendFriendRequest);
 
     popoverInput.addEventListener("keypress", (e: KeyboardEvent) => {
-      console.log("tou aqui");
       if (e.key === "Enter") {
-        console.log("tou liaq");
         sendFriendRequest();
       }
     });
