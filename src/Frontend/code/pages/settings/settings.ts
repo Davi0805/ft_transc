@@ -662,7 +662,7 @@ export const SettingsPage = {
               }
 
               const succPopup = new SuccessPopup();
-              succPopup.create("Avatar Successfully Changed", "Your profile avatar was successfully changed!")
+              succPopup.create("Avatar Successfully Changed", "Your profile avatar was successfully changed!");
               return;
             } catch (error) {
               const errPopup = new ErrorPopup();
