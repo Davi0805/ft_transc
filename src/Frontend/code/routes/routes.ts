@@ -6,12 +6,9 @@ import { ProfilePage  } from '../pages/profile'
 import { RegisterPage } from '../pages/register'
 import { AboutUsPage } from '../pages/about'
 import { SettingsPage } from '../pages/settings/settings'
-import { CreateFriendlyPage } from '../pages/play/createFriendly'
-import { CreateRankedPage } from '../pages/play/createRanked'
-import { CreateTournamentPage } from '../pages/play/createTournament'
-import { LobbyFriendlyPage } from '../pages/play/lobbyFriendly'
-import { LobbyRankedPage } from '../pages/play/lobbyRanked'
-import { LobbyTournamentPage } from '../pages/play/lobbyTournament'
+import { LobbyPage } from '../pages/play/lobby'
+import { CreateLobbyPage } from '../pages/play/createLobby'
+import { MatchPage } from '../pages/play/match'
 
 export interface Route {
     path: string;
@@ -81,47 +78,23 @@ export const routes: Array<Route> = [
         script: NotFoundPage
     },
     // ROUTES INSIDE PLAY LOGIC
-    // Create friendly match lobby
     {
-        path: '/create-friendly',
-        title: 'Create Friendly Match',
-        template: CreateFriendlyPage.template,
-        script: CreateFriendlyPage
+        path: '/create-lobby',
+        title: 'Create Lobby',
+        template: CreateLobbyPage.template,
+        script: CreateLobbyPage
     },
-    // Create ranked match lobby
     {
-        path: '/create-ranked',
-        title: 'Create Ranked Match',
-        template: CreateRankedPage.template,
-        script: CreateRankedPage
+        path: '/lobby',
+        title: 'Lobby',
+        template: LobbyPage.template,
+        script: LobbyPage
     },
-    // Create Tournament lobby
     {
-        path: '/create-tournament',
-        title: 'Create Tournament',
-        template: CreateTournamentPage.template,
-        script: CreateTournamentPage
-    },
-    // Lobby for friendly match
-    {
-        path: '/lobby-friendly',
-        title: 'Friendly Match Lobby',
-        template: LobbyFriendlyPage.template,
-        script: LobbyFriendlyPage
-    },
-    // Lobby for ranked match
-    {
-        path: '/lobby-ranked',
-        title: 'Ranked Match Lobby',
-        template: LobbyRankedPage.template,
-        script: LobbyRankedPage
-    },
-    // Lobby for tournament
-    {
-        path: '/lobby-tournament',
-        title: 'Tournament Lobby',
-        template: LobbyTournamentPage.template,
-        script: LobbyTournamentPage
+        path: '/match',
+        title: 'Match',
+        template: MatchPage.template,
+        script: MatchPage
     }
     //? additional pages would be put here
 ];

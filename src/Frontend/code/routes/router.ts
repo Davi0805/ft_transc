@@ -31,8 +31,12 @@ class Router {
   }
 
   navigateTo(url: string): void {
-    const finalUrl = authService.handleProtectedRoute(url);
-
+    const finalUrl: string = authService.handleProtectedRoute(url);
+    //  Dont update anything if we are on the correct page
+    if (window.location.pathname === finalUrl) {
+      return; 
+    }
+    
     // Update our browser history without reload
     //                state, title, url
     history.pushState(null, "", finalUrl);

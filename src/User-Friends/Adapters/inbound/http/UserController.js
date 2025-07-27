@@ -30,7 +30,7 @@ class UserController {
     async getMyData(req, reply)
     {
         const users = await userService.findById(req.session.user_id);
-        return reply.send({id: users[0].user_id, nickname: users[0].name});
+        return reply.send({id: users[0].user_id, nickname: users[0].name, username: users[0].username, email: users[0].email});
     }
 
 
@@ -47,7 +47,9 @@ class UserController {
         return reply.send({ user_id: user[0].user_id,
                             name: user[0].name,
                             username: user[0].username,
-                            email: user[0].email });
+                            email: user[0].email,
+                            spriteID: user[0].sprite_id, //TODO: Check if this addition is correct.
+                            rating: user[0].rating });
     }
 
 
