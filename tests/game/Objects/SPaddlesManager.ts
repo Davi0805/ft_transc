@@ -1,6 +1,6 @@
 import SPaddle, { TSPaddleConfigs } from "./SPaddle.js";
 import Point from "../shared/Point.js";
-import { point } from "../shared/sharedTypes.js";
+import { point, SIDES } from "../shared/sharedTypes.js";
 import SBallsManager from "./SBallsManager.js";
 import LoopController from "../LoopController.js";import STeamsManager from "../STeamsManager.js";
 ;
@@ -31,6 +31,13 @@ export default class SPaddlesManager {
         this._handleLimitsCollision();
         this._paddles.forEach(paddle => {
             ballsManager.handlePaddleCollision(paddle, teamsManager);
+        })
+    }
+
+    deactivatePaddles(team: SIDES) {
+        const paddlesOfTeam = this.paddles.filter(paddle => paddle.side === team);
+        paddlesOfTeam.forEach(paddle => {
+            paddle.active = false;
         })
     }
 

@@ -5,6 +5,7 @@ import Point from "../shared/Point.js";
 import { getRandomInt } from "../shared/sharedUtils.js";
 import STeamsManager from "../STeamsManager.js";
 import LoopController from "../LoopController.js";
+import SPaddlesManager from "./SPaddlesManager.js";
 
 
 export default class SBallsManager {
@@ -58,7 +59,7 @@ export default class SBallsManager {
         this.balls.splice(index, 1);
     }
 
-    handleLimitCollision(teamsManager: STeamsManager) {
+    handleLimitCollision(teamsManager: STeamsManager, paddlesManager: SPaddlesManager) {
         this.balls.forEach(ball => {
             let team: SIDES | null = null;
             if (ball.cbox.x < 0) {
@@ -79,8 +80,11 @@ export default class SBallsManager {
                 team = SIDES.BOTTOM
             }
             if (team != null) {
-                teamsManager.damageTeam(team, ball.damage);
-            }            
+                const died = teamsManager.damageTeam(team, ball.damage);
+                if (died) {
+                    paddlesManager.deactivatePaddles(team);
+                }
+            }           
         })
     }
 

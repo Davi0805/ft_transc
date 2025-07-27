@@ -219,6 +219,8 @@ export type OutboundDTOMap = {
 
     //Game dto:
     updateGame: SGameDTO //Dealt with in game
+
+    //finishGame: 
 }
 
 export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {

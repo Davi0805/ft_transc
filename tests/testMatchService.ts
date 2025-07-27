@@ -43,11 +43,11 @@ class TestMatchService {
 
             lobbySocketService.broadcast(lobbySettings.id, "displayPairings", { pairings: tournMatches.tournPairings })
 
-            /* setTimeout(() => {
+            setTimeout(() => {
                 tournMatches.matches.forEach(match => {
                     this._runMatch(lobbySettings, match, tournMatches.tournPairings)
                 })
-            }, 10000) */
+            }, 10000)
         }
     }
 

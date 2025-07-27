@@ -104,14 +104,14 @@ export default class ServerGame {
         // but I would have to make sure that I do not decrease flexibility
         // I should definitely delagate the consequenses to each object though!
         // I can also make a collision handler a singleton and register/unregister objects there?
-        this._ballsManager.handleLimitCollision(this._teamsManager);
+        this._ballsManager.handleLimitCollision(this._teamsManager, this._paddlesManager);
         this._paddlesManager.handleCollisions(this._ballsManager, this._teamsManager);
         
         if (loop.isEventTime(1)) {
             this._timeLeft -= 1;
         }
         // Game state handling
-        if (this._teamsManager.teamLost() !== undefined
+        if (this._teamsManager.allTeamsFinished()
             || this._timeLeft <= 0) {
             loop.pause();
             const finalGameState = this._teamsManager.getTeamsState();

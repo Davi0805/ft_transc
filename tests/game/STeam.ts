@@ -5,6 +5,7 @@ export default class STeam {
     constructor(side: SIDES, initialScore: number) {
         this._side = side;
         this._score = initialScore;
+        this._place = 0;
     }
 
     private _side: SIDES
@@ -13,4 +14,8 @@ export default class STeam {
     private _score: number
     set score(score: number ) { this._score = score; }
     get score(): number { return this._score; }
+
+    private _place: number
+    set place(place: number) { this._place = place; }
+    get place(): number { return this._place; }
 }

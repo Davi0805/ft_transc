@@ -18,9 +18,11 @@ export default class SPaddle extends SObject {
         super(id, pos, computeOrientation(side), size, speed);
         this._side = side;
         this._nextMovement = MOVEMENT.NONE;
+        this._active = true;
     }
 
     move(delta: number) {
+        if (!this._active) { return; }
         if (this._nextMovement === MOVEMENT.LEFT || this._nextMovement == MOVEMENT.RIGHT) {
             let movVector = this.orientation.multiplyScalar(this.speed * delta)
                             .rotate((this._nextMovement === MOVEMENT.LEFT) ? -90 : 90);
@@ -39,4 +41,7 @@ export default class SPaddle extends SObject {
 
     private _side: SIDES;
     get side(): SIDES { return this._side; }
+    
+    private _active: boolean;
+    set active(active: boolean) { this._active = active; }
 }
