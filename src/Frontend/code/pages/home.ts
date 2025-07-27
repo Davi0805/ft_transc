@@ -1,5 +1,7 @@
 import { ErrorPopup } from "../utils/popUpError";
-import { PlayerStats, getTopTen } from "../api/leaderboard/getTopTenAPI";
+import { searchPlayer } from "../api/leaderboard/searchPlayerAPI";
+import { PlayerStats } from "../api/leaderboard/types/PlayerStatsInterface";
+import { getTopTen } from "../api/leaderboard/getTopTenAPI";
 
 export const HomePage = {
   template() {
@@ -177,13 +179,13 @@ export const HomePage = {
 
             <!-- Player Search -->
             <div class="mt-6 flex justify-center">
-                <div class="relative w-full max-w-md">
+                <form class="relative w-full max-w-md">
                     <input type="text" placeholder="Search for a player..." class="w-full rounded-xl border border-blue-400/30 bg-slate-700/50 px-4 py-3 pr-32 pl-12 text-white placeholder-blue-200/60 transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 focus:outline-none" />
                     <svg class="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 transform text-blue-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    <button class="absolute top-1/2 right-2 -translate-y-1/2 transform rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700">Search</button>
-                </div>
+                    <button type="submit" class="absolute top-1/2 right-2 -translate-y-1/2 transform rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700">Search</button>
+                </form>
             </div>
         </div>
     </div>
@@ -240,12 +242,41 @@ export const HomePage = {
     }
   },
 
+  async initLeaderboardSearch() {
+    const form = document.querySelector("form");
+    const input = form?.querySelector("input");
+    if (!form || !input) {
+      const errorPopup = new ErrorPopup();
+      errorPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly. Please refresh and try again."
+      );
+      return;
+    }
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const playerUserame: string = input.value;
+      // 200 com dados do jogador
+      // 200 com null se o jogador não existir
+      const playerData = await searchPlayer(playerUserame);
+      if (playerData) {
+        // Display player data
+        
+
+      } else {
+        // Show error
+      }
+    });
+  },
+
   init() {
     console.log("Home page loaded!");
 
     this.loadLeaderBoard();
 
     // cada nome uma anchor para o perfil do jogador no nameCell. adicionar href para o sitio correto
-    
+    this.initLeaderboardSearch();
+
   },
 } as const;
