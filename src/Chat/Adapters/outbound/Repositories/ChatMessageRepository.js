@@ -23,6 +23,14 @@ class ChatMessageRepository {
             + ' WHERE conversation_id = ? AND from_user_id != ?', [conversation_id, user_id]);
     }
 
+    async saveInviteMessage(conversation_id, from_user_id, lobbyId)
+    {
+        return await db.raw('INSERT INTO messages '+
+                            '(conversation_id, from_user_id, message_content, metadata) '+
+                            'VALUES (?, ?, ?)',
+                            [conversation_id, from_user_id, 'match_invite', lobbyId]);
+    }
+
     // with metadata
 /*     async saveSpecialMessage()
     {
