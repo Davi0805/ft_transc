@@ -104,23 +104,23 @@
     }
 
     .leaderboard-td-position {
-        @apply py-3 px-4 font-bold text-blue-200;
+        @apply h-[49px] py-3 px-4 font-bold text-blue-200;
     }
 
     .leaderboard-td-name {
-        @apply py-3 px-4 text-white;
+        @apply h-[49px] py-3 px-4 text-white;
     }
 
     .leaderboard-td-points {
-        @apply py-3 px-4 text-center text-blue-200;
+        @apply h-[49px] py-3 px-4 text-center text-blue-200;
     }
     
     .leaderboard-td-win {
-        @apply py-3 px-4 text-center text-green-400;
+        @apply h-[49px] py-3 px-4 text-center text-green-400;
     }
 
     .leaderboard-td-losses {
-        @apply py-3 px-4 text-center text-red-400;
+        @apply h-[49px] py-3 px-4 text-center text-red-400;
     }
     
     /* POPUPS */
