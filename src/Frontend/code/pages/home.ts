@@ -103,74 +103,74 @@ export const HomePage = {
                     </thead>
                     <tbody>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position text-yellow-400">1</td>
-                        <td class="leaderboard-td-name">Artur</td>
-                        <td class="leaderboard-td-points">1247</td>
-                        <td class="leaderboard-td-win">89</td>
-                        <td class="leaderboard-td-losses">12</td>
+                        <td class="leaderboard-td-position text-yellow-400"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position text-white/50">2</td>
-                        <td class="leaderboard-td-name">Miguel</td>
-                        <td class="leaderboard-td-points">1156</td>
-                        <td class="leaderboard-td-win">76</td>
-                        <td class="leaderboard-td-losses">18</td>
+                        <td class="leaderboard-td-position text-white/50"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position text-orange-400">3</td>
-                        <td class="leaderboard-td-name">Toni</td>
-                        <td class="leaderboard-td-points">1089</td>
-                        <td class="leaderboard-td-win">71</td>
-                        <td class="leaderboard-td-losses">23</td>
+                        <td class="leaderboard-td-position text-orange-400"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position">4</td>
-                        <td class="leaderboard-td-name">Mica</td>
-                        <td class="leaderboard-td-points">967</td>
-                        <td class="leaderboard-td-win">65</td>
-                        <td class="leaderboard-td-losses">28</td>
+                        <td class="leaderboard-td-position"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position">5</td>
-                        <td class="leaderboard-td-name">João</td>
-                        <td class="leaderboard-td-points">834</td>
-                        <td class="leaderboard-td-win">58</td>
-                        <td class="leaderboard-td-losses">31</td>
+                        <td class="leaderboard-td-position"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position">6</td>
-                        <td class="leaderboard-td-name">Maria</td>
-                        <td class="leaderboard-td-points">712</td>
-                        <td class="leaderboard-td-win">45</td>
-                        <td class="leaderboard-td-losses">27</td>
+                        <td class="leaderboard-td-position"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position">7</td>
-                        <td class="leaderboard-td-name">Sandrinho</td>
-                        <td class="leaderboard-td-points">689</td>
-                        <td class="leaderboard-td-win">42</td>
-                        <td class="leaderboard-td-losses">35</td>
+                        <td class="leaderboard-td-position"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position">8</td>
-                        <td class="leaderboard-td-name">Davi</td>
-                        <td class="leaderboard-td-points">567</td>
-                        <td class="leaderboard-td-win">38</td>
-                        <td class="leaderboard-td-losses">29</td>
+                        <td class="leaderboard-td-position"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position">9</td>
-                        <td class="leaderboard-td-name">Macaco</td>
-                        <td class="leaderboard-td-points">456</td>
-                        <td class="leaderboard-td-win">33</td>
-                        <td class="leaderboard-td-losses">41</td>
+                        <td class="leaderboard-td-position"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                         <tr class="leaderboard-tr">
-                        <td class="leaderboard-td-position">10</td>
-                        <td class="leaderboard-td-name">Kelson</td>
-                        <td class="leaderboard-td-points">389</td>
-                        <td class="leaderboard-td-win">28</td>
-                        <td class="leaderboard-td-losses">37</td>
+                        <td class="leaderboard-td-position"></td>
+                        <td class="leaderboard-td-name"></td>
+                        <td class="leaderboard-td-points"></td>
+                        <td class="leaderboard-td-win"></td>
+                        <td class="leaderboard-td-losses"></td>
                         </tr>
                     </tbody>
                     </table>
@@ -179,13 +179,12 @@ export const HomePage = {
 
             <!-- Player Search -->
             <div class="mt-6 flex justify-center">
-                <form class="relative w-full max-w-md">
-                    <input type="text" placeholder="Search for a player..." class="w-full rounded-xl border border-blue-400/30 bg-slate-700/50 px-4 py-3 pr-32 pl-12 text-white placeholder-blue-200/60 transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 focus:outline-none" />
+                <div class="relative w-full max-w-md">
+                    <input id="search-player" type="text" placeholder="Search for a player..." class="w-full rounded-xl border border-blue-400/30 bg-slate-700/50 py-3 px-4 pl-12 text-white placeholder-blue-200/60 transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 focus:outline-none" />
                     <svg class="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 transform text-blue-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    <button type="submit" class="absolute top-1/2 right-2 -translate-y-1/2 transform rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700">Search</button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -193,35 +192,107 @@ export const HomePage = {
   },
 
 
-  /* 
-<tbody>
-    <tr class="leaderboard-tr">
-        <td class="leaderboard-td-position text-yellow-400">1</td>
-        <td class="leaderboard-td-name">Artur</td>
-        <td class="leaderboard-td-points">1247</td>
-        <td class="leaderboard-td-win">89</td>
-        <td class="leaderboard-td-losses">12</td>
-    </tr>
-    <tr class="leaderboard-tr">
-        <td class="leaderboard-td-position text-yellow-400">1</td>
-        <td class="leaderboard-td-name">Artur</td>
-        <td class="leaderboard-td-points">1247</td>
-        <td class="leaderboard-td-win">89</td>
-        <td class="leaderboard-td-losses">12</td>
-    </tr>
-  */
-
   async loadLeaderBoard() {
     const leaderboardRows = document.querySelectorAll('.leaderboard-tr');
     try {
-        const topTen: PlayerStats[] = await getTopTen();
+        if (!leaderboardRows) {
+          throw new Error("Someone is messing up the html caralho ta quieto");
+        }
+
+        // todo descomentar a de baixo e ver se o retorno vem do genero da de baixo
+        // const topTen: PlayerStats[] = await getTopTen();
+       
+        const topTen : PlayerStats[] = [
+          {
+            id: 1,
+            username: "Artur",
+            rank: 1,
+            wins: 89,
+            losses: 12,
+            points: 1247,
+          },
+          {
+            id: 2,
+            username: "Miguel",
+            rank: 2,
+            wins: 76,
+            losses: 18,
+            points: 1156,
+          },
+          {
+            id: 3,
+            username: "Toni",
+            rank: 3,
+            wins: 71,
+            losses: 23,
+            points: 1089,
+          },
+          {
+            id: 4,
+            username: "Mica",
+            rank: 4,
+            wins: 65,
+            losses: 28,
+            points: 967,
+          },
+          {
+            id: 5,
+            username: "João",
+            rank: 5,
+            wins: 58,
+            losses: 31,
+            points: 834,
+          },
+          {
+            id: 6,
+            username: "Maria",
+            rank: 6,
+            wins: 45,
+            losses: 27,
+            points: 712,
+          },
+          {
+            id: 7,
+            username: "Sandrinho",
+            rank: 7,
+            wins: 42,
+            losses: 35,
+            points: 689,
+          },
+          {
+            id: 8,
+            username: "Davi",
+            rank: 8,
+            wins: 38,
+            losses: 29,
+            points: 567,
+          },
+          {
+            id: 9,
+            username: "Macaco",
+            rank: 9,
+            wins: 33,
+            losses: 41,
+            points: 456,
+          },
+          {
+            id: 10,
+            username: "Kelson",
+            rank: 10,
+            wins: 28,
+            losses: 37,
+            points: 389,
+          },
+        ];
+        
         leaderboardRows.forEach((row, index) => {
+          const positionCell = row.querySelector('.leaderboard-td-position');
           const nameCell = row.querySelector('.leaderboard-td-name');
           const pointsCell = row.querySelector('.leaderboard-td-points');
           const winCell = row.querySelector('.leaderboard-td-win');
           const lossesCell = row.querySelector('.leaderboard-td-losses');
     
-          if (!nameCell || !pointsCell || !winCell || !lossesCell) {
+          if (!positionCell || !nameCell || !pointsCell || !winCell || !lossesCell) {
             const errorPopup = new ErrorPopup();
             errorPopup.create("Error Loading Leaderboard", "One or more cells are missing in the leaderboard row.");
             return;
