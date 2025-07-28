@@ -21,6 +21,7 @@ class MessageHandler {
                 lobbyService.removePlayerPosition(lobby_id, user_id);
                 break;
             case 'inviteUserToLobby':
+                lobbyService.inviteUserToLobby(lobby_id, user_id, parsedMessage.data.userID);
                 break;
             case 'addFriendlyPlayer':
                 break;
