@@ -1,7 +1,8 @@
 import { ErrorPopup } from "../utils/popUpError";
-import { searchPlayer } from "../api/leaderboard/searchPlayerAPI";
 import { PlayerStats } from "../api/leaderboard/types/PlayerStatsInterface";
+import { searchPlayer } from "../api/leaderboard/searchPlayerAPI";
 import { getTopTen } from "../api/leaderboard/getTopTenAPI";
+import { debounce } from "../utils/debouncing";
 
 export const HomePage = {
   template() {
@@ -300,6 +301,14 @@ export const HomePage = {
     
           if (topTen.length > index) {
             const playerData = topTen[index];
+            positionCell.textContent = (index + 1).toString();
+            if (index === 0) {
+              // This is for when the leaderboard is loaded after a search
+              // i wont use toggle cuz im afraid it might break in some error case but 
+              // if anyone is willing you could test it kkkk
+              positionCell.classList.remove('text-blue-200');
+              positionCell.classList.add('text-yellow-400');
+            }
             nameCell.textContent = playerData.username;
             pointsCell.textContent = playerData.points.toString();
             winCell.textContent = playerData.wins.toString();
@@ -313,10 +322,77 @@ export const HomePage = {
     }
   },
 
-  async initLeaderboardSearch() {
-    const form = document.querySelector("form");
-    const input = form?.querySelector("input");
-    if (!form || !input) {
+  updateLeaderBoard(playerData: PlayerStats | null): void{
+    // clear leader board contents
+    // erases positions as well!
+    const leaderboardRows = document.querySelectorAll('.leaderboard-tr');
+    try {
+        if (!leaderboardRows) {
+          throw new Error("Someone is messing up the html caralho ta quieto");
+        }
+        if (!playerData){
+          throw new Error("Searched player error");
+        }
+
+        leaderboardRows.forEach((row, index) => {
+          const positionCell = row.querySelector('.leaderboard-td-position');
+          const nameCell = row.querySelector('.leaderboard-td-name');
+          const pointsCell = row.querySelector('.leaderboard-td-points');
+          const winCell = row.querySelector('.leaderboard-td-win');
+          const lossesCell = row.querySelector('.leaderboard-td-losses');
+    
+          if (!positionCell || !nameCell || !pointsCell || !winCell || !lossesCell) {
+            const errorPopup = new ErrorPopup();
+            errorPopup.create("Error Loading Leaderboard", "One or more cells are missing in the leaderboard row.");
+            return;
+          }
+    
+          // fill first row with playerData
+          // if player is on podium select correct color for position
+          if (index === 0) {
+            positionCell.textContent = playerData.rank?.toString() || 'NA';
+
+            // rank color lol
+            positionCell.classList.remove('text-yellow-400', 'text-white/50', 'text-orange-400', 'text-blue-200');
+            switch (playerData.rank) {
+              case 1:
+                positionCell.classList.add('text-yellow-400');
+                break;
+              case 2:
+                positionCell.classList.add('text-white/50');
+                break;
+              case 3:
+                positionCell.classList.add('text-orange-400');
+                break;
+              default:
+                positionCell.classList.add('text-blue-200');
+                break;
+            }
+
+            nameCell.textContent = playerData.username;
+            pointsCell.textContent = playerData.points.toString();
+            winCell.textContent = playerData.wins.toString();
+            lossesCell.textContent = playerData.losses.toString();
+          } else {
+            positionCell.textContent = '';
+            nameCell.textContent = '';
+            pointsCell.textContent = '';
+            winCell.textContent = '';
+            lossesCell.textContent = '';
+          }
+        });
+    } catch (error) {
+        const errorPopup = new ErrorPopup();
+        errorPopup.create("Error Loading Leaderboard", "Failed to fetch the top ten players. Please try again later.");
+        console.error("DEBUG:Error fetching top ten players:", error);
+    }
+
+  },
+
+  async initLeaderboardSearch(): Promise<void>{
+    const input = document.getElementById("search-player");
+    if (!input ||
+        !(input instanceof HTMLInputElement)) {
       const errorPopup = new ErrorPopup();
       errorPopup.create(
         "Something is strange...",
@@ -324,21 +400,60 @@ export const HomePage = {
       );
       return;
     }
-    form.addEventListener("submit", async (event) => {
+
+    // initialization for for error case
+    let errorShown = false;
+    let errorTimer: ReturnType<typeof setTimeout> | null = null;
+
+    input.addEventListener("input", async (event) => {
       event.preventDefault();
 
-      const playerUserame: string = input.value;
-      // 200 com dados do jogador
-      // 200 com null se o jogador não existir
-      const playerData = await searchPlayer(playerUserame);
-      if (playerData) {
-        // Display player data
-        
+      // makes it so it doesnt call on every single input but with a delay
+      const inputDebounced = debounce(async () => {
 
-      } else {
-        // Show error
-      }
+        const playerUserame: string = input.value.trim();
+        if (!playerUserame.length) {
+          await this.loadLeaderBoard();
+          return; 
+        }
+        
+        try {
+          // 200 com dados do jogador
+          // 200 com null se o jogador não existir
+          //! todo delete mock data
+          // const playerData: PlayerStats | null = await searchPlayer(playerUserame);
+          const playerData: PlayerStats | null = {
+            id: 1, // userID
+            username: "artur lindo",
+            rank: 15, // Rank of the player in the leaderboar
+            wins: 69,
+            losses: 420,
+            points: 666, // Points of the player in the leaderboard
+          };
+
+          // Display player data
+          this.updateLeaderBoard(playerData);
+        } catch (error) {
+          // Show error
+          if (!errorShown) {
+            const errPopup = new ErrorPopup();
+            errPopup.create("Error Searching Player!", "Seems like an error occoured while searching player. Please refresh and try again");
+            errorShown = true;
+
+            errorTimer && clearTimeout(errorTimer); // short circuting guard
+            // after 5000ms sets the error shown to false so it can appear again if called
+            // this prevents popup spam
+            errorTimer = setTimeout(() => {
+              errorShown = false;
+            }, 5000);
+          }
+        }
+      }, 350); // 500ms debouncing time
+
+      inputDebounced(); // calling
     });
+
+
   },
 
   init() {
