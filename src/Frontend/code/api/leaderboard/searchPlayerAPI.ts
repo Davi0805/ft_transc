@@ -4,7 +4,7 @@ import { PlayerStats } from "./types/PlayerStatsInterface";
  *
  *
  */
-export async function searchPlayer(username: string): Promise<PlayerStats> {
+export async function searchPlayer(username: string): Promise<PlayerStats | null> {
   try {
     const response = await fetch("http://localhost:8080/", { // todo Change endpoint
       method: "GET",
