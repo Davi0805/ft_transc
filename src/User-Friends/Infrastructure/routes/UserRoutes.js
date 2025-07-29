@@ -42,7 +42,6 @@ async function userRoutes(fastify, options) {
       schema: {
         body: { $ref: 'verifytwofa#' }
       },
-      preHandler: authMiddleware,
       handler: userController.twofa_verify
     });
     
