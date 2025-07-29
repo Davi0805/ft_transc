@@ -25,7 +25,7 @@ export interface NewFriendRequestEvent {
 export interface MessageDTO {
   conversation_id: number;
   message: string;
-  metadata: string | null;
+  metadata: string | null; // todo denesting type (new type for invite. metadata only for invite so it can be its own type)
 }
 
 class WebSocketService {
