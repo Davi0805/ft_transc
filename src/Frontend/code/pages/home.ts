@@ -411,8 +411,8 @@ export const HomePage = {
       // makes it so it doesnt call on every single input but with a delay
       const inputDebounced = debounce(async () => {
 
-        const playerUserame: string = input.value.trim();
-        if (!playerUserame.length) {
+        const playerUsername: string = input.value.trim();
+        if (!playerUsername.length) {
           await this.loadLeaderBoard();
           return; 
         }
