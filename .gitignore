@@ -45,3 +45,10 @@ coverage/
 *.swp
 
 test
+
+*.jpg
+*jpeg
+*.gif
+*.web*
+*.png
+*
