@@ -75,7 +75,7 @@ export class Chat {
     /*
       metadata: { event: "new_friend_request" }
     */
-    webSocketService.registerFriendRequestsUpdate((add: boolean) => {
+    webSocketService.registerFriendRequestsUpdate(() => {
       this.updateFriendRequestsNumber(webSocketService.getFriendRequestCount());
     });
 
