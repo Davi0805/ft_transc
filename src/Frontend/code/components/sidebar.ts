@@ -1,3 +1,7 @@
+import { authService } from "../services/authService";
+import { webSocketService, MessageDTO } from "../services/webSocketService";
+import { chatWindowControler } from "./chatWindow";
+
 import { getUserDataById, UserData } from "../api/userData/getUserDataAPI";
 import { getUserAvatarById } from "../api/userData/getUserAvatarAPI";
 import {
@@ -8,12 +12,12 @@ import {
   getFriendRequests,
   FriendRequest,
 } from "../api/friends/getFriendRequestsAPI";
+import { getFriendRequestsCount } from "../api/friends/getFriendRequestsCountAPI";
+
 import { acceptFriendRequest } from "../api/friends/acceptFriendRequestAPI";
 import { rejectFriendRequest } from "../api/friends/rejectFriendRequestAPI";
 import { createFriendRequestByUsername } from "../api/friends/createFriendRequestAPI";
-import { authService } from "../services/authService";
-import { webSocketService, MessageDTO } from "../services/webSocketService";
-import { chatWindowControler } from "./chatWindow";
+
 import { SuccessPopup } from "../utils/popUpSuccess";
 import { ErrorPopup } from "../utils/popUpError";
 
@@ -35,18 +39,17 @@ export class Chat {
   private sidebar: HTMLElement;
 
   private friends: Array<Friend>;
-  private friendRequests: Map<string, FriendRequest> | null; // Map
-  private friendRequestCount: number;
-
   /* (convID, {element: contactBtn, handler: clickHandler }) */
   private contactElements: Map<number, ContactElement>;
+
+  private friendRequestCount: number = 0;
+  private friendRequests: Map<string, FriendRequest> = new Map();
+
 
   constructor() {
     this.sidebar = document.querySelector("aside") as HTMLElement;
     this.friends = [];
 
-    this.friendRequests = null;
-    this.friendRequestCount = 0;
 
     this.contactElements = new Map();
   }
@@ -54,23 +57,6 @@ export class Chat {
   async init(): Promise<void> {
     this.sidebar.innerHTML = this.renderHTML();
     await this.attachHeaderEventListeners();
-
-    try {
-      const reqArray: FriendRequest[] = await getFriendRequests();
-      this.friendRequestCount = reqArray.length;
-      this.friendRequests = new Map(
-        reqArray.map((req) => [req.sender_username, req])
-      );
-    } catch (error) {
-      console.error("Error at Chat initialization", error);
-      // could check why and handle it individually
-      authService.logout();
-      return;
-    }
-
-    this.updateFriendRequestsNumber(this.friendRequestCount);
-
-    await this.getSidebarConversations();
 
     webSocketService.connect(authService.userID);
 
@@ -87,13 +73,27 @@ export class Chat {
     });
 
     /*
-      metadata: {user_id?: string = reciever_id?,
-                event: "new_friend_request"}
+      metadata: { event: "new_friend_request" }
   */
-    webSocketService.registerFriendRequestsUpdate(() => {
-      this.updateFriendRequestsNumber(this.friendRequestCount + 1);
-      //! this.friendRequests?.set()  TODO check this event!!!
+    webSocketService.registerFriendRequestsUpdate((add: boolean) => {
+      this.updateFriendRequestsNumber(webSocketService.getFriendRequestCount());
     });
+
+
+    try {
+      this.friendRequestCount = await getFriendRequestsCount();
+      webSocketService.setFriendRequestCount(this.friendRequestCount);
+    } catch (error) {
+      console.error("Error at Chat initialization", error);
+      const errPopup = new ErrorPopup();
+      errPopup.create("Error Getting Friend Requets", "Could not fetch your friend requests count. Please try again later.");
+      // could check why and handle it individually
+      authService.logout();
+      return;
+    }
+
+
+    await this.getSidebarConversations();
 
     this.insertContactsOnSidebar();
   }
@@ -287,7 +287,7 @@ export class Chat {
         // conversationTracker initialization
         webSocketService.conversationTracker.set(conv.id, conv.unread_count);
       } catch (error) {
-        console.error("Error getting friend on sidebar", error);
+        console.error("DEBUG: Error getting friend on sidebar", error);
         // just skip it. could be improved
       }
     }
@@ -346,15 +346,20 @@ export class Chat {
     const requestsContainer = document.querySelector(".requests-container");
     if (!(requestsContainer instanceof HTMLDivElement)) return;
 
-    requestsContainer.textContent = this.friendRequestCount
+    requestsContainer.textContent = webSocketService.getFriendRequestCount()
       ? ""
       : "No friend requests";
 
-    if (!this.friendRequests) return;
-    for (const request of this.friendRequests.values()) {
+    this.friendRequests.clear(); // clear old data
+    // fetch new friend requests
+    //todo trycatch
+    const friendRequests: FriendRequest[] = await getFriendRequests();
+    
+    friendRequests.forEach(async (request) => {
+      this.friendRequests.set(request.sender_username, request);
       const element = await this.createFriendRequestElement(request);
       requestsContainer.appendChild(element);
-    }
+    });
   }
 
   deleteFriendRequest(username: string): void {
@@ -364,16 +369,16 @@ export class Chat {
     if (!(friendRequestElement instanceof HTMLDivElement)) return;
 
     friendRequestElement.remove();
-    this.friendRequestCount--;
     this.friendRequests?.delete(username);
 
-    if (this.friendRequestCount == 0) {
+    if (webSocketService.getFriendRequestCount() === 0) {
       const reqContainer = document.querySelector(".requests-container");
       if (reqContainer instanceof HTMLDivElement) {
         reqContainer.textContent = "No friend requests";
       }
     }
-    this.updateFriendRequestsNumber(this.friendRequestCount);
+
+    webSocketService.decrementFriendRequestCount();
   }
 
   async openFriendRequetsDialog(): Promise<void> {
@@ -421,17 +426,14 @@ export class Chat {
         const username = btn.dataset.username;
         if (!username) return;
 
-        if (!this.friendRequests) return;
+        const request = this.friendRequests.get(username);
+        if (!request) return;
 
         try {
           if (btn.classList.contains("accept")) {
-            await acceptFriendRequest(
-              this.friendRequests.get(username)?.request_id!
-            );
+            await acceptFriendRequest(request.request_id);
           } else if (btn.classList.contains("reject")) {
-            await rejectFriendRequest(
-              this.friendRequests.get(username)?.request_id!
-            );
+            await rejectFriendRequest(request.request_id);
           }
 
           this.deleteFriendRequest(username);
