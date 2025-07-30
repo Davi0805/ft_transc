@@ -11,8 +11,8 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     user_image VARCHAR(255),
-    sprite_id INTEGER NOT NULL,
-    rating INTEGER NOT NULL,
+    sprite_id INTEGER NOT NULL DEFAULT 1,
+    rating INTEGER NOT NULL DEFAULT 1500,
     twofa_secret TEXT,
     twofa_enabled BOOLEAN DEFAULT FALSE
 );

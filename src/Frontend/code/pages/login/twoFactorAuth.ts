@@ -1,7 +1,9 @@
-import { verifyTwoFactorCode } from "../../api/twoFactorAPI";
+import { verifyTwoFactorCode } from "../../api/login/twoFactorAPI";
 import { authService } from "../../services/authService";
-import { translator } from "../../services/translationService"
+import { translator } from "../../services/translationService";
 import { router } from "../../routes/router";
+import { ErrorPopup } from "../../utils/popUpError";
+import { WarningPopup } from "../../utils/popUpWarn";
 
 export const TwoFactorAuth = {
   renderHTML(): string {
@@ -29,47 +31,68 @@ export const TwoFactorAuth = {
 
   async show(token: string): Promise<void> {
     const container = document.querySelector("main");
-    if (!container) return;
+    if (!container) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly..."
+      );
+      return;
+    }
 
     container.innerHTML = this.renderHTML();
     translator.apply();
-    
-    const inputs = document.querySelectorAll<HTMLInputElement>('.otp-input');
+
+    const inputs = document.querySelectorAll<HTMLInputElement>(".otp-input");
 
     inputs.forEach((input, idx) => {
-      input.addEventListener('input', () => {
+      input.addEventListener("input", () => {
         const val = input.value;
         if (val.length === 1 && idx < inputs.length - 1)
-            inputs[idx + 1].focus();
+          inputs[idx + 1].focus();
       });
 
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && input.value === '' && idx > 0)
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && input.value === "" && idx > 0)
           inputs[idx - 1].focus();
-      })
+      });
     });
 
     const twofaForm = document.getElementById("twofa-form") as HTMLFormElement;
     twofaForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const code = Array.from(inputs).map(input => input.value).join('');
+      const code = Array.from(inputs)
+        .map((input) => input.value)
+        .join("");
       try {
         await verifyTwoFactorCode(token, code);
 
         authService.login(token);
-        
+
         const redirectPath = authService.getRedirectAfterLogin();
         router.navigateTo(redirectPath);
       } catch (error) {
         if ((error as any).status == 401) {
-          const loginError = document.getElementById('twofacode-error') as HTMLElement;
-          loginError.textContent = "Verification code is incorrect!"
+          const loginError = document.getElementById(
+            "twofacode-error"
+          ) as HTMLElement;
+          loginError.textContent = "Verification code is incorrect!";
           loginError.hidden = false;
           console.error("DEBUG 2FA code wrong");
+        } else {
+          console.error(
+            "DEBUG: Something went wrong:",
+            (error as any)?.message
+          );
+          const errPopup = new ErrorPopup();
+          errPopup.create(
+            "Error Logging In",
+            "Something went wrong while trying to log in. Refresh and try again."
+          );
         }
       }
     });
     return;
-  }
+  },
 } as const;

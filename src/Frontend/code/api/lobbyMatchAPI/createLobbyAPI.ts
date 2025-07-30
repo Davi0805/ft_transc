@@ -10,18 +10,15 @@ export async function createLobby(lobbySettings: LobbyCreationConfigsDTO): Promi
       throw error;
     }
 
-    console.log(lobbySettings)
-    const response = await fetch(
-      `http://localhost:8084/lobby`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${authService.getToken()}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(lobbySettings)
-      }
-    );
+    console.log(lobbySettings);
+    const response = await fetch(`http://localhost:8084/lobby`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${authService.getToken()}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(lobbySettings),
+    });
 
     if (!response.ok) {
       const errorMessage: string = `DEBUG: createLobby failed with status ${response.status}`;

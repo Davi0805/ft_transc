@@ -1,4 +1,5 @@
 const lobbyRepo = require('../../Adapters/outbound/LobbyDataRepository');
+const lobbyService = require('../../Application/Services/LobbyService');
 
 class MessageHandler {
 
@@ -6,22 +7,37 @@ class MessageHandler {
     {
         const parsedMessage = JSON.parse(message);
 
-        console.log("FUCK ME")
-        console.log(parsedMessage)
-        console.log("FUCK YOU")
         switch (parsedMessage.requestType) {
-            case ('updateSettings'):
-                lobbyRepo.updateSettings(lobby_id, parsedMessage.data.settings)
+            case 'addRankedPlayer':
+                lobbyService.setPlayerPosition(lobby_id, user_id, parsedMessage.data.player);
+                break;
+            case 'updateReadiness':
+                lobbyService.setUserState(lobby_id, user_id, parsedMessage.data.ready);
+                break;
+            case 'updateSettings':
+                lobbyService.updateLobbySettings(lobby_id, user_id, parsedMessage.data.settings);
+                break;
+            case 'removeRankedPlayer':
+                lobbyService.removePlayerPosition(lobby_id, user_id);
+                break;
+            case 'inviteUserToLobby':
+                lobbyService.inviteUserToLobby(lobby_id, user_id, parsedMessage.data.userID);
+                break;
+            case 'addFriendlyPlayer':
+                break;
+            case 'removeFriendlyPlayer':
+                break;
+            case 'addTournamentPlayer':
+                break;
+            case 'removeTournamentPlayer':
+                break;
+            case 'startGame':
+                break;
+            case 'updateGame':
+                break;
+            default:
+                break;
         }
-        if (parsedMessage.type == 'position_update')
-            lobbyRepo.setPlayerPosition(lobby_id, user_id, {team: parsedMessage.team, role: parsedMessage.role});
-        else if(parsedMessage.type == 'ready_state_update')
-            lobbyRepo.setUserState(lobby_id, user_id, parsedMessage.ready);
-    }
-
-    async eventSelector()
-    {
-        
     }
 
 };

@@ -45,6 +45,14 @@ class ConversationsRepository {
                             + 'FROM conversations WHERE id = ?',
                             [conversation_id]);
     }
+
+    async getConversationByUserIds(from_user_id, to_user_id)
+    {
+        return await db.raw('SELECT user1_id AS user1, user2_id AS user2 '
+                        + 'FROM conversations WHERE (user1_id = ? OR user2_id = ?)'
+                        + ' AND (user1_id = ? OR user2_id = ?)',
+                    [from_user_id, to_user_id, from_user_id, to_user_id]);
+    }
 }
 
 module.exports = new ConversationsRepository();

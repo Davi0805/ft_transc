@@ -9,8 +9,8 @@ import { TLobbyType, TMap, TMode, TDuration, TLobby, LobbyCreationConfigsDTO } f
 import { lobbyService } from "../../services/LobbyService";
 
 export const CreateLobbyPage = {
-    template() {
-        return `
+  template() {
+    return `
             <div class="flex flex-col items-center justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12">
                 <form id="lobby-creation-form" class="flex flex-col items-center justify-center gap-6">
                     <h1 id="create-lobby-title" class="text-3xl p-3"></h1>
@@ -35,22 +35,28 @@ export const CreateLobbyPage = {
                     </div>
                 </form>
             </div>
-        `
-    },
+        `;
+  },
 
-    init() {
-        const title = document.getElementById('create-lobby-title') as HTMLElement;
-        title.textContent = "New Lobby"
+  init() {
+    const title = document.getElementById("create-lobby-title") as HTMLElement;
+    title.textContent = "New Lobby";
 
-        const lobbyTypeInput = document.getElementById('lobby-type') as HTMLSelectElement;
-        lobbyTypeInput.addEventListener('change', () => this._updateLobbyOptions(
-            lobbyTypeInput.options[lobbyTypeInput.selectedIndex].id as TLobbyType
-        ))
+    const lobbyTypeInput = document.getElementById(
+      "lobby-type"
+    ) as HTMLSelectElement;
+    lobbyTypeInput.addEventListener("change", () =>
+      this._updateLobbyOptions(
+        lobbyTypeInput.options[lobbyTypeInput.selectedIndex].id as TLobbyType
+      )
+    );
 
-        this._updateLobbyOptions(lobbyTypeInput.options[lobbyTypeInput.selectedIndex].id as TLobbyType)
+    this._updateLobbyOptions(
+      lobbyTypeInput.options[lobbyTypeInput.selectedIndex].id as TLobbyType
+    );
 
-        const buttonReturn = document.getElementById('btn-return') as HTMLElement;
-        buttonReturn.addEventListener('click', () => router.navigateTo('/play'))
+    const buttonReturn = document.getElementById("btn-return") as HTMLElement;
+    buttonReturn.addEventListener("click", () => router.navigateTo("/play"));
 
         const form = document.getElementById('lobby-creation-form') as HTMLFormElement;
         form.addEventListener('submit', async (e) => {
@@ -79,10 +85,15 @@ export const CreateLobbyPage = {
         console.log('Create Friendly page loaded!')
     },
 
-    _updateLobbyOptions(currentType: TLobbyType) {
-        const mutableSettings = document.getElementById('mutable-settings') as HTMLElement;
-        mutableSettings.innerHTML = ""
-        mutableSettings.innerHTML += getLobbyOptionsHTML(true, currentType,
-            {map: "2-players-small", mode: "classic", duration: "classical"});
-    }
-}
+  _updateLobbyOptions(currentType: TLobbyType) {
+    const mutableSettings = document.getElementById(
+      "mutable-settings"
+    ) as HTMLElement;
+    mutableSettings.innerHTML = "";
+    mutableSettings.innerHTML += getLobbyOptionsHTML(true, currentType, {
+      map: "2-players-small",
+      mode: "classic",
+      duration: "classical",
+    });
+  },
+};

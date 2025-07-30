@@ -34,6 +34,7 @@
         display: flex;
         height: 60px;
         padding: 8px 24px;
+        gap: 24px;
     
         background: #172332;
         
@@ -57,6 +58,7 @@
         align-items: center;
         padding: 65px 20px;
     }
+
 }
 
 @layer components {
@@ -95,6 +97,40 @@
 
     .button {
         @apply w-full h-11 bg-white text-base font-semibold text-myBlack border-none outline-none rounded-3xl cursor-pointer shadow active:scale-95;
+    }
+
+    .leaderboard-tr {
+        @apply border-b border-blue-400/10 hover:bg-blue-500/10 transition-colors;
+    }
+
+    .leaderboard-td-position {
+        @apply h-[49px] py-3 px-4 font-bold text-blue-200;
+    }
+
+    .leaderboard-td-name {
+        @apply h-[49px] py-3 px-4 text-white;
+    }
+
+    .leaderboard-td-points {
+        @apply h-[49px] py-3 px-4 text-center text-blue-200;
+    }
+    
+    .leaderboard-td-win {
+        @apply h-[49px] py-3 px-4 text-center text-green-400;
+    }
+
+    .leaderboard-td-losses {
+        @apply h-[49px] py-3 px-4 text-center text-red-400;
+    }
+    
+    /* POPUPS */
+    #popupContainer {
+        @apply fixed top-16 z-[9999] flex flex-col gap-2.5 max-w-sm w-full;
+    }
+    
+    .popup {
+        @apply  flex items-start gap-3 p-4 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.15)] border-l-4
+                opacity-0 transform translate-x-full transition-all duration-300 ease-in-out relative;
     }
 }
 

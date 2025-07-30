@@ -2,6 +2,7 @@ import { authService } from "../services/authService";
 import { translator } from "../services/translationService";
 import { router } from "../routes/router";
 import { LanguageCode } from "../languages/languages";
+import { WarningPopup } from "../utils/popUpWarn";
 
 /**
  * @class Header
@@ -17,7 +18,7 @@ class Header {
   constructor() {
     this.navBarElement = document.getElementById("header-nav");
   }
-  
+
   init() {
     this.logOutEventListener();
     this.languageSelectorDisplayEventListener();
@@ -30,7 +31,14 @@ class Header {
    * Logs the user out via the authentication service and redirects to the homepage.
    */
   logOutEventListener(): void {
-    if (!this.navBarElement) return;
+    if (!this.navBarElement) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the header could not be found..."
+      );
+      return;
+    }
     this.navBarElement.addEventListener("click", (event: Event) => {
       event.preventDefault();
       const target = event.target as HTMLElement;
@@ -47,7 +55,14 @@ class Header {
   languageSelectorDisplayEventListener(): void {
     const dropDown = document.querySelector(".current-language") as HTMLElement;
     const langList = document.querySelector(".lang-options") as HTMLElement;
-    if (!dropDown || !langList) return;
+    if (!dropDown || !langList) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the language selector could not be found..."
+      );
+      return;
+    }
 
     dropDown.addEventListener("click", (e: Event) => {
       e.preventDefault();
@@ -58,12 +73,16 @@ class Header {
 
   /**
    * @brief Updates the active underline on the navigation link based on the current route.
-   * 
+   *
    * @param path The path of the current route to match against nav link hrefs.
    */
   updateActiveUnderline(path: string): void {
-    const curActive = document.querySelector("a.nav-link.active") as HTMLElement;
-    const newActive = document.querySelector(`a.nav-link[href='${path}']`) as HTMLElement;
+    const curActive = document.querySelector(
+      "a.nav-link.active"
+    ) as HTMLElement;
+    const newActive = document.querySelector(
+      `a.nav-link[href='${path}']`
+    ) as HTMLElement;
 
     if (curActive && newActive && curActive !== newActive) {
       curActive.classList.remove("active");
@@ -73,7 +92,7 @@ class Header {
 
   /**
    * @brief Creates and returns a new HTML element with optional id and class attributes.
-   * 
+   *
    * @param elementType The type of element to create (e.g., "div", "a").
    * @param id Optional ID to assign to the element.
    * @param classList Optional class list to assign to the element.
@@ -126,7 +145,7 @@ class Header {
 
     /**
      * @brief Displays the header layout for logged-in users.
-     * 
+     *
      * @param nickname The user's nickname to display.
      * @param avatarURL The user's avatar image URL.
      */
@@ -156,8 +175,7 @@ class Header {
 
     if (authService.isUserAuthenticated())
       showLoggedInVersion(authService.userNick!, authService.userAvatar!);
-    else
-      showLoggedOutVersion();
+    else showLoggedOutVersion();
   }
 
   /**
@@ -165,12 +183,17 @@ class Header {
    * Switches language when a new language option is clicked and applies translations.
    */
   languageSelectorChangeEventListener(): void {
-    const langs: NodeListOf<Element> = document.querySelectorAll(".lang-option");
+    const langs: NodeListOf<Element> =
+      document.querySelectorAll(".lang-option");
 
     langs.forEach((langOption: Element) => {
       langOption.addEventListener("click", () => {
-        const langOptionImg = langOption.querySelector("img") as HTMLImageElement | null;
-        const currLang = document.querySelector(".current-language img[data-lang]") as HTMLImageElement | null;
+        const langOptionImg = langOption.querySelector(
+          "img"
+        ) as HTMLImageElement | null;
+        const currLang = document.querySelector(
+          ".current-language img[data-lang]"
+        ) as HTMLImageElement | null;
 
         if (!langOptionImg || !currLang) return;
 
@@ -190,7 +213,8 @@ class Header {
 
         // Update language
         translator.setLanguage(selectedData as LanguageCode);
-        (document.querySelector(".lang-options") as HTMLElement).style.display = "none";
+        (document.querySelector(".lang-options") as HTMLElement).style.display =
+          "none";
         translator.apply();
       });
     });
@@ -207,6 +231,5 @@ class Header {
     if (lang) lang.click();
   }
 }
-
 
 export const header = new Header();

@@ -1,4 +1,4 @@
-import { SelfData } from "../api/getSelfDataAPI";
+import { SelfData } from "../api/userData/getSelfDataAPI";
 import { LobbyPage } from "../pages/play/lobby";
 import { TSlots } from "../pages/play/utils/helpers";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";

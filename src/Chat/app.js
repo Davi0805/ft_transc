@@ -25,6 +25,7 @@ const setup = () => {
     app.register(require('@fastify/websocket'));
 
     eventBroadcast.subscribe('realTimeNotif', eventBroadcast.handleRealTimeNotif);
+    eventBroadcast.subscribe('lobbyInvites', eventBroadcast.handleLobbyInvitations);
 
     app.register(sensible);
     app.register(webSocketRoutes);

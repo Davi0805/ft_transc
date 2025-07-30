@@ -192,10 +192,11 @@ class UserController {
     */
     async twofa_verify(req, reply)
     {
-        const user = await userService.findById(req.session.user_id);
+        const session = await redisService.getSession(req.headers.authorization);
+        const user = await userService.findById(session.user_id);
         await twofaService.verifyToken(user[0].twofa_secret, req.body.token)
         const jwt = req.headers.authorization.substring(7);
-        await redisService.saveSession(jwt, { user_id: req.session.user_id, twofa_verified: 1 });
+        await redisService.saveSession(jwt, { user_id: session.user_id, twofa_verified: 1 });
         return reply.send();
     }
 }

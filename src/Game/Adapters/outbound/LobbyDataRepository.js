@@ -1,6 +1,7 @@
 const redis = require('../../Infrastructure/config/Redis');
 const connectedUsersRepository = require('../outbound/ConnectedUsersRepository');
-
+const eventBus = require('../../Adapters/outbound/EventBusUserRepository');
+const lobbyMapper = require('../../Infrastructure/Mappers/LobbyMapper');
 
 /* 
 *   {
@@ -15,14 +16,16 @@ const connectedUsersRepository = require('../outbound/ConnectedUsersRepository')
 */
 class LobbyDataRepository {
 
-    async save(lobby_id, data)
+    async save(lobby_id, data, user_id)
     {
         console.log('Lobby id = ' + lobby_id + ' | Data = ' + data);
 
         // TODO: later find the documentation to send it all at once
+        redis.hSet(`lobby:${lobby_id}`, 'id', data.id);
         redis.hSet(`lobby:${lobby_id}`, 'name', data.name);
         redis.hSet(`lobby:${lobby_id}`, 'type', data.type);
         redis.hSet(`lobby:${lobby_id}`, 'mode', data.mode);
+        redis.hSet(`lobby:${lobby_id}`, 'hostID', user_id);
         redis.hSet(`lobby:${lobby_id}`, 'duration', data.duration);
         redis.hSet(`lobby:${lobby_id}`, 'map', data.map);
         redis.hSet(`lobby:${lobby_id}`, 'slots_taken', data.slots_taken);
@@ -32,6 +35,13 @@ class LobbyDataRepository {
         redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify([]));
 
         await redis.expire(`lobby:${lobby_id}`, 60);
+    }
+
+    async updateSettings(lobby_id, data)
+    {
+        redis.hSet(`lobby:${lobby_id}`, 'mode', data.mode);
+        redis.hSet(`lobby:${lobby_id}`, 'duration', data.duration);
+        redis.hSet(`lobby:${lobby_id}`, 'map', data.map);
     }
 
 
@@ -48,12 +58,11 @@ class LobbyDataRepository {
         }
     }
 
-    async addUser(lobby_id, data)
+    async addUser(lobby_id, user_id)
     {
         const lobby = await this.get(lobby_id);
         if (lobby) this.isTemp(lobby_id);
-        if (lobby.users.length == 0) lobby.users.push({id: data.user_id, ready: false, host: true});
-        else lobby.users.push({id: data.user_id, ready: false, host: false});
+        lobby.users.push({id: user_id, ready: false});
         await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(lobby.users));
         return lobby;
     }
@@ -85,20 +94,20 @@ class LobbyDataRepository {
                                                             role: data.role})
     }
 
+    async getLobbyUsers(lobbyId)
+    {
+        const lobby = await this.get(lobbyId);
+        return lobby.users;
+    }
+
+
     async removeUser(lobby_id, user_id)
     {
     }
 
-    async setUserState(lobby_id, user_id, ready_state)
+    async updateUsers(lobbyId, users)
     {
-        if (ready_state != false && ready_state != true) throw new Error('Invalid argument');
-        const lobby = await this.get(lobby_id);
-        const user = lobby.users.find(u => u.id == user_id);
-        user.ready = ready_state;
-        await redis.hSet(`lobby:${lobby_id}`, 'users', JSON.stringify(lobby.users));
-        // todo: this is reallyy coupled
-        connectedUsersRepository.broadcastToLobby(lobby_id, {type: "ready_state_update_event",
-                                                            user_id: user_id, ready: ready_state});
+        await redis.hSet(`lobby:${lobbyId}`, 'users', JSON.stringify(users));
     }
 
     async setUserPosition(lobby_id, position)
@@ -106,41 +115,40 @@ class LobbyDataRepository {
 
     }
 
-    async getHostIdByLobbyId(lobby_id)
-    {
-        const lobby = await this.get(lobby_id);
-        const host = lobby.users.find(u => u.host == true);
-        return host.id;
-    }
+
+    
 
 
     /*
-    export type TLobby = {
+    export type TUser = {
+    //Stuff from database
     id: number,
-    hostID: number,
-    name: string,
-    host: string,
-    type: TLobbyType, ok
-    capacity: TMatchCapacity, ok
-    map: TMapType, ok
-    mode: TMatchMode, ok
-    duration: TMatchDuration,
-    round: number
-    }*/
-    async getLobbyToGameBuild(lobby_id)
+    nickname: string,
+    spriteID: number
+    rating: number
+
+    //Stuff about lobby
+    ready: boolean, //Default is false
+    participating: boolean //Default is false
+    player: TFriendlyPlayer[] | TRankedPlayer | TTournamentPlayer //Depends on the type of lobby
+    }
+    */
+   async getUsersToGameBuild(lobby_id)
     {
         const lobby = await this.get(lobby_id);
-        const hostId = await this.getHostIdByLobbyId(lobby_id);
-        return ({id: lobby_id,
-                name: lobby.name,
-                hostID: hostId,
-                type: lobby.type,
-                capacity: {taken: lobby.slots_taken, max: lobby.map_usr_max},
-                map: lobby.map,
-                mode: lobby.mode,
-                duration: lobby.duration,
-                round: lobby.round
-        })
+        const TUsers = [];
+        for (const u of lobby.users) {
+            TUsers.push({
+                id: u.id,
+                nickname: await eventBus.getNicknamesByUserId(u.id),
+                spriteID: 1, //!!!! LEMBRAR DE TIRAR ESSE HARDCODED
+                rating: 2, //!!! FAZ PARTE DO USER SERVICE
+                ready: u.ready,
+                participating: (u.team && u.role) ? true : false,
+                player: {}
+            });
+        }
+        return TUsers;
     }
 
     async get(lobby_id)
@@ -152,16 +160,16 @@ class LobbyDataRepository {
     }
 
     async getAllLobbies() {
-    const lobbies = {};
-    for await (const key of redis.scanIterator({
-        MATCH: 'lobby:*',
-        COUNT: 100
-    })) {
-        const data = await redis.hGetAll(key);
-        console.log(`Data for ${key}:`, data);
-        lobbies[key] = data;
-    }
-    return lobbies;
+        const lobbies = [];
+        for await (const key of redis.scanIterator({
+            MATCH: 'lobby:*',
+            COUNT: 100
+        })) {
+            const data = await redis.hGetAll(key);
+            data.id = key.substring(6);
+            lobbies.push(data);
+        }
+        return lobbies;
 }
 
 

@@ -26,9 +26,10 @@ class RedisService {
     */
     async validateSession(token)
     {
-        if (!token) { throw exception('Authorization token not found!', 400) };
+        if (!token) { throw exception('Authorization token not found!', 400); }
         const metadata = JSON.parse(await sessionRepository.findByJwt(token.substring(7)));
-        if (!metadata || metadata.twofa_verified != 1) { throw exception('Authorization failed!', 401) };
+        if (!metadata) { throw exception('Authorization failed!', 401); }
+        else if(metadata.twofa_verified != 1) { throw exception('2FA not validated', 401);}
         return metadata;
     }
 
@@ -40,8 +41,8 @@ class RedisService {
     */
     async getSession(token)
     {
-        if (!token) { throw exception('Failed to authenticate', 400); }
-        const metadata = await sessionRepository.findByJwt(token.substring(7));
+        if (!token) { throw exception('Token not found', 400); }
+        const metadata = JSON.parse(await sessionRepository.findByJwt(token.substring(7)));
         if (!metadata) { throw exception('Failed to authenticate', 401); }
         return metadata;
     }

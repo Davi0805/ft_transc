@@ -1,10 +1,10 @@
 import { header } from "../components/header";
 import { Chat } from "../components/sidebar";
-import { SelfData, getSelfData } from "../api/getSelfDataAPI";
-import { getUserAvatarById } from "../api/getUserAvatarAPI";
-import { webSocketService } from "./webSocketService";
+import { SelfData, getSelfData } from "../api/userData/getSelfDataAPI";
+import { getUserAvatarById } from "../api/userData/getUserAvatarAPI";
+import { webSocketService } from "../services/webSocketService";
 import { chatWindowControler } from "../components/chatWindow";
-import { router } from "../routes/router"
+import { router } from "../routes/router";
 
 export class AuthService {
   private protectedRoutes: string[];
@@ -35,8 +35,7 @@ export class AuthService {
   async init(): Promise<void> {
     this.authToken = localStorage.getItem("authToken");
     this.isAuthenticated = !!this.authToken;
-    if (this.isAuthenticated)
-      await this.getMyData();
+    if (this.isAuthenticated) await this.getMyData();
 
     header.updateHeaderVisibility();
 
@@ -48,22 +47,22 @@ export class AuthService {
     return;
   }
 
-    async  getMyData(): Promise<void> {
-      try {
-        const userData: SelfData = await getSelfData();
-        this.userID = userData.id;
-        this.userNick = userData.nickname;
-        this.userEmail = userData.email;
-        this.userUsername = userData.username;
-        
-        this.userAvatar = await getUserAvatarById(this.userID);
-      } catch (error) {
-        this.logout();
-        console.log("DEBUG: Did not get self data", error)
-      }
+  async getMyData(): Promise<void> {
+    try {
+      const userData: SelfData = await getSelfData();
+      this.userID = userData.id;
+      this.userNick = userData.nickname;
+      this.userEmail = userData.email;
+      this.userUsername = userData.username;
 
-      return;
+      this.userAvatar = await getUserAvatarById(this.userID);
+    } catch (error) {
+      this.logout();
+      console.log("DEBUG: Did not get self data", error);
     }
+
+    return;
+  }
 
   async login(token: string): Promise<void> {
     this.authToken = token;

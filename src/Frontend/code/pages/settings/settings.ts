@@ -1,9 +1,13 @@
-import { UserData } from "../../api/getUserDataAPI";
+import { UserData } from "../../api/userData/getUserDataAPI";
 import { authService } from "../../services/authService";
-import { updateName } from "../../api/updateNameAPI";
-import { updatePassword } from "../../api/updatePasswordAPI";
-import { enableTwoFactor } from "../../api/enableTwoFactorAPI";
-import { confirmTwoFactorCode } from "../../api/confirmEnableTwoFactorAPI"
+import { updateName } from "../../api/settings/updateNameAPI";
+import { updatePassword } from "../../api/settings/updatePasswordAPI";
+import { enableTwoFactor } from "../../api/settings/twoFactorAPIS/enableTwoFactorAPI";
+import { confirmTwoFactorCode } from "../../api/settings/twoFactorAPIS/confirmEnableTwoFactorAPI";
+import { uploadAvatar } from "../../api/settings/uploadAvatarAPI";
+import { WarningPopup } from "../../utils/popUpWarn";
+import { ErrorPopup } from "../../utils/popUpError";
+import { SuccessPopup } from "../../utils/popUpSuccess";
 
 export const SettingsPage = {
   template() {
@@ -17,8 +21,25 @@ export const SettingsPage = {
               <div id="settings-sidebar" class=" flex w-52 min-w-32 flex-col items-center border-white/20 pt-4 text-white">
                 <!-- INFO USER -->
                 <div class="user flex flex-col items-center">
-                  <img id="user-avatar" class="mb-2 h-16 w-16 rounded-full border-2 border-sky-300" src="${avatar}" alt="User avatar" />
-                  <div class="text-center text-base">
+                  <!-- Profile image -->
+                  <label for="avatar-upload" class="relative group cursor-pointer">
+                    <img
+                      id="user-avatar"
+                      class="h-16 w-16 rounded-full border-2 border-sky-300 object-cover transition duration-300 group-hover:brightness-75"
+                      src="${avatar}"
+                      alt="User avatar"
+                    />
+                    <!-- Overlay -->
+                    <div class="absolute inset-0 flex items-center justify-center rounded-full bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z" />
+                      </svg>
+                    </div>
+                  </label>
+                  <input type="file" id="avatar-upload" class="hidden" accept="image/*" />
+
+                  <!-- User -->
+                  <div class="mt-2 text-center text-base">
                     <p id="user-name" class="font-bold">${nickname}</p>
                     <p id="user-username" class="text-gray-400">${username}</p>
                   </div>
@@ -85,14 +106,13 @@ export const SettingsPage = {
                             class="input-settings" />
                           <span class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</span>
                         </div>
-                      </div>
                         
-                      <!-- Save Button positioned at bottom right -->
-                      <div class="mt-auto flex justify-end pt-6">
-                        <button id="save-btn" type="submit" class="btn-settings ">Save</button>
-                      </div>
-                    </form>
-                  `;
+                        <!-- Save button -->
+                        <div class="mt-auto flex justify-end pt-6">
+                          <button id="save-btn" type="submit" class="btn-settings ">Save</button>
+                        </div>
+                      </form>
+                     `;
   },
 
   getSecurityHTML(): string {
@@ -121,7 +141,7 @@ export const SettingsPage = {
               <h3 class="mr-6 text-l font-semibold">Enable/Disable 2FA</h3>
               <label class="relative inline-block w-[60px] h-[34px]">
                 <input id="two-fac" type="checkbox" class="peer sr-only" 
-                ${ authService.getHas2FA() ? "checked" : ""}
+                ${authService.getHas2FA() ? "checked" : ""}
                 >
                 <span class="block bg-gray-500 peer-checked:bg-myWhite w-full h-full rounded-full transition-all duration-300"></span>
                 <span class="absolute left-[3px] bottom-[3px] bg-blue-600 w-[28px] h-[28px] rounded-full transition-transform duration-300 peer-checked:translate-x-[26px]"></span>
@@ -148,8 +168,6 @@ export const SettingsPage = {
             <!-- Will insert blocked users dynamically -->
             
           </div>
-
-
     `;
   },
 
@@ -185,10 +203,24 @@ export const SettingsPage = {
 
   updateActiveSection(): void {
     const sidebar = document.getElementById("settings-sidebar");
-    if (!sidebar) return;
+    if (!sidebar) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly. Please refresh and try again."
+      );
+      return;
+    }
 
     const test = sidebar.querySelector(`.settings-active`);
-    if (!test) return;
+    if (!test) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly. Please refresh and try again."
+      );
+      return;
+    }
 
     test.classList.toggle("settings-active");
     const test2 = sidebar.querySelector(
@@ -199,7 +231,14 @@ export const SettingsPage = {
 
   updateContent(): void {
     const content = document.getElementById("settings-content");
-    if (!content) return;
+    if (!content) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly. Please refresh and try again."
+      );
+      return;
+    }
 
     switch (SettingsPage.currentSection) {
       case "account":
@@ -218,90 +257,146 @@ export const SettingsPage = {
   },
 
   async initAccountEvents(): Promise<void> {
+    console.log("initAccountEvents called"); // Add this line
+
     const form = document.querySelector("form");
     if (!(form instanceof HTMLFormElement)) {
       console.warn("DEBUG: Form element not found or incorrect.");
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly..."
+      );
       return;
     }
 
-    form.addEventListener("submit", (event) => {
+    console.log("About to attach event listener"); // Add this line
+
+    form.addEventListener("submit", async (event) => {
+      console.log("submit");
+
       event.preventDefault();
 
       try {
-        const nameInput = form.querySelector<HTMLInputElement>("#settings-name");
+        const nameInput =
+          form.querySelector<HTMLInputElement>("#settings-name");
         if (!nameInput) {
           console.error("DEBUG: Name input not found.");
+
+          const warnPopup = new WarningPopup();
+          warnPopup.create(
+            "Something is strange...",
+            "Seems like the page was not loaded correctly..."
+          );
           return;
         }
 
         const newName = nameInput.value.trim();
         if (newName === authService.userNick) {
           console.warn("DEBUG: Name unchanged.");
+          const warnPopup = new WarningPopup();
+          warnPopup.create(
+            "Nickname Not Updated...",
+            "Seems like your new nickname is the same as the old one..."
+          );
           return;
         }
 
         // Update backend and local auth state
-        updateName(newName);
+        await updateName(newName);
         authService.userNick = newName;
+        
+        { // UI feedback
+          const succPopup = new SuccessPopup();
+          succPopup.create("Name Successfully Changed", "Your display name has been successfully updated!");
+        }
 
         // Update UI
         const profileHeaderName = document.getElementById("profile-link");
         if (profileHeaderName) {
           profileHeaderName.textContent = newName;
-        } 
+        }
 
         const navBarName = document.getElementById("user-name");
         if (navBarName) {
           navBarName.textContent = newName;
-        } 
-
+        }
       } catch (error) {
         console.error("DEBUG: Exception during account save:", error);
+
+        const errPopup = new ErrorPopup();
+        errPopup.create(
+          "Error Updating Account settings",
+          "Seems like there was an error updating your informatiom. Please refresh and try again"
+        );
+        return;
       }
     });
+
+    console.log("Event listener attached successfully"); // Add this line
   },
 
   initEnable2FAEventListeners(): void {
     const content = document.getElementById("settings-content");
     if (!content) {
       console.error("DEUBG: No content container at show2FAActivation");
+
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly..."
+      );
       return;
     }
 
-    const inputs = document.querySelectorAll<HTMLInputElement>('.otp-input');
+    const inputs = document.querySelectorAll<HTMLInputElement>(".otp-input");
 
     inputs.forEach((input, idx) => {
-      input.addEventListener('input', () => {
+      input.addEventListener("input", () => {
         const val = input.value;
         if (val.length === 1 && idx < inputs.length - 1)
-            inputs[idx + 1].focus();
+          inputs[idx + 1].focus();
       });
 
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && input.value === '' && idx > 0)
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && input.value === "" && idx > 0)
           inputs[idx - 1].focus();
-      })
+      });
     });
 
     content.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const code = Array.from(inputs).map(input => input.value).join('');
+      const code = Array.from(inputs)
+        .map((input) => input.value)
+        .join("");
       try {
         await confirmTwoFactorCode(code);
         // success
         authService.setHas2FA(true);
         this.updateContent();
+
+        //UI feedback
+        const succPopup = new SuccessPopup();
+        succPopup.create("Two Factor Authentication Updated", "Your account two factor authentication has been successfully updated!");
       } catch (error) {
         if ((error as any).status == 401) {
-          const loginError = document.getElementById('twofacode-error') as HTMLElement;
-          loginError.textContent = "Verification code is incorrect!"
-          loginError.hidden = false;
           console.error("DEBUG 2FA code wrong");
-        }
-        else {
+
+          const loginError = document.getElementById(
+            "twofacode-error"
+          ) as HTMLElement;
+          loginError.textContent = "Verification code is incorrect!";
+          loginError.hidden = false;
+        } else {
           console.error("DEBUG: Unexpeted error", error);
-          authService.logout()
+
+          const warnPopup = new WarningPopup();
+          warnPopup.create(
+            "Something is strange...",
+            "Seems like the page was not loaded correctly..."
+          );
+          authService.logout();
         }
       }
     });
@@ -312,9 +407,14 @@ export const SettingsPage = {
     const content = document.getElementById("settings-content");
     if (!content) {
       console.error("DEUBG: No content container at show2FAActivation");
+
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly..."
+      );
       return;
     }
-
 
     content.innerHTML = `
       <h1 class="mb-6 text-4xl font-bold">Settings</h1>
@@ -349,13 +449,19 @@ export const SettingsPage = {
         </form>
       </div>
     `;
-    return ;
+    return;
   },
 
   initSecurityEvents(): void {
     const form = document.querySelector("#security-form");
     if (!(form instanceof HTMLFormElement)) {
       console.warn("DEBUG: Form element not found or incorrect.");
+
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly..."
+      );
       return;
     }
     form.addEventListener("submit", async (event) => {
@@ -363,59 +469,75 @@ export const SettingsPage = {
         event.preventDefault();
 
         const oldPass = form.querySelector<HTMLInputElement>("#old-pass");
-        if (!oldPass || !oldPass.value) {
-          console.warn("DEBUG: No old password.");
-          return;
-        }
-        
         const newPass = form.querySelector<HTMLInputElement>("#new-pass");
-        if (!newPass) {
-          console.warn("DEBUG: No new password.");
+        const twoFactor = form.querySelector<HTMLInputElement>("#two-fac");
+
+        if (!oldPass || !oldPass.value || !newPass || !twoFactor) {
+          console.warn("DEBUG: Security page error.");
+
+          const warnPopup = new WarningPopup();
+          warnPopup.create(
+            "Something is strange...",
+            "Seems like the page was not loaded correctly..."
+          );
           return;
         }
-      
-        const twoFactor = form.querySelector<HTMLInputElement>("#two-fac");
-        if (!twoFactor) {
-          console.warn("DEBUG: No two factor checkbox.");
-          return;
-        }       
 
         // update password
-        if (newPass.value){
+        if (newPass.value) {
           try {
-            updatePassword(oldPass.value, newPass.value);
+            await updatePassword(oldPass.value, newPass.value);
+
+            //UI feedback
+            const succPopup = new SuccessPopup();
+            succPopup.create("Password Changed Successfully", "Your password has been successfully changed!");
           } catch (error: any) {
-            if (error && (error.status === 401)) {
+            if (error && error.status === 401) {
               console.warn("DEBUG: Unauthorized (401) error.");
-              // todo error message that shows that the password was wrong
+
+              const errPopup = new ErrorPopup();
+              errPopup.create(
+                "Error Updating Password...",
+                "Password was not updated. Please make sure to type your correct old password."
+              );
             } else {
               console.error("DEBUG: Error updating password:", error);
+
+              const errPopup = new ErrorPopup();
+              errPopup.create(
+                "Something Went Wrong...",
+                "Seems like something went wrong while updating your password. Please refresh and try again."
+              );
             }
-            return ;
+            return;
           }
         }
 
         if (twoFactor) {
-          if (twoFactor.checked === authService.getHas2FA()) return;
+          if (twoFactor.checked === authService.getHas2FA()) {
+            return;
+          }
 
           if (authService.getHas2FA()) {
             // todo disable twofa
-          }
-          else {
+          } else {
             try {
               const qrcode = await enableTwoFactor();
               this.show2FAActivation(qrcode);
               this.initEnable2FAEventListeners();
-
             } catch (error) {
               console.warn("DEBUG: Error enabling 2fa", error);
+
+              const errPopup = new ErrorPopup();
+              errPopup.create(
+                "Error Updating 2FA...",
+                "There was an error updating the 2FA status. Please reload and try again."
+              );
               authService.logout();
             }
           }
         }
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     });
   },
 
@@ -430,7 +552,7 @@ export const SettingsPage = {
       username: "aaa-s",
       email: "a@example.com",
       spriteID: 0,
-      rating: 1500
+      rating: 1500,
     };
 
     let user2: UserData = {
@@ -439,7 +561,7 @@ export const SettingsPage = {
       username: "www-s",
       email: "a@example.com",
       spriteID: 0,
-      rating: 1600
+      rating: 1600,
     };
 
     let user3: UserData = {
@@ -448,7 +570,7 @@ export const SettingsPage = {
       username: "qweqwe-s",
       email: "a@example.com",
       spriteID: 0,
-      rating: 1700
+      rating: 1700,
     };
 
     let avatar =
@@ -482,8 +604,91 @@ export const SettingsPage = {
     // btn unblock has data-username="${userData.user_id} so we can use that
   },
 
+  initChangeAvatarEventListener(): void {
+    const input = document.getElementById(
+      "avatar-upload"
+    ) as HTMLInputElement | null;
+    const avatarImg = document.getElementById(
+      "user-avatar"
+    ) as HTMLImageElement | null;
+    const headerAvatarImg = document.querySelector(
+      ".profile-container .profile-avatar"
+    ) as HTMLImageElement | null;
+
+    if (input && avatarImg) {
+      input.addEventListener("change", (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        const file = target.files?.[0];
+
+        if (!file) {
+          const warnPopup = new WarningPopup();
+          warnPopup.create("Avatar Not Changed", "Seems like we could not read any file. Please try again");
+          console.warn("No file selected.");
+          return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+          const errPopup = new ErrorPopup();
+          errPopup.create("Avatar Not Changed", "Seems like the selected file was not an image. Please try again with an image");
+          console.error("Selected file is not an image.");
+          return;
+        }
+
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+        if (file.size > MAX_FILE_SIZE) {
+          const errPopup = new ErrorPopup();
+          errPopup.create("Avatar Not Changed", "Seems like the file was too large. Please try again with an image less than 10MB");
+          console.error("DEBUG: File is too large. Maximum size is 10MB.");
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = async (e: ProgressEvent<FileReader>) => {
+          const result = e.target?.result;
+          
+            try {
+              if (typeof result !== "string") {
+                console.error("DEBUG: Unexpected result type from FileReader.");
+                throw new Error("Unexpected result type from FileReader.");
+              }
+
+              await uploadAvatar(file);
+
+              avatarImg.src = result;
+              if (headerAvatarImg) {
+                headerAvatarImg.src = result;
+              }
+
+              const succPopup = new SuccessPopup();
+              succPopup.create("Avatar Successfully Changed", "Your profile avatar was successfully changed!");
+              return;
+            } catch (error) {
+              const errPopup = new ErrorPopup();
+              errPopup.create("Avatar Not Changed", "Seems like there was an error uploading your avatar. Please refresh the page and try again");
+            }
+        };
+
+        reader.onerror = (e: ProgressEvent<FileReader>) => {
+          console.error("DEBUG: Error reading file:", e.target?.error);
+        };
+
+        try {
+          reader.readAsDataURL(file);
+        } catch (err) {
+          console.error("DEBUG: Failed to read file:", err);
+        }
+      });
+    } else {
+      console.error("DEBUG: Input or avatar image element not found in DOM.");
+    }
+  },
+
   init(): void {
     SettingsPage.currentSection = "account";
+
+    SettingsPage.initChangeAvatarEventListener();
     SettingsPage.initAccountEvents();
 
     // Event listener delegations
@@ -493,14 +698,13 @@ export const SettingsPage = {
       container.addEventListener("click", (event: MouseEvent) => {
         const target = event.target as HTMLElement;
 
-
         if (target.matches("#settings-account")) {
           SettingsPage.setCurretSection("account");
         } else if (target.matches("#settings-security")) {
           SettingsPage.setCurretSection("security");
         } else if (target.matches("#settings-social")) {
           SettingsPage.setCurretSection("social");
-        } else if (target.matches("#settings-logout")){
+        } else if (target.matches("#settings-logout")) {
           authService.logout();
         }
       });

@@ -1,7 +1,11 @@
 import { ReadEvent, webSocketService } from "../services/webSocketService";
-import { getMessagesByConvID, Message } from "../api/getConversationMessagesAPI";
+import {
+  getMessagesByConvID,
+  Message,
+} from "../api/friends/chat/getConversationMessagesAPI";
 import { authService } from "../services/authService";
 import { Friend } from "./sidebar";
+import { WarningPopup } from "../utils/popUpWarn";
 
 export interface ChatWindowMessage {
   convID: number;
@@ -21,7 +25,6 @@ class ChatWindow {
   private isOpen: boolean;
   public isMinimized: boolean;
 
-
   constructor() {
     this.element = null;
 
@@ -34,7 +37,6 @@ class ChatWindow {
     this.isOpen = false;
     this.isMinimized = false;
   }
-
 
   async open(friend: Friend): Promise<void> {
     if (this.isOpen) {
@@ -67,7 +69,7 @@ class ChatWindow {
     }
     const messageContainer = this.element?.querySelector(".chat-messages");
     if (messageContainer) {
-      messageContainer.scrollTop = messageContainer.scrollHeight;;
+      messageContainer.scrollTop = messageContainer.scrollHeight;
     }
     this.focus();
   }
@@ -76,8 +78,7 @@ class ChatWindow {
     if (this.element) {
       this.element.style.zIndex = "1000";
       const messageInput = this.element.querySelector(".message-input");
-      if (messageInput instanceof HTMLInputElement)
-        messageInput.focus();
+      if (messageInput instanceof HTMLInputElement) messageInput.focus();
     }
   }
 
@@ -117,8 +118,9 @@ class ChatWindow {
 
   toggleMinimize(): void {
     if (!this.element || !authService.userID) return;
-    this.element.style.height = (this.element.style.height === "50px") ? "400px" : "50px";
-    this.element.classList.toggle('minimized');
+    this.element.style.height =
+      this.element.style.height === "50px" ? "400px" : "50px";
+    this.element.classList.toggle("minimized");
     this.isMinimized = !this.isMinimized;
     if (!this.isMinimized)
       authService.sidebar?.updateContactUnreadUI(authService.userID, 0);
@@ -131,7 +133,9 @@ class ChatWindow {
     const sendBtn = this.element.querySelector(".send-btn");
     const messageInput = this.element.querySelector(".message-input");
 
-    minimizeBtn?.addEventListener("click", () => { this.toggleMinimize() });
+    minimizeBtn?.addEventListener("click", () => {
+      this.toggleMinimize();
+    });
 
     closeBtn?.addEventListener("click", () => {
       this.close();
@@ -163,10 +167,19 @@ class ChatWindow {
 
   sendMessage(): void {
     if (!this.element || !authService.userID) return;
-    const messageInput = this.element.querySelector(".message-input") as HTMLInputElement;
+    const messageInput = this.element.querySelector(
+      ".message-input"
+    ) as HTMLInputElement;
     const message = messageInput.value.trim();
 
-    if (!message) return;
+    if (!message) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the message could not be sent..."
+      );
+      return;
+    }
 
     if (webSocketService.sendChatMessage(authService.userID, message)) {
       this.addMessage({
@@ -175,6 +188,11 @@ class ChatWindow {
       } as ChatWindowMessage);
       messageInput.value = ""; // clear
     } else {
+      const errPopup = new WarningPopup();
+      errPopup.create(
+        "Error Sending Message",
+        "Message was not able to be sent. Please refresh the page and try again."
+      );
       console.log("DEBUG: Could not send message. Try again");
     }
   }
@@ -191,21 +209,28 @@ class ChatWindow {
     } as ChatWindowMessage);
     webSocketService.send({
       type: "read_event",
-      conversation_id: messageData.convID
+      conversation_id: messageData.convID,
     } as ReadEvent); // read trigger event
   }
 
   addMessage(messageData: ChatWindowMessage): void {
-    if (!this.element) return;
-    const messageContainer = this.element.querySelector(".chat-messages");
-    if (!messageContainer) return;
+    const messageContainer = this.element?.querySelector(".chat-messages");
+    if (!this.element || !messageContainer) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the message window could not be found..."
+      );
+      return;
+    }
+
     const newMessage = document.createElement("div");
     newMessage.classList.add("message");
 
     if (messageData.isOwn) {
-      newMessage.classList.add('isOwn');
+      newMessage.classList.add("isOwn");
     } else {
-      newMessage.classList.add('notOwn');
+      newMessage.classList.add("notOwn");
     }
 
     newMessage.innerText = messageData.message;

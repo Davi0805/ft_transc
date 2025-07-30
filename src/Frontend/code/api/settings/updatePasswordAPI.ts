@@ -1,24 +1,24 @@
-import { authService } from "../services/authService";
+import { authService } from "../../services/authService";
 
-export async function updateName(newName: string): Promise<void> {
+export async function updatePassword(oldPass: string, newPass: string): Promise<void> {
   try {
     if (!authService.isUserAuthenticated()) {
-      const errorMessage: string = `DEBUG: No authToken at updateName`;
+      const errorMessage: string = `DEBUG: No authToken at updatePassword`;
       const error: Error = new Error(errorMessage);
       throw error;
     }
 
-    const response = await fetch("http://localhost:8080/users/name", {
+    const response = await fetch("http://localhost:8080/user/password", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${authService.getToken()}`,
       },
-      body: JSON.stringify({ name: newName }),
+      body: JSON.stringify({ "old_password": oldPass, "password": newPass }),
     });
 
     if (!response.ok) {
-      const errorMessage = `UpdateName failed with status ${response.status}`;
+      const errorMessage = `updatePassword failed with status ${response.status}`;
       const error = new Error(errorMessage);
       (error as any).status = response.status;
       throw error;

@@ -1,8 +1,9 @@
 import { togglePasswordVisibility } from "../../utils/domUtils";
 import { TwoFactorAuth } from "./twoFactorAuth";
-import { login, LoginState } from "../../api/loginAPI";
+import { login, LoginState } from "../../api/login/loginAPI";
 import { authService } from "../../services/authService";
 import { router } from "../../routes/router";
+import { ErrorPopup } from "../../utils/popUpError";
 
 export const LoginPage = {
   template(): string {
@@ -40,7 +41,6 @@ export const LoginPage = {
   },
 
   init(): void {
-
     togglePasswordVisibility();
 
     const form = document.getElementById("login-form") as HTMLFormElement;
@@ -77,8 +77,13 @@ export const LoginPage = {
         loginError.hidden = false;
         console.error("DEBUG Pass ou user wrong");
       } else {
-        console.error((error as any)?.message);
-        console.error("DEBUG FODEU GERAL");
+        console.error("DEBUG: Something went wrong:", (error as any)?.message);
+
+        const errPopup = new ErrorPopup();
+        errPopup.create(
+          "Error Logging In",
+          "Something went wrong while trying to log in. Refresh and try again."
+        );
       }
     }
     return;
