@@ -43,15 +43,16 @@ class WebSocketController {
         await connectionsService.addUser(session.user_id, socket);
 
         const friends = await redisService.getCachedFriends(session.user_id);
-        if (!friends) return ;
-        const parsedFriends = JSON.parse(friends);
-        const friendArr = Object.keys(parsedFriends);
-        const onlineUsers = [];
-        for (const friend of friendArr) {
-            const temp = await connectionsService.getUser(friend);
-            if (temp) onlineUsers.push(parseInt(friend));
+        if (friends) {
+            const parsedFriends = JSON.parse(friends);
+            const friendArr = Object.keys(parsedFriends);
+            const onlineUsers = [];
+            for (const friend of friendArr) {
+                const temp = await connectionsService.getUser(friend);
+                if (temp) onlineUsers.push(parseInt(friend));
+            }
+            socket.send(JSON.stringify({ online_users: onlineUsers }));
         }
-        socket.send(JSON.stringify({ online_users: onlineUsers }));
 
         socket.on('open', async () => {
         })

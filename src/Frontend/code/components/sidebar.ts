@@ -74,7 +74,7 @@ export class Chat {
 
     /*
       metadata: { event: "new_friend_request" }
-  */
+    */
     webSocketService.registerFriendRequestsUpdate((add: boolean) => {
       this.updateFriendRequestsNumber(webSocketService.getFriendRequestCount());
     });
@@ -346,10 +346,6 @@ export class Chat {
     const requestsContainer = document.querySelector(".requests-container");
     if (!(requestsContainer instanceof HTMLDivElement)) return;
 
-    requestsContainer.textContent = webSocketService.getFriendRequestCount()
-      ? ""
-      : "No friend requests";
-
     this.friendRequests.clear(); // clear old data
     // fetch new friend requests
     //todo trycatch
@@ -521,6 +517,8 @@ export class Chat {
           element: contactBtn,
           handler: clickHandler,
         });
+
+        webSocketService.conversationTracker.set(friend.convID, 0);
         // else if (type === "remove") { } // todo remover amizade
       } catch (error) {
         console.error("Error getting new conversation with new friend", error);
