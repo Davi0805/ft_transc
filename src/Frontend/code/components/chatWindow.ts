@@ -166,7 +166,15 @@ class ChatWindow {
   }
 
   sendMessage(): void {
-    if (!this.element || !authService.userID) return;
+    if (!this.element || !authService.userID) {
+      console.warn("DEBUG: Chat window element or user ID not found.");
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the chat window could not be found..."
+      );
+      return;
+    } 
     const messageInput = this.element.querySelector(
       ".message-input"
     ) as HTMLInputElement;
@@ -181,7 +189,7 @@ class ChatWindow {
       return;
     }
 
-    if (webSocketService.sendChatMessage(authService.userID, message)) {
+    if (this.convID && webSocketService.sendChatMessage(this.convID, message)) {
       this.addMessage({
         message: message,
         isOwn: true,
@@ -193,7 +201,6 @@ class ChatWindow {
         "Error Sending Message",
         "Message was not able to be sent. Please refresh the page and try again."
       );
-      console.log("DEBUG: Could not send message. Try again");
     }
   }
 
