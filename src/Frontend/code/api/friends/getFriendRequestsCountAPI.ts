@@ -18,11 +18,12 @@ export async function getFriendRequestsCount(): Promise<number> {
     if (!authService.isUserAuthenticated()) {
       const errorMessage: string = `DEBUG: No authToken at getFriendRequestsCount`;
       const error: Error = new Error(errorMessage);
+      (error as any).status = 401;
       throw error;
     }
 
     const response = await fetch(
-      `http://localhost:8080/friend_requests/pending`,
+      `http://localhost:8080/friend_requests/pending/count`,
       {
         method: "GET",
         headers: {
@@ -37,7 +38,16 @@ export async function getFriendRequestsCount(): Promise<number> {
       (error as any).status = response.status;
       throw error;
     }
-    return parseInt((await response.json()).pendingRequestsCounter) as number;
+
+    const data = await response.json();
+    console.log(`DEBUG: getFriendRequestsCount response:`, data);
+    if (typeof data.pendingRequestsCounter !== "number") {
+      const errorMessage: string = `DEBUG: Invalid response format from getFriendRequestsCount`;
+      const error: Error = new Error(errorMessage);
+      (error as any).status = 500;
+      throw error;
+    }
+    return data.pendingRequestsCounter as number;
   } catch (error) {
     throw error;
   }
