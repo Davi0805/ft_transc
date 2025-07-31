@@ -46,6 +46,16 @@ async function FriendRequestRoutes(fastify, options) {
         preHandler: authMiddleware,
         handler: friendRequestController.getAllFriends
     });
+
+    fastify.get('/friend_requests/pending/count', {
+        preHandler: authMiddleware,
+        handler: friendRequestController.getPendingRequestsCount
+    });
+
+    fastify.get('/friend_requests/blocked', {
+        preHandler: authMiddleware,
+        handler: friendRequestController.getAllMyBlockedFriends
+    });
 }
 
 module.exports = FriendRequestRoutes;

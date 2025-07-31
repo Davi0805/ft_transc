@@ -54,6 +54,22 @@ class FriendRequestService {
 
 
     /* 
+    *    @brief Method returns the number of pending requests of user
+    *    @throws 400 - Bad request
+    *    @returns {pendingRequestCounter: number}
+    */
+    async countPendingRequests(user_id)
+    {
+        try {
+            const result = await friendRequestRepo.getPendingRequestCounter(user_id);
+            return result;
+        } catch (error) {
+            throw exception('Failed to retrieve pending friend requests', 400); 
+        }
+    }
+
+
+    /* 
     *    @brief Method to accept friend request
     *    @throws 400 - Bad request
     */
@@ -111,6 +127,15 @@ class FriendRequestService {
         } catch (error) {
             throw exception('Failed to retrieve all friends', 400); 
             
+        }
+    }
+
+    async getAllMyBlockedFriends(user_id)
+    {
+        try {
+            return await friendRequestRepo.getAllMyBlockedFriends(user_id);
+        } catch (error) {
+            throw exception('Failed to retrieve', 400);
         }
     }
 }

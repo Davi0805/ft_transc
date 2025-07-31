@@ -1,0 +1,69 @@
+Comm with backend:
+
+CREATE LOBBY: Based on the lobby settings (see above) defined by the host, create a lobby in the database
+
+GET LOBBY LIST: All active lobbies with the following info:
+- id: given by backend. The identifier that allows to open a lobby when clicked on the list
+- name: The name given by the host
+- host
+- type: Friendly Match | Ranked Match | Tournament
+- capacity: How many are in the slots / how many slots the map allows. Does not really matter how many people are in the lobby since not all will necessarily play.
+- mode: Classic | Modern
+- map: See map list
+- match-duration: Blitz | Rapid | Classical | Long | Marathon
+
+GO TO LOBBY: Based on a lobby id, make the frontend go to a specific lobby. maybe using a query string, but not sure how that works
+
+GET LOBBY SETTINGS BASED ON ID: So settings can be rendered
+
+UPDATE LOBBY SETTINGS: Only the following:
+- mode
+- map
+- match-duration
+
+INVITE PLAYER TO LOBBY: Probably works like "go to lobby" but for a different player?
+
+-------------------------
+Live state of the lobby:
+
+Where should that be saved? Database or Memory?
+
+EACH LOBBY HAS A LIST OF USERS PRESENT. EACH USER HAS:
+- A "Ready" flag (with respective setter and getter)
+- Depending on type of lobby:
+--- An array of players at that user's machine (Friendly). A player consists of (all chosen by user):
+------ id (so it is possible to link that player to their controls)
+------ alias
+------ paddleID
+------ team slot chosen by that player
+--- A team slot for that user (Ranked)
+--- A "Participating" flag (Tournament) (with getter. Should be set if a player exists in the array (friendly), if a team slot exists (ranked) or if the user is present in the tournament (tournament)
+
+GET "IS HOST" BASED ON THE ID OF THE CLIENT: That determined the layout of some buttons, for example the "Start" button
+
+GET "IS EVERYONE READY": returns true if, from the users who ARE participating, all "Ready" flags are true (so people who get in the lobby with no intentions of participating do not stop the game from starting)
+
+---
+For matches:
+
+GET SLOTS: Returns the slots that are already filled by users. Should include for each slot:
+- nickname of the player:
+- userid who controls that player (so frontend can figure out which players it can withdraw)
+
+ADD PLAYER TO SLOT: Indicates that a user chose that slot. Add settings depending whether it is friendly or ranked (see above)
+
+---
+For Tournaments:
+
+- Two extra bits of info:
+--- "Has Started" flag, which stops new players from joining if true.
+--- Current round: the current round of the tournament.
+
+
+GET PARTICIPANTS: the current participants of the tournament. Constist of:
+- username
+- rating
+- score: (everyone starts at 0)
+- prevOpponents: (an array of players, can be only userids), starts empty
+
+

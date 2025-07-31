@@ -10,7 +10,7 @@
 
     min-width: 400px;
     max-width: 500px;
-    max-height: 80vh;
+    height: 500px;
 
     background: rgb(20, 20, 20);
     border: 2px solid rgba(255, 255, 255, 0.1);
@@ -18,10 +18,6 @@
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 
     color: #eee;
-}
-
-.friend-requests-wrapper::backdrop {
-    background: rgba(20, 20, 20, 0.85);
 }
 
 .friend-request-header {

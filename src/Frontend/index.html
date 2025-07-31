@@ -2,77 +2,124 @@
 
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>SPA test</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>SPA test</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/components/utils.css" />
-  <link rel="stylesheet" href="css/login/login.css" />
-  <link rel="stylesheet" href="css/login/twoFactor.css"/>
-  <link rel="stylesheet" href="css/register/register.css"/>
-  <link rel="stylesheet" href="css/header/header.css" />
-  <link rel="stylesheet" href="css/sidebar/chat.css" />
-  <link rel="stylesheet" href="css/sidebar/sidebar.css" />
-  <link rel="stylesheet" href="css/sidebar/friend-requests.css" />
+  <body class="flex flex-col flex-1 overflow-x-auto min-w-[850px]">
+    <video autoplay muted loop class="video-bg">
+      <source src="./Assets/bg.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
 
-</head>
 
-<body>
-  <!-- Header (will contain navigation links) -->
-  <header class="content">
-    <div class="left flex flex-center">
-      <a href="/" class="flex center gap-8 site-home" data-link>
-      <img class="logo" src="./Assets/42PortoLogo.png" alt="42 Porto logo" draggable="false" >
-        <span  class="site-title">ft_transcendence</span>
-      </a>
-    </div>
 
-    <div class="right flex flex-center gap-16 ">
-      <nav id="header-nav" class="flex flex-center gap-24">
-        <a id="home-link" href="/" data-link data-i18n="header-home" class="active nav-link">Home</a>
-        <a id="about-link" href="/about" data-link data-i18n="header-about" class="nav-link">About</a>
+    <!-- Header (will contain navigation links) -->
+    <header id="header">
+      <div class="left flex flex-center flex-shrink-0 min-w-0">
+        <a href="/" class="flex center gap-2 site-home" data-link>
+          <img
+            class="logo"
+            src="./Assets/42PortoLogo.png"
+            alt="42 Porto logo"
+            draggable="false"
+          />
+          <span class="site-title">ft_transcendence</span>
+        </a>
+      </div>
 
-        <!-- <div id="log-reg" class="log-reg flex gap-24"></div>
+      <div class="right flex flex-center gap-4 min-w-0">
+        <nav id="header-nav" class="flex flex-center gap-6">
+          <a
+            id="home-link"
+            href="/"
+            data-link
+            data-i18n="header-home"
+            class="active nav-link"
+            >Home</a
+          >
+          <a 
+            id="play-link"
+            href="/play"
+            data-link
+            data-i18n="header-play"
+            class="nav-link"
+            >Play</a
+          >
+          <a
+            id="about-link"
+            href="/about"
+            data-link
+            data-i18n="header-about"
+            class="nav-link"
+            >About</a
+          >
+
+          <!-- <div id="log-reg" class="log-reg flex gap-24"></div>
 
         <div id="user-in" class="user-in flex gap-16"></div> -->
-      </nav>
+        </nav>
 
-      <div class="language-selector flex flex-center flex-dir-col">
-      <button class="current-language flex flex-center" >
-          <img src="https://flagcdn.com/w20/gb.png" data-lang="uk" alt="United Kingdom" flag draggable="false">
-        <img class="flex flex-dir flex-center" src="./Assets/icons/drop-down.svg" alt="drop-down icon" flag draggable="false">
-        </button>
+        <div class="language-selector flex flex-center flex-dir-col">
+          <button class="current-language flex flex-center">
+            <img
+              src="https://flagcdn.com/w20/gb.png"
+              data-lang="uk"
+              alt="United Kingdom"
+              flag
+              draggable="false"
+            />
+            <img
+              class="flex flex-dir flex-center"
+              src="./Assets/icons/drop-down.svg"
+              alt="drop-down icon"
+              flag
+              draggable="false"
+            />
+          </button>
 
-        <div class="lang-options " style="display: none;">
-          <ul class="flex flex-dir-col flex-center">
-            <li><button class="lang-option">
-                <img src="https://flagcdn.com/w20/pt.png" data-lang="pt" alt="Portuguese flag" draggable="false">
-              </button></li>
+          <div class="lang-options" style="display: none">
+            <ul class="flex flex-dir-col flex-center">
+              <li>
+                <button class="lang-option">
+                  <img
+                    src="https://flagcdn.com/w20/pt.png"
+                    data-lang="pt"
+                    alt="Portuguese flag"
+                    draggable="false"
+                  />
+                </button>
+              </li>
 
-            <li><button class="lang-option">
-                <img src="https://flagcdn.com/w20/es.png" data-lang="es" alt="Spain flag" flag draggable="false">
-              </button></li>
-          </ul>
+              <li>
+                <button class="lang-option">
+                  <img
+                    src="https://flagcdn.com/w20/es.png"
+                    data-lang="es"
+                    alt="Spain flag"
+                    flag
+                    draggable="false"
+                  />
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
+    </header>
+
+    <!-- Main content area (will be dynamically updated) -->
+    <div id="page-layout">
+      <main id="main"></main>
+
+      <aside class="flex justify-end max-w-[200px]"></aside>
+
+      <div id="chat-window-wrapper"></div>
     </div>
-  </header>
 
-  <!-- Main content area (will be dynamically updated) -->
-  <div class="page-layout">
-    <main id="main"></main>
-
-    <aside></aside>
-
-    <div id="chat-window-wrapper"></div>
-  </div>
-
-
-  <!-- JavaScript -->
-  <script type="module" src="js/app.js"></script>
-</body>
-
+    <script src="dist/bundle.js"></script>
+  </body>
 </html>

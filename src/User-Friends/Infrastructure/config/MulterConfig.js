@@ -15,7 +15,10 @@ const storage = multer.diskStorage({
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
+        const fileName = 'avatar_' + req.session.user_id + path.extname(file.originalname);
+        if (fs.existsSync(fileName))
+            fs.unlink(fileName)
+        cb(null, fileName);
     }
 });
 
@@ -28,10 +31,8 @@ function multerConfig(fastify, opts, done) {
         done(null);
     });
 
-    // Decorate fastify with the blob object containing upload methods
     fastify.decorate('blob', upload);
     done();
 }
 
-// Export wrapped with fastify-plugin to preserve decorations
 module.exports = fp(multerConfig);

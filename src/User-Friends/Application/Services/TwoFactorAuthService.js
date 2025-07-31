@@ -1,6 +1,7 @@
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const exception = require('../../Infrastructure/config/CustomException');
+const temp2FARepository = require('../../Adapters/outbound/Repositories/Temp2FARepository');
 
 class TwoFactorAuthService {
 
@@ -34,6 +35,20 @@ class TwoFactorAuthService {
 
         if (!verified) throw exception('Failed to authenticate your 2FA token', 400);
         return verified;
+    }
+
+    async saveTempTwoFa(user_id, secret)
+    {
+        await temp2FARepository.save(user_id, secret);
+    }
+
+
+    async confirmTwoFaActivation(user_id, token)
+    {
+        const secret = await temp2FARepository.get(user_id);
+        if (!secret) throw exception('Activation failed', 400);
+        if (!await this.verifyToken(secret, token)) throw exception('Activation failed', 400);
+        return secret;
     }
     
 }

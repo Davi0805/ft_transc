@@ -1,5 +1,14 @@
-.chat-sidebar.content {
+.chat-sidebar {
+  width: 100%;
   background: rgba(20, 20, 20, 0.7);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-sidebar.content {
+  background: #0e2942;
   border-top: none;
   border-right: none;
   border-bottom: none;
@@ -7,19 +16,6 @@
   border-radius: 0;
 }
 
-.chat-sidebar {
-  position: fixed;
-  top: 60px;
-  right: 0;
-  width: 200px;
-  height: calc(100vh - 60px);
-  background: rgba(20, 20, 20, 0.7);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  z-index: 10;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 .chat-sidebar-topbar {
   display: flex;
@@ -177,6 +173,7 @@
   margin: 0;
   padding: 0;
 }
+
 .friend-requests-btn {
   border-radius: 0;
   width: 100%;
@@ -254,40 +251,58 @@
       inset 0 1px 4px rgba(255, 255, 255, 0.15);
   }
 }
-
 .add-friend-popover {
+  display: flex;
+  align-items: center; /* Vertically center content like topbar */
   position: fixed;
-  top: 62px; /* header */
-  right: 202px; /* sidebar */
+  top: 60px; /* header */
+  right: 200px; /* sidebar */
+  
+  padding: 5px; /* Match the topbar padding */
+  width: 200px; /* Reduced width to prevent overlap */
+  min-height: 40px; /* Match topbar min-height */
+  z-index: 1002;
+  gap: 6px; /* Match topbar gap */
+
   background: rgb(12, 23, 36);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 10px;
-  width: 200px;
-  z-index: 1002;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  display: flex;
-  gap: 8px;
 }
 
 .add-friend-popover input {
+  outline: none;
+  flex: 1; /* Take remaining space */
+  padding: 4px 6px; /* Reduced horizontal padding */
+  height: 28px; /* Same as icon buttons (20px icon + 4px padding each side) */
+  min-width: 0; /* Allow input to shrink */
+  
   background-color: rgba(255, 255, 255, 0.05);
-  border: none;
-  padding: 6px 8px;
+  border: 0.5px solid rgba(255, 255, 255, 0.1); /* Match icon-btn border */
   border-radius: 4px;
+  box-sizing: border-box;
+  
   color: #fff;
   font-size: 14px;
-  width: 80%;
-  outline: none;
 }
 
 .add-friend-popover button {
-  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px; 
+  height: 28px;
+  padding: 4px; /* Match icon-btn padding */
+
   background-color: rgba(0, 123, 255, 0.2);
-  border: none;
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
+
   color: #fff;
   font-weight: 500;
+  font-size: 12px;
   cursor: pointer;
   transition: background 0.2s ease;
 }

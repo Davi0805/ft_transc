@@ -30,7 +30,7 @@ class UserController {
     async getMyData(req, reply)
     {
         const users = await userService.findById(req.session.user_id);
-        return reply.send({id: users[0].user_id, nickname: users[0].name});
+        return reply.send({id: users[0].user_id, nickname: users[0].name, username: users[0].username, email: users[0].email});
     }
 
 
@@ -47,7 +47,9 @@ class UserController {
         return reply.send({ user_id: user[0].user_id,
                             name: user[0].name,
                             username: user[0].username,
-                            email: user[0].email });
+                            email: user[0].email,
+                            spriteID: user[0].sprite_id, //TODO: Check if this addition is correct.
+                            rating: user[0].rating });
     }
 
 
@@ -169,8 +171,16 @@ class UserController {
         const user = await userService.findById(req.session.user_id);
         if (user.twofa_enabled) throw exception('2FA already activated', 400);
         const twofa = await twofaService.generateSecret();
-        await userService.activateTwoFactorAuth(req.session.user_id, twofa.secret);
+        await twofaService.saveTempTwoFa(req.session.user_id, twofa.secret);
         return reply.send({qrcode: twofa.qrCodeUrl});
+    }
+
+
+    async confirmTwoFactorAuthActivation(req, reply)
+    {
+        const secret = await twofaService.confirmTwoFaActivation(req.session.user_id, req.body.token);
+        await userService.activateTwoFactorAuth(req.session.user_id, secret);
+        return reply.send();
     }
 
 
@@ -182,10 +192,11 @@ class UserController {
     */
     async twofa_verify(req, reply)
     {
-        const user = await userService.findById(req.session.user_id);
+        const session = await redisService.getSession(req.headers.authorization);
+        const user = await userService.findById(session.user_id);
         await twofaService.verifyToken(user[0].twofa_secret, req.body.token)
         const jwt = req.headers.authorization.substring(7);
-        await redisService.saveSession(jwt, { user_id: req.session.user_id, twofa_verified: 1 });
+        await redisService.saveSession(jwt, { user_id: session.user_id, twofa_verified: 1 });
         return reply.send();
     }
 }
