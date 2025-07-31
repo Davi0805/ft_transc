@@ -43,6 +43,19 @@ export function getSlotsFromMap(map: TMap): TSlots {
     } as TSlots
 }
 
+export function areAllSlotsFull(slots: TSlots): boolean {
+    for (const teamName of (Object.keys(slots) as (keyof typeof SIDES)[])) {
+        const team = slots[teamName];
+        if (!team) { continue };
+        for (const roleName of (Object.keys(team) as (keyof typeof ROLES)[])) {
+            const player = team[roleName];
+            if (player === undefined) { continue; }
+            else if (player === null) { return false; }
+        }
+    }
+    return true;
+}
+
 //TODO: This should be calculated in the backend!!!!!!!
 export function getMaxPlayersFromMap(map: TMap): number {
     const [amountStr, type, _size] = map.split("-");

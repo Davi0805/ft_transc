@@ -1,5 +1,4 @@
-import { SelfData } from "../api/getSelfDataAPI";
-import { LobbiesListDTO, LobbyCreationConfigsDTO, TLobby } from "../pages/play/lobbyTyping";
+import { LobbiesListDTO, LobbyCreationConfigsDTO } from "../pages/play/lobbyTyping";
 
 export async function getAllLobbies(): Promise<LobbiesListDTO> {
     const response = await fetch(`http://localhost:6969/getAllLobbies`, {

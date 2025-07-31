@@ -1,6 +1,6 @@
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { router } from "../../routes/router";
-import { getSelfData } from "../../api/getSelfDataAPI";
+import { getSelfData } from "../../api/userData/getSelfDataAPI";
 //import { createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
 import { createLobby } from "../../testServices/testLobbyAPI";
 //import { lobbySocketService } from "../../services/lobbySocketService";

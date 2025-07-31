@@ -259,7 +259,4 @@ export type TMatchPlayer = {
     spriteID: number | null, //If null, take spriteID from settings of userid
     team: SIDES,
     role: ROLES,
-    //leftControl: string,
-    //rightControl: string,
-    //ready: boolean
 }

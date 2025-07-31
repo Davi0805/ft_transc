@@ -208,11 +208,6 @@ class TestMatchService {
             const human = {
                 id: player.id,
                 paddleID: paddleID,
-                controls: {
-                    left: "ArrowLeft", //TODO: probably get these from lobby
-                    right: "ArrowRight",
-                    pause: " " //TODO: Deprecated. To be removed
-                }
             }
             const client = userCustoms.clients.find(client => client.id === player.userID);
             if (client) {

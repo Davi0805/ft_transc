@@ -5,7 +5,7 @@ import { lobbySocketService } from "../../testServices/testLobySocketService";
 import { getAllLobbies } from "../../testServices/testLobbyAPI";
 import { getTable } from "./utils/stylingComponents";
 import { LobbiesListDTO, TLobby } from "./lobbyTyping";
-import { getSelfData } from "../../api/getSelfDataAPI";
+import { getSelfData } from "../../api/userData/getSelfDataAPI";
 import { lobbyService } from "../../services/LobbyService";
 
 export const PlayPage = {
