@@ -1,8 +1,6 @@
-import { InboundDTOMap, InboundDTO, OutboundDTO, OutboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
-import { authService } from "./authService";
-import { lobbyService } from "./LobbyService";
+/* import { lobbyService } from "../services/LobbyService";
+import { InboundDTO, OutboundDTO, InboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
 import { App } from "../match/system/App";
-import { matchService } from "./matchService";
 
 class LobbySocketService {
     constructor() {
@@ -10,7 +8,7 @@ class LobbySocketService {
         this._lobbyID = 0; //TODO change to null
     }
 
-    connect(lobbyID: number): Promise<TLobby | null> {
+    connect(lobbyID: number, userID: number): Promise<TLobby | null> { //TODO: this should return TLobby, so people who connect to it get the info
         return new Promise((resolve, reject) => {
             if (this._ws && this._ws.readyState === WebSocket.OPEN) {
                 console.log("DEBUG: lobbySocket already connected");
@@ -18,29 +16,28 @@ class LobbySocketService {
                 return;
             }
 
-            this._ws = new WebSocket(`ws://localhost:8084/ws/${lobbyID}`, [`Bearer.${authService.getToken()}`]);
+            this._ws = new WebSocket(`ws://localhost:6969/ws/${lobbyID}/${userID}`);
             this._lobbyID = lobbyID;
+            
+            this._ws.onmessage = (ev: MessageEvent) => {
+                //try {
+                    const data = JSON.parse(ev.data) as OutboundDTO;
+                    //console.log("Received data")
+                    //console.log(data)
+                    if (data.requestType === "lobby") {
+                        resolve(data.data);
+                    } else {
+                        this._handleMessage(data)
+                    }
+                //} catch (error) {
+                //    console.error("Error parsing websocket message");
+                //}
+            }
 
             this._ws.onopen = (ev: Event) => {
                 console.log("DEBUG: lobbySocket connected");
             }
             
-            this._ws.onmessage = (ev: MessageEvent) => {
-                console.log("Message received: " + ev.data)
-                let data: OutboundDTO | null = null;
-                try {
-                    data = JSON.parse(ev.data) as OutboundDTO;
-                } catch (error) {
-                    console.error("Error parsing websocket message");
-                }
-                if (!data) {return}
-                if (data.requestType === "lobby") {
-                    resolve(data.data);
-                } else {
-                    this._handleMessage(data)
-                }
-            }
-
             this._ws.onclose = (ev: CloseEvent) => {
                 console.log("DEBUG: websocket closed:", ev.code, ev.reason);
                 this._ws = null;
@@ -130,9 +127,9 @@ class LobbySocketService {
                 App.severUpdate(dto.data)
                 break;
             default:
-                throw Error(`A message came in with a non registered type!! (${dto.requestType})`)
+                throw Error("A message came in with a non registered type!!")
         }
     }
 }
 
-export const lobbySocketService = new LobbySocketService();
+export const lobbySocketService = new LobbySocketService(); */

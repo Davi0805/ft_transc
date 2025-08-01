@@ -2,7 +2,7 @@ import AScene from "../system/AScene";
 import Point from "../matchSharedDependencies/Point";
 import Assets from "../system/framework/Assets";
 import { SIDES } from "../matchSharedDependencies/sharedTypes";
-import { CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies";
+import { CGameSceneConfigs, TControls } from "../matchSharedDependencies/SetupDependencies";
 import { SGameDTO } from "../matchSharedDependencies/dtos";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
@@ -35,14 +35,16 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 )
             ))
         })
-        gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
+        gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => {
             this.paddles.set(
                 paddleConf.id,  
                 new CPaddle(paddleConf, this._root),
             )
         })
-        gameSceneConfigs.controls.forEach( (controls, humanID) => {
-            this._controls.set(humanID, new CPaddleControls(humanID, controls))
+
+        if (gameSceneConfigs.controls === null) { throw Error("controls were not initialized!") }
+        gameSceneConfigs.controls.forEach( human => {
+            this._controls.set(human.humanID, new CPaddleControls(human.humanID, human.controls))
         })
     }
 
@@ -90,7 +92,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
 
     override tickerUpdate(delta: number, counter: number): void {
-        //if (counter % 20 === 0) {console.log(delta)}
         this.teams.forEach(team => {
             team.hp.updateAnimations();
         })

@@ -1,15 +1,8 @@
 import { authService } from "../../services/authService";
-import { TLobby } from "../../pages/play/lobbyTyping";
+import { LobbyCreationConfigsDTO, TLobby } from "../../pages/play/lobbyTyping";
 
-export type TLobbyCreationConfigs = Pick<
-  TLobby,
-  "name" | "host" | "type" | "map" | "mode" | "duration"
->;
-type CreationResultData = { lobby_id: number };
 
-export async function createLobby(
-  lobbySettings: TLobbyCreationConfigs
-): Promise<number> {
+export async function createLobby(lobbySettings: LobbyCreationConfigsDTO): Promise<number> {
   try {
     if (!authService.isUserAuthenticated()) {
       const errorMessage: string = `DEBUG: No authToken at createLobby`;
@@ -34,8 +27,8 @@ export async function createLobby(
       throw error;
     }
 
-    const data = (await response.json()) as CreationResultData;
-    return data.lobby_id;
+    const data = (await response.json()).id as number;
+    return data;
   } catch (error) {
     throw error;
   }

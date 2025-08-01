@@ -1,7 +1,12 @@
-import { getLobbySettings} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
 import { router } from "../../routes/router";
 import { lobbySocketService } from "../../services/lobbySocketService";
+//import { lobbySocketService } from "../../testServices/testLobySocketService";
+import { getAllLobbies } from "../../api/lobbyMatchAPI/getAllLobbiesAPI";
+//import { getAllLobbies } from "../../testServices/testLobbyAPI";
 import { getTable } from "./utils/stylingComponents";
+import { LobbiesListDTO, TLobby } from "./lobbyTyping";
+import { getSelfData } from "../../api/userData/getSelfDataAPI";
+import { lobbyService } from "../../services/LobbyService";
 
 export const PlayPage = {
     template() {
@@ -25,7 +30,6 @@ export const PlayPage = {
     },
 
     init() {
-        console.log("wtfffff")
         const lobbiesHead = document.getElementById('lobbies-head') as HTMLElement;
         lobbiesHead.innerHTML = this.getLobbyCategoriesHtml();
 
@@ -53,17 +57,33 @@ export const PlayPage = {
         const lobbiesBody = document.getElementById('lobbies-body') as HTMLElement;
         lobbiesBody.innerHTML = ""
 
-        const lobbiesInfo = await getLobbySettings(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
+        const lobbiesInfo = await getAllLobbies(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
+
+        //console.log(lobbiesInfo)
+
+        const categories = ["name", "host", "type", "capacity", "mode", "map", "duration"] as const
 
         for (let i = 0; i < lobbiesInfo.length; i++) {
             const row = document.createElement("tr");
             const bgBrightness = i % 2 === 0 ? "bg-gray-900/0" : "bg-gray-900/25";
             row.className = `${bgBrightness} hover:bg-gray-900/90 active:bg-gray-900/25`
             
-            Object.values(lobbiesInfo[i]).forEach(item => {
+            const lobby = lobbiesInfo[i]
+            
+            console.log("CURRENT LOBBY IS: ")
+            console.log(lobby)
+            categories.forEach(category => {
+                console.log("Category: ", category)
+
+                console.log("lobby setting: ", lobby[category])
                 const tdata = document.createElement('td');
                 tdata.className = `px-6 py-2 wrap-anywhere`;
-                tdata.textContent = item.toString();
+                
+                if (category === "capacity") {
+                    tdata.textContent = `${lobby["capacity"].taken}/${lobby["capacity"].max}`
+                } else {
+                    tdata.textContent = lobby[category].toString();
+                }
                 row.appendChild(tdata);
             })
             row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].id))
@@ -73,8 +93,11 @@ export const PlayPage = {
         console.log("Lobby list updated!")
     },
 
-    async goToLobby(id: number) {
-        lobbySocketService.connect(id);
+    async goToLobby(lobbyId: number) {
+        const selfData = await getSelfData();
+        const lobby = await lobbySocketService.connect(lobbyId);
+        if (!lobby) {throw Error("Socket was already connected somehow!")}
+        lobbyService.init(selfData.id, lobby)
         router.navigateTo('/lobby')
     }
 }

@@ -1,20 +1,12 @@
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { router } from "../../routes/router";
 import { getSelfData } from "../../api/userData/getSelfDataAPI";
-import {
-  TLobbyCreationConfigs,
-  createLobby,
-} from "../../api/lobbyMatchAPI/createLobbyAPI";
+import { createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
+//import { createLobby } from "../../testServices/testLobbyAPI";
 import { lobbySocketService } from "../../services/lobbySocketService";
-import {
-  TLobbyType,
-  TMapType,
-  TMatchMode,
-  TMatchDuration,
-  TLobby,
-} from "./lobbyTyping";
-import { lobby } from "../../services/LobbyService";
-import { getMaxPlayersFromMap } from "./utils/helpers";
+//import { lobbySocketService } from "../../testServices/testLobySocketService";
+import { TLobbyType, TMap, TMode, TDuration, TLobby, LobbyCreationConfigsDTO } from "./lobbyTyping";
+import { lobbyService } from "../../services/LobbyService";
 
 export const CreateLobbyPage = {
   template() {
@@ -66,61 +58,31 @@ export const CreateLobbyPage = {
     const buttonReturn = document.getElementById("btn-return") as HTMLElement;
     buttonReturn.addEventListener("click", () => router.navigateTo("/play"));
 
-    const form = document.getElementById(
-      "lobby-creation-form"
-    ) as HTMLFormElement;
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const selfData = await getSelfData();
-      const hostName = selfData.nickname;
-      if (!hostName) {
-        throw Error();
-      }
-      const nameInput = document.getElementById(
-        "lobby-name"
-      ) as HTMLInputElement;
-      const typeInput = document.getElementById(
-        "lobby-type"
-      ) as HTMLSelectElement;
-      const matchMapInput = document.getElementById(
-        "match-map"
-      ) as HTMLSelectElement;
-      const matchModeInput = document.getElementById(
-        "match-mode"
-      ) as HTMLSelectElement;
-      const matchDurationInput = document.getElementById(
-        "match-duration"
-      ) as HTMLSelectElement;
-      const lobbySettings: TLobbyCreationConfigs = {
-        name: nameInput.value,
-        host: hostName,
-        type: typeInput.options[typeInput.selectedIndex].id as TLobbyType,
-        map: matchMapInput.value as TMapType,
-        mode: matchModeInput.value as TMatchMode,
-        duration: matchDurationInput.value as TMatchDuration,
-      };
-
-      const lobbyID = await createLobby(lobbySettings);
-      console.log("Waiting for websocket to connect...");
-      await lobbySocketService.connect(lobbyID);
-      /* lobby.init(selfData, {
-                id: lobbyID,
-                hostID: selfData.id,
-                name: lobbySettings.name,
-                host: lobbySettings.host,
-                type: lobbySettings.type,
-                capacity: { taken: 0, max: 0 }, //TODO: Make calculating function
-                map: lobbySettings.map,
-                mode: lobbySettings.mode,
-                duration: lobbySettings.duration,
-                round: 1
-            })
-            await lobby.addLobbyUserOUT(selfData.id); */
-      await lobby.waitForInit();
-      router.navigateTo("/lobby");
-    });
-    console.log("Create Friendly page loaded!");
-  },
+        const form = document.getElementById('lobby-creation-form') as HTMLFormElement;
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const selfData = await getSelfData();
+            const nameInput = document.getElementById("lobby-name") as HTMLInputElement
+            const typeInput = document.getElementById("lobby-type") as HTMLSelectElement
+            const matchMapInput = document.getElementById("match-map") as HTMLSelectElement
+            const matchModeInput = document.getElementById("match-mode") as HTMLSelectElement
+            const matchDurationInput = document.getElementById("match-duration") as HTMLSelectElement
+            const lobbySettings: LobbyCreationConfigsDTO = {
+                name: nameInput.value,
+                type: typeInput.options[typeInput.selectedIndex].id as TLobbyType,
+                map: matchMapInput.value as TMap,
+                mode: matchModeInput.value as TMode,
+                duration: matchDurationInput.value as TDuration
+            }
+            
+            const lobbyID = await createLobby(lobbySettings)
+            const lobby = await lobbySocketService.connect(lobbyID);
+            if (!lobby) {throw Error("Socket was already connected somehow!")}
+            lobbyService.init(selfData.id, lobby)
+            router.navigateTo('/lobby')
+        })
+        console.log('Create Friendly page loaded!')
+    },
 
   _updateLobbyOptions(currentType: TLobbyType) {
     const mutableSettings = document.getElementById(

@@ -1,11 +1,11 @@
 import { router } from "../../routes/router";
-import { flashButton, getButton, getTable, toggleButton } from "./utils/stylingComponents";
+import { flashButton, getButton, getTable, setupKeyCaptureButton, toggleButton } from "./utils/stylingComponents";
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
-import { TLobby } from "./lobbyTyping";
-import { TDynamicLobbySettings, TMapType, TMatchDuration, TMatchMode } from "./lobbyTyping";
-//import { LobbyLogic } from "./lobbyLogic";
-import { lobby } from "../../services/LobbyService";
+import { TLobby, TDynamicLobbySettings, TMap, TDuration, TMode } from "./lobbyTyping";
+import { lobbyService } from "../../services/LobbyService";
 import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes";
+import { matchService } from "../../services/matchService";
+import { areAllSlotsFull } from "./utils/helpers";
 
 export const LobbyPage = {
     template() {
@@ -13,32 +13,34 @@ export const LobbyPage = {
             <div class="flex flex-col items-center h-full max-h-[650px] justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 gap-3 overflow-hidden">
                 <h1 id="lobby-title" class="text-3xl p-2"></h1>
                 <h3 id="lobby-subtitle" class="text-xl p-1"></h3>
-                <div id="lobby-body" class="flex flex-row w-full min-h-0 gap-3">
+                <div id="lobby-body" class="flex flex-row w-full min-h-0 gap-3 ">
                     <div id="participants" class="flex flex-col min-w-[300px] border-2 rounded-2xl border-gray-900/75 min-h-0 overflow-hidden">
                     </div>
-                    <div id="lobby-settings-and-buttons" class="flex flex-col justify-between gap-6">
-                        <div id="lobby-settings">
+                    <div id="lobby-settings-and-buttons" class="flex flex-col justify-between gap-6 outline outline-2 outline-red-500">
+                        <div id="lobby-settings" class="flex flex-col gap-1">
                         </div>
                         <div id="lobby-buttons" class="flex flex-col gap-1">
                         </div>
                     </div>
                 </div>
+                <h3 id="current-round"></h3>
             </div>
         `;
     },
 
     async init() {
+        console.log(lobbyService.lobby)
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
-        titleElement.textContent = lobby.settings.name;
+        titleElement.textContent = lobbyService.lobby.name;
         const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
-        switch (lobby.settings.type) {
+        switch (lobbyService.lobby.type) {
             case "friendly": subtitleElement.textContent = "Friendly Match Lobby"; break;
             case "ranked": subtitleElement.textContent = "Ranked Match Lobby"; break;
             case "tournament": subtitleElement. textContent = "Tournament Lobby"; break;
             default: throw new Error("GAVE SHIT");
         }
         
-        if (lobby.settings.type == "tournament") {
+        if (lobbyService.lobby.type == "tournament") {
             await this.renderParticipants();
         } else {
             await this.renderSlots();
@@ -46,32 +48,29 @@ export const LobbyPage = {
         await this.renderSettings();
         await this.activateButtons();
 
+        this.updateRound();
+
         console.log('Lobby Ranked page loaded!')
     },
 
     async renderSettings() {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        const lobbySettingsListing: TLobby = lobby.settings;
+        const lobbySettingsListing: TLobby = lobbyService.lobby;
         
-        let lobbySettingsHtml = `
-            <div id="settings-listing" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(false, lobby.settings.type, lobbySettingsListing)}
-                ${getButton("btn-change-settings", "button", "Change lobby settings", false).outerHTML}
-            </div>
-        `;
-        lobbySettingsElement.innerHTML = lobbySettingsHtml;
+        lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing)
 
-        const buttonChangeSettings = document.getElementById('btn-change-settings') as HTMLElement;
-        buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
-
-
+        if (lobbyService.amIHost()) {
+            const buttonChangeSettings = getButton("btn-change-settings", "button", "Change lobby settings", false);
+            buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
+            lobbySettingsElement.appendChild(buttonChangeSettings);
+        }
     },
 
     renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(true, lobby.settings.type, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(true, lobbyService.lobby.type, lobbySettingsListing)}
                 ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
             </div>
         `;
@@ -84,50 +83,55 @@ export const LobbyPage = {
         })
     },
 
+    updateRound() {
+        const roundElement = document.getElementById("current-round") as HTMLElement;
+        roundElement.textContent = `Current round: ${lobbyService.lobby.round}`
+    },
+
 
     async activateButtons() {
         const buttonsDiv = document.getElementById("lobby-buttons") as HTMLElement;
 
         const inviteButton = getButton("btn-invite", "button", "Invite");
-        inviteButton.addEventListener('click', () => { lobby.inviteUserToLobby(1); }) //TODO: "1" is hardcoded. Find a way to invite specific user
+        inviteButton.addEventListener('click', () => { lobbyService.inviteUserToLobby(1); }) //TODO: "1" is hardcoded. Find a way to invite specific user
         buttonsDiv.appendChild(inviteButton);
 
         const leaveButton = getButton("btn-leave", "button", "Leave");
         leaveButton.addEventListener('click', () => {
-            lobby.leave()
+            lobbyService.leave()
             router.navigateTo('/play')
         })
         buttonsDiv.appendChild(leaveButton);
 
         const readyButton = getButton("btn-ready", "button", "Ready");
         readyButton.addEventListener('click', async () => {
-            if (!lobby.amIParticipating()) {
+            if (!lobbyService.isUserParticipating(lobbyService.myID)) {
                 flashButton(readyButton, "You must join first!")
             } else {
                 const state = toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
-                lobby.updateReadinessIN(state);
+                lobbyService.updateReadinessIN(state);
             }
         });
         buttonsDiv.appendChild(readyButton);
 
-        console.log(lobby.amIHost())
-        if (lobby.amIHost()) {
+        if (lobbyService.amIHost()) {
             const startButton = getButton("btn-start", "button", "Start");
             buttonsDiv.appendChild(startButton);
             startButton.addEventListener('click', async () => {
-                if (!lobby.isEveryoneReady()) {
+                if (!lobbyService.isEveryoneReady()) {
                     flashButton(startButton, "Not everyone is ready!");
-                } else {
-                    lobby.startMatchIN();
+                } else if (lobbyService._isLobbyOfType("ranked") && !areAllSlotsFull(lobbyService.getSlots())) {
+                    flashButton(startButton, "Not all slots are filled!")
+                } else {        
+                    lobbyService.startMatchIN();
                 }
             })
         }
     },
 
     async renderSlots() {
-        const slots = lobby.getSlots();
-        const canJoin = !(lobby.amIParticipating()) || lobby.settings.type == "friendly";
-        console.log("can join: " + canJoin)
+        const slots = lobbyService.getSlots();
+        const canJoin = !(lobbyService.isUserParticipating(lobbyService.myID)) || lobbyService.lobby.type == "friendly";
 
         const teamsElement = document.getElementById('participants') as HTMLElement;
         teamsElement.innerHTML = "";
@@ -143,9 +147,7 @@ export const LobbyPage = {
             teamNameElement.textContent = teamName;
             teamElement.appendChild(teamNameElement);
             slotsTable.appendChild(teamElement);
-            
-            console.log("Team: ")
-            console.log(team);
+  
             for (const roleName of (Object.keys(team) as (keyof typeof ROLES)[])) {
                 const player = team[roleName]
                 if (player === undefined) { continue; }
@@ -161,16 +163,30 @@ export const LobbyPage = {
                 const slotSpaceElement = document.createElement("td");
                 slotSpaceElement.className = "text-center"
                 if (player !== null) {
-                    //TODO should find a way to identify if player is current user and add a withdraw button
+                    const playerDiv = document.createElement("div");
+                    playerDiv.className = "flex flex-row"
+                    
                     const playerElement = document.createElement("p");
-                    playerElement.className = "text-xl p-2"
-                    playerElement.textContent = player.toString();
-                    slotSpaceElement.appendChild(playerElement);
+                    playerElement.className = "w-full text-xl p-2"
+                    playerElement.textContent = player.nickname.toString();
+                    playerDiv.appendChild(playerElement);
+
+                    if (player.userID === lobbyService.myID) {
+                        const withdrawButton = getButton("btn-withdraw", "button", "X", false);
+                        withdrawButton.addEventListener("click", () => {
+                            matchService.removeControls(player.id);
+                            lobbyService.lobby.type === "friendly"
+                            ? lobbyService.removeFriendlyPlayerIN(player.id)
+                            : lobbyService.removeRankedPlayerIN(player.id)
+                        })
+                        playerDiv.appendChild(withdrawButton);
+                    }
+                    
+                    slotSpaceElement.appendChild(playerDiv);
                 } else if (canJoin){
-                    console.log("maybe")
                     const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
                     slotJoinElement.addEventListener('click', async () => {
-                        lobby.settings.type === "friendly"
+                        lobbyService.lobby.type === "friendly"
                         ? this.slotJoinFriendlyCallback(SIDES[teamName], ROLES[roleName])
                         : this.slotJoinRankedCallback(SIDES[teamName], ROLES[roleName])
                     })
@@ -184,6 +200,11 @@ export const LobbyPage = {
     },
 
     async slotJoinFriendlyCallback(team: SIDES, role: ROLES) {
+        const directions = matchService.getDirectionsFromTeam(team);
+
+        const leftKey = "Arrow" + directions.left
+        const rightKey = "Arrow" + directions.right
+
         const settingsDialog = document.createElement('dialog');
         settingsDialog.className = "fixed m-auto overflow-hidden rounded-lg"
         settingsDialog.innerHTML = `
@@ -196,16 +217,32 @@ export const LobbyPage = {
                 <div id="choose-paddle" class="flex flex-row gap-3">
                     <label for="player-paddle" class="text-xl">Paddle:</label>
                     <select id="player-paddle" name="player-alias" class="bg-gray-900/50 rounded-2xl px-4 text-center">
+                        <option>0</option>
                         <option>1</option>
                         <option>2</option>
-                        <option>3</option>
                     </select>
+                </div>
+                <div id="choose-left-ctr" class="flex flex-row gap-3">
+                    <label for="left-listener" class="text-xl">${directions.left} button:</label>
+                    ${getButton("left-listener", "button", leftKey, false).outerHTML}
+                </div>
+                <div id="choose-right-ctr" class="flex flex-row gap-3">
+                    <label for="right-listener" class="text-xl">${directions.right} button:</label>
+                    ${getButton("right-listener", "button", rightKey, false).outerHTML}
                 </div>
 
                 ${getButton("btn-close-dialog", "submit", "Join", false).outerHTML}
             </form>
         `;
         document.body.appendChild(settingsDialog);
+
+        
+        const leftListener = document.getElementById("left-listener") as HTMLButtonElement
+        const rightListener = document.getElementById("right-listener") as HTMLButtonElement
+        setupKeyCaptureButton(leftListener)
+        setupKeyCaptureButton(rightListener)
+
+
         const closeDialogButton = document.getElementById("btn-close-dialog") as HTMLElement;
         closeDialogButton.addEventListener("click", (e) => {
             e.preventDefault();
@@ -218,52 +255,69 @@ export const LobbyPage = {
     },
 
     async slotJoinRankedCallback(team: SIDES, role: ROLES) {
-        //TODO: check how to save the controls. Maybe on lobby Service? Maybe only at the start of the match?
-        const leftControl: string = "LeftArrow" //TODO: calculate from team
-        const rightControl: string = "RightArrow" //TODO: calculate from team
-        lobby.addRankedPlayerIN({
+        matchService.addDefaultControls(lobbyService.myID, team);
+        lobbyService.addRankedPlayerIN({
             team: team,
             role: role
         });
-        //this.renderSlots(); This should probably only happen when everyone is updated
     },
 
     async renderParticipants() {
         const participantsElement = document.getElementById('participants') as HTMLElement;
+        const participantsTableElement = document.createElement("div");
+        participantsTableElement.id = "participants-table";
+        participantsTableElement.className = "h-full"
+        participantsElement.appendChild(participantsTableElement);
 
+        this.renderTournamentTable()
+        
+        const participating = lobbyService.isUserParticipating(lobbyService.myID);
+        const joinWithdrawButton = getButton("btn-join-withdraw", "button", "Join", false)
+        joinWithdrawButton.addEventListener("click", () => {
+            const state = toggleButton(joinWithdrawButton, "Withdraw", "Join")
+            console.log(state)
+            if (state === true) {
+                lobbyService.addTournamentPlayerIN()
+            } else {
+                lobbyService.removeTournamentPlayerIN()
+            }
+        })
+        joinWithdrawButton.classList.add("w-full");
+
+        participantsElement.appendChild(joinWithdrawButton)
+    },
+
+    renderTournamentTable() {
+        const tableElement = document.getElementById("participants-table");
+        if (!tableElement) {throw Error("Tournament table element was not found")}
+        tableElement.innerHTML = ""
+        
         const header = document.createElement("h2");
         header.className = "text-center text-2xl bg-gray-900/75 p-1"
         header.textContent = "Participants";
-        participantsElement.appendChild(header)
+        tableElement.appendChild(header)
 
 
         let participantsTableBody = ""
         let place = 1
-        for (let participant of lobby.getTournPlayers()) {
-            participantsTableBody += `<tr class="bg-gray-900/${place % 2 === 0 ? "25" : "50"}"><td>${place++}</td>`;
-            Object.values(participant).forEach(info => {
-                participantsTableBody += `<td>${info}</td>`
+        const categories = ["nick", "rating", "score"] as const
+        for (let participant of lobbyService.getTournPlayers()) {
+            const opacity = `opacity-${participant.participating ? "100" : "25"}`
+            const bg = `bg-gray-900/${place % 2 === 0 ? "25" : "50"}`;
+            participantsTableBody += `<tr class="${bg} ${opacity}"><td>${place++}</td>`;
+            categories.forEach(category => {
+                participantsTableBody += `<td>${participant[category]}</td>`;
             })
             participantsTableBody += "</tr>";
         }
 
         const participantsTableHead = `
             <tr class="text-xl bg-gray-900/90">
-                <td>Place</td><td>Player</td><td>rank</td><td>score</td>
+                <td>Place</td><td>Player</td><td>Rating</td><td>Score</td>
             </tr>
         `
         const participantsTable = getTable("participants", participantsTableHead, participantsTableBody)
-        participantsElement.innerHTML += participantsTable.outerHTML;
-        
-        const participating = lobby.amIParticipating();
-        const joinWithdrawButton = getButton("btn-join-withdraw", "button", participating ? "Withdraw" : "Join", false)
-        joinWithdrawButton.addEventListener("click", () => {
-            lobby.addTournPlayerIN()
-        })
-        //TODO: callback for this button is missing!
-        joinWithdrawButton.classList.add("w-full");
-
-        participantsElement.appendChild(joinWithdrawButton)
+        tableElement.innerHTML += participantsTable.outerHTML;
     },
 
     //Settings logic
@@ -271,10 +325,10 @@ export const LobbyPage = {
         const map = (document.getElementById('match-map') as HTMLSelectElement).value;
         const mode = (document.getElementById('match-mode') as HTMLSelectElement).value;
         const duration = (document.getElementById('match-duration') as HTMLSelectElement).value;
-        lobby.updateSettingsIN({
-            map: map as TMapType,
-            mode: mode as TMatchMode,
-            duration: duration as TMatchDuration
+        lobbyService.updateSettingsIN({
+            map: map as TMap,
+            mode: mode as TMode,
+            duration: duration as TDuration
         })
         console.log("New settings applied!")
     },
@@ -287,14 +341,23 @@ export const LobbyPage = {
         const alias = aliasInput.value;
         const spriteIdInput = document.getElementById("player-paddle") as HTMLInputElement;
         const spriteID = Number(spriteIdInput.value)
-        lobby.addFriendlyPlayerIN({
+        lobbyService.addFriendlyPlayerIN({
             id: -1, //This is supposed to be generated by backend
             nickname: alias,
             spriteID: spriteID,
             team: team,
             role: role 
         });
+
+        const leftKey = (document.getElementById("left-listener") as HTMLButtonElement).textContent
+        const rightKey = (document.getElementById("right-listener") as HTMLButtonElement).textContent
+        if (!leftKey || !rightKey) {throw Error("tired of this bullshit")}
+        matchService.addControls(-1, {
+            left: leftKey,
+            right: rightKey
+        })
         console.log(`Player saved with alias ${alias} and sprite id ${spriteID}`)
         console.log(`Player added to team ${team} and role ${role}!`)
     },
+
 }

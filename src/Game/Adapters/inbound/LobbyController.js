@@ -21,6 +21,7 @@ class LobbyController {
     async getAllLobbies(req, reply)
     {
         const lobby = await lobbyService.getAllLobbies();
+        console.log(lobby)
         return reply.send(lobby);
     }
 

@@ -1,6 +1,7 @@
-import { SIDES, ROLES } from "../../match/matchSharedDependencies/sharedTypes"
-import { CGameDTO, SGameDTO } from "../../match/matchSharedDependencies/dtos"
-import { CAppConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
+import { CAppConfigs } from "../game/shared/SetupDependencies.js"
+import { SIDES, ROLES } from "../game/shared/sharedTypes.js"
+import { Pairing } from "../TournamentService.cjs"
+import { CGameDTO, SGameDTO } from "./dtos.js"
 
 //TYPES REPRESENTATIVE OF THE ENTITIES
 
@@ -87,7 +88,7 @@ export type TLobby = {
 //TYPES TO BE SENT
 
 //GetLobbiesList()
-export type LobbyInfoForDisplay = {
+export type LobbiesListDTO = {
     //The lobby id. Allows a user to click on the lobby and go to it
     id: number 
     //Name of the lobby.
@@ -103,8 +104,7 @@ export type LobbyInfoForDisplay = {
     map: TMap,
     mode: TMode,
     duration: TDuration
-}
-export type LobbiesListDTO = LobbyInfoForDisplay[]
+}[]
 
 //CreateLobby()
 //Although this is a POST, IT SHOULD RETURN A TLOBBY WITH THE CONFIGS AND THE CREATOR AS ITS ONLY USER INSTEAD OF ONLY THE LOBBY_ID!
@@ -214,26 +214,23 @@ export type OutboundDTOMap = {
     //host starts the match
     startMatch: {
         configs: CAppConfigs
-        //tournPairings: [number, number][] | null 
+        //tournPairings: Pairing[] | null
     }
-
     //Game dto:
     updateGame: SGameDTO //Dealt with in game
-
-    //finishGame: 
 }
 
-export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {
-    requestType: T,
-    data: InboundDTOMap[T]
-}
-
-export type OutboundDTO = {
-    [K in keyof OutboundDTOMap]: {
+export type InboundDTO = {
+    [K in keyof InboundDTOMap]: {
         requestType: K,
-        data: OutboundDTOMap[K]
+        data: InboundDTOMap[K]
     }
-}[keyof OutboundDTOMap]
+}[keyof InboundDTOMap]
+
+export type OutboundDTO<T extends keyof OutboundDTOMap = keyof OutboundDTOMap> = {
+    requestType: T,
+    data: OutboundDTOMap[T]
+}
 
 
 
@@ -253,10 +250,13 @@ export type TTournPlayer = {
 }
 
 export type TMatchPlayer = {
-    userID: number | null //Same as userID
+    userID: number// | null //Same as userID
     id: number | null, //To be generated.
     nickname: string | null //If null, take the nick from userid
     spriteID: number | null, //If null, take spriteID from settings of userid
     team: SIDES,
     role: ROLES,
+    //leftControl: string,
+    //rightControl: string,
+    //ready: boolean
 }

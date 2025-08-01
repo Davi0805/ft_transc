@@ -1,4 +1,4 @@
-import { SIDES, ROLES, point, TPaddle } from "./sharedTypes"
+import { SIDES, ROLES, point, TPaddle } from "./sharedTypes.js"
 
 export type TControls = {
     left: string,
@@ -78,7 +78,7 @@ export type CGameSceneConfigs = {
     controls: {
         humanID: number,
         controls: TControls
-    }[] | null
+    }[] | null //Server sets them to null, and client sets it later
     gameInitialState: CGameState
 }
 
