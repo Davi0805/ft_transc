@@ -37,6 +37,11 @@ async function FriendRequestRoutes(fastify, options) {
       handler: friendRequestController.blockFriend
     });
 
+    fastify.post('/friend_requests/:username/blockbyusername', {
+      preHandler: authMiddleware,
+      handler: friendRequestController.blockByUsername
+    });
+
     fastify.post('/friend_requests/:id/unblock', {
         preHandler: authMiddleware,
         handler: friendRequestController.unblockFriend

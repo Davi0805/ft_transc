@@ -39,9 +39,10 @@ class FriendRequestRepository {
 
     async getPendingRequestCounter(user_id)
     {
-        return await db.raw('SELECT COUNT() AS pendingRequestsCounter'
-                            +' FROM friend_requests WHERE to_user_id = ? AND status = ?'
-                            , [user_id, 'PENDING']);
+        const count = await db.raw('SELECT COUNT(*) AS pendingRequestsCounter'
+            +' FROM friend_requests WHERE to_user_id = ? AND status = ?'
+            , [user_id, 'PENDING']);
+        return count[0]; 
     }
 
     async rejectRequest(request_id, user_id)

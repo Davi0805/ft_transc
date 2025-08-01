@@ -127,7 +127,16 @@ class ChatWindow {
   }
 
   attachEventListeners(): void {
-    if (!this.element) return;
+    if (!this.element)
+      {
+        console.warn("DEBUG: Chat window element not found.");
+        const warnPopup = new WarningPopup();
+        warnPopup.create(
+          "Something is strange...",
+          "Seems like the chat window could not be found... Please refresh the page and try again."
+        );
+        return;
+      } 
     const minimizeBtn = this.element.querySelector(".minimize-btn");
     const closeBtn = this.element.querySelector(".close-btn");
     const sendBtn = this.element.querySelector(".send-btn");
@@ -141,9 +150,27 @@ class ChatWindow {
       this.close();
     });
 
-    sendBtn?.addEventListener("click", () => this.sendMessage());
+    if (!sendBtn) {
+      console.warn("DEBUG: Send button not found.");
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the send button could not be found... Please refresh the page and try again."
+      );
+      return;
+    }
+    sendBtn.addEventListener("click", () => this.sendMessage());
 
-    messageInput?.addEventListener("keydown", (e: Event) => {
+    if (!messageInput) {
+      console.warn("DEBUG: Message input not found.");
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the message input could not be found... Please refresh the page and try again."
+      );
+      return;
+    } 
+    messageInput.addEventListener("keydown", (e: Event) => {
       const event = e as KeyboardEvent;
       if (event.key === "Enter") this.sendMessage();
     });
@@ -166,7 +193,15 @@ class ChatWindow {
   }
 
   sendMessage(): void {
-    if (!this.element || !authService.userID) return;
+    if (!this.element) {
+      console.warn("DEBUG: Chat window element or user ID not found.");
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the chat window could not be found... Please refresh the page and try again."
+      );
+      return;
+    } 
     const messageInput = this.element.querySelector(
       ".message-input"
     ) as HTMLInputElement;
@@ -176,12 +211,12 @@ class ChatWindow {
       const warnPopup = new WarningPopup();
       warnPopup.create(
         "Something is strange...",
-        "Seems like the message could not be sent..."
+        "Seems like the message could not be sent... Please refresh the page and try again."
       );
       return;
     }
 
-    if (webSocketService.sendChatMessage(authService.userID, message)) {
+    if (this.convID && webSocketService.sendChatMessage(this.convID, message)) {
       this.addMessage({
         message: message,
         isOwn: true,
@@ -193,7 +228,6 @@ class ChatWindow {
         "Error Sending Message",
         "Message was not able to be sent. Please refresh the page and try again."
       );
-      console.log("DEBUG: Could not send message. Try again");
     }
   }
 

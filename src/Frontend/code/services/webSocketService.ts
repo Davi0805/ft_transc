@@ -25,16 +25,14 @@ export interface NewFriendRequestEvent {
 export interface MessageDTO {
   conversation_id: number;
   message: string;
-  metadata: string | null; // todo denesting type (new type for invite. metadata only for invite so it can be its own type)
+  metadata: string | null;
 }
 
 class WebSocketService {
   private ws: WebSocket | null;
-  private isConnected: boolean;
   private reconnectAttempts: number;
   private maxReconnectAttempts: number;
   private reconnectDelay: number;
-  private userID: number | null;
 
   // Message Handling
   public conversationTracker: Map<number, number>;
@@ -44,13 +42,13 @@ class WebSocketService {
   private friendsUpdateCallbacks: FunctionCallback[];
   private newFriendRequestsCallbacks: FunctionCallback[];
 
+  private friendRequestCount: number = 0;
+
   constructor() {
     this.ws = null;
-    this.isConnected = false;
     this.reconnectAttempts = 0; // current
     this.maxReconnectAttempts = 5;
     this.reconnectDelay = 1000;
-    this.userID = null;
 
     // Message Handling
     this.messageHandlers = new Map();
@@ -80,14 +78,12 @@ class WebSocketService {
       return;
     }
 
-    this.userID = userID;
     this.ws = new WebSocket("ws://localhost:8081/ws", [
       `Bearer.${authService.getToken()}`,
     ]);
 
     this.ws.onopen = (ev: Event) => {
       console.log("DEBUG: WebSocket connected");
-      this.isConnected = true;
     };
     this.ws.onmessage = (ev: MessageEvent) => {
       try {
@@ -99,7 +95,6 @@ class WebSocketService {
     };
     this.ws.onclose = (ev: CloseEvent) => {
       console.log("DEBUG: websocket closed:", ev.code, ev.reason);
-      this.isConnected = false;
       this.ws = null;
 
       if (
@@ -115,7 +110,6 @@ class WebSocketService {
     };
     this.ws.onerror = (error: Event) => {
       console.error("DEBUG: WebSocket error:", error);
-      this.isConnected = false;
     };
   }
 
@@ -128,8 +122,14 @@ class WebSocketService {
     if (this.ws) {
       this.ws.close(1000, "User Disconnected");
       this.ws = null;
-      this.isConnected = false;
     }
+    this.messageHandlers.clear();
+    this.conversationTracker.clear();
+    this.notificationCallbacks = [];
+    this.onlineCallbacks = [];
+    this.friendsUpdateCallbacks = [];
+    this.newFriendRequestsCallbacks = [];
+    this.friendRequestCount = 0;
   }
 
   /**
@@ -242,7 +242,7 @@ class WebSocketService {
     Object { event: "new_friend_request" }
     */
     if (this.isNewFriendRequestEvent(data)) {
-      this.triggerNewFriendRequest();
+      this.newFriendRequestCount();
       return;
     }
 
@@ -328,6 +328,8 @@ class WebSocketService {
     });
   }
 
+
+  // FRIEND REQUESTS
   triggerNewFriendRequest(): void {
     this.newFriendRequestsCallbacks.forEach((callback) => {
       try {
@@ -341,6 +343,27 @@ class WebSocketService {
     });
   }
 
+  newFriendRequestCount(): void {
+    console.log(`DEBUG: Triggering new friend request count update`);
+    this.friendRequestCount++;
+    this.triggerNewFriendRequest();
+  }
+
+  decrementFriendRequestCount(): void {
+    this.friendRequestCount--;
+    this.triggerNewFriendRequest();
+  }
+
+  setFriendRequestCount(count: number): void {
+    this.friendRequestCount = count;
+    this.triggerNewFriendRequest();
+  }
+
+  getFriendRequestCount(): number {
+    return this.friendRequestCount;
+  }
+
+
   /**
    * Sends a chat message to a specified recipient via WebSocket.
    *
@@ -348,7 +371,7 @@ class WebSocketService {
    * @param {string} message - The content of the chat message to send.
    * @returns {boolean} - if the messages was really sent or not
    */
-  sendChatMessage(convID: number, message: string) {
+  sendChatMessage(convID: number, message: string): boolean {
     return this.send({
       conversation_id: convID,
       message: message,

@@ -21,7 +21,7 @@ class LobbyService {
         const map = await this.validateMap(data.map);
         const lobby = mapper.buildLobbyData(id, data, map, user_id);
         await lobbyRepo.save(id, lobby, user_id);
-        return mapper.lobbyDataToTLobby(lobby);
+        return ({id: id});
     }
 
 
@@ -40,7 +40,7 @@ class LobbyService {
         broadcast.userJoined(lobbyId, user_id);
         //connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, {type: "user_joined_event",
         //                                                    user_id: user_id}, user_id);
-        socket.send(JSON.stringify(mapper.lobbyDataToTLobby(lobby)));
+        broadcast.newPlayerInitData(mapper.lobbyDataToTLobby(lobby), socket);
     }
 
     async removeUserFromLobby(lobbyId, userId)
