@@ -151,6 +151,7 @@ class LobbyService {
         for (let i = 0; i < this.lobby.users.length; i++) {
             const user = this.lobby.users[i];
             const players: TFriendlyPlayer[] = (user.player) as TFriendlyPlayer[];
+            if (!players) {continue} 
             const player = players.find(player => player.id === playerID);
             if (player) {
                 const index: number = players.indexOf(player);
@@ -209,16 +210,18 @@ class LobbyService {
             this.lobby.users.forEach(user => {
                 if (this.isUserParticipating(user.id)) {
                     const players = user.player as TFriendlyPlayer[]
-                    players.forEach(player => {
-                        out.push({
-                            userID: user.id,
-                            id: player.id,
-                            nickname: player.nickname,
-                            spriteID: player.spriteID,
-                            team: player.team,
-                            role: player.role,
+                    if (players) {
+                        players.forEach(player => {
+                            out.push({
+                                userID: user.id,
+                                id: player.id,
+                                nickname: player.nickname,
+                                spriteID: player.spriteID,
+                                team: player.team,
+                                role: player.role,
+                            })
                         })
-                    })
+                    }
                 }
             })
         } else if (this._isLobbyOfType("ranked")) {

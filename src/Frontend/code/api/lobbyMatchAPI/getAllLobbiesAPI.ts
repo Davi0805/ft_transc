@@ -1,8 +1,8 @@
 import { authService } from "../../services/authService";
-import { TLobby } from "../../pages/play/lobbyTyping";
+import { LobbiesListDTO, TLobby } from "../../pages/play/lobbyTyping";
 
 
-export async function getLobbySettings(): Promise<TLobby[]> {
+export async function getAllLobbies(): Promise<LobbiesListDTO> {
     try {
         if (!authService.isUserAuthenticated()) {
             const errorMessage: string = `DEBUG: No authToken at getLobbySettingsByID`;
@@ -25,7 +25,7 @@ export async function getLobbySettings(): Promise<TLobby[]> {
         console.log("Response:")
         console.log(await response.json())
 
-        return (await response.json()) as TLobby[];
+        return (await response.json()) as LobbiesListDTO;
     } catch (error) {
         throw error;
     }

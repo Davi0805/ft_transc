@@ -1,5 +1,5 @@
 import { BALL_TYPES, point, } from "./shared/sharedTypes.js"
-import { SGameDTO, CGameDTO, Adto } from "./shared/dtos.js";
+import { SGameDTO, CGameDTO } from "./shared/dtos.js";
 import { SGameConfigs } from "../testMatchService.js";
 import LoopController from "./LoopController.js";
 import SHumansManager from "./Players/SHumansManager.js";
@@ -7,7 +7,6 @@ import STeamsManager from "./STeamsManager.js";
 import BotsManager from "./Players/SBotsManager.js";
 import SBallsManager from "./Objects/SBallsManager.js";
 import SPaddlesManager from "./Objects/SPaddlesManager.js";
-import WebSocket from "ws";
 
 
 export default class ServerGame {

@@ -120,6 +120,7 @@ class TestMatchService {
         //Broadcast that was previously in game but got moved out to match lobbySocket conditions for send()
         const loop = new LoopController(60);
         loop.start(() => {
+            //console.log("is this even running")
             const dto = game.getGameDTO()
             //option 1
             playerIDs.forEach(id => {
@@ -193,6 +194,7 @@ class TestMatchService {
         }
 
         let paddleID = 0;
+        let availableSlots = this._getSlotsFromMap(settings.map)
         players.forEach(player => {
             if (player.userID === null || player.id === null || player.spriteID === null) {
                 throw Error("This player is not initialized!!");
@@ -219,8 +221,23 @@ class TestMatchService {
                 })
             }
             paddleID++
+
+            availableSlots = availableSlots.filter(slot => slot.team !== player.team || slot.role !== player.role)
         })
-        //TODO: Have to find a way to build bots into empty slots
+
+        console.log(availableSlots)
+        availableSlots.forEach(slot => {
+            userCustoms.paddles.push({
+                id: paddleID,
+                side: slot.team,
+                role: slot.role,
+                spriteID: 0 //Maybe should be random? Or a specific bot one?
+            })
+            userCustoms.bots.push({
+                paddleID: paddleID,
+                difficulty: 1
+            })
+        })
 
         return userCustoms
     }
@@ -323,24 +340,7 @@ class TestMatchService {
         return out;
     }
 
-    _buildCAppConfigs(gameConfigs: TGameConfigs/*, clientID: number*/): CAppConfigs {
-        //console.log(gameConfigs.clients)
-        //const humansInClient = gameConfigs.clients.find(client => client.id == clientID)?.humans;
-        /* if (humansInClient === undefined) {
-        throw new Error(`The clientID ${clientID} has no controls saved in gameConfigs!`)
-        }
-        const controls: {
-            humanID: number,
-            controls: TControls
-        }[] = [];
-        humansInClient.forEach(human => {
-            controls.push({
-                humanID: human.id, 
-                controls: human.controls
-            })
-        }) */
-
-        
+    _buildCAppConfigs(gameConfigs: TGameConfigs): CAppConfigs {        
         const out: CAppConfigs = {
             appConfigs: {
                 width: gameConfigs.field.size.x,
@@ -366,7 +366,7 @@ class TestMatchService {
                 },
             })
         }
-        //console.log(gameConfigs.paddles)
+
         for (let paddle of gameConfigs.paddles) {
             out.gameSceneConfigs.gameInitialState.paddles.push({
                 id: paddle.id,
@@ -431,6 +431,27 @@ class TestMatchService {
             case "big": return { x: 900, y: 900 }
             default: throw Error("Size not detected!");
         }
+    }
+
+    _getSlotsFromMap(map: TMap): { team: SIDES, role: ROLES }[] {
+        const out: { team: SIDES, role: ROLES }[] = []
+        const [amountStr, type, _size] = map.split("-");
+        out.push({ team: SIDES.LEFT, role: ROLES.BACK })
+        out.push({ team: SIDES.RIGHT, role: ROLES.BACK })
+        if (type === "teams") {
+            out.push({ team: SIDES.LEFT, role: ROLES.FRONT })
+            out.push({ team: SIDES.RIGHT, role: ROLES.FRONT })
+        }
+
+        if (amountStr === "4") {
+            out.push({ team: SIDES.TOP, role: ROLES.BACK })
+            out.push({ team: SIDES.BOTTOM, role: ROLES.BACK })
+            if (type === "teams") {
+                out.push({ team: SIDES.TOP, role: ROLES.FRONT })
+                out.push({ team: SIDES.BOTTOM, role: ROLES.FRONT })
+            }
+        } 
+        return out
     }
 }
 
