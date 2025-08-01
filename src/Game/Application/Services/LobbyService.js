@@ -18,6 +18,8 @@ class LobbyService {
     {
         const id = Math.floor(Math.random() * 99999);
         await this.validateLobbyConfig(data);
+        console.log("THE ID CREATED IS THE FOLLOWING")
+        console.log(id)
         const map = await this.validateMap(data.map);
         const lobby = mapper.buildLobbyData(id, data, map, user_id);
         await lobbyRepo.save(id, lobby, user_id);

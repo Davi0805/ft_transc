@@ -1,8 +1,8 @@
 import { router } from "../../routes/router";
-//import { lobbySocketService } from "../../services/lobbySocketService";
-import { lobbySocketService } from "../../testServices/testLobySocketService";
-//import { getLobbySettings} from "../../api/lobbyMatchAPI/getLobbySettingsAPI";
-import { getAllLobbies } from "../../testServices/testLobbyAPI";
+import { lobbySocketService } from "../../services/lobbySocketService";
+//import { lobbySocketService } from "../../testServices/testLobySocketService";
+import { getAllLobbies } from "../../api/lobbyMatchAPI/getAllLobbiesAPI";
+//import { getAllLobbies } from "../../testServices/testLobbyAPI";
 import { getTable } from "./utils/stylingComponents";
 import { LobbiesListDTO, TLobby } from "./lobbyTyping";
 import { getSelfData } from "../../api/userData/getSelfDataAPI";
@@ -59,6 +59,8 @@ export const PlayPage = {
 
         const lobbiesInfo = await getAllLobbies(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
 
+        //console.log(lobbiesInfo)
+
         const categories = ["name", "host", "type", "capacity", "mode", "map", "duration"] as const
 
         for (let i = 0; i < lobbiesInfo.length; i++) {
@@ -68,8 +70,12 @@ export const PlayPage = {
             
             const lobby = lobbiesInfo[i]
             
-            
+            console.log("CURRENT LOBBY IS: ")
+            console.log(lobby)
             categories.forEach(category => {
+                console.log("Category: ", category)
+
+                console.log("lobby setting: ", lobby[category])
                 const tdata = document.createElement('td');
                 tdata.className = `px-6 py-2 wrap-anywhere`;
                 
@@ -89,7 +95,7 @@ export const PlayPage = {
 
     async goToLobby(lobbyId: number) {
         const selfData = await getSelfData();
-        const lobby = await lobbySocketService.connect(lobbyId, selfData.id);
+        const lobby = await lobbySocketService.connect(lobbyId);
         if (!lobby) {throw Error("Socket was already connected somehow!")}
         lobbyService.init(selfData.id, lobby)
         router.navigateTo('/lobby')

@@ -37,6 +37,7 @@ class LobbyMapper {
         return ({id: parseInt(lobbyData.id),
                 name: lobbyData.name,
                 hostID: parseInt(lobbyData.hostID),
+                host: "mockHostName",
                 type: lobbyData.type,
                 capacity: {taken: parseInt(lobbyData.slots_taken),
                            max: parseInt(lobbyData.map_usr_max)
@@ -53,7 +54,7 @@ class LobbyMapper {
     {
         const array = [];
         lobbyDataArray.forEach(l => {
-            array.push(this.lobbyDataToResponse(l));
+            array.push(this.lobbyDataToTLobby(l));
         });
         return array;
     }

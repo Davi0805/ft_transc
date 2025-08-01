@@ -5,7 +5,7 @@ import { EventBus } from './EventBus';
 import { Adto, SGameDTO } from '../matchSharedDependencies/dtos';
 import { CAppConfigs } from '../matchSharedDependencies/SetupDependencies';
 import { assetsManifest, scenesManifest } from '../game/Manifests';
-import { lobbySocketService } from '../../testServices/testLobySocketService';
+import { lobbySocketService } from '../../services/lobbySocketService';
 
 class FtApplication {
     async init(gameConfigs: CAppConfigs, rootElement: HTMLElement, websocket: WebSocket) {

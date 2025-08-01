@@ -1,6 +1,7 @@
-import { InboundDTOMap, InboundDTO, OutboundDTO, OutboundDTOMap } from "../pages/play/lobbyTyping";
+import { InboundDTOMap, InboundDTO, OutboundDTO, OutboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
 import { lobbyService } from "./LobbyService";
+import { App } from "../match/system/App";
 import { matchService } from "./matchService";
 
 class LobbySocketService {
@@ -9,11 +10,11 @@ class LobbySocketService {
         this._lobbyID = 0; //TODO change to null
     }
 
-    connect(lobbyID: number): Promise<void> {
+    connect(lobbyID: number): Promise<TLobby | null> {
         return new Promise((resolve, reject) => {
             if (this._ws && this._ws.readyState === WebSocket.OPEN) {
                 console.log("DEBUG: lobbySocket already connected");
-                resolve();
+                resolve(null);
                 return;
             }
 
@@ -22,16 +23,21 @@ class LobbySocketService {
 
             this._ws.onopen = (ev: Event) => {
                 console.log("DEBUG: lobbySocket connected");
-                resolve();
             }
             
             this._ws.onmessage = (ev: MessageEvent) => {
                 console.log("Message received: " + ev.data)
+                let data: OutboundDTO | null = null;
                 try {
-                    const data = JSON.parse(ev.data) as OutboundDTO;
-                    this._handleMessage(data)
+                    data = JSON.parse(ev.data) as OutboundDTO;
                 } catch (error) {
                     console.error("Error parsing websocket message");
+                }
+                if (!data) {return}
+                if (data.requestType === "lobby") {
+                    resolve(data.data);
+                } else {
+                    this._handleMessage(data)
                 }
             }
 
@@ -93,12 +99,40 @@ class LobbySocketService {
             case "addLobbyUser":
                 lobbyService.addLobbyUserOUT(dto.data.user)
                 break;
+            case "removeLobbyUser":
+                lobbyService.removeLobbyUserOUT(dto.data.id)
+                break;
+            case "addFriendlyPlayer":
+                lobbyService.addFriendlyPlayerOUT(dto.data.userID, dto.data.player)
+                break;
+            case "removeFriendlyPlayer":
+                lobbyService.removeFriendlyPlayerOUT(dto.data.playerID);
+                break;
+            case "addRankedPlayer":
+                lobbyService.addRankedPlayerOUT(dto.data.userID, dto.data.player)
+                break;
+            case "removeRankedPlayer":
+                lobbyService.removeRankedPlayerOUT(dto.data.id);
+                break;
+            case "addTournamentPlayer":
+                lobbyService.addTournamentPlayerOUT(dto.data.userID, dto.data.player);
+                break;
+            case "removeTournamentPlayer":
+                lobbyService.removeTournamentPlayerOUT(dto.data.id);
+                break;
+            case "displayPairings":
+                lobbyService.displayPairingsOUT(dto.data.pairings);
+                break;
+            case "startMatch":
+                lobbyService.startMatchOUT(dto.data.configs);
+                break;
             case "updateGame":
+                App.severUpdate(dto.data)
                 break;
             default:
-                throw Error("A message came in with a non registered type!!")
+                throw Error(`A message came in with a non registered type!! (${dto.requestType})`)
         }
     }
 }
 
-//export const lobbySocketService = new LobbySocketService();
+export const lobbySocketService = new LobbySocketService();

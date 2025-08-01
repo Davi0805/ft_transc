@@ -1,8 +1,8 @@
 import { CAppConfigs, TControls } from "../match/matchSharedDependencies/SetupDependencies";
 import { SIDES } from "../match/matchSharedDependencies/sharedTypes";
 import { App } from "../match/system/App";
-//import { lobbySocketService } from "./lobbySocketService";
-import { lobbySocketService } from "../testServices/testLobySocketService";
+import { lobbySocketService } from "./lobbySocketService";
+//import { lobbySocketService } from "../testServices/testLobySocketService";
 
 
 class MatchService {
