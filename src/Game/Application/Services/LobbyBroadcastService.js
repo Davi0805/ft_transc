@@ -77,6 +77,17 @@ class LobbyBroadcastService {
         };
         connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, msg);
     }
+
+    async newPlayerInitData(data, socket)
+    {
+        const msg = {
+            requestType: 'lobby',
+            data: data
+        };
+        socket.send(JSON.stringify(msg));
+    } 
+
+
 };
 
 module.exports = new LobbyBroadcastService();

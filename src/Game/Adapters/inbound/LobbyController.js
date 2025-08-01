@@ -8,7 +8,7 @@ class LobbyController {
     // todo: maybe later implement a builder pattern to lobby
     async createLobby(req, reply)
     {
-        const lobby = await lobbyService.createLobby(req.body, 1);
+        const lobby = await lobbyService.createLobby(req.body, req.session.user_id);
         return reply.send(lobby);
     }
 

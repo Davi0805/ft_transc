@@ -32,6 +32,18 @@ CREATE TABLE friend_requests (
     CHECK (from_user_id != to_user_id)
 );
 
+CREATE TABLE block_relationships (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    from_user_id INTEGER NOT NULL,
+    blocked_user_id INTEGER NOT NULL,
+
+    FOREIGN KEY (from_user_id) REFERENCES users(user_id),
+    FOREIGN KEY (blocked_user_id) REFERENCES users(user_id),
+
+    UNIQUE(from_user_id, to_user_id),
+    CHECK (from_user_id != to_user_id)
+);
+
 
 -- just a simple index to optimize queries filtering by username
 -- i dont really know if this really work in sqlite, but u know
