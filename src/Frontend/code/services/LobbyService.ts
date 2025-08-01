@@ -9,6 +9,7 @@ import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies"
 import { matchService} from "./matchService";
 import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournPlayer, TMatchPlayer } from "../pages/play/lobbyTyping";
 import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
+import { tournamentService } from "./tournamentService";
 
 
 
@@ -127,22 +128,16 @@ class LobbyService {
         this.lobby.users.splice(index, 1); //TODO: For tournament, this does not work!
     }
     addFriendlyPlayerOUT(userID: number, player: TFriendlyPlayer) {
-        console.log(1)
         if (!this._isLobbyOfType("friendly")) { return; }
         const user = this._findUserByID(userID);
-        console.log(2)
         if (user.id === this.myID) {
             matchService.updateLatestControlsID(player.id)
         }
-        console.log(3)
         if (user.player === null) {
-            console.log(4)
             user.player = [player]
         } else {
-            console.log(5);
             (user.player as TFriendlyPlayer[]).push(player)
         }
-        console.log(6)
         LobbyPage.renderSlots();
     }
     removeFriendlyPlayerOUT(playerID: number) {
@@ -196,7 +191,10 @@ class LobbyService {
     displayPairingsOUT(tournPairings: [number, number][]) {
         const side: SIDES = matchService.getTeamFromPairings(this.myID, tournPairings);
         matchService.addDefaultControls(this.myID, side);
-        LobbyPage.renderTournamentPairings(tournPairings);
+        tournamentService.loadPairings(tournPairings);
+        //console.log(tournamentService.pairings)
+        router.navigateTo("/tournament-pairings")
+        //LobbyPage.renderTournamentPairings(tournPairings);
     }
     startMatchOUT(configs: CAppConfigs) {
         matchService.init(configs);
