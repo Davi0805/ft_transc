@@ -23,7 +23,7 @@ export const TournamentPairingsPage = {
         const categories = ["nick", "rating", "score"] as const
         tournamentService.pairings.forEach(pair => {
             const bg = `bg-gray-900/${board % 2 === 0 ? "25" : "50"}`;
-            const border = pair.players.includes(lobbyService.myID) ? "outline-red-500" : ""
+            const border = pair.players.includes(lobbyService.myID) ? "outine outline-2 outline-red-500" : ""
             participantsTableBody += `<tr class="${bg} ${border}"><td>${board++}</td>`;
             const player1 = participants.find(participant => participant.id === pair.players[0])
             const player2 = participants.find(participant => participant.id === pair.players[1])
