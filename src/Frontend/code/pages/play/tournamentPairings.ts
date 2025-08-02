@@ -20,41 +20,44 @@ export const TournamentPairingsPage = {
         let participantsTableBody = ""
         let board = 1
         const participants = lobbyService.getTournPlayers();
+        console.log("participants: ", participants)
         const categories = ["nick", "rating", "score"] as const
+        const paddingLength = 6
         tournamentService.pairings.forEach(pair => {
             const bg = `bg-gray-900/${board % 2 === 0 ? "25" : "50"}`;
-            const border = pair.players.includes(lobbyService.myID) ? "outine outline-2 outline-red-500" : ""
-            participantsTableBody += `<tr class="${bg} ${border}"><td>${board++}</td>`;
+            const border = pair.players.includes(lobbyService.myID) ? "border-2 border-red-500" : ""
+            participantsTableBody += `<tr class="${bg} ${border}"><td class="px-${paddingLength}">${board++}</td>`;
             const player1 = participants.find(participant => participant.id === pair.players[0])
             const player2 = participants.find(participant => participant.id === pair.players[1])
             if (!player1 || !player2) { throw Error("Getting tired of this shit") }
             
             categories.forEach(category => {
-                participantsTableBody += `<td>${player1[category]}</td>`;
+                participantsTableBody += `<td class="px-${paddingLength}">${player1[category]}</td>`;
             })
             if (pair.result === null) {
-                participantsTableBody += "<td>?</td><td>?</td>"
+                participantsTableBody += `<td class="px-${paddingLength}">?</td><td class="px-${paddingLength}">?</td>`
             } else {
-                participantsTableBody += `<td>${pair.result}</td><td>${(pair.result + 1) % 2}</td>`
+                participantsTableBody += `<td class="px-${paddingLength}">${pair.result}</td><td class="px-${paddingLength}">${(pair.result + 1) % 2}</td>`
             }
             for (let i = categories.length - 1; i >= 0; i--) {
-                participantsTableBody += `<td>${player1[categories[i]]}</td>`;
+                participantsTableBody += `<td class="px-${paddingLength}">${player2[categories[i]]}</td>`;
             }
             participantsTableBody += "</tr>";
         })
 
         const participantsTableHead = `
             <tr class="text-xl bg-gray-900/90">
-                <td>Board</td><td>Player</td><td>Rt</td><td>Scr</td><td colspan="2">Result</td><td>Scr</td><td>Rt</td><td>Player</td>
+                <td class="px-${paddingLength}">Board</td>
+                <td class="px-${paddingLength}">Player</td>
+                <td class="px-${paddingLength}">Rt</td>
+                <td class="px-${paddingLength}">Scr</td>
+                <td colspan="2" class="px-${paddingLength}">Result</td>
+                <td class="px-${paddingLength}">Scr</td>
+                <td class="px-${paddingLength}">Rt</td>
+                <td class="px-${paddingLength}">Player</td>
             </tr>
         `
         const pairingsTable = getTable("pairings", participantsTableHead, participantsTableBody)
-        /* lobbyPairings.innerHTML += pairingsTable.outerHTML;
-        lobbyPairings.innerHTML += `
-            <p>The match will start soon...</p>
-        ` */
-
-        //lobbyBody.appendChild(lobbyPairings)
         pairingsElement.innerHTML = pairingsTable.outerHTML
     }
 }
