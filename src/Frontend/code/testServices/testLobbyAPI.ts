@@ -1,4 +1,4 @@
-/* import { LobbiesListDTO, LobbyCreationConfigsDTO } from "../pages/play/lobbyTyping";
+import { LobbiesListDTO, LobbyCreationConfigsDTO } from "../pages/play/lobbyTyping";
 
 export async function getAllLobbies(): Promise<LobbiesListDTO> {
     const response = await fetch(`http://localhost:6969/getAllLobbies`, {
@@ -43,4 +43,4 @@ export async function createLobby(lobbySettings: LobbyCreationConfigsDTO, userID
   } catch (error) {
     throw error;
   }
-} */
+}

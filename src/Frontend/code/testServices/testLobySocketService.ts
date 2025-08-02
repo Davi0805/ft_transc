@@ -1,4 +1,4 @@
-/* import { lobbyService } from "../services/LobbyService";
+import { lobbyService } from "../services/LobbyService";
 import { InboundDTO, OutboundDTO, InboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
 import { App } from "../match/system/App";
 
@@ -8,7 +8,7 @@ class LobbySocketService {
         this._lobbyID = 0; //TODO change to null
     }
 
-    connect(lobbyID: number, userID: number): Promise<TLobby | null> { //TODO: this should return TLobby, so people who connect to it get the info
+    connect(lobbyID: number, userID: number): Promise<TLobby | null> {
         return new Promise((resolve, reject) => {
             if (this._ws && this._ws.readyState === WebSocket.OPEN) {
                 console.log("DEBUG: lobbySocket already connected");
@@ -132,4 +132,4 @@ class LobbySocketService {
     }
 }
 
-export const lobbySocketService = new LobbySocketService(); */
+export const lobbySocketService = new LobbySocketService();

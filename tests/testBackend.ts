@@ -1,4 +1,4 @@
-/* //This file contains both the exposed api to the client and the websocket endpoint
+//This file contains both the exposed api to the client and the websocket endpoint
 import Fastify from 'fastify'
 import FastifyWebsocket from '@fastify/websocket'
 import cors from '@fastify/cors';
@@ -66,4 +66,4 @@ try {
 } catch (err) {
     fastify.log.error(err)
     process.exit(1)
-} */
+}

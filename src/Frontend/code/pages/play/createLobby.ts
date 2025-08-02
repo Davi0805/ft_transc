@@ -1,10 +1,10 @@
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { router } from "../../routes/router";
 import { getSelfData } from "../../api/userData/getSelfDataAPI";
-import { createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
-//import { createLobby } from "../../testServices/testLobbyAPI";
-import { lobbySocketService } from "../../services/lobbySocketService";
-//import { lobbySocketService } from "../../testServices/testLobySocketService";
+//import { createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
+import { createLobby } from "../../testServices/testLobbyAPI";
+//import { lobbySocketService } from "../../services/lobbySocketService";
+import { lobbySocketService } from "../../testServices/testLobySocketService";
 import { TLobbyType, TMap, TMode, TDuration, TLobby, LobbyCreationConfigsDTO } from "./lobbyTyping";
 import { lobbyService } from "../../services/LobbyService";
 
@@ -75,8 +75,8 @@ export const CreateLobbyPage = {
                 duration: matchDurationInput.value as TDuration
             }
             
-            const lobbyID = await createLobby(lobbySettings)
-            const lobby = await lobbySocketService.connect(lobbyID);
+            const lobbyID = await createLobby(lobbySettings, selfData.id)
+            const lobby = await lobbySocketService.connect(lobbyID, selfData.id);
             if (!lobby) {throw Error("Socket was already connected somehow!")}
             lobbyService.init(selfData.id, lobby)
             router.navigateTo('/lobby')
