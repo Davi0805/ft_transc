@@ -109,7 +109,7 @@ class LobbyService {
         this.lobby.map = settings.map
         this.lobby.mode = settings.mode
         this.lobby.duration = settings.duration
-        LobbyPage.renderSettings();
+        LobbyPage.updateSettings();
         if (updatedUsers && this.lobby.type !== "tournament") {
             this.lobby.users = updatedUsers
             LobbyPage.renderSlots()

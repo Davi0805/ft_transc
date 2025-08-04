@@ -6,8 +6,12 @@ import { lobbyService } from "../../services/LobbyService";
 import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes";
 import { matchService } from "../../services/matchService";
 import { areAllSlotsFull } from "./utils/helpers";
+import { ALobbyRenderer } from "./renderers/ALobbyRenderer";
+import { createLobbyRenderer } from "./renderers/createLobbyRenderer";
 
 export const LobbyPage = {
+    renderer: null as ALobbyRenderer | null,
+
     template() {
         return `
             <div class="flex flex-col items-center h-full max-h-[650px] justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 gap-3 overflow-hidden">
@@ -29,7 +33,9 @@ export const LobbyPage = {
     },
 
     async init() {
-        console.log(lobbyService.lobby)
+        this.renderer = createLobbyRenderer(lobbyService.lobby.type)
+        this.renderer.renderTitles();
+        /* console.log(lobbyService.lobby)
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
         titleElement.textContent = lobbyService.lobby.name;
         const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
@@ -38,14 +44,17 @@ export const LobbyPage = {
             case "ranked": subtitleElement.textContent = "Ranked Match Lobby"; break;
             case "tournament": subtitleElement. textContent = "Tournament Lobby"; break;
             default: throw new Error("GAVE SHIT");
-        }
+        } */
         
         if (lobbyService.lobby.type == "tournament") {
             await this.renderParticipants();
         } else {
             await this.renderSlots();
         }
-        await this.renderSettings();
+
+        //await this.renderSettings();
+        await this.renderer.renderSettings(); //TODO check with other functions if it is possible to simply pass whatever the renderer needs from lobby service, so it is not dependent of it
+        
         await this.activateButtons();
 
         this.updateRound();
@@ -53,7 +62,13 @@ export const LobbyPage = {
         console.log('Lobby Ranked page loaded!')
     },
 
-    async renderSettings() {
+    updateSettings() {
+        if (this.renderer) {
+            this.renderer.renderSettings();
+        }
+    },
+
+    /* async renderSettings() {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         const lobbySettingsListing: TLobby = lobbyService.lobby;
         
@@ -64,9 +79,9 @@ export const LobbyPage = {
             buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
             lobbySettingsElement.appendChild(buttonChangeSettings);
         }
-    },
+    }, */
 
-    renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
+    /* renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col gap-1">
@@ -81,7 +96,7 @@ export const LobbyPage = {
             e.preventDefault()
             this.fetchAndSubmitSettings();
         })
-    },
+    }, */
 
     updateRound() {
         const roundElement = document.getElementById("current-round") as HTMLElement;
@@ -321,7 +336,7 @@ export const LobbyPage = {
     },
 
     //Settings logic
-    fetchAndSubmitSettings() {
+    /* fetchAndSubmitSettings() {
         const map = (document.getElementById('match-map') as HTMLSelectElement).value;
         const mode = (document.getElementById('match-mode') as HTMLSelectElement).value;
         const duration = (document.getElementById('match-duration') as HTMLSelectElement).value;
@@ -331,7 +346,7 @@ export const LobbyPage = {
             duration: duration as TDuration
         })
         console.log("New settings applied!")
-    },
+    }, */
 
     fetchAndAddPlayerToSlot(settingsDialog: HTMLDialogElement,
             team: SIDES, role: ROLES) {
