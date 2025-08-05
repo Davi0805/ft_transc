@@ -5,7 +5,6 @@ import "../css/login/twoFactor.css";
 import "../css/register/register.css";
 import "../css/header/header.css";
 import "../css/sidebar/chat.css";
-import "../css/sidebar/sidebar.css";
 import "../css/sidebar/friend-requests.css";
 
 
