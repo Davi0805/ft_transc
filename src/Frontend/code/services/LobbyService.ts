@@ -66,6 +66,7 @@ class LobbyService {
     }
 
     addFriendlyPlayerIN(player: TFriendlyPlayer) {
+        console.log("addFriendlyPlayerIN called!")
         lobbySocketService.send("addFriendlyPlayer", { player: player });
     }
 
@@ -112,7 +113,7 @@ class LobbyService {
         LobbyPage.updateSettings();
         if (updatedUsers && this.lobby.type !== "tournament") {
             this.lobby.users = updatedUsers
-            LobbyPage.renderSlots()
+            LobbyPage.renderer?.renderPlayers()
         }
     }
     updateReadinessOUT(id: number, ready: boolean) {
@@ -128,6 +129,7 @@ class LobbyService {
         this.lobby.users.splice(index, 1); //TODO: For tournament, this does not work!
     }
     addFriendlyPlayerOUT(userID: number, player: TFriendlyPlayer) {
+        console.log("addFriendlyPlayerOUT called!")
         if (!this._isLobbyOfType("friendly")) { return; }
         const user = this._findUserByID(userID);
         if (user.id === this.myID) {
@@ -138,7 +140,7 @@ class LobbyService {
         } else {
             (user.player as TFriendlyPlayer[]).push(player)
         }
-        LobbyPage.renderSlots();
+        LobbyPage.renderer?.renderPlayers();
     }
     removeFriendlyPlayerOUT(playerID: number) {
         if (!this._isLobbyOfType("friendly")) { return; }
@@ -157,7 +159,7 @@ class LobbyService {
                 if (user.id === this.myID) {
                     matchService.removeControls(playerID);
                 }
-                LobbyPage.renderSlots();
+                LobbyPage.renderer?.renderPlayers();
                 return ;
             }
         }
@@ -168,25 +170,25 @@ class LobbyService {
 
         const user = this._findUserByID(userID);
         user.player = player;
-        LobbyPage.renderSlots();
+        LobbyPage.renderer?.renderPlayers();
     }
     removeRankedPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("ranked")) { return; }
         const user = this._findUserByID(userID);
         user.player = null
-        LobbyPage.renderSlots();
+        LobbyPage.renderer?.renderPlayers();
     }
     addTournamentPlayerOUT(userID: number, player: TTournamentPlayer) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         user.player = player;
-        LobbyPage.renderTournamentTable();
+        //LobbyPage.renderTournamentTable();
     }
     removeTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         (user.player as TTournamentPlayer).participating = false;
-        LobbyPage.renderTournamentTable();
+        //LobbyPage.renderTournamentTable();
     }
     displayPairingsOUT(tournPairings: [number, number][]) {
         const side: SIDES = matchService.getTeamFromPairings(this.myID, tournPairings);

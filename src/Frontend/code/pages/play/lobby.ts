@@ -18,7 +18,7 @@ export const LobbyPage = {
                 <h1 id="lobby-title" class="text-3xl p-2"></h1>
                 <h3 id="lobby-subtitle" class="text-xl p-1"></h3>
                 <div id="lobby-body" class="flex flex-row w-full min-h-0 gap-3 ">
-                    <div id="participants" class="flex flex-col min-w-[300px] border-2 rounded-2xl border-gray-900/75 min-h-0 overflow-hidden">
+                    <div id="players" class="flex flex-col min-w-[300px] border-2 rounded-2xl border-gray-900/75 min-h-0 overflow-hidden">
                     </div>
                     <div id="lobby-settings-and-buttons" class="flex flex-col justify-between gap-6 outline outline-2 outline-red-500">
                         <div id="lobby-settings" class="flex flex-col gap-1">
@@ -35,19 +35,19 @@ export const LobbyPage = {
     async init() {
         this.renderer = createLobbyRenderer(lobbyService.lobby.type)
         this.renderer.renderTitles();
-        
-        if (lobbyService.lobby.type == "tournament") {
+        this.renderer.renderPlayers();
+        /* if (lobbyService.lobby.type == "tournament") {
             await this.renderParticipants();
         } else {
             await this.renderSlots();
-        }
+        } */
 
         await this.renderer.renderSettings(); //TODO check with other functions if it is possible to simply pass whatever the renderer needs from lobby service, so it is not dependent of it
         
 
         await this.renderer.renderActionButtons();
 
-        this.updateRound();
+        //this.updateRound();
 
         console.log('Lobby Ranked page loaded!')
     },
@@ -58,16 +58,16 @@ export const LobbyPage = {
         }
     },
 
-    updateRound() {
+    /* updateRound() {
         const roundElement = document.getElementById("current-round") as HTMLElement;
         roundElement.textContent = `Current round: ${lobbyService.lobby.round}`
-    },
+    }, */
 
-    async renderSlots() {
+    /* async renderSlots() {
         const slots = lobbyService.getSlots();
         const canJoin = !(lobbyService.isUserParticipating(lobbyService.myID)) || lobbyService.lobby.type == "friendly";
 
-        const teamsElement = document.getElementById('participants') as HTMLElement;
+        const teamsElement = document.getElementById('players') as HTMLElement;
         teamsElement.innerHTML = "";
         const slotsTable = document.createElement('table');
         for (const teamName of (Object.keys(slots) as (keyof typeof SIDES)[])) {
@@ -131,9 +131,9 @@ export const LobbyPage = {
             }
         }
         teamsElement.appendChild(slotsTable);
-    },
+    }, */
 
-    async slotJoinFriendlyCallback(team: SIDES, role: ROLES) {
+    /* async slotJoinFriendlyCallback(team: SIDES, role: ROLES) {
         const directions = matchService.getDirectionsFromTeam(team);
 
         const leftKey = "Arrow" + directions.left
@@ -186,18 +186,18 @@ export const LobbyPage = {
             settingsDialog.remove();
         })
         settingsDialog.showModal();
-    },
+    }, */
 
-    async slotJoinRankedCallback(team: SIDES, role: ROLES) {
+    /* async slotJoinRankedCallback(team: SIDES, role: ROLES) {
         matchService.addDefaultControls(lobbyService.myID, team);
         lobbyService.addRankedPlayerIN({
             team: team,
             role: role
         });
-    },
+    }, */
 
-    async renderParticipants() {
-        const participantsElement = document.getElementById('participants') as HTMLElement;
+    /* async renderParticipants() {
+        const participantsElement = document.getElementById('players') as HTMLElement;
         const participantsTableElement = document.createElement("div");
         participantsTableElement.id = "participants-table";
         participantsTableElement.className = "h-full"
@@ -219,9 +219,9 @@ export const LobbyPage = {
         joinWithdrawButton.classList.add("w-full");
 
         participantsElement.appendChild(joinWithdrawButton)
-    },
+    }, */
 
-    renderTournamentTable() {
+    /* renderTournamentTable() {
         const tableElement = document.getElementById("participants-table");
         if (!tableElement) {throw Error("Tournament table element was not found")}
         tableElement.innerHTML = ""
@@ -252,7 +252,7 @@ export const LobbyPage = {
         `
         const participantsTable = getTable("participants", participantsTableHead, participantsTableBody)
         tableElement.innerHTML += participantsTable.outerHTML;
-    },
+    }, */
 
     //Settings logic
     /* fetchAndSubmitSettings() {
@@ -267,7 +267,7 @@ export const LobbyPage = {
         console.log("New settings applied!")
     }, */
 
-    fetchAndAddPlayerToSlot(settingsDialog: HTMLDialogElement,
+    /* fetchAndAddPlayerToSlot(settingsDialog: HTMLDialogElement,
             team: SIDES, role: ROLES) {
         const form = settingsDialog.querySelector("form") as HTMLFormElement;
         if (!form.reportValidity()) return;
@@ -292,6 +292,6 @@ export const LobbyPage = {
         })
         console.log(`Player saved with alias ${alias} and sprite id ${spriteID}`)
         console.log(`Player added to team ${team} and role ${role}!`)
-    },
+    }, */
 
 }

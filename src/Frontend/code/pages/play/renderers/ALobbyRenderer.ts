@@ -1,5 +1,5 @@
 import { lobbyService } from "../../../services/LobbyService";
-import { applySettingsClicked, changeSettingsClicked, inviteUserClicked, leaveClicked, readyClicked, startClicked } from "../buttonCallbacks";
+import { applySettingsClicked, inviteUserClicked, leaveClicked, readyClicked, startClicked } from "../buttonCallbacks";
 import { TDynamicLobbySettings, TLobby } from "../lobbyTyping";
 import { getLobbyOptionsHTML } from "../utils/concreteComponents";
 import { getButton } from "../utils/stylingComponents";
@@ -14,8 +14,6 @@ export abstract class ALobbyRenderer {
         subtitleElement.textContent = this.subtitleText;
     }
 
-    renderPlayers() {}
-
     async renderSettings() {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         const lobbySettingsListing: TLobby = lobbyService.lobby;
@@ -24,7 +22,7 @@ export abstract class ALobbyRenderer {
 
         if (lobbyService.amIHost()) {
             const buttonChangeSettings = getButton("btn-change-settings", "button", "Change lobby settings", false);
-            buttonChangeSettings.addEventListener('click', () => changeSettingsClicked(lobbySettingsListing))
+            buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
             lobbySettingsElement.appendChild(buttonChangeSettings);
         }
     }
@@ -64,6 +62,8 @@ export abstract class ALobbyRenderer {
         const formChangeSettings = document.getElementById('settings-change-form') as HTMLElement;
         formChangeSettings.addEventListener('submit', (e: SubmitEvent) => applySettingsClicked(e))
     }
+
+    abstract renderPlayers(): Promise<void>;
 
     protected abstract readonly subtitleText: string;
 }

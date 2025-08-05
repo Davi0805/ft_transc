@@ -1,6 +1,6 @@
 type TButton = "button" | "submit" | "reset"
 
-export function setupKeyCaptureButton(button: HTMLButtonElement) {
+export function setupKeyCaptureButton(button: HTMLButtonElement, inputElement: HTMLInputElement) {
   let isListeningForKey = false;
 
   const handleKeyPress = (event: KeyboardEvent) => {
@@ -8,6 +8,7 @@ export function setupKeyCaptureButton(button: HTMLButtonElement) {
 
     const pressedKey = event.key;
     button.textContent = pressedKey;
+    inputElement.value = pressedKey;
     isListeningForKey = false;
 
     // Remove the key listener after capturing

@@ -1,7 +1,7 @@
 import { TMap } from "../lobbyTyping";
 import { SIDES, ROLES } from "../../../match/matchSharedDependencies/sharedTypes";
 
-type TPlayerInSlot = {
+export type TPlayerInSlot = {
     id: number,
     userID: number,
     nickname: string,

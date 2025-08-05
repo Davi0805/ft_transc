@@ -5,5 +5,9 @@ export class TournamentLobbyRenderer extends ALobbyRenderer {
         super()
     }
 
+    async renderPlayers(): Promise<void> {
+        
+    }
+
     protected readonly subtitleText: string = "Tournament Lobby";
 }
