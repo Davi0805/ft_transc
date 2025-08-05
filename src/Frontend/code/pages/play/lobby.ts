@@ -35,16 +35,6 @@ export const LobbyPage = {
     async init() {
         this.renderer = createLobbyRenderer(lobbyService.lobby.type)
         this.renderer.renderTitles();
-        /* console.log(lobbyService.lobby)
-        const titleElement = document.getElementById('lobby-title') as HTMLElement;
-        titleElement.textContent = lobbyService.lobby.name;
-        const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
-        switch (lobbyService.lobby.type) {
-            case "friendly": subtitleElement.textContent = "Friendly Match Lobby"; break;
-            case "ranked": subtitleElement.textContent = "Ranked Match Lobby"; break;
-            case "tournament": subtitleElement. textContent = "Tournament Lobby"; break;
-            default: throw new Error("GAVE SHIT");
-        } */
         
         if (lobbyService.lobby.type == "tournament") {
             await this.renderParticipants();
@@ -52,7 +42,6 @@ export const LobbyPage = {
             await this.renderSlots();
         }
 
-        //await this.renderSettings();
         await this.renderer.renderSettings(); //TODO check with other functions if it is possible to simply pass whatever the renderer needs from lobby service, so it is not dependent of it
         
         await this.activateButtons();
@@ -67,36 +56,6 @@ export const LobbyPage = {
             this.renderer.renderSettings();
         }
     },
-
-    /* async renderSettings() {
-        const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        const lobbySettingsListing: TLobby = lobbyService.lobby;
-        
-        lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing)
-
-        if (lobbyService.amIHost()) {
-            const buttonChangeSettings = getButton("btn-change-settings", "button", "Change lobby settings", false);
-            buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
-            lobbySettingsElement.appendChild(buttonChangeSettings);
-        }
-    }, */
-
-    /* renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
-        const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        let lobbySettingsHtml = `
-            <form id="settings-change-form" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(true, lobbyService.lobby.type, lobbySettingsListing)}
-                ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
-            </div>
-        `;
-        lobbySettingsElement.innerHTML = lobbySettingsHtml;
-
-        const formChangeSettings = document.getElementById('settings-change-form') as HTMLElement;
-        formChangeSettings.addEventListener('submit', async (e) => {
-            e.preventDefault()
-            this.fetchAndSubmitSettings();
-        })
-    }, */
 
     updateRound() {
         const roundElement = document.getElementById("current-round") as HTMLElement;

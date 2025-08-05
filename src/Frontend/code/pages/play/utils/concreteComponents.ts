@@ -72,7 +72,7 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
     return `
         <div class="flex flex-row w-full justify-between gap-1">
             <label for="match-map" class="text-xl">Map:</label>
-            <${tagType} id="match-map" name="lobby-map" class="bg-gray-900/50 rounded-2xl px-4 text-center">
+            <${tagType} id="match-map" name="match-map" class="bg-gray-900/50 rounded-2xl px-4 text-center">
                 ${mapOptionsHtml}
             </${tagType}>
         </div>

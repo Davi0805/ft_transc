@@ -1,5 +1,6 @@
 import { lobbyService } from "../../../services/LobbyService";
-import { TDuration, TDynamicLobbySettings, TLobby, TMap, TMode } from "../lobbyTyping";
+import { submitSettings } from "../buttonCallbacks";
+import { TDynamicLobbySettings, TLobby } from "../lobbyTyping";
 import { getLobbyOptionsHTML } from "../utils/concreteComponents";
 import { getButton } from "../utils/stylingComponents";
 
@@ -28,12 +29,10 @@ export abstract class ALobbyRenderer {
             }
         }
     
-    renderActionButtons() {}
+    renderActionButtons() {
 
+    }
 
-
-
-    
     private _renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         let lobbySettingsHtml = `
@@ -45,22 +44,7 @@ export abstract class ALobbyRenderer {
         lobbySettingsElement.innerHTML = lobbySettingsHtml;
 
         const formChangeSettings = document.getElementById('settings-change-form') as HTMLElement;
-        formChangeSettings.addEventListener('submit', async (e) => {
-            e.preventDefault()
-            this._fetchAndSubmitSettings();
-        })
-    }
-
-    private _fetchAndSubmitSettings() {
-        const map = (document.getElementById('match-map') as HTMLSelectElement).value;
-        const mode = (document.getElementById('match-mode') as HTMLSelectElement).value;
-        const duration = (document.getElementById('match-duration') as HTMLSelectElement).value;
-        lobbyService.updateSettingsIN({
-            map: map as TMap,
-            mode: mode as TMode,
-            duration: duration as TDuration
-        })
-        console.log("New settings applied!")
+        formChangeSettings.addEventListener('submit', submitSettings)
     }
 
     protected abstract readonly subtitleText: string;
