@@ -44,7 +44,8 @@ export const LobbyPage = {
 
         await this.renderer.renderSettings(); //TODO check with other functions if it is possible to simply pass whatever the renderer needs from lobby service, so it is not dependent of it
         
-        await this.activateButtons();
+
+        await this.renderer.renderActionButtons();
 
         this.updateRound();
 
@@ -60,47 +61,6 @@ export const LobbyPage = {
     updateRound() {
         const roundElement = document.getElementById("current-round") as HTMLElement;
         roundElement.textContent = `Current round: ${lobbyService.lobby.round}`
-    },
-
-
-    async activateButtons() {
-        const buttonsDiv = document.getElementById("lobby-buttons") as HTMLElement;
-
-        const inviteButton = getButton("btn-invite", "button", "Invite");
-        inviteButton.addEventListener('click', () => { lobbyService.inviteUserToLobby(1); }) //TODO: "1" is hardcoded. Find a way to invite specific user
-        buttonsDiv.appendChild(inviteButton);
-
-        const leaveButton = getButton("btn-leave", "button", "Leave");
-        leaveButton.addEventListener('click', () => {
-            lobbyService.leave()
-            router.navigateTo('/play')
-        })
-        buttonsDiv.appendChild(leaveButton);
-
-        const readyButton = getButton("btn-ready", "button", "Ready");
-        readyButton.addEventListener('click', async () => {
-            if (!lobbyService.isUserParticipating(lobbyService.myID)) {
-                flashButton(readyButton, "You must join first!")
-            } else {
-                const state = toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
-                lobbyService.updateReadinessIN(state);
-            }
-        });
-        buttonsDiv.appendChild(readyButton);
-
-        if (lobbyService.amIHost()) {
-            const startButton = getButton("btn-start", "button", "Start");
-            buttonsDiv.appendChild(startButton);
-            startButton.addEventListener('click', async () => {
-                if (!lobbyService.isEveryoneReady()) {
-                    flashButton(startButton, "Not everyone is ready!");
-                } else if (lobbyService._isLobbyOfType("ranked") && !areAllSlotsFull(lobbyService.getSlots())) {
-                    flashButton(startButton, "Not all slots are filled!")
-                } else {        
-                    lobbyService.startMatchIN();
-                }
-            })
-        }
     },
 
     async renderSlots() {
