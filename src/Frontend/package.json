@@ -18,6 +18,5 @@
     "dev": "webpack --mode=development --watch"
   },
   "dependencies": {
-    "tailwind-scrollbar-hide": "^4.0.0"
-  }
+      }
 }

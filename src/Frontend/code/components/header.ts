@@ -10,16 +10,113 @@ import { WarningPopup } from "../utils/popUpWarn";
  * language switching, and header-authentication-related UI updates.
  */
 class Header {
-  private navBarElement: HTMLElement | null;
+  private navBarElement: HTMLElement | null = null;
 
-  /**
-   * @brief Initializes the header by setting up event listeners and language configuration.
-   */
-  constructor() {
-    this.navBarElement = document.getElementById("header-nav");
+  createHeaderElement(): void {
+    const headerElement = document.createElement("header");
+    headerElement.id = "header";
+
+    headerElement.innerHTML = `
+      <div class="left flex flex-center flex-shrink-0 min-w-0">
+        <a href="/" class="flex center gap-2 site-home" data-link>
+          <img
+            class="logo"
+            src="../../Assets/42PortoLogo.png"
+            alt="42 Porto logo"
+            draggable="false"
+          />
+          <span class="site-title">ft_transcendence</span>
+        </a>
+      </div>
+
+      <div class="right flex flex-center gap-4 min-w-0">
+        <nav id="header-nav" class="flex flex-center gap-6">
+          <a
+            id="home-link"
+            href="/"
+            data-link
+            data-i18n="header-home"
+            class="active nav-link"
+            >Home</a
+          >
+          <a 
+            id="play-link"
+            href="/play"
+            data-link
+            data-i18n="header-play"
+            class="nav-link"
+            >Play</a
+          >
+          <a
+            id="about-link"
+            href="/about"
+            data-link
+            data-i18n="header-about"
+            class="nav-link"
+            >About</a
+          >
+
+          <!-- <div id="log-reg" class="log-reg flex gap-24"></div>
+
+        <div id="user-in" class="user-in flex gap-16"></div> -->
+        </nav>
+
+        <div class="language-selector flex flex-center flex-dir-col">
+          <button class="current-language flex flex-center">
+            <img
+              src="https://flagcdn.com/w20/gb.png"
+              data-lang="uk"
+              alt="United Kingdom"
+              flag
+              draggable="false"
+            />
+            <img
+              class="flex flex-dir flex-center"
+              src="../../Assets/icons/drop-down.svg"
+              alt="drop-down icon"
+              flag
+              draggable="false"
+            />
+          </button>
+
+          <div class="lang-options" style="display: none">
+            <ul class="flex flex-dir-col flex-center">
+              <li>
+                <button class="lang-option">
+                  <img
+                    src="https://flagcdn.com/w20/pt.png"
+                    data-lang="pt"
+                    alt="Portuguese flag"
+                    draggable="false"
+                  />
+                </button>
+              </li>
+
+              <li>
+                <button class="lang-option">
+                  <img
+                    src="https://flagcdn.com/w20/es.png"
+                    data-lang="es"
+                    alt="Spain flag"
+                    flag
+                    draggable="false"
+                  />
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      `;
+
+    document.body.insertAdjacentElement('afterbegin', headerElement);
   }
 
   init() {
+    
+    this.createHeaderElement();
+    
+    this.navBarElement = document.getElementById("header-nav");
     this.logOutEventListener();
     this.languageSelectorDisplayEventListener();
     this.languageSelectorChangeEventListener();
