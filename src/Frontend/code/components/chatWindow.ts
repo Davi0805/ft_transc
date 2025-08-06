@@ -40,11 +40,16 @@ class ChatWindow {
 
   async open(friend: Friend): Promise<void> {
     if (this.isOpen) {
-      if (this.isMinimized) {
-        this.toggleMinimize();
-      }
-      this.focus();
-      return;
+      if (this.convID === friend.convID) {
+        if (this.isMinimized) {
+          this.toggleMinimize();
+        } else {
+          this.focus();
+        }
+        return;
+      } else {
+        this.close(); // close current chat if different conversation
+      } 
     }
 
     this.friendAvatar = friend.friendAvatar;
@@ -90,6 +95,7 @@ class ChatWindow {
     }
 
     this.isOpen = false;
+    this.isMinimized = false;
 
     // delete chat from DOM
     if (this.element && this.element.parentNode) {
