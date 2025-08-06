@@ -40,8 +40,9 @@ CREATE TABLE block_relationships (
     FOREIGN KEY (from_user_id) REFERENCES users(user_id),
     FOREIGN KEY (blocked_user_id) REFERENCES users(user_id),
 
-    UNIQUE(from_user_id, to_user_id),
-    CHECK (from_user_id != to_user_id)
+    UNIQUE(from_user_id, blocked_user_id),
+    CHECK (from_user_id != blocked_user_id
+    )
 );
 
 

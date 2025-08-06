@@ -4,6 +4,8 @@ export type TPairing = {
     result: number | null //points of player1
 }
 
+
+
 class TournamentService {
 
     loadPairings(pairings: [number, number][]) {
@@ -15,6 +17,8 @@ class TournamentService {
             })
         }
     }
+
+    //update
 
 
     private _pairings: TPairing[] = []

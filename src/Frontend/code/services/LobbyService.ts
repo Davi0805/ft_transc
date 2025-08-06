@@ -140,7 +140,7 @@ class LobbyService {
         } else {
             (user.player as TFriendlyPlayer[]).push(player)
         }
-        LobbyPage.renderer?.renderPlayers();
+        LobbyPage.renderer?.updatePlayers();
     }
     removeFriendlyPlayerOUT(playerID: number) {
         if (!this._isLobbyOfType("friendly")) { return; }
@@ -159,7 +159,7 @@ class LobbyService {
                 if (user.id === this.myID) {
                     matchService.removeControls(playerID);
                 }
-                LobbyPage.renderer?.renderPlayers();
+                LobbyPage.renderer?.updatePlayers();
                 return ;
             }
         }
@@ -170,32 +170,36 @@ class LobbyService {
 
         const user = this._findUserByID(userID);
         user.player = player;
-        LobbyPage.renderer?.renderPlayers();
+        LobbyPage.renderer?.updatePlayers();
     }
     removeRankedPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("ranked")) { return; }
         const user = this._findUserByID(userID);
         user.player = null
-        LobbyPage.renderer?.renderPlayers();
+        LobbyPage.renderer?.updatePlayers();
     }
     addTournamentPlayerOUT(userID: number, player: TTournamentPlayer) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         user.player = player;
-        //LobbyPage.renderTournamentTable();
+        LobbyPage.renderer?.updatePlayers();
     }
     removeTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
-        (user.player as TTournamentPlayer).participating = false;
-        //LobbyPage.renderTournamentTable();
+        //(user.player as TTournamentPlayer).participating = false;
+        user.player = null
+        LobbyPage.renderer?.updatePlayers();
+    }
+    displayStandingsOUT(tournStandings: number[]) {
+        
     }
     displayPairingsOUT(tournPairings: [number, number][]) {
         const side: SIDES = matchService.getTeamFromPairings(this.myID, tournPairings);
         matchService.addDefaultControls(this.myID, side);
         tournamentService.loadPairings(tournPairings);
         //console.log(tournamentService.pairings)
-        router.navigateTo("/tournament-pairings")
+        router.navigateTo("/tournament")
         //LobbyPage.renderTournamentPairings(tournPairings);
     }
     startMatchOUT(configs: CAppConfigs) {

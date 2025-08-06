@@ -92,3 +92,12 @@ export function withdrawRankedClicked(playerID: number) {
     matchService.removeControls(playerID);
     lobbyService.removeRankedPlayerIN(playerID)
 }
+
+export function joinWithdrawTournamentClicked(state: boolean) {
+    console.log(state)
+    if (state === true) {
+        lobbyService.addTournamentPlayerIN()
+    } else {
+        lobbyService.removeTournamentPlayerIN()
+    }
+}

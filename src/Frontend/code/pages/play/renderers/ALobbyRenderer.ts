@@ -64,6 +64,7 @@ export abstract class ALobbyRenderer {
     }
 
     abstract renderPlayers(): Promise<void>;
+    abstract updatePlayers(): Promise<void>;
 
     protected abstract readonly subtitleText: string;
 }

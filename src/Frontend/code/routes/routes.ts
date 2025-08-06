@@ -9,7 +9,7 @@ import { SettingsPage } from '../pages/settings/settings'
 import { LobbyPage } from '../pages/play/lobby'
 import { CreateLobbyPage } from '../pages/play/createLobby'
 import { MatchPage } from '../pages/play/match'
-import { TournamentPairingsPage } from '../pages/play/tournamentPairings'
+import { TournamentPage } from '../pages/play/tournament'
 
 export interface Route {
     path: string;
@@ -94,8 +94,8 @@ export const routes: Array<Route> = [
     {
         path: '/tournament-pairings',
         title: 'Tournament Pairings',
-        template: TournamentPairingsPage.template,
-        script: TournamentPairingsPage
+        template: TournamentPage.template,
+        script: TournamentPage
     },
     {
         path: '/match',

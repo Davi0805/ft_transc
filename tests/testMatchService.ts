@@ -36,18 +36,11 @@ class TestMatchService {
         if (lobbySettings.type !== "tournament") {
             this._runMatch(lobbySettings, lobbySettings.users)
         } else {
-            const tournMatches: {
-                matches: TMatch[]
-                tournPairings: Pairing[]
-            } = this._buildMatches(lobbySettings);
-
-            lobbySocketService.broadcast(lobbySettings.id, "displayPairings", { pairings: tournMatches.tournPairings })
-
-            setTimeout(() => {
-                tournMatches.matches.forEach(match => {
-                    this._runMatch(lobbySettings, match, tournMatches.tournPairings)
-                })
-            }, 10000)
+            const finalParticipantsList = this._getTournPlayers(lobbySettings.users); //USE THIS FROM NOW ON, SO EVEN IF PLAYERS EXIT TOURNAMENT, INFO IS STILL SAVED
+            lobbySocketService.broadcast(lobbySettings.id, "setParticipantsList", { participants: finalParticipantsList })
+            //Where the fuck will I save this
+            //TODO: probably need to send this so frontend has a copy of it as well
+            this._displayStandings(lobbySettings, finalParticipantsList)
         }
     }
 
@@ -64,9 +57,31 @@ class TestMatchService {
         playerIDs: number[] 
     }[] = []
 
+    private _displayStandings(lobbySettings: TLobby, participants: TTournPlayer[]) {
+        const tournStandings = TournamentService.getCurrentStandings(participants)
+        lobbySocketService.broadcast(lobbySettings.id, "displayStandings", { standings: tournStandings })
 
+        setTimeout(() => {
+            this._displayPairings(lobbySettings)
+        }, 10 * 1000)
+    }
 
-    _buildMatches(lobbySettings: TLobby): {
+    private _displayPairings(lobbySettings: TLobby) {
+        const tournMatches: {
+            matches: TMatch[]
+            tournPairings: Pairing[]
+        } = this._buildMatches(lobbySettings); //Builds matches ONLY WITH THE PLAYERS STILL PRESENT
+
+        lobbySocketService.broadcast(lobbySettings.id, "displayPairings", { pairings: tournMatches.tournPairings })
+
+        setTimeout(() => {
+            tournMatches.matches.forEach(match => {
+                this._runMatch(lobbySettings, match, tournMatches.tournPairings)
+            })
+        }, 10000)
+    }
+
+    private _buildMatches(lobbySettings: TLobby): {
         matches: TMatch[],
         tournPairings: Pairing[]
     } {

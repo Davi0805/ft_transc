@@ -33,7 +33,7 @@ export class TournamentService {
         return pairings;
     }
 
-    static getClassificationTable(players: TTournPlayer[]): TTournPlayer[] {
+    static getCurrentStandings(players: TTournPlayer[]): TTournPlayer[] {
         const classificationTable = Array.from(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
             else { //put here tiebreaks
@@ -122,4 +122,8 @@ export class TournamentService {
         
         return pairings;
     }
+
+    /* private _participants: TTournPlayer[] = []
+    set participants(participants: TTournPlayer[]) { this._participants = participants }
+    get participants(): TTournPlayer[] { return this._participants } */
 }

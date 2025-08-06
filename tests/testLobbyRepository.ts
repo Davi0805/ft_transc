@@ -146,22 +146,23 @@ class LobbyRepository {
     addTournamentPlayer(lobbyID: number, userID: number): TTournamentPlayer {
         const lobby = this.getLobbyByID(lobbyID)
         const user = this._getLobbyUserByID(lobby, userID)
-        if (user.player) {
+        /* if (user.player) {
             (user.player as TTournamentPlayer).participating = true
-        } else {
-            user.player = {
-                participating: true,
-                score: 0,
-                prevOpponents: [],
-                teamPref: 0
-            } as TTournamentPlayer
-        }
+        } else { */
+        user.player = {
+            participating: true,
+            score: 0,
+            prevOpponents: [],
+            teamPref: 0
+        } as TTournamentPlayer
+        //}
         return (user.player as TTournamentPlayer)
     }
     removeTournamentPlayer(lobbyID: number, userID: number) {
         const lobby = this.getLobbyByID(lobbyID)
         const user = this._getLobbyUserByID(lobby, userID);
-        (user.player as TTournamentPlayer).participating = false
+        user.player = null;
+        //(user.player as TTournamentPlayer).participating = false
     }
 
     leaveLobby(lobbyID: number, userID: number) {

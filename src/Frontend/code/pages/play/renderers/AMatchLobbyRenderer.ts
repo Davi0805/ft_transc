@@ -41,6 +41,10 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
         teamsElement.appendChild(slotsTable);
     }
 
+    async updatePlayers(): Promise<void> {
+        this.renderPlayers()
+    }
+
     private _renderTeamName(slotsTable: HTMLTableElement, teamName: string) {
         const teamElement = document.createElement("tr");
         const teamNameElement = document.createElement("td");

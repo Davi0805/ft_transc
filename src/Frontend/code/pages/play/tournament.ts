@@ -2,12 +2,12 @@ import { lobbyService } from "../../services/LobbyService";
 import { tournamentService } from "../../services/tournamentService";
 import { getTable } from "./utils/stylingComponents";
 
-export const TournamentPairingsPage = {
+export const TournamentPage = {
     template() {
         return `
             <div class="flex flex-col items-center h-full max-h-[650px] justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 gap-3 overflow-hidden">
-                <h1 id="lobby-title" class="text-3xl p-2"></h1>
-                <h3 id="lobby-subtitle" class="text-xl p-1"></h3>
+                <h1 id="tournament-title" class="text-3xl p-2"></h1>
+                <h3 id="tournament-subtitle" class="text-xl p-1">Tournament</h3>
                 <h3 id="current-round"></h3>
                 <div id="pairings" class="flex flex-row w-full min-h-0 gap-3 "></div>
             </div>
@@ -15,6 +15,12 @@ export const TournamentPairingsPage = {
     },
 
     async init() {
+        const titleElement = document.getElementById("tournament-title") as HTMLHeadingElement;
+        titleElement.textContent = lobbyService.lobby.name;
+        const currentRoundElement = document.getElementById("current-round") as HTMLHeadingElement;
+        currentRoundElement.textContent = `Round ${lobbyService.lobby.round}` //Round probably needs to be in tournament service?
+
+
         const pairingsElement = document.getElementById("pairings") as HTMLElement;
 
         let participantsTableBody = ""
