@@ -1,4 +1,4 @@
-import { BALL_TYPES, point, } from "./shared/sharedTypes.js"
+import { BALL_TYPES, point, SIDES, } from "./shared/sharedTypes.js"
 import { SGameDTO, CGameDTO } from "./shared/dtos.js";
 import { SGameConfigs } from "../testMatchService.js";
 import LoopController from "./LoopController.js";
@@ -55,7 +55,6 @@ export default class ServerGame {
             dto.controlsState.humanID,
             dto.controlsState.controlsState
         );
-        //console.log("After processing dto: " + this._humansManager.humans[0].controls.left.pressed)
     }
 
     private _windowSize: point;
@@ -63,6 +62,8 @@ export default class ServerGame {
     get windowSize() { return this._windowSize; }
     
     private _matchHasStarted: boolean = false;
+    private _matchResult: Record<SIDES, number> | null = null;
+    get matchResult() { return this._matchResult; }
 
     private _matchLength: number;
     private _timeLeft: number; 
@@ -72,7 +73,6 @@ export default class ServerGame {
     private _humansManager: SHumansManager;
     private _botsManager: BotsManager;
     private _paddlesManager: SPaddlesManager;
-
 
     
 
@@ -113,8 +113,7 @@ export default class ServerGame {
         if (this._teamsManager.allTeamsFinished()
             || this._timeLeft <= 0) {
             loop.pause();
-            const finalGameState = this._teamsManager.getTeamsState();
-            console.log(finalGameState);
+            this._matchResult = this._teamsManager.getTeamsState();
         }
     }
 

@@ -3,6 +3,7 @@ import { InboundDTO, InboundDTOMap, OutboundDTO, OutboundDTOMap, TDynamicLobbySe
 import { testLobbyRepository } from "./testLobbyRepository.js";
 import { testMatchService } from "./testMatchService.js";
 import { CGameDTO } from "./dependencies/dtos.js";
+import { tournamentService } from "./TournamentService.cjs";
 
 class TestLobbySocketService {
     constructor() {}
@@ -90,6 +91,11 @@ class TestLobbySocketService {
             })
         }
     }
+    broadcastToUsers<T extends keyof OutboundDTOMap>(userIDs: number[], reqType: T, data: OutboundDTOMap[T]) {
+        userIDs.forEach(userID => {
+            this.sendToUser(userID, reqType, data);
+        })
+    }
     getWsFromUserID(userID: number): WebSocket {
         for (const lobbySockets of this._wsMap.values()) {
             const ws = lobbySockets.get(userID);
@@ -158,6 +164,9 @@ class TestLobbySocketService {
     }
     startGame(lobbyID: number, senderID: number) {
         const lobby = testLobbyRepository.getLobbyByID(lobbyID)
+        if (lobby.type === "tournament") {
+            tournamentService.startMatch
+        }
         testMatchService.startMatch(lobby)
     }
 

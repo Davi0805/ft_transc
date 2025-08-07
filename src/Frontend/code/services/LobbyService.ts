@@ -7,7 +7,7 @@ import { lobbySocketService } from "../testServices/testLobySocketService"; //TE
 import { router } from "../routes/router";
 import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies";
 import { matchService} from "./matchService";
-import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournPlayer, TMatchPlayer } from "../pages/play/lobbyTyping";
+import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournamentParticipant, TMatchPlayer } from "../pages/play/lobbyTyping";
 import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
 import { tournamentService } from "./tournamentService";
 
@@ -245,10 +245,10 @@ class LobbyService {
         } else { throw Error("Function called in wrong lobby type")}
         return out;
     }
-    getTournPlayers(): TTournPlayer[] { //Probably this will only be used for pairings, and the tournament Service does not need all this info, so doublecheck constitution of TTournPlayers (also name lol)
+    getTournPlayers(): TTournamentParticipant[] { //Probably this will only be used for pairings, and the tournament Service does not need all this info, so doublecheck constitution of TTournPlayers (also name lol)
         if (!this._isLobbyOfType("tournament")) {throw Error("Function called in wrong lobby type")}
 
-        const out: TTournPlayer[] = [];
+        const out: TTournamentParticipant[] = [];
         this.lobby.users.forEach(user => {
             if (user.player) {
                 const player = user.player as TTournamentPlayer;
@@ -259,8 +259,7 @@ class LobbyService {
                     rating: user.rating,
                     prevOpponents: player.prevOpponents,
                     teamDist: player.teamPref,
-                    participating: player.participating,
-                    ready: user.ready
+                    participating: true
                 })
             }
         })
@@ -278,8 +277,6 @@ class LobbyService {
         if (!me) {throw Error("How can't I be in the lobby???"); }
         if (!me.player) {
             return false
-        } else if (this._isLobbyOfType("tournament")) {
-            return (me.player as TTournamentPlayer).participating
         } else {
             return true
         }

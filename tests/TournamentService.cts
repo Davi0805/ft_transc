@@ -1,11 +1,11 @@
-import { TTournPlayer } from "./dependencies/lobbyTyping.js";
+import { TTournamentParticipant } from "./dependencies/lobbyTyping.js";
 //import * as blossom from 'edmonds-blossom'
 var blossom = require('edmonds-blossom')
 
 
 export type Pairing = [number, number]
 
-type PlayerGraph = [TTournPlayer, TTournPlayer][]
+type PlayerGraph = [TTournamentParticipant, TTournamentParticipant][]
 
 type GraphEdge = [number, number, number];
 type WeightedGraph = GraphEdge[];
@@ -13,7 +13,7 @@ type WeightedGraph = GraphEdge[];
 export class TournamentService {
     constructor() {}
 
-    static getNextRoundPairings(players: TTournPlayer[]): Pairing[] {
+    static getNextRoundPairings(players: TTournamentParticipant[]): Pairing[] {
 
         const normalizedPlayers = structuredClone(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
@@ -33,7 +33,7 @@ export class TournamentService {
         return pairings;
     }
 
-    static getCurrentStandings(players: TTournPlayer[]): TTournPlayer[] {
+    static getCurrentStandings(players: TTournamentParticipant[]): TTournamentParticipant[] {
         const classificationTable = Array.from(players).sort((a, b) => {
             if (a.score !== b.score) return b.score - a.score;
             else { //put here tiebreaks
@@ -44,7 +44,7 @@ export class TournamentService {
         return classificationTable
     }
 
-    private static _generatePlayerGraph(players: TTournPlayer[]): PlayerGraph {
+    private static _generatePlayerGraph(players: TTournamentParticipant[]): PlayerGraph {
         const playerGraph: PlayerGraph = [];
         for (let i: number = 0; i < players.length - 1; i++) {
             for (let j: number = i + 1; j < players.length; j++) {
@@ -82,7 +82,7 @@ export class TournamentService {
         return weightedGraph
     }
 
-    private static _calculateEdgeWeight(p1: TTournPlayer, p2: TTournPlayer, scoreGroupSize: number): number {
+    private static _calculateEdgeWeight(p1: TTournamentParticipant, p2: TTournamentParticipant, scoreGroupSize: number): number {
         const ratingWeight = Math.abs(p1.rating - p2.rating); // rating is rank
         const weightMiddleScoreGroup = Math.abs((scoreGroupSize / 2) - ratingWeight);
         const dutchWeight: number = -Math.pow(weightMiddleScoreGroup, 1.01)
@@ -101,7 +101,7 @@ export class TournamentService {
         return map
     }
 
-    private static _convertToPairings(normalizedPlayers: TTournPlayer[], pairingsIndexes: number[]): Pairing[] {
+    private static _convertToPairings(normalizedPlayers: TTournamentParticipant[], pairingsIndexes: number[]): Pairing[] {
         const pairings: Pairing[] = []
         const usedIDs: number [] = [];
         for (let i = 0; i < pairingsIndexes.length; i++) {
@@ -123,7 +123,9 @@ export class TournamentService {
         return pairings;
     }
 
-    /* private _participants: TTournPlayer[] = []
-    set participants(participants: TTournPlayer[]) { this._participants = participants }
-    get participants(): TTournPlayer[] { return this._participants } */
+    private _participants: TTournamentParticipant[] = [] //The players that initially applied to the tournament. Stays the same, even if players leave the lobby
+    set participants(participants: TTournamentParticipant[]) { this._participants = participants }
+    get participants(): TTournamentParticipant[] { return this._participants }
 }
+
+export const tournamentService = new TournamentService()

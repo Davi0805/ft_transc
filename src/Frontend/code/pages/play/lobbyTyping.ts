@@ -34,8 +34,6 @@ export type TRankedPlayer = {
 //SHOULD NEVER BE SET TO NULL AFTER BEING SET!!! (change the "participating" flag instead)
 //Except for participating flag, All these will be calculated by tournament service
 export type TTournamentPlayer = {
-    //Tells if the player is currently participating in the tournament.
-    participating: boolean
     //How many points the player currently has in the tournament
     score: number, //Def: 0
     //The userIDs of the players with whom this user played
@@ -208,13 +206,19 @@ export type OutboundDTOMap = {
         id: number
     }
     //host clicks start on tournament lobby
+    displayStandings: {
+        standings: TTournamentParticipant[]
+    }
     displayPairings: {
         pairings: [number, number][]
+    }
+    updateTournamentResult: {
+        board: number,
+        result: number
     }
     //host starts the match
     startMatch: {
         configs: CAppConfigs
-        //tournPairings: [number, number][] | null 
     }
 
     //Game dto:
@@ -240,7 +244,7 @@ export type OutboundDTO = {
 
 //THE FOLLOWING ARE INTERMIDIARY TYPES
 
-export type TTournPlayer = {
+export type TTournamentParticipant = {
     id: number | null // Same as userID
     nick: string | null // To be taken from userid
     score: number //default: 0
@@ -249,7 +253,6 @@ export type TTournPlayer = {
     teamDist: number //default: 0
     participating: boolean //default: true
     //TODO: IN TOURNAMENT SERVICE, ONLY PAIR PLAYERS THAT HAVE THIS FLAG SET TO TRUE!!!!
-    ready: boolean
 }
 
 export type TMatchPlayer = {
