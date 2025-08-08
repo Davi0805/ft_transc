@@ -165,10 +165,10 @@ class LobbyRepository {
         //(user.player as TTournamentPlayer).participating = false
     }
 
-    leaveLobby(lobbyID: number, userID: number) {
+    /* leaveLobby(lobbyID: number, userID: number) {
         const lobby = this.getLobbyByID(lobbyID)
         lobby.users = lobby.users.filter(user => user.id === userID)
-    }
+    } */
 
     _getLobbyUserByID(lobby: TLobby, userID: number): TLobbyUser {
         const user = lobby.users.find(user => user.id === userID);

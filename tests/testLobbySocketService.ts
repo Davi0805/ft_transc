@@ -49,6 +49,8 @@ class TestLobbySocketService {
     }
     
     private _wsMap: Map<number, Map<number, WebSocket> > = new Map<number, Map<number, WebSocket>>()
+
+    
     addSocketToLobby(lobbyID: number, userID: number, ws: WebSocket) {
         console.log("lobby adds")
         const lobbySockets = this._wsMap.get(lobbyID)

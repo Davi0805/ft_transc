@@ -56,6 +56,8 @@ export const PlayPage = {
         const lobbiesBody = document.getElementById('lobbies-body') as HTMLElement;
         lobbiesBody.innerHTML = ""
 
+        //TODO add amIInLobby
+
         const lobbiesInfo = await getAllLobbies(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
 
         //console.log(lobbiesInfo)
