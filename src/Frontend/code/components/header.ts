@@ -181,9 +181,9 @@ class Header {
       `a.nav-link[href='${path}']`
     ) as HTMLElement;
 
-    if (curActive && newActive && curActive !== newActive) {
-      curActive.classList.remove("active");
-      newActive.classList.add("active");
+    if (curActive !== newActive) {
+      curActive?.classList.remove("active");
+      newActive?.classList.add("active");
     }
   }
 
