@@ -5,6 +5,7 @@ import LoopController from "./game/LoopController.js";
 import ServerGame from "./game/ServerGame.js";
 import { CAppConfigs, TGameConfigs, TUserCustoms } from "./game/shared/SetupDependencies.js";
 import { point, ROLES, SIDES } from "./game/shared/sharedTypes.js";
+import { CGameDTO } from "./dependencies/dtos.js";
 
 export type TMatchInRepo = {
     id: number,
@@ -13,7 +14,7 @@ export type TMatchInRepo = {
     userIDs: number[]
 }
 
-class TestMatchRepository {
+class TestGameService {
 
     loadMatch(lobbySettings: TLobby, players: TMatchPlayer[]) {
         const userCustoms: TUserCustoms = this._buildUserCustoms(lobbySettings, players);
@@ -42,7 +43,7 @@ class TestMatchRepository {
 
         //TODO: This probably has to be moved to the services
         //Broadcast that was previously in game but got moved out to match lobbySocket conditions for send()
-        /* const loop = new LoopController(60);
+        const loop = new LoopController(60);
         loop.start(() => {
             //console.log("is this even running")
             const dto = game.getGameDTO()
@@ -62,11 +63,21 @@ class TestMatchRepository {
                 }
             }
         })
-        game.startGameLoop(); */
+        game.startGameLoop();
     }
 
+    
+
+    updateControlsState(playerID: number, controlsDTO: CGameDTO) {
+        const match = this._matches.find(match => match.userIDs.includes(playerID))
+        if (!match) {throw Error("This playerID is not present in any match!!")}
+        match.serverGame.processClientDTO(controlsDTO)
+    }
+
+
+
     private _currentMatchID: number = 0;
-    private _matches: Map<number, TMatchInRepo> = new Map()
+    private _matches: TMatchInRepo[] = []
 
 
     _buildUserCustoms(settings: TLobby, players: TMatchPlayer[]): TUserCustoms {
@@ -326,4 +337,4 @@ class TestMatchRepository {
     }
 }
 
-export const testMatchRepository = new TestMatchRepository()
+export const testGameService = new TestGameService()

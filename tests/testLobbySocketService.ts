@@ -165,9 +165,10 @@ class TestLobbySocketService {
     startGame(lobbyID: number, senderID: number) {
         const lobby = testLobbyRepository.getLobbyByID(lobbyID)
         if (lobby.type === "tournament") {
-            tournamentService.startMatch
+            tournamentService.()
+        } else {
+            testMatchService.startMatch(lobby, lobby.users)
         }
-        testMatchService.startMatch(lobby)
     }
 
     updateGame(senderID: number, controlsDTO: CGameDTO) {

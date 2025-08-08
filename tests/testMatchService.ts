@@ -7,7 +7,7 @@ import { point, SIDES, ROLES, TWindow, TPaddle } from "./game/shared/sharedTypes
 import { lobbySocketService } from "./testLobbySocketService.js";
 import { Pairing, tournamentService, TournamentService } from "./TournamentService.cjs";
 import LoopController from "./game/LoopController.js";
-import { testMatchRepository } from "./testMatchRepository.js";
+import { testMatchRepository } from "./testGameService.js";
 
 type TMatch = TLobbyUser[];
 
@@ -32,8 +32,8 @@ export type SGameConfigs = {
 class TestMatchService {
     constructor(){}
 
-    startMatch(lobbySettings: TLobby) {
-        const matchPlayers = this._getMatchPlayers(lobbySettings.users, lobbySettings.type)
+    startMatch(lobbySettings: TLobby, participants: TMatch) {
+        const matchPlayers = this._getMatchPlayers(participants, lobbySettings.type)
         const matchInfo = testMatchRepository.loadMatch(lobbySettings, matchPlayers)
         if (!matchInfo) {throw Error("Something went wrong creating this match!")}
 
@@ -53,19 +53,15 @@ class TestMatchService {
         game.startGameLoop();
 
 
-        if (lobbySettings.type !== "tournament") {
+        /* if (lobbySettings.type !== "tournament") {
             this._runMatch(lobbySettings, lobbySettings.users)
         } else {
             tournamentService.participants = this._getTournPlayers(lobbySettings.users); //USE THIS FROM NOW ON, SO EVEN IF PLAYERS EXIT TOURNAMENT, INFO IS STILL SAVED
             this._displayStandings(lobbySettings, tournamentService.participants)
-        }
+        } */
     }
 
-    updateControlsState(playerID: number, controlsDTO: CGameDTO) {
-        const match = this._currentMatches.find(match => match.playerIDs.includes(playerID))
-        if (!match) {throw Error("This playerID is not present in any match!!")}
-        match.game.processClientDTO(controlsDTO)
-    }
+    
 
 
     
@@ -112,7 +108,7 @@ class TestMatchService {
 
         setTimeout(() => {
             for (let i = 0; i < tournMatches.matches.length; i++) {
-                testMatchService.startMatch(lobbySettings, tournMatches.matches[i], i+1)
+                testMatchService.startMatch(lobbySettings, tournMatches.matches[i])
             }
         }, 10000)
     }
