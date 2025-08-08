@@ -10,6 +10,7 @@ import { WarningPopup } from "../utils/popUpWarn";
 export interface ChatWindowMessage {
   convID: number;
   message: string;
+  metadata?: any; // optional, used for match invitations
   isOwn: boolean;
 }
 
@@ -262,6 +263,26 @@ class ChatWindow {
         "Seems like the message window could not be found..."
       );
       return;
+    }
+
+    // match invitation has metadata, other messages do not
+
+    if (messageData.metadata) {
+      const matchInvitation = document.createElement("div");
+      matchInvitation.classList.add("game-invitation");
+      matchInvitation.innerHTML = `
+        <div class="game-invitation-header">
+            <div class="game-icon">♔</div>
+            <div class="game-title">Pong Battle</div>
+            <div class="invitation-label">Game Invite</div>
+        </div>
+        
+        <div class="game-description">
+            Join me for a quick pong match!
+        </div>
+        
+        <button class="play-btn">Join Game</button>
+      `;
     }
 
     const newMessage = document.createElement("div");
