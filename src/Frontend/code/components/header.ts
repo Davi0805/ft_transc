@@ -246,7 +246,7 @@ class Header {
      * @param nickname The user's nickname to display.
      * @param avatarURL The user's avatar image URL.
      */
-    const showLoggedInVersion = (nickname: string, avatarURL: string) => {
+    const showLoggedInVersion = (username: string, nickname: string, avatarURL: string) => {
       if (loggedOut) {
         loggedOut.remove();
       }
@@ -256,7 +256,7 @@ class Header {
 
       loggedIn.innerHTML = `
         <div class="profile-container flex flex-center gap-8">
-          <a id="profile-link" href="/profile" class="profile nav-link" data-link>${nickname}</a>
+          <a id="profile-link" href="/profile/${username}" class="profile nav-link" data-link>${nickname}</a>
           <img class="profile-avatar" src="${avatarURL}" alt="user profile picture" draggable="false">
         </div>
         <a id="settings-link" href="/settings" data-link class="settings flex flex-center nav-link">
@@ -271,7 +271,7 @@ class Header {
     };
 
     if (authService.isUserAuthenticated())
-      showLoggedInVersion(authService.userNick!, authService.userAvatar!);
+      showLoggedInVersion(authService.userUsername!, authService.userNick!, authService.userAvatar!);
     else showLoggedOutVersion();
   }
 
