@@ -1,4 +1,4 @@
-import { UserData } from "../../api/userData/getUserDataAPI";
+import { UserData } from "../../api/userData/types/UserDataType";
 import { authService } from "../../services/authService";
 import { updateName } from "../../api/settings/updateNameAPI";
 import { updatePassword } from "../../api/settings/updatePasswordAPI";

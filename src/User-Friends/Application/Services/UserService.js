@@ -39,17 +39,20 @@ class UserService {
     *    @brief Method to get user by username
     *    @params username (string) - username 
     *    @throws 404 - Not found
+    *    @returns {user_id, username, rating} - user_id and username
     */
     async findByUsername(username)
     {
         try {
             const users = await userRepository.findByUsername(username);
-            if (!users || users.length === 0) throw exception('Data not found!, 404');
+            if (!users || users.length === 0) throw exception('Data not found!', 204);
             return {user_id: users[0].user_id,
                     username: users[0].username,
-                    user_image: users[0].user_image};    
+                    name: users[0].name,
+                    rating: users[0].rating,
+                };    
         } catch (error) {
-            throw exception('Failed to create a friendship!', 400);
+            throw exception('Failed to fetch user data!', 400);
         }
         
     }

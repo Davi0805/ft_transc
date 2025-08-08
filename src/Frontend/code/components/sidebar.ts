@@ -1,8 +1,8 @@
 import { authService } from "../services/authService";
 import { webSocketService, MessageDTO } from "../services/webSocketService";
 import { chatWindowControler } from "./chatWindow";
-
-import { getUserDataById, UserData } from "../api/userData/getUserDataAPI";
+import { UserData } from "../api/userData/types/UserDataType";
+import { getUserDataById} from "../api/userData/getUserDataByIDAPI";
 import { getUserAvatarById } from "../api/userData/getUserAvatarAPI";
 import {
   getSelfConversations,

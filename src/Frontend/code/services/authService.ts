@@ -1,10 +1,11 @@
 import { header } from "../components/header";
 import { Chat } from "../components/sidebar";
-import { SelfData, getSelfData } from "../api/userData/getSelfDataAPI";
+import {getSelfData } from "../api/userData/getSelfDataAPI";
 import { getUserAvatarById } from "../api/userData/getUserAvatarAPI";
 import { webSocketService } from "../services/webSocketService";
 import { chatWindowControler } from "../components/chatWindow";
 import { router } from "../routes/router";
+import { UserData } from "../api/userData/types/UserDataType";
 
 export class AuthService {
   private protectedRoutes: string[];
@@ -49,10 +50,10 @@ export class AuthService {
 
   async getMyData(): Promise<void> {
     try {
-      const userData: SelfData = await getSelfData();
-      this.userID = userData.id;
-      this.userNick = userData.nickname;
-      this.userEmail = userData.email;
+      const userData: UserData = await getSelfData();
+      this.userID = userData.user_id;
+      this.userNick = userData.name;
+      this.userEmail = userData.email || null;
       this.userUsername = userData.username;
 
       this.userAvatar = await getUserAvatarById(this.userID);

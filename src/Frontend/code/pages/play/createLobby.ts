@@ -78,7 +78,7 @@ export const CreateLobbyPage = {
             const lobbyID = await createLobby(lobbySettings)
             const lobby = await lobbySocketService.connect(lobbyID);
             if (!lobby) {throw Error("Socket was already connected somehow!")}
-            lobbyService.init(selfData.id, lobby)
+            lobbyService.init(selfData.user_id, lobby)
             router.navigateTo('/lobby')
         })
         console.log('Create Friendly page loaded!')
