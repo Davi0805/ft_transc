@@ -10,6 +10,8 @@ export type TMap = "2-players-small" | "2-players-medium" | "2-players-big" | "4
 export type TMode = "classic" | "modern"
 export type TDuration = "blitz" | "rapid" | "classical" | "long" | "marathon"
 
+export type TMatchResult = Record<SIDES, number>
+
 
 //SET TO NULL IF IT BECOMES EMPTY
 export type TFriendlyPlayer = {
@@ -151,7 +153,7 @@ export type InboundDTOMap = {
     //user withdraws from the tournament
     removeTournamentPlayer: null
     //host starts the game
-    startGame: null,
+    start: null,
     
     //Game dto:
     updateGame: CGameDTO //Dealt with in game
@@ -224,7 +226,10 @@ export type OutboundDTOMap = {
     //Game dto:
     updateGame: SGameDTO //Dealt with in game
 
-    //finishGame: 
+    //finishGame:
+    endOfMatch: {
+        result: TMatchResult
+    }
 }
 
 export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {

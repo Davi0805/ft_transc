@@ -1,5 +1,8 @@
+import { CGameDTO } from "./dependencies/dtos.js";
 import { TDynamicLobbySettings, TFriendlyPlayer, TLobbyUser, TRankedPlayer, TTournamentPlayer } from "./dependencies/lobbyTyping.js";
+import { friendlyService } from "./FriendlyService.js";
 import { lobbyRepository } from "./LobbyRepository.js";
+import { matchService } from "./MatchService.js";
 import { socketService } from "./SocketService.js";
 import { userRepository } from "./UserRepository.js";
 
@@ -141,6 +144,18 @@ class LobbyService {
         })
     }
 
+    start(lobbyID: number) {
+        const lobby = lobbyRepository.getLobbyByID(lobbyID);
+        switch (lobby.type) {
+            case "friendly":
+                friendlyService.start(lobby);
+        }
+    }
+
+    updateGame(lobbyID: number, senderID: number, controlsDTO: CGameDTO) {
+        //TODO add check here to see if the game is running
+        matchService.updateControlsState(lobbyID, senderID, controlsDTO);
+    }
 
     private _currentUID: number = 0;
 }

@@ -25,6 +25,14 @@ class SocketService {
         })
     }
 
+    broadcastToUsers<T extends keyof OutboundDTOMap>(userIDs: number[], reqType: T, data: OutboundDTOMap[T]) {
+        const sockets = socketRepository.getSocketsByUserIDs(userIDs);
+        this._broadcastToSockets(sockets, reqType, data)
+    }
+
+    
+
+
     handleMessage(lobbyID: number, senderID: number, dto: InboundDTO) {
         switch (dto.requestType) {
             case "updateSettings":
@@ -54,9 +62,26 @@ class SocketService {
             case "removeTournamentPlayer":
                 lobbyService.removeTournamentPlayer(lobbyID, senderID);
                 break;
+            case "start":
+                lobbyService.start(lobbyID);
+                break;
+            case "updateGame":
+                lobbyService.updateGame(lobbyID, senderID, dto.data)
+                break;
             default:
                 throw Error("dto type not recognized!")
         }
+    }
+
+    private _broadcastToSockets<T extends keyof OutboundDTOMap>(sockets: WebSocket[], reqType: T, data: OutboundDTOMap[T]) {
+        const dto: OutboundDTO = {
+            requestType: reqType,
+            data: data
+        }
+        const dtoString = JSON.stringify(dto);
+        sockets.forEach(socket => {
+            socket.send(dtoString)
+        })
     }
 
 }

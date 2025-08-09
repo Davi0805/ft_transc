@@ -48,14 +48,7 @@ class LobbyRepository {
             mode: configs.mode,
             duration: configs.duration,
             round: 1,
-            users: [/* {
-                id: userInfo.id,
-                username: userInfo.username,
-                spriteID: userInfo.spriteID,
-                rating: userInfo.rating,
-                ready: false,
-                player: null
-            } */]
+            users: []
         }
         this._lobbies.push(newLobby)
         

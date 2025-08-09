@@ -101,7 +101,7 @@ class LobbyService {
     }
 
     startMatchIN() {
-        lobbySocketService.send("startGame", null);
+        lobbySocketService.send("start", null);
     }
 
 
