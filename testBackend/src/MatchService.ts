@@ -16,11 +16,12 @@ class MatchService {
         const game = match.serverGame;
         const loop = new LoopController(60);
         loop.start(() => {
+            if (!loop.isRunning) return;
             const dto = game.getGameDTO()
             socketService.broadcastToUsers(match.userIDs, "updateGame", dto);
             
             if (game.matchResult !== null) {
-                loop.pause();
+                loop.stop();
                 console.log(`The result of the match with id ${match.id} was: `, game.matchResult)
                 switch (lobby.type) {
                     case "friendly":

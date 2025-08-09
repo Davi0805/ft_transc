@@ -1,4 +1,5 @@
 import { TFriendlyPlayer, TLobby, TLobbyUser, TMatchPlayer, TMatchResult } from "./dependencies/lobbyTyping.js"
+import { lobbyService } from "./LobbyService.js";
 import { matchService } from "./MatchService.js";
 import { socketService } from "./SocketService.js";
 
@@ -10,6 +11,9 @@ class FriendlyService {
 
     onMatchFinished(lobbyID: number, _matchID: number, result: TMatchResult) {
         socketService.broadcastToLobby(lobbyID, "endOfMatch", { result: result })
+        setTimeout(() => {
+            lobbyService.returnToLobby(lobbyID);
+        }, 10 * 1000)
     }
 
 

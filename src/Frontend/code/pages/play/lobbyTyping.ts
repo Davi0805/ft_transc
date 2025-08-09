@@ -230,6 +230,10 @@ export type OutboundDTOMap = {
     endOfMatch: {
         result: TMatchResult
     }
+
+    returnToLobby: {
+        lobby: TLobby
+    }
 }
 
 export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {

@@ -126,6 +126,13 @@ class LobbySocketService {
             case "updateGame":
                 App.severUpdate(dto.data)
                 break;
+            case "endOfMatch":
+                //TODO: Display result
+                console.log("Results: ", dto.data.result);
+                break;
+            case "returnToLobby":
+                lobbyService.return(dto.data.lobby)
+                break;
             default:
                 throw Error("A message came in with a non registered type!!")
         }

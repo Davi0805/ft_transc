@@ -157,6 +157,14 @@ class LobbyService {
         matchService.updateControlsState(lobbyID, senderID, controlsDTO);
     }
 
+    returnToLobby(lobbyID: number) {
+        const lobby = lobbyRepository.getLobbyByID(lobbyID);
+        lobby.users.forEach(user => {
+            user.player = null;
+        })
+        socketService.broadcastToLobby(lobbyID, "returnToLobby", { lobby: lobby })
+    }
+
     private _currentUID: number = 0;
 }
 
