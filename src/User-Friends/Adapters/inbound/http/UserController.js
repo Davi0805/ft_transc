@@ -65,6 +65,12 @@ class UserController {
         return reply.send(user);
     }
 
+    async getProfileData(req, reply)
+    {
+        const profileData = await userService.getProfileData(req.params.username
+                                                            , req.session.user_id);
+        return reply.send(profileData);
+    }
 
     /* 
     *    @brief Endpoint to create user

@@ -57,6 +57,18 @@ class UserService {
         
     }
 
+    async getProfileData(username, originUserId)
+    {
+        try {
+            const profileData = await userRepository.getProfileDataByUsername(username, originUserId);
+            if (!profileData || profileData.length === 0) throw exception('User not found!', 204);
+            profileData[0].is_friend = (profileData[0].is_friend) ? true : false;
+            return profileData[0];    
+        } catch (error) {
+            console.log(error.message);
+            throw exception('Failed to find user!', 400);
+        }
+    }
 
     /* 
     *    @brief Method to get all users (more for debug)
