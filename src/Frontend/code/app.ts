@@ -6,7 +6,7 @@ import "../css/register/register.css";
 import "../css/header/header.css";
 import "../css/sidebar/chat.css";
 import "../css/sidebar/friend-requests.css";
-
+import "./pages/profile/profile.css"
 
 import { authService } from "./services/authService";
 import { header } from "./components/header";
