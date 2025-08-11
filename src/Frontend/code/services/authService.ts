@@ -51,8 +51,8 @@ export class AuthService {
   async getMyData(): Promise<void> {
     try {
       const userData: UserData = await getSelfData();
-      this.userID = userData.user_id;
-      this.userNick = userData.name;
+      this.userID = userData.id;
+      this.userNick = userData.nickname;
       this.userEmail = userData.email || null;
       this.userUsername = userData.username;
 

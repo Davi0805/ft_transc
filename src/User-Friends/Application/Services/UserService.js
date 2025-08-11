@@ -48,7 +48,7 @@ class UserService {
             if (!users || users.length === 0) throw exception('Data not found!', 204);
             return {user_id: users[0].user_id,
                     username: users[0].username,
-                    name: users[0].name,
+                    nickname: users[0].name,
                     rating: users[0].rating,
                 };    
         } catch (error) {

@@ -1,6 +1,6 @@
 export interface UserData {
-  user_id: number;
-  name: string;
+  id: number;
+  nickname: string;
   username: string;
   rating: number;
   email?: string;

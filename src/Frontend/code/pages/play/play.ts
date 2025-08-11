@@ -97,7 +97,7 @@ export const PlayPage = {
         const selfData = await getSelfData();
         const lobby = await lobbySocketService.connect(lobbyId);
         if (!lobby) {throw Error("Socket was already connected somehow!")}
-        lobbyService.init(selfData.user_id, lobby)
+        lobbyService.init(selfData.id, lobby)
         router.navigateTo('/lobby')
     }
 }

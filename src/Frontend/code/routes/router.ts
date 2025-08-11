@@ -101,7 +101,7 @@ class Router {
           null;
 
 
-        document.title = `${userData.name}'s profile`;
+        document.title = `${userData.nickname}'s profile`;
         // Load HTML template
         document.getElementById("main")!.innerHTML = await route?.template();
 

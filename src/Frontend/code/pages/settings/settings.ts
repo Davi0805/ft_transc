@@ -179,10 +179,10 @@ export const SettingsPage = {
           <img src="${avatar}"
               alt="user-avatar"
               class="w-10 h-10 rounded-full border-2 border-yellow-400" />
-          <span class="font-medium">${userData.name}</span>
+          <span class="font-medium">${userData.nickname}</span>
         </div>
         <button class="unblock-btn bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-white font-semibold transition duration-200"
-                data-username="${userData.user_id}">
+                data-username="${userData.id}">
           Unblock
         </button>
          `;
@@ -547,8 +547,8 @@ export const SettingsPage = {
     // this is mock data
     // add a loop after getting all blocked users and append with somehting like that
     let user1: UserData = {
-      user_id: 1,
-      name: "panela",
+      id: 1,
+      nickname: "panela",
       username: "aaa-s",
       email: "a@example.com",
       spriteID: 0,
@@ -556,8 +556,8 @@ export const SettingsPage = {
     };
 
     let user2: UserData = {
-      user_id: 1,
-      name: "puta",
+      id: 1,
+      nickname: "puta",
       username: "www-s",
       email: "a@example.com",
       spriteID: 0,
@@ -565,8 +565,8 @@ export const SettingsPage = {
     };
 
     let user3: UserData = {
-      user_id: 1,
-      name: "pariu",
+      id: 1,
+      nickname: "pariu",
       username: "qweqwe-s",
       email: "a@example.com",
       spriteID: 0,
@@ -601,7 +601,7 @@ export const SettingsPage = {
     // add the event listener
 
     // unblock contact for specific user
-    // btn unblock has data-username="${userData.user_id} so we can use that
+    // btn unblock has data-username="${userData.id} so we can use that
   },
 
   initChangeAvatarEventListener(): void {

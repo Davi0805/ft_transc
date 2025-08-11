@@ -280,7 +280,7 @@ export class Chat {
         this.friends.push({
           convID: conv.id,
           friendID: friendID,
-          friendName: friendData.name,
+          friendName: friendData.nickname,
           friendAvatar: friendAvatarURL,
           unreadMsg: conv.unread_count,
           friendOn: false,
@@ -495,7 +495,7 @@ export class Chat {
         this.friends.push({
           convID: data.conversation_id,
           friendID: friendID,
-          friendName: friendData.name,
+          friendName: friendData.nickname,
           friendAvatar: friendAvatarURL,
           unreadMsg: 0,
           friendOn: false,
