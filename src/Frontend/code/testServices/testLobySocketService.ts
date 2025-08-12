@@ -62,6 +62,7 @@ class LobbySocketService {
                 requestType: type,
                 data: data
             }
+            console.log("The following message type will be send: ", type)
             this._ws.send(JSON.stringify(dto));
             return true;
         } else {
@@ -84,6 +85,7 @@ class LobbySocketService {
     }
 
     private _handleMessage(dto: OutboundDTO) {
+        console.log("The followind message type will be handled: ", dto.requestType)
         switch (dto.requestType) {
             case "updateSettings":
                 lobbyService.updateSettingsOUT(dto.data.settings, dto.data.users);
@@ -126,7 +128,7 @@ class LobbySocketService {
                 break;
             case "endOfMatch":
                 //TODO: Display result
-                console.log("Results: ", dto.data.result);
+                //console.log("Results: ", dto.data.result);
                 break;
             case "returnToLobby":
                 lobbyService.return(dto.data.lobby)

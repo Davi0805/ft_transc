@@ -17,7 +17,6 @@ class LobbyService {
     init(myID: number, lobby: TLobby) {
         this._lobby = lobby;
         this._myID = myID;
-        //this._isInit = true;
     }
 
     return(lobby: TLobby) {

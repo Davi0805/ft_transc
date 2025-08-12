@@ -3,7 +3,9 @@ import { TDynamicLobbySettings, TFriendlyPlayer, TLobbyUser, TRankedPlayer, TTou
 import { friendlyService } from "./FriendlyService.js";
 import { lobbyRepository } from "./LobbyRepository.js";
 import { matchService } from "./MatchService.js";
+import { rankedService } from "./RankedService.js";
 import { socketService } from "./SocketService.js";
+import { tournamentService } from "./tournamentService.js";
 import { userRepository } from "./UserRepository.js";
 
 class LobbyService {
@@ -149,6 +151,15 @@ class LobbyService {
         switch (lobby.type) {
             case "friendly":
                 friendlyService.start(lobby);
+                break;
+            case "ranked":
+                rankedService.start(lobby);
+                break;
+            case "tournament":
+                tournamentService.start(lobby);
+                break;
+            default:
+                throw Error("lobby type not recognized!");
         }
     }
 

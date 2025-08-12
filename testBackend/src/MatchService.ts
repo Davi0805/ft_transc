@@ -5,6 +5,7 @@ import LoopController from "./game/LoopController.js";
 import { SIDES } from "./game/shared/sharedTypes.js";
 import { matchFactory } from "./MatchFactory.js";
 import { matchRepository } from "./MatchRepository.js";
+import { rankedService } from "./RankedService.js";
 import { socketService } from "./SocketService.js";
 
 class MatchService {
@@ -26,7 +27,12 @@ class MatchService {
                 switch (lobby.type) {
                     case "friendly":
                         friendlyService.onMatchFinished(lobby.id, match.id, game.matchResult);
-                        matchRepository.removeMatchByID(match.id)
+                        matchRepository.removeMatchByID(match.id);
+                        break;
+                    case "ranked":
+                        rankedService.onMatchFinished(lobby.id, match.id, game.matchResult);
+                        matchRepository.removeMatchByID(match.id);
+                        break;
                 }
             }
         })
