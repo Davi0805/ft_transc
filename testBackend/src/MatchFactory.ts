@@ -11,6 +11,11 @@ class MatchFactory {
         const serverSettings: SGameConfigs = this._buildSGameConfigs(gameSettings);
         const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings);
 
+        console.log("Server settings: ")
+        console.log(serverSettings)
+        console.log("Client Settings: ")
+        console.log(clientSettings)
+
         const userIDs: number[] = []
         players.forEach(player => {
             if (!userIDs.includes(player.userID)) {

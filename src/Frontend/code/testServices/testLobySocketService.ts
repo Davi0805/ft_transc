@@ -22,8 +22,6 @@ class LobbySocketService {
             this._ws.onmessage = (ev: MessageEvent) => {
                 //try {
                     const data = JSON.parse(ev.data) as OutboundDTO;
-                    //console.log("Received data")
-                    //console.log(data)
                     if (data.requestType === "lobby") {
                         resolve(data.data);
                     } else {

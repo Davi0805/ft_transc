@@ -84,6 +84,7 @@ export default class CPaddleControls {
                 const dto: CGameDTO = {
                     controlsState: {humanID: this._humanID, controlsState: this._controlsState}
                 }
+                console.log(`humanID ${dto.controlsState.humanID} will send this: ${dto.controlsState.controlsState}`)
                 EventBus.dispatchEvent(new CustomEvent("sendToServer", { detail: dto}))
             }
         }

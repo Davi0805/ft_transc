@@ -43,7 +43,6 @@ export default class Ticker {
     }
 
     protected _callCallbacks() {
-        //console.log(this._delta)
         this._callbacks.forEach(callback => {
             callback(this._delta, this._tickerTimer);
         })

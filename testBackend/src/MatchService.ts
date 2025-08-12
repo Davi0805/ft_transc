@@ -26,6 +26,7 @@ class MatchService {
                 switch (lobby.type) {
                     case "friendly":
                         friendlyService.onMatchFinished(lobby.id, match.id, game.matchResult);
+                        matchRepository.removeMatchByID(match.id)
                 }
             }
         })

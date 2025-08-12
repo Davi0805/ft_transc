@@ -17,8 +17,6 @@ class FtApplication {
         // and forward it to the socket. This avoids the scenes to hold references to higher objects in the tree
         EventBus.addEventListener("sendToServer", (event: Event) => {
             const dto = (event as CustomEvent).detail;
-            
-            console.log(dto)
             lobbySocketService.send("updateGame", dto);
             //this._socket.send(JSON.stringify(dto))
         })
@@ -47,6 +45,11 @@ class FtApplication {
                 this._scenesManager.currentScene?.serverUpdate(message.dto);
             }
         }) */
+    }
+
+    async destroy() {
+        this._scenesManager.removeCurrentScene();
+        //Maybe something else is necessary?
     }
 
     severUpdate(dto: SGameDTO) {

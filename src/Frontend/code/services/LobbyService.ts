@@ -22,6 +22,7 @@ class LobbyService {
 
     return(lobby: TLobby) {
         this._lobby = lobby;
+        matchService.destroy();
         router.navigateTo("/lobby")
     }
 
@@ -203,7 +204,6 @@ class LobbyService {
         const side: SIDES = matchService.getTeamFromPairings(this.myID, tournPairings);
         matchService.addDefaultControls(this.myID, side);
         tournamentService.loadPairings(tournPairings);
-        //console.log(tournamentService.pairings)
         router.navigateTo("/tournament")
         //LobbyPage.renderTournamentPairings(tournPairings);
     }

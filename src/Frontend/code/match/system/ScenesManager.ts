@@ -35,6 +35,14 @@ export class ScenesManager {
         this.container.addChild(this.currentScene!.root);
     }
 
+    async removeCurrentScene() {
+        if (this.currentScene) {
+            await this.currentScene.remove();
+            this.container.removeChildren();
+        }
+        this._currentScene = null;
+    }
+
     private _container: Container;
     get container() {
         return this._container;

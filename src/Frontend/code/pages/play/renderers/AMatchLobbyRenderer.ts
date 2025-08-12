@@ -63,7 +63,6 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
     }
 
     private _renderOccupiedSlot(slotSpaceElement: HTMLTableCellElement, player: TPlayerInSlot) {
-        console.log("The player in this slot is: ", player)
         const playerDiv = document.createElement("div");
         playerDiv.className = "flex flex-row"
         

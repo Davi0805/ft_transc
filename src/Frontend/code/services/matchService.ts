@@ -8,7 +8,6 @@ import { lobbySocketService } from "../testServices/testLobySocketService";
 class MatchService {
 
     init(configs: CAppConfigs) {
-        console.log(this._controls)
         configs.gameSceneConfigs.controls = this._controls;
         this._configs = configs;
     }
@@ -55,10 +54,13 @@ class MatchService {
     }
 
     async start(root: HTMLElement) {
-        console.log("Match about to start!")
-        console.log(this.configs)
         await App.init(this.configs, root, lobbySocketService.ws);
-    } 
+    }
+
+    destroy() {
+        App.destroy()
+        this._controls = []
+    }
 
     private _configs: CAppConfigs | null = null;
     get configs(): CAppConfigs {
