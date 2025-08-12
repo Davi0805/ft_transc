@@ -5,7 +5,7 @@ import { lobbyRepository } from "./LobbyRepository.js";
 import { matchService } from "./MatchService.js";
 import { rankedService } from "./RankedService.js";
 import { socketService } from "./SocketService.js";
-import { tournamentService } from "./tournamentService.js";
+import { tournamentService } from "./TournamentService.js";
 import { userRepository } from "./UserRepository.js";
 
 class LobbyService {

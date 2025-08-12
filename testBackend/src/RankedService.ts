@@ -5,7 +5,7 @@ import { socketService } from "./SocketService.js";
 
 class RankedService {
     start(lobby: TLobby) {
-        const matchPlayers = this._getRankedPlayers(lobby.users);
+        const matchPlayers = this._getMatchPlayers(lobby.users);
         matchService.createAndRunMatch(lobby, matchPlayers);
     }
 
@@ -17,7 +17,7 @@ class RankedService {
     }
 
 
-    private _getRankedPlayers(users: TLobbyUser[]) {
+    private _getMatchPlayers(users: TLobbyUser[]) {
         const out: TMatchPlayer[] = [];
         users.forEach(user => {
             if (user.player) {

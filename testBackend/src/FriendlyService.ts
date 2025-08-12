@@ -5,7 +5,7 @@ import { socketService } from "./SocketService.js";
 
 class FriendlyService {
     start(lobby: TLobby) {
-        const matchPlayers = this._getFriendlyPlayers(lobby.users);
+        const matchPlayers = this._getMatchPlayers(lobby.users);
         matchService.createAndRunMatch(lobby, matchPlayers);
     }
 
@@ -17,7 +17,7 @@ class FriendlyService {
     }
 
 
-    private _getFriendlyPlayers(users: TLobbyUser[]) {
+    private _getMatchPlayers(users: TLobbyUser[]) {
         const out: TMatchPlayer[] = [];
         users.forEach(user => {
             if (user.player) {
