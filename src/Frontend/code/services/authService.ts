@@ -117,7 +117,7 @@ export class AuthService {
   }
 
   canAccessRoute(routePath: string): boolean {
-    if (this.protectedRoutes.includes(routePath)) {
+    if (this.protectedRoutes.includes(routePath) || routePath.startsWith("/profile/")) {
       return this.isAuthenticated;
     }
     return true;
