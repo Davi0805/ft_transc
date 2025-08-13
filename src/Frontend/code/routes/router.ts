@@ -4,6 +4,8 @@ import { translator } from "../services/translationService";
 import { Route, routes } from "./routes";
 import { getUserDataByUsername } from "../api/userData/getUserDataByUsernameAPI";
 import { UserData } from "../api/userData/types/UserDataType";
+import { getProfileUserData } from "../api/userData/getProfileUserDataAPI";
+import { ProfileDataType } from "../api/userData/types/ProfileDataType";
 
 class Router {
   private routes: Array<Route>;
@@ -94,7 +96,7 @@ class Router {
         if (!username || !/^[a-zA-Z0-9_\\-]{3,15}$/.test(username)) {
           throw new Error("Invalid username format");
         } 
-        const userData: UserData | null = await getUserDataByUsername(username);
+        const userData: ProfileDataType | null = await getProfileUserData(username);
         let route: Route | null =
           this.routes.find((r: Route) => r.path === "/profile") ||
           this.routes.find((r: Route) => r.path === "/404") ||
