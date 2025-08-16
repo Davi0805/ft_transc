@@ -37,6 +37,11 @@ async function userRoutes(fastify, options) {
     fastify.get('/users/username/:username', {
       handler: userController.getByUsername
     });
+
+    fastify.get('/profile/:username', {
+      preHandler: authMiddleware,
+      handler: userController.getProfileData
+    });
     
     fastify.post('/twofa/auth', {
       schema: {

@@ -18,7 +18,6 @@ class LobbyService {
     {
         const id = Math.floor(Math.random() * 99999);
         await this.validateLobbyConfig(data);
-        console.log("THE ID CREATED IS THE FOLLOWING")
         console.log(id)
         const map = await this.validateMap(data.map);
         const lobby = mapper.buildLobbyData(id, data, map, user_id);
@@ -49,11 +48,10 @@ class LobbyService {
     {
         connPlyrsRepo.deleteUser(lobbyId, userId);
         broadcast.userLeft(lobbyId, userId);
-        //connPlyrsRepo.broadcastToLobby(lobbyId, {type: "user_left_event",
-        //                                        user_id: userId});
         let lobbyUsers = await lobbyRepo.getLobbyUsers(lobbyId);
         lobbyUsers = lobbyUsers.filter(u => u.id != userId);
-        await lobbyRepo.updateUsers(lobbyId, lobbyUsers);
+        if (lobbyUsers.length == 0) { await lobbyRepo.deleteLobby(lobbyId); }
+        else { await lobbyRepo.updateUsers(lobbyId, lobbyUsers); }
     }
 
     async setUserState(lobbyId, user_id, readyState)
