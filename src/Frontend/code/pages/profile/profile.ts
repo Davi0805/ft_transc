@@ -21,13 +21,13 @@ export const ProfilePage = {
             </div>
             
             <!-- User Info -->
-            <div class="flex-1 flex gap-6 items-start pl-2">
+            <div class="flex-1 flex gap-6 items-center justify-center pl-2 h-32">
                 <!-- User Details -->
-                <div class="flex flex-col flex-1 gap-2 justify-center">
+                <div class="flex flex-col flex-1 gap-2 justify-center h-full">
                     <!-- clip text to create gradient effect -->
-                    <h1 id="profile-nickname" class="text-4xl font-bold bg-gradient-to-br from-white to-blue-300 bg-clip-text text-transparent"></h1>
-                    <p id="profile-username" class="text-xl text-slate-300 font-medium"></p>
-                    <p class="text-gray-300 text-lg font-semibold">
+                    <h1 id="profile-nickname" class="text-4xl leading-none font-bold text-white "></h1>
+                    <p id="profile-username" class="text-lg leading-none text-slate-300 font-medium"></p>
+                    <p class="text-gray-300 text-base leading-none font-semibold">
                         Friends <span id="profile-friends" class="text-sky-500 font-semibold pl-2"></span>
                     </p>
                 </div>
