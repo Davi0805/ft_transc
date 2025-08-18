@@ -98,7 +98,7 @@ class Router {
         } 
         const userData: ProfileDataType | null = await getProfileUserData(username);
         let route: Route | null =
-          this.routes.find((r: Route) => r.path === "/profile") ||
+          this.routes.find((r: Route) => r.path.startsWith("/profile")) ||
           this.routes.find((r: Route) => r.path === "/404") ||
           null;
 
