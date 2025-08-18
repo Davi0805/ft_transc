@@ -30,19 +30,10 @@ export const ProfilePage = {
                     <p class="text-gray-300 text-lg font-semibold">
                         Friends <span id="profile-friends" class="text-sky-500 font-semibold pl-2"></span>
                     </p>
-                    
-                    <div class="flex gap-3 mt-1">
-                        <button class="px-4 py-2 bg-black/20 hover:bg-blue-900 text-white font-semibold rounded-lg transition-all duration-200 text-sm">
-                            Add friend
-                        </button>
-                        <button class="px-4 py-2 bg-white/10 hover:bg-red-600/50 text-white font-semibold rounded-lg border border-white/20 transition-all duration-200 text-sm">
-                            Block
-                        </button>
-                    </div>
                 </div>
                 
                 <!-- Ranking Section -->
-                <div class="flex flex-col items-center justify-center min-w-[120px] p-4 bg-black/20 rounded-xl border border-white/10">
+                <div class="flex flex-col items-center h-[90px] justify-center min-w-[120px] bg-black/20 rounded-xl border border-white/10">
                     <div id="profile-ranking" class="text-3xl font-bold text-amber-400 mb-1"></div>
                     <div class="text-sm text-gray-400 uppercase tracking-wider">Ranking</div>
                 </div>
