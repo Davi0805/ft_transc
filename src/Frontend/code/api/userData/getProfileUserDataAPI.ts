@@ -21,7 +21,10 @@ export async function getProfileUserData(username: string): Promise<ProfileDataT
       throw error;
     }
     const response = await fetch(`http://localhost:8080/profile/${username}`, {
-        method: "GET",
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${authService.getToken()}`,
+      },
       });
 
       if (!response.ok) {

@@ -2,6 +2,7 @@ import { getUserAvatarById } from "../../api/userData/getUserAvatarAPI";
 import { UserData } from "../../api/userData/types/UserDataType";
 import { ErrorPopup } from "../../utils/popUpError";
 import { ProfileDataType } from "../../api/userData/types/ProfileDataType";
+import { authService } from "../../services/authService";
 
 export const ProfilePage = {
   template() {
@@ -15,7 +16,8 @@ export const ProfilePage = {
                 <img id="profile-avatar"
                      src="" 
                      alt="User Avatar" 
-                     class="w-30 h-30 rounded-full border-3 border-sky-500 object-cover">
+                     class="w-32 h-32 rounded-full border-3 border-sky-500 object-cover" 
+                     width="128px height="128px">
             </div>
             
             <!-- User Info -->
@@ -151,13 +153,13 @@ export const ProfilePage = {
   async init(userData: ProfileDataType) {
     console.log("Profile page loaded!");
 
-    console.log("DEBUG: User data received:", userData);
-
     // Load user data into the page contents
     // profile-avatar 
     const avatarElement = document.getElementById("profile-avatar") as HTMLImageElement;
     try {
-        avatarElement.src = await getUserAvatarById(userData.user_id);
+        avatarElement.src =  authService.userAvatar?.startsWith(".")
+                            ? authService.userAvatar?.replace("./", "/")
+                            : authService.userAvatar || "/Assets/default-avatar.png";
     } catch (error) {
         console.error("DEBUG: Failed to load user avatar:", error);
         const errrorPopup = new ErrorPopup();
