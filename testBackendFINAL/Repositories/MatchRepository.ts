@@ -63,6 +63,12 @@ class MatchRepository {
         return match.match;
     }
 
+    getMatchUsersByID(matchID: number) {
+        const match = this._matches.find(match => match.id === matchID);
+        if (!match) { throw Error("Match with this ID does not exist!") };
+        return match.userIDs
+    }
+
     getMatchBroadcastLoopByID(matchID: number) {
         const match = this._matches.find(match => match.id === matchID);
         if (!match) { throw Error("Match with this ID does not exist!") };

@@ -2,7 +2,6 @@ import { FriendlyPlayerT, lobbyRepository, LobbyUserT, RankedPlayerT, Tournament
 import { MatchSettingsT } from "../Repositories/MatchRepository.js";
 import { userRepository } from "../Repositories/UserRepository.js";
 import { friendlyService } from "./FriendlyService.js";
-import { matchService } from "./MatchService.js";
 import { rankedService } from "./RankedService.js";
 import { socketService } from "./SocketService.js";
 
