@@ -69,6 +69,12 @@ async function userRoutes(fastify, options) {
       preHandler: authMiddleware,
       handler: userController.updateName
     });
+
+    fastify.put('/users/email', {
+        preHandler: authMiddleware,
+        handler: userController.updateEmail
+      }
+    )
     
     fastify.put('/user/password', {
       schema: {
