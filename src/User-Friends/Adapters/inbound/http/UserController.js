@@ -112,6 +112,13 @@ class UserController {
     }
 
 
+    async updateEmail(req, reply)
+    {
+        await userService.updateEmail({email: req.body.email, id: req.session.user_id});
+        return reply.send();
+    }
+
+
     /* 
     *    @brief Endpoint to update users password
     *    PUT - localhost:8080/user/password

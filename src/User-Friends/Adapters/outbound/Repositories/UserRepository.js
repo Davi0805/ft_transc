@@ -68,6 +68,11 @@ class UserRepository {
         );
     }
 
+    async updateEmail(user)
+    {
+        return db.raw('UPDATE users SET email = ? WHERE user_id = ?', [user.email, user.id]);
+    }
+
     async addTwoFactorAuth(user_id, twofa_secret)
     {
         return db.raw('UPDATE users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?',

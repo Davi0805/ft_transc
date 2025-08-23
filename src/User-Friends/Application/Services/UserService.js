@@ -148,6 +148,15 @@ class UserService {
         }
     }
 
+    async updateEmail(user)
+    {
+        try {
+            await userRepository.updateEmail(user);
+        } catch (error) {
+            throw exception('Failed to update name', 400);
+        }
+    }
+
 
     /* 
     *    @brief Method that updates the users password
