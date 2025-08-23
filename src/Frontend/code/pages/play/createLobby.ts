@@ -70,14 +70,17 @@ export const CreateLobbyPage = {
             const lobbySettings: LobbyCreationConfigsDTO = {
                 name: nameInput.value,
                 type: typeInput.options[typeInput.selectedIndex].id as TLobbyType,
-                map: matchMapInput.value as TMap,
-                mode: matchModeInput.value as TMode,
-                duration: matchDurationInput.value as TDuration
+                matchSettings: {
+                  map: matchMapInput.value as TMap,
+                  mode: matchModeInput.value as TMode,
+                  duration: matchDurationInput.value as TDuration
+                }
             }
             
             const lobbyID = await createLobby(lobbySettings, selfData.id)
             const lobby = await lobbySocketService.connect(lobbyID, selfData.id);
             if (!lobby) {throw Error("Socket was already connected somehow!")}
+            console.log(lobby)
             lobbyService.init(selfData.id, lobby)
             router.navigateTo('/lobby')
         })

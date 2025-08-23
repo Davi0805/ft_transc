@@ -36,12 +36,12 @@ export type TRankedPlayer = {
 //SHOULD NEVER BE SET TO NULL AFTER BEING SET!!! (change the "participating" flag instead)
 //Except for participating flag, All these will be calculated by tournament service
 export type TTournamentPlayer = {
-    //How many points the player currently has in the tournament
+    /* //How many points the player currently has in the tournament
     score: number, //Def: 0
     //The userIDs of the players with whom this user played
     prevOpponents: number[], //Def: []
     //The Team Preference index. Indicates whether this user deserves to play on the left or right
-    teamPref: number, //Def: 0
+    teamPref: number, //Def: 0 */
 }
 
 export type TLobbyUser = {
@@ -70,14 +70,7 @@ export type TLobby = {
     name: string,
     //The type of the lobby (see above for options)
     type: TLobbyType,
-    //Map of the lobby. Dictates how many and which slots exist (the capacity can be taken from crossing this info with the users' position)
-    map: TMap,
-    //Mode of lobby (see above for options). Tells if powerups will be present
-    mode: TMode,
-    //Duration of the matches (See above for options). Better saved as string and only convert to number when the match starts
-    duration: TDuration,
-    //Current round. Important for pairings in tournaments, and allows the same people to start a new game from the same lobby, keeping track of how many games they played
-    round: number, //Def: 1
+    matchSettings: TDynamicLobbySettings
     //The users present in the lobby. 
     users: TLobbyUser[] //Def: [host]
 }
@@ -112,13 +105,14 @@ export type LobbiesListDTO = LobbyInfoForDisplay[]
 export type LobbyCreationConfigsDTO = {
     name: string,
     type: TLobbyType,
+    matchSettings: TDynamicLobbySettings
+}
+
+export type TDynamicLobbySettings = {
     map: TMap,
     mode: TMode,
     duration: TDuration
 }
-
-
-export type TDynamicLobbySettings = Pick<TLobby, "map" | "mode" | "duration">
 
 //server will receive these when...
 export type InboundDTOMap = {
@@ -201,7 +195,7 @@ export type OutboundDTOMap = {
     //user applies to a tournament
     addTournamentPlayer: {
         userID: number,
-        player: TTournamentPlayer
+        //player: TTournamentPlayer
     }
     //user withdraws from tournament
     removeTournamentPlayer: {

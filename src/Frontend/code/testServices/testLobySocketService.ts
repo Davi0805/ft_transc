@@ -21,8 +21,10 @@ class LobbySocketService {
             
             this._ws.onmessage = (ev: MessageEvent) => {
                 //try {
+                    //console.log(ev.data)
                     const data = JSON.parse(ev.data) as OutboundDTO;
                     if (data.requestType === "lobby") {
+                        
                         resolve(data.data);
                     } else {
                         this._handleMessage(data)
@@ -85,7 +87,7 @@ class LobbySocketService {
     }
 
     private _handleMessage(dto: OutboundDTO) {
-        console.log("The followind message type will be handled: ", dto.requestType)
+        //console.log("The followind message type will be handled: ", dto.requestType)
         switch (dto.requestType) {
             case "updateSettings":
                 lobbyService.updateSettingsOUT(dto.data.settings, dto.data.users);
@@ -112,7 +114,7 @@ class LobbySocketService {
                 lobbyService.removeRankedPlayerOUT(dto.data.id);
                 break;
             case "addTournamentPlayer":
-                lobbyService.addTournamentPlayerOUT(dto.data.userID, dto.data.player);
+                lobbyService.addTournamentPlayerOUT(dto.data.userID);
                 break;
             case "removeTournamentPlayer":
                 lobbyService.removeTournamentPlayerOUT(dto.data.id);

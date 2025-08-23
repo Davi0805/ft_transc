@@ -1,26 +1,14 @@
-import { TDuration, TLobby, TLobbyUser, TMap, TMatchPlayer, TTournamentParticipant, TTournamentPlayer } from "./dependencies/lobbyTyping.js";
-import { lobbySocketService } from "./testLobbySocketService.js";
-import { SGameConfigs } from "./testMatchService.js";
-import LoopController from "./game/LoopController.js";
-import ServerGame from "./game/ServerGame.js";
-import { CAppConfigs, TGameConfigs, TUserCustoms } from "./game/shared/SetupDependencies.js";
-import { point, ROLES, SIDES } from "./game/shared/sharedTypes.js";
-import { CGameDTO } from "./dependencies/dtos.js";
+import ServerGame, { SGameConfigs } from "../game/ServerGame.js";
+import { CAppConfigs, TGameConfigs, TUserCustoms } from "../game/shared/SetupDependencies.js";
+import { point, ROLES, SIDES } from "../game/shared/sharedTypes.js";
+import { MatchDurationT, MatchMapT, MatchPlayerT, MatchSettingsT } from "../Repositories/MatchRepository.js";
 
-export type TMatchInRepo = {
-    id: number,
-    clientSettings: CAppConfigs,
-    serverGame: ServerGame,
-    userIDs: number[]
-}
-
-class TestGameService {
-
-    loadMatch(lobbySettings: TLobby, players: TMatchPlayer[]) {
-        const userCustoms: TUserCustoms = this._buildUserCustoms(lobbySettings, players);
+class MatchFactory {
+    generateMatchInfo(settings: MatchSettingsT, players: MatchPlayerT[]) {
+        const userCustoms: TUserCustoms = this._buildUserCustoms(settings, players);
         const gameSettings: TGameConfigs = this._applyDevCustoms(userCustoms);
-        const serverSettings: SGameConfigs = this._buildSGameConfigs(gameSettings);
-        const clientSettings: CAppConfigs = this._buildCAppConfigs(gameSettings);
+        const serverConfigs: SGameConfigs = this._buildSGameConfigs(gameSettings);
+        const clientConfigs: CAppConfigs = this._buildCAppConfigs(gameSettings);
 
         const userIDs: number[] = []
         players.forEach(player => {
@@ -29,58 +17,19 @@ class TestGameService {
             }
         })
 
-        const game = new ServerGame(serverSettings);
-        this._matches.set(this._currentMatchID, {
-            id: this._currentMatchID,
-            clientSettings: clientSettings,
-            serverGame: game,
+        return {
+            clientConfigs: clientConfigs,
+            serverConfigs: serverConfigs,
             userIDs: userIDs
-        })
-
-        return this._matches.get(this._currentMatchID++)
-
-
-
-        //TODO: This probably has to be moved to the services
-        //Broadcast that was previously in game but got moved out to match lobbySocket conditions for send()
-        const loop = new LoopController(60);
-        loop.start(() => {
-            //console.log("is this even running")
-            const dto = game.getGameDTO()
-            //option 1
-            playerIDs.forEach(id => {
-                lobbySocketService.sendToUser(id, "updateGame", dto)
-            })
-
-            //Option 2
-            //lobbySocketService.broadcast(lobbySettings.id, "updateGame", dto)
-            
-            if (game.matchResult !== null) {
-                loop.pause();
-                console.log(`The result of the match with id ${this._currentMatchID} was: `, game.matchResult)
-                if (board) {
-                    lobbySocketService.broadcast(lobbySettings.id, "updateTournamentResult", { board: board, result: game.matchResult[SIDES.LEFT]})
-                }
-            }
-        })
-        game.startGameLoop();
+        };
     }
 
-    
-
-    updateControlsState(playerID: number, controlsDTO: CGameDTO) {
-        const match = this._matches.find(match => match.userIDs.includes(playerID))
-        if (!match) {throw Error("This playerID is not present in any match!!")}
-        match.serverGame.processClientDTO(controlsDTO)
+    create(matchConfigs: SGameConfigs) {
+        const game = new ServerGame(matchConfigs);
+        return game
     }
 
-
-
-    private _currentMatchID: number = 0;
-    private _matches: TMatchInRepo[] = []
-
-
-    _buildUserCustoms(settings: TLobby, players: TMatchPlayer[]): TUserCustoms {
+    private _buildUserCustoms(settings: MatchSettingsT, players: MatchPlayerT[]): TUserCustoms {
         const userCustoms: TUserCustoms = {
             field: {
                 size: this._getSizeFromMap(settings.map),
@@ -142,7 +91,7 @@ class TestGameService {
         return userCustoms
     }
 
-    _applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
+    private _applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         const out: TGameConfigs = {
             field: userCustoms.field,
             matchLength: userCustoms.matchLength,
@@ -204,7 +153,7 @@ class TestGameService {
         return out;
     }
 
-    _buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
+    private _buildSGameConfigs(gameConfigs: TGameConfigs): SGameConfigs {
         const out: SGameConfigs = {
             window: {
             size: gameConfigs.field.size
@@ -240,7 +189,7 @@ class TestGameService {
         return out;
     }
 
-    _buildCAppConfigs(gameConfigs: TGameConfigs): CAppConfigs {        
+    private _buildCAppConfigs(gameConfigs: TGameConfigs): CAppConfigs {        
         const out: CAppConfigs = {
             appConfigs: {
                 width: gameConfigs.field.size.x,
@@ -281,31 +230,7 @@ class TestGameService {
         return out;
     }
 
-    /*  */
-
-    _getSecondsFromDuration(duration: TDuration) {
-        const durationToSeconds: Record<TDuration, number> = {
-            "blitz": 60,
-            "rapid": 90,
-            "classical": 120,
-            "long": 150,
-            "marathon": 180
-        }
-        return durationToSeconds[duration]
-    }
-
-    _getStartingScoreFromDuration(duration: TDuration) {
-        const durationToScore: Record<TDuration, number> = {
-            "blitz": 100,
-            "rapid": 150,
-            "classical": 200,
-            "long": 250,
-            "marathon": 300
-        }
-        return durationToScore[duration]
-    }
-
-    _getSizeFromMap(map: TMap) {
+    private _getSizeFromMap(map: MatchMapT) {
         const [_amountStr, _type, size] = map.split("-");
         switch (size) {
             case "small": return { x: 500, y: 500 }
@@ -315,7 +240,28 @@ class TestGameService {
         }
     }
 
-    _getSlotsFromMap(map: TMap): { team: SIDES, role: ROLES }[] {
+    private _getSecondsFromDuration(duration: MatchDurationT) {
+        const durationToSeconds: Record<MatchDurationT, number> = {
+            "blitz": 60,
+            "rapid": 90,
+            "classical": 120,
+            "long": 150,
+            "marathon": 180
+        }
+        return durationToSeconds[duration]
+    }
+
+    private _getStartingScoreFromDuration(duration: MatchDurationT) {
+        const durationToScore: Record<MatchDurationT, number> = {
+            "blitz": 100,
+            "rapid": 150,
+            "classical": 200,
+            "long": 250,
+            "marathon": 300
+        }
+        return durationToScore[duration]
+    }
+    private _getSlotsFromMap(map: MatchMapT): { team: SIDES, role: ROLES }[] {
         const out: { team: SIDES, role: ROLES }[] = []
         const [amountStr, type, _size] = map.split("-");
         out.push({ team: SIDES.LEFT, role: ROLES.BACK })
@@ -337,4 +283,4 @@ class TestGameService {
     }
 }
 
-export const testGameService = new TestGameService()
+export const matchFactory = new MatchFactory()

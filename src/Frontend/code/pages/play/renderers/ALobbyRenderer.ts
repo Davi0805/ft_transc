@@ -2,7 +2,7 @@ import { lobbyService } from "../../../services/LobbyService";
 import { applySettingsClicked, inviteUserClicked, leaveClicked, readyClicked, startClicked } from "../buttonCallbacks";
 import { TDynamicLobbySettings, TLobby } from "../lobbyTyping";
 import { getLobbyOptionsHTML } from "../utils/concreteComponents";
-import { getButton } from "../utils/stylingComponents";
+import { getButton, toggleButton } from "../utils/stylingComponents";
 
 export abstract class ALobbyRenderer {
     constructor() {}
@@ -18,11 +18,11 @@ export abstract class ALobbyRenderer {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         const lobbySettingsListing: TLobby = lobbyService.lobby;
         
-        lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing)
+        lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing.matchSettings)
 
         if (lobbyService.amIHost()) {
             const buttonChangeSettings = getButton("btn-change-settings", "button", "Change lobby settings", false);
-            buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing))
+            buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing.matchSettings))
             lobbySettingsElement.appendChild(buttonChangeSettings);
         }
     }
@@ -46,6 +46,13 @@ export abstract class ALobbyRenderer {
             const startButton = getButton("btn-start", "button", "Start");
             startButton.addEventListener('click', () => startClicked(startButton))
             buttonsDiv.appendChild(startButton);
+        }
+    }
+
+    resetReadyButton() {
+        const readyButton = document.getElementById('btn-ready') as HTMLButtonElement;
+        if (readyButton.classList.contains("active")) {
+            toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
         }
     }
 

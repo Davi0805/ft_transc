@@ -5,9 +5,9 @@
   "license": "ISC",
   "author": "",
   "type": "module",
-  "main": "testBackend.js",
+  "main": "main.js",
   "scripts": {
-    "test": "npx tsc && node dist/testBackend.js"
+    "test": "npx tsc && node dist/main.js"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.1",

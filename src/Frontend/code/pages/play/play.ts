@@ -42,7 +42,7 @@ export const PlayPage = {
     },
 
     getLobbyCategoriesHtml() {
-        const lobbyCategories = ["NAME", "HOST", "TYPE", "CAPACITY", "MODE", "MAP", "MATCH LENGTH"]
+        const lobbyCategories = ["NAME", "HOST", "TYPE", "CAPACITY"/*, "MODE", "MAP", "MATCH LENGTH"*/]
         let lobbyCategoriesHtml = "";
         lobbyCategoriesHtml += `<tr class="backdrop-brightness-60 text-left">`;
         for (let category of lobbyCategories) {
@@ -60,7 +60,8 @@ export const PlayPage = {
 
         const lobbiesInfo = await getAllLobbies(); //This one is necessary because the page must be able to request at the beginning the current active lobbies
 
-        const categories = ["name", "host", "type", "capacity", "mode", "map", "duration"] as const
+        console.log(lobbiesInfo)
+        const categories = ["name", "host", "type", "capacity"/*, "mode", "map", "duration"*/] as const
 
         for (let i = 0; i < lobbiesInfo.length; i++) {
             const row = document.createElement("tr");

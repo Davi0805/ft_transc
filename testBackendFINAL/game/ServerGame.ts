@@ -1,6 +1,5 @@
-import { BALL_TYPES, point, SIDES, } from "./shared/sharedTypes.js"
+import { BALL_TYPES, point, SIDES, TPaddle, TWindow, } from "./shared/sharedTypes.js"
 import { SGameDTO, CGameDTO } from "./shared/dtos.js";
-import { SGameConfigs } from "../testMatchService.js";
 import LoopController from "./LoopController.js";
 import SHumansManager from "./Players/SHumansManager.js";
 import STeamsManager from "./STeamsManager.js";
@@ -8,6 +7,25 @@ import BotsManager from "./Players/SBotsManager.js";
 import SBallsManager from "./Objects/SBallsManager.js";
 import SPaddlesManager from "./Objects/SPaddlesManager.js";
 
+export type SGameConfigs = {
+    window: Pick<TWindow, "size">,
+    matchLength: number
+    teams: {
+        side: SIDES,
+        score: number
+    }[]
+    humans: {
+        id: number,
+        paddleID: number,
+    }[]
+    bots: {
+        paddleID: number,
+        difficulty: number
+    }[],
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
+}
+
+export type TMatchResult = Record<SIDES, number>
 
 export default class ServerGame {
     //Creates the game. To pass the correct configuration, must build a UserCustoms object (see in file src/misc/gameOptions.ts)
@@ -62,7 +80,7 @@ export default class ServerGame {
     get windowSize() { return this._windowSize; }
     
     private _matchHasStarted: boolean = false;
-    private _matchResult: Record<SIDES, number> | null = null;
+    private _matchResult: TMatchResult | null = null;
     get matchResult() { return this._matchResult; }
 
     private _matchLength: number;

@@ -18,7 +18,7 @@ export const TournamentPage = {
         const titleElement = document.getElementById("tournament-title") as HTMLHeadingElement;
         titleElement.textContent = lobbyService.lobby.name;
         const currentRoundElement = document.getElementById("current-round") as HTMLHeadingElement;
-        currentRoundElement.textContent = `Round ${lobbyService.lobby.round}` //Round probably needs to be in tournament service?
+        //currentRoundElement.textContent = `Round ${lobbyService.lobby.round}` //Round probably needs to be in tournament service?
 
 
         const pairingsElement = document.getElementById("pairings") as HTMLElement;

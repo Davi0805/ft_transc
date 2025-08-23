@@ -2,6 +2,7 @@ export default class LoopController {
     constructor(tickerRate: number) {
         this._tickerRate = tickerRate
         this._isRunning = true;
+        this._stop = false;
         this._prevTime = Date.now();
         this._currentTime = this._prevTime;
         this._tickerTimer = 0;
@@ -12,7 +13,9 @@ export default class LoopController {
         const loop = () => {
             this._updateVars();
             fn();
-            setTimeout(loop, 1000 / this._tickerRate);
+            if (!this._stop) {
+                setTimeout(loop, 1000 / this._tickerRate);
+            }
         }
         loop();
     }
@@ -20,6 +23,7 @@ export default class LoopController {
     pause() { this._isRunning = false; }
     unpause() { this._isRunning = true; }
     togglePause() { this._isRunning = !this._isRunning; }
+    stop() { this._stop = true; }
 
     // Update rate in seconds
     isEventTime(updateRate: number): boolean {
@@ -36,6 +40,7 @@ export default class LoopController {
     private _tickerRate: number; //in ticks per Second
     private _isRunning: boolean;
     get isRunning(): boolean { return this._isRunning; }
+    private _stop: boolean;
     private _prevTime: number;
     private _currentTime: number;
     private _tickerTimer: number;

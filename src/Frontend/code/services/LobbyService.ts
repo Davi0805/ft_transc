@@ -35,7 +35,7 @@ class LobbyService {
     getSlots(): TSlots {
         if (!this._lobby) { throw Error("getSlots should not be called before lobby is initialized!")}
         
-        const mapSlots = getSlotsFromMap(this.lobby.map);
+        const mapSlots = getSlotsFromMap(this.lobby.matchSettings.map);
         const matchPlayers = this.getMatchPlayers()
 
         matchPlayers.forEach(player => {
@@ -112,13 +112,14 @@ class LobbyService {
 
     //outbound
     updateSettingsOUT(settings: TDynamicLobbySettings, updatedUsers: TLobbyUser[] | null) {
-        this.lobby.map = settings.map
-        this.lobby.mode = settings.mode
-        this.lobby.duration = settings.duration
+        this.lobby.matchSettings.map = settings.map
+        this.lobby.matchSettings.mode = settings.mode
+        this.lobby.matchSettings.duration = settings.duration
         LobbyPage.updateSettings();
         if (updatedUsers && this.lobby.type !== "tournament") {
             this.lobby.users = updatedUsers
             LobbyPage.renderer?.renderPlayers()
+            LobbyPage.renderer?.resetReadyButton()
         }
     }
     updateReadinessOUT(id: number, ready: boolean) {
@@ -183,10 +184,10 @@ class LobbyService {
         user.player = null
         LobbyPage.renderer?.updatePlayers();
     }
-    addTournamentPlayerOUT(userID: number, player: TTournamentPlayer) {
+    addTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
-        user.player = player;
+        user.player = {};
         LobbyPage.renderer?.updatePlayers();
     }
     removeTournamentPlayerOUT(userID: number) {
@@ -259,10 +260,10 @@ class LobbyService {
                 out.push({
                     id: user.id,
                     nick: user.username,
-                    score: player.score,
+                    score: 0, //player.score,
                     rating: user.rating,
-                    prevOpponents: player.prevOpponents,
-                    teamDist: player.teamPref,
+                    prevOpponents: [], //player.prevOpponents,
+                    teamDist: 0, //player.teamPref,
                     participating: true
                 })
             }
