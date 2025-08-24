@@ -3,11 +3,12 @@ import { ROLES, SIDES } from "../game/shared/sharedTypes.js";
 import { LobbyT, LobbyUserT } from "../Repositories/LobbyRepository.js";
 import { MatchPlayerT, matchRepository } from "../Repositories/MatchRepository.js";
 import { TournamentParticipantT, tournamentRepository } from "../Repositories/TournamentRepository.js";
+import { lobbyService } from "./LobbyService.js";
 import { matchService } from "./MatchService.js";
 import { socketService } from "./SocketService.js";
 import { SwissService } from "./SwissService.cjs";
 
-type MatchT = [TournamentParticipantT, TournamentParticipantT];
+export type TournamentMatchT = [TournamentParticipantT, TournamentParticipantT];
 
 class TournamentService {
     start(lobby: LobbyT) {
@@ -23,7 +24,15 @@ class TournamentService {
         socketService.broadcastToLobby(tournament.lobbyID, "displaySettings", { standings: standings })
         
         setTimeout(() => {
-            this._displayPairings(tournamentID)
+            const tournamentDone = tournament.currentRound >= tournament.roundAmount
+            if (tournamentDone) {
+                socketService.broadcastToLobby(tournament.lobbyID, "displayTournamentEnd", { standings: standings})
+                setTimeout(() => {
+                    lobbyService.returnToLobby(tournament.lobbyID);
+                }, 10 * 1000)
+            } else {
+                this._displayPairings(tournamentID)
+            }
         }, 10 * 1000)
     }
 
@@ -31,13 +40,13 @@ class TournamentService {
         const tournament = tournamentRepository.getTournamentByID(tournamentID);
         const activePlayers = tournament.participants.filter(participant => participant.participating === true)
         const pairingsIDs = SwissService.getNextRoundPairings(activePlayers);
-        const pairings: MatchT[] = pairingsIDs.map(pair => {
+        const pairings: TournamentMatchT[] = pairingsIDs.map(pair => {
             const player1 = activePlayers.find(user => user.id === pair[0]);
             const player2 = activePlayers.find(user => user.id === pair[1]);
             if (!player1 || !player2) { throw Error("GAVE GIGANTIC SHIT"); }
             return [player1, player2];
         })
-        socketService.broadcastToLobby(tournament.lobbyID, "displayPairings", { pairings: pairings });
+        socketService.broadcastToLobby(tournament.lobbyID, "displayPairings", { pairings: pairings }); //TODO
 
         setTimeout(() => {
             tournament.rounds.push({
@@ -50,21 +59,39 @@ class TournamentService {
                 tournament.rounds[tournament.currentRound].matches.push({
                     matchID: matchID,
                     playerIDs: pairingsIDs[i],
-                    result: 
+                    winner: null
                 });
 
-                const loop = () => {
+                const checkResult = () => {
                     const matchResult = matchService.getMatchResultByID(matchID);
                     if (matchResult) {
                         this._onMatchFinished(tournamentID, matchID, matchResult)
                     } else {
-                        setTimeout(loop, 1 * 1000)
+                        setTimeout(checkResult, 1 * 1000)
                     }
                 }
-                loop()
+                checkResult()
             };
 
-            
+            const checkRoundEnd = () => {
+                const roundMatches = tournament.rounds[tournament.currentRound].matches;
+                let allGamesDone = false;
+                for (let i = 0; i < roundMatches.length; i++) {
+                    if (!roundMatches[i].winner) {
+                        break;
+                    }
+                    allGamesDone = true;
+                }
+                
+                if (allGamesDone) {
+                    setTimeout(() => {
+                        this._displayStandings(tournamentID);
+                    }, 10 * 1000);
+                } else {
+                    setTimeout(checkRoundEnd, 1 * 1000);
+                }
+            }
+            checkRoundEnd()
         }, 10 * 1000)
     }
 
@@ -75,17 +102,18 @@ class TournamentService {
 
         const tournament = tournamentRepository.getTournamentByID(tournamentID);
 
-        //TODO update the tournament information
-        //TODO add the dtos and frontend
+        const match = tournament.rounds[tournament.currentRound].matches.find(match => match.matchID === matchID);
+        if (!match) {throw Error("This match does not exist in the tournament!")}
+        match.winner = result[SIDES.LEFT] === 1 ? match.playerIDs[0] : match.playerIDs[1]
+
         socketService.broadcastToLobby(tournament.lobbyID, "updateTournamentResult", {
             matchID: matchID,
-            result: result
+            winnerID: match.winner
         })
 
         setTimeout(() => {
-            this._displayStandings(tournamentID);
-        })
-        
+            socketService.broadcastToUsers(matchUsers, "displayResults", null);
+        }, 5 * 1000)   
     }
 
     private _getTournamentParticipants(users: LobbyUserT[]) {
@@ -105,7 +133,7 @@ class TournamentService {
         return out;
     }
 
-    private _getMatchPlayers(users: MatchT) {
+    private _getMatchPlayers(users: TournamentMatchT) {
         const out: MatchPlayerT[] = [];
         for (let i = 0; i < users.length; i++) {
             out.push({

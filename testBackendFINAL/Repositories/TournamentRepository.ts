@@ -1,3 +1,4 @@
+import { SIDES } from "../game/shared/sharedTypes.js"
 import { MatchSettingsT } from "./MatchRepository.js"
 
 export type TournamentParticipantT = {
@@ -21,9 +22,10 @@ type TournamentT = {
         matches: {
             matchID: number,
             playerIDs: [number, number],
-            result: number
+            winner: number | null
         }[]
     }[],
+    roundAmount: number,
     currentRound: number
 }
 
@@ -35,6 +37,7 @@ class TournamentRepository {
             matchSettings: matchSettings,
             participants: participants,
             rounds: [],
+            roundAmount: Math.ceil(Math.log2(participants.length)),
             currentRound: 0
         })
 
