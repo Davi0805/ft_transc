@@ -51,6 +51,10 @@ class LobbyService {
 
     updateUserReadinesss(lobbyID: number, userID: number, ready: boolean) {
         const user = lobbyRepository.getLobbyUserByID(lobbyID, userID);
+        if (!user.player) {
+            socketService.broadcastToUsers([userID], "actionBlock", { blockType: "setReadyWithoutJoining" })
+            return;
+        }
         user.ready = ready
 
         socketService.broadcastToLobby(lobbyID, "updateReadiness", {
@@ -83,6 +87,12 @@ class LobbyService {
         socketService.broadcastToLobby(lobbyID, "removeFriendlyPlayer", {
             playerID: playerID
         })
+
+        user.ready = false;
+        socketService.broadcastToLobby(lobbyID, "updateReadiness", {
+            userID: userID,
+            ready: false
+        })
     }
 
     addRankedPlayer(lobbyID: number, userID: number, player: RankedPlayerT) {
@@ -98,9 +108,14 @@ class LobbyService {
     removeRankedPlayer(lobbyID: number, userID: number) {
         const user = lobbyRepository.getLobbyUserByID(lobbyID, userID);
         user.player = null;
-
         socketService.broadcastToLobby(lobbyID, "removeRankedPlayer", {
             userID: userID
+        })
+
+        user.ready = false;
+        socketService.broadcastToLobby(lobbyID, "updateReadiness", {
+            userID: userID,
+            ready: false
         })
     }
 
@@ -115,10 +130,16 @@ class LobbyService {
 
     removeTournamentPlayer(lobbyID: number, userID: number) {
         const user = lobbyRepository.getLobbyUserByID(lobbyID, userID);
+        
         user.player = null;
-
         socketService.broadcastToLobby(lobbyID, "removeTournamentPlayer", {
             userID: userID
+        })
+
+        user.ready = false;
+        socketService.broadcastToLobby(lobbyID, "updateReadiness", {
+            userID: userID,
+            ready: false
         })
     }
 
@@ -153,6 +174,7 @@ class LobbyService {
         const lobby = lobbyRepository.getLobbyByID(lobbyID);
         lobby.users.forEach(user => {
             user.player = null;
+            user.ready = false;
         })
         socketService.broadcastToLobby(lobbyID, "returnToLobby", { lobby: lobby })
     }

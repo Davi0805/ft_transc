@@ -9,6 +9,7 @@ import { matchService} from "./matchService";
 import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournamentParticipant, TMatchPlayer } from "../pages/play/lobbyTyping";
 import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
 import { tournamentService } from "./tournamentService";
+import { flashButton } from "../pages/play/utils/stylingComponents";
 
 
 
@@ -69,8 +70,8 @@ class LobbyService {
         lobbySocketService.send("updateSettings", { settings: settings })
     }
 
-    updateReadinessIN(ready: boolean) {
-        lobbySocketService.send("updateReadiness", { ready: ready });
+    updateReadinessIN() {
+        lobbySocketService.send("updateReadiness", { ready: !this.amIReady() }); //We want to be the opposite of whatever we are atm
     }
 
     addFriendlyPlayerIN(player: TFriendlyPlayer) {
@@ -128,6 +129,9 @@ class LobbyService {
     updateReadinessOUT(id: number, ready: boolean) {
         const user = this._findUserByID(id);
         user.ready = ready;
+        if (this.myID === id) {
+            LobbyPage.renderer?.updateReadyButton(ready);
+        }
     }
     async addLobbyUserOUT(user: TLobbyUser) {
         this.lobby.users.push(user);
@@ -225,7 +229,7 @@ class LobbyService {
                 break;
             case "fewPlayersForTournament":
                 if (this.amIHost()) {
-                    LobbyPage.renderer?.handleTooFewPlayersForTournament();
+                    LobbyPage.renderer?.handleFewPlayersForTournament();
                 }
                 break;
             case "notAllSlotsFilled":
@@ -233,6 +237,10 @@ class LobbyService {
                     LobbyPage.renderer?.handleNotAllSlotsFilled();
                 }
                 break;
+            case "setReadyWithoutJoining": {
+                LobbyPage.renderer?.handleSetReadyWithoutJoining();
+                break;
+            }
             default:
                 throw Error(`${blockType} is not recognized! `)
         }
@@ -299,6 +307,11 @@ class LobbyService {
 
     amIHost(): boolean {
         return this.myID == this.lobby.hostID
+    }
+    amIReady(): boolean {
+        const me = this.lobby.users.find(user => user.id == this.myID);
+        if (!me) {throw Error("How can't I be in the lobby???"); }
+        return me.ready
     }
     isEveryoneReady(): boolean {
         return this.lobby.users.find(user => (this.isUserParticipating(user.id) && !user.ready)) ? false : true

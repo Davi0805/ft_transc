@@ -39,7 +39,7 @@ export abstract class ALobbyRenderer {
         buttonsDiv.appendChild(leaveButton);
 
         const readyButton = getButton("btn-ready", "button", "Ready");
-        readyButton.addEventListener('click', () => readyClicked(readyButton))
+        readyButton.addEventListener('click', () => readyClicked())
         buttonsDiv.appendChild(readyButton);
 
         if (lobbyService.amIHost()) {
@@ -49,6 +49,12 @@ export abstract class ALobbyRenderer {
         }
     }
 
+    updateReadyButton(ready: boolean) {
+        const readyButton = document.getElementById('btn-ready') as HTMLButtonElement;
+        if (readyButton.classList.contains("active") !== ready) {
+            toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
+        }
+    }
     resetReadyButton() {
         const readyButton = document.getElementById('btn-ready') as HTMLButtonElement;
         if (readyButton.classList.contains("active")) {
@@ -65,9 +71,13 @@ export abstract class ALobbyRenderer {
         const buttonElement = document.getElementById('btn-start') as HTMLButtonElement;
         flashButton(buttonElement, "Not all slots are filled!")
     }
-    handleTooFewPlayersForTournament() {
+    handleFewPlayersForTournament() {
         const buttonElement = document.getElementById('btn-start') as HTMLButtonElement;
         flashButton(buttonElement, "Not enough players for tournament!")
+    }
+    handleSetReadyWithoutJoining() {
+        const buttonElement = document.getElementById('btn-ready') as HTMLButtonElement;
+        flashButton(buttonElement, "You must join first!")
     }
 
 

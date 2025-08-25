@@ -190,7 +190,7 @@ export type OutboundDTOMap = {
     },
     //user removes itself from slot in a ranked lobby
     removeRankedPlayer: {
-        id: number 
+        userID: number 
     }
     //user applies to a tournament
     addTournamentPlayer: {

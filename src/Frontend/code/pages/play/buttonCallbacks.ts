@@ -29,13 +29,8 @@ export function leaveClicked() {
     router.navigateTo('/play')
 }
 
-export function readyClicked(readyButton: HTMLButtonElement) {
-    if (!lobbyService.isUserParticipating(lobbyService.myID)) {
-        flashButton(readyButton, "You must join first!")//TODO put this in backend
-    } else {
-        const state = toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
-        lobbyService.updateReadinessIN(state);
-    }
+export function readyClicked() {
+    lobbyService.updateReadinessIN();
 }
 
 export function startClicked() {      
