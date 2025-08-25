@@ -43,12 +43,8 @@ class MatchFactory {
         }
 
         let paddleID = 0;
-        let availableSlots = this._getSlotsFromMap(settings.map)
+        let availableSlots = getSlotsFromMap(settings.map)
         players.forEach(player => {
-            if (player.userID === null || player.id === null || player.spriteID === null) {
-                throw Error("This player is not initialized!!");
-            }
-
             userCustoms.paddles.push({
                 id: paddleID,
                 side: player.team,
@@ -261,7 +257,11 @@ class MatchFactory {
         }
         return durationToScore[duration]
     }
-    private _getSlotsFromMap(map: MatchMapT): { team: SIDES, role: ROLES }[] {
+}
+
+export const matchFactory = new MatchFactory()
+
+export function getSlotsFromMap(map: MatchMapT): { team: SIDES, role: ROLES }[] {
         const out: { team: SIDES, role: ROLES }[] = []
         const [amountStr, type, _size] = map.split("-");
         out.push({ team: SIDES.LEFT, role: ROLES.BACK })
@@ -281,6 +281,3 @@ class MatchFactory {
         } 
         return out
     }
-}
-
-export const matchFactory = new MatchFactory()

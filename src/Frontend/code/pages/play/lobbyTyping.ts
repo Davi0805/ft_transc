@@ -199,7 +199,7 @@ export type OutboundDTOMap = {
     }
     //user withdraws from tournament
     removeTournamentPlayer: {
-        id: number
+        userID: number
     }
     //host clicks start on tournament lobby
     displayStandings: {
@@ -227,6 +227,10 @@ export type OutboundDTOMap = {
 
     returnToLobby: {
         lobby: TLobby
+    }
+
+    actionBlock: {
+        blockType: string
     }
 }
 

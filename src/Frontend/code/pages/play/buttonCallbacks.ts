@@ -3,7 +3,7 @@ import { router } from "../../routes/router";
 import { lobbyService } from "../../services/LobbyService";
 import { matchService } from "../../services/matchService";
 import { LobbyPage } from "./lobby";
-import { TDuration, TDynamicLobbySettings, TMap, TMode } from "./lobbyTyping";
+import { TDuration, TDynamicLobbySettings, TLobbyType, TMap, TMode } from "./lobbyTyping";
 import { areAllSlotsFull } from "./utils/helpers";
 import { flashButton, toggleButton } from "./utils/stylingComponents";
 
@@ -31,21 +31,15 @@ export function leaveClicked() {
 
 export function readyClicked(readyButton: HTMLButtonElement) {
     if (!lobbyService.isUserParticipating(lobbyService.myID)) {
-        flashButton(readyButton, "You must join first!")
+        flashButton(readyButton, "You must join first!")//TODO put this in backend
     } else {
         const state = toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
         lobbyService.updateReadinessIN(state);
     }
 }
 
-export function startClicked(startButton: HTMLButtonElement) {
-    if (!lobbyService.isEveryoneReady()) {
-        flashButton(startButton, "Not everyone is ready!");
-    } else if (lobbyService._isLobbyOfType("ranked") && !areAllSlotsFull(lobbyService.getSlots())) {
-        flashButton(startButton, "Not all slots are filled!")
-    } else {        
-        lobbyService.startMatchIN();
-    }
+export function startClicked() {      
+    lobbyService.startMatchIN();
 }
 
 export function joinFriendlyClicked(e: SubmitEvent, team: SIDES, role: ROLES) {

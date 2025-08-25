@@ -117,6 +117,10 @@ export type OutboundDTOMap = {
     returnToLobby: {
         lobby: LobbyT
     }
+
+    actionBlock: {
+        blockType: string
+    }
 }
 
 

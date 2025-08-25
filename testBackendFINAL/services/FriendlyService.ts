@@ -6,7 +6,8 @@ import { matchService } from "./MatchService.js";
 import { socketService } from "./SocketService.js";
 
 class FriendlyService {
-    start(lobby: LobbyT) {
+    start(lobby: LobbyT, _senderID: number) {
+
         const matchPlayers = this._getMatchPlayers(lobby.users);
         const matchID = matchService.createAndStartMatch(lobby.matchSettings, matchPlayers);
 

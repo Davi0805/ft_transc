@@ -1,13 +1,19 @@
+import { getSlotsFromMap } from "../factories/matchFactory.js";
 import { TMatchResult } from "../game/ServerGame.js";
 import { LobbyT, LobbyUserT, RankedPlayerT } from "../Repositories/LobbyRepository.js";
-import { MatchPlayerT } from "../Repositories/MatchRepository.js";
+import { MatchMapT, MatchPlayerT } from "../Repositories/MatchRepository.js";
 import { lobbyService } from "./LobbyService.js";
 import { matchService } from "./MatchService.js";
 import { socketService } from "./SocketService.js";
 
 class RankedService {
-    start(lobby: LobbyT) {
+    start(lobby: LobbyT, senderID: number) {
         const matchPlayers = this._getMatchPlayers(lobby.users);
+        if (!this._areAllSlotsFull(lobby.matchSettings.map, matchPlayers)) {
+            socketService.broadcastToUsers([senderID], "actionBlock", { blockType: "notAllSlotsFilled" })
+            return;
+        }
+
         const matchID = matchService.createAndStartMatch(lobby.matchSettings, matchPlayers);
 
         const loop = () => {
@@ -47,6 +53,14 @@ class RankedService {
             }
         })
         return out
+    }
+
+    private _areAllSlotsFull(map: MatchMapT, players: MatchPlayerT[]): boolean {
+        let availableSlots = getSlotsFromMap(map);
+        players.forEach(player => {
+            availableSlots = availableSlots.filter(slot => slot.team !== player.team || slot.role !== player.role)
+        })
+        return availableSlots.length === 0;
     }
 }
 

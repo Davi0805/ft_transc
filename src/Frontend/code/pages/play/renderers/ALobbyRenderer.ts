@@ -2,7 +2,7 @@ import { lobbyService } from "../../../services/LobbyService";
 import { applySettingsClicked, inviteUserClicked, leaveClicked, readyClicked, startClicked } from "../buttonCallbacks";
 import { TDynamicLobbySettings, TLobby } from "../lobbyTyping";
 import { getLobbyOptionsHTML } from "../utils/concreteComponents";
-import { getButton, toggleButton } from "../utils/stylingComponents";
+import { flashButton, getButton, toggleButton } from "../utils/stylingComponents";
 
 export abstract class ALobbyRenderer {
     constructor() {}
@@ -44,7 +44,7 @@ export abstract class ALobbyRenderer {
 
         if (lobbyService.amIHost()) {
             const startButton = getButton("btn-start", "button", "Start");
-            startButton.addEventListener('click', () => startClicked(startButton))
+            startButton.addEventListener('click', () => startClicked(/*startButton*/))
             buttonsDiv.appendChild(startButton);
         }
     }
@@ -55,6 +55,21 @@ export abstract class ALobbyRenderer {
             toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
         }
     }
+
+    //Handling of blocked actions by server
+    handleNotEveryoneReady() {
+        const buttonElement = document.getElementById('btn-start') as HTMLButtonElement;
+        flashButton(buttonElement, "Not everyone is ready!")
+    }
+    handleNotAllSlotsFilled() {
+        const buttonElement = document.getElementById('btn-start') as HTMLButtonElement;
+        flashButton(buttonElement, "Not all slots are filled!")
+    }
+    handleTooFewPlayersForTournament() {
+        const buttonElement = document.getElementById('btn-start') as HTMLButtonElement;
+        flashButton(buttonElement, "Not enough players for tournament!")
+    }
+
 
     renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;

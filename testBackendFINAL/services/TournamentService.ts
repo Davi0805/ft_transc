@@ -11,8 +11,13 @@ import { SwissService } from "./SwissService.cjs";
 export type TournamentMatchT = [TournamentParticipantT, TournamentParticipantT];
 
 class TournamentService {
-    start(lobby: LobbyT) {
+    start(lobby: LobbyT, senderID: number) {
         const tournamentParticipants = this._getTournamentParticipants(lobby.users);
+        if (tournamentParticipants.length < 4) {
+            socketService.broadcastToUsers([senderID], "actionBlock", { blockType: "fewPlayersForTournament" })
+            return;
+        }
+        
         const tournamentID = tournamentRepository.createTournament(lobby.id, lobby.matchSettings, tournamentParticipants);
 
         this._displayStandings(tournamentID);

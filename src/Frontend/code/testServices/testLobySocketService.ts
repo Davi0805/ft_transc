@@ -21,7 +21,7 @@ class LobbySocketService {
             
             this._ws.onmessage = (ev: MessageEvent) => {
                 //try {
-                    //console.log(ev.data)
+                    console.log(ev.data)
                     const data = JSON.parse(ev.data) as OutboundDTO;
                     if (data.requestType === "lobby") {
                         
@@ -117,7 +117,7 @@ class LobbySocketService {
                 lobbyService.addTournamentPlayerOUT(dto.data.userID);
                 break;
             case "removeTournamentPlayer":
-                lobbyService.removeTournamentPlayerOUT(dto.data.id);
+                lobbyService.removeTournamentPlayerOUT(dto.data.userID);
                 break;
             case "displayPairings":
                 lobbyService.displayPairingsOUT(dto.data.pairings);
@@ -134,6 +134,9 @@ class LobbySocketService {
                 break;
             case "returnToLobby":
                 lobbyService.return(dto.data.lobby)
+                break;
+            case "actionBlock":
+                lobbyService.handleActionBlock(dto.data.blockType)
                 break;
             default:
                 throw Error("A message came in with a non registered type!!")

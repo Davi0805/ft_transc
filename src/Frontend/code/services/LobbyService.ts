@@ -1,4 +1,3 @@
-import { SelfData } from "../api/userData/getSelfDataAPI";
 import { LobbyPage } from "../pages/play/lobby";
 import { TSlots } from "../pages/play/utils/helpers";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
@@ -59,6 +58,10 @@ class LobbyService {
             mapSlots[player.team]
         })
         return mapSlots
+    }
+
+    getPlayersAmount(): number {
+        return this.lobby.users.length;
     }
 
     //inbound
@@ -212,6 +215,29 @@ class LobbyService {
         router.navigateTo("/match")
     }
 
+    //errors
+    handleActionBlock(blockType: string) { //probably this should be strongly typed, but I am way too tired
+        switch (blockType) {
+            case "notEveryoneReady":
+                if (this.amIHost()) {
+                    LobbyPage.renderer?.handleNotEveryoneReady();
+                }
+                break;
+            case "fewPlayersForTournament":
+                if (this.amIHost()) {
+                    LobbyPage.renderer?.handleTooFewPlayersForTournament();
+                }
+                break;
+            case "notAllSlotsFilled":
+                if (this.amIHost()) {
+                    LobbyPage.renderer?.handleNotAllSlotsFilled();
+                }
+                break;
+            default:
+                throw Error(`${blockType} is not recognized! `)
+        }
+    }
+
     getMatchPlayers(): TMatchPlayer[] {
         const out: TMatchPlayer[] = []
 
@@ -301,7 +327,7 @@ class LobbyService {
 
     _findUserByID(userID: number): TLobbyUser {
         const user = this.lobby.users.find(user => user.id === userID);
-        if (!user) { throw Error("User requested was not found in lobby!"); }
+        if (!user) { throw Error(`User with ID ${userID} was not found in lobby!`); }
         return user
     }
     _isLobbyOfType(desiredType: TLobbyType) {

@@ -118,7 +118,7 @@ class LobbySocketService {
                 lobbyService.addTournamentPlayerOUT(dto.data.userID);
                 break;
             case "removeTournamentPlayer":
-                lobbyService.removeTournamentPlayerOUT(dto.data.id);
+                lobbyService.removeTournamentPlayerOUT(dto.data.userID);
                 break;
             case "displayPairings":
                 lobbyService.displayPairingsOUT(dto.data.pairings);

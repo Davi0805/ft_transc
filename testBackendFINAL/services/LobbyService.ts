@@ -1,11 +1,14 @@
-import { FriendlyPlayerT, lobbyRepository, LobbyUserT, RankedPlayerT, TournamentPlayerT } from "../Repositories/LobbyRepository.js";
+import { FriendlyPlayerT, lobbyRepository, LobbyT, LobbyUserT, RankedPlayerT, TournamentPlayerT } from "../Repositories/LobbyRepository.js";
 import { MatchSettingsT } from "../Repositories/MatchRepository.js";
+import { socketRepository } from "../Repositories/SocketRepository.js";
 import { userRepository } from "../Repositories/UserRepository.js";
 import { friendlyService } from "./FriendlyService.js";
 import { rankedService } from "./RankedService.js";
 import { socketService } from "./SocketService.js";
+import { tournamentService } from "./TournamentService.js";
 
 class LobbyService {
+
     addUser(lobbyID: number, userID: number) {
         const lobby = lobbyRepository.getLobbyByID(lobbyID);
         const userInfo = userRepository.getUserByID(userID);
@@ -126,12 +129,20 @@ class LobbyService {
             return ;
         }
 
+        if (!this._isEveryoneReady(lobby.users)) {
+            socketService.broadcastToUsers([senderID], "actionBlock", { blockType: "notEveryoneReady" })
+            return;
+        }
+
         switch (lobby.type) {
             case "friendly":
-                friendlyService.start(lobby);
+                friendlyService.start(lobby, senderID);
                 break;
             case "ranked":
-                rankedService.start(lobby);
+                rankedService.start(lobby, senderID);
+                break;
+            case "tournament":
+                tournamentService.start(lobby, senderID);
                 break;
             default:
                 throw Error("lobby type not recognized!");
@@ -147,6 +158,10 @@ class LobbyService {
     }
 
     private _currentID: number = 0; //Necessary to tag the friendly players
+
+    private _isEveryoneReady(lobbyUsers: LobbyUserT[]): boolean {
+        return lobbyUsers.find(user => (user.player && !user.ready)) ? false : true
+    }
 }
 
 export const lobbyService = new LobbyService()
