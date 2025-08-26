@@ -4,13 +4,10 @@ import { getSlotsFromMap } from "../pages/play/utils/helpers";
 //import { lobbySocketService } from "./lobbySocketService";
 import { lobbySocketService } from "../testServices/testLobySocketService"; //TEST
 import { router } from "../routes/router";
-import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies";
 import { matchService} from "./matchService";
 import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournamentParticipant, TMatchPlayer } from "../pages/play/lobbyTyping";
 import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
 import { tournamentService } from "./tournamentService";
-import { flashButton } from "../pages/play/utils/stylingComponents";
-import { TournamentPage } from "../pages/play/tournament";
 
 
 
@@ -207,11 +204,6 @@ class LobbyService {
     startTournamentOUT() {
         tournamentService.create()
         router.navigateTo("/tournament")
-    }
-
-    startMatchOUT(configs: CAppConfigs) {
-        matchService.init(configs);
-        router.navigateTo("/match")
     }
 
     //errors

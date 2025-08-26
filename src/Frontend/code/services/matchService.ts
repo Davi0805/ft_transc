@@ -1,16 +1,29 @@
+import { SGameDTO } from "../match/matchSharedDependencies/dtos";
 import { CAppConfigs, TControls } from "../match/matchSharedDependencies/SetupDependencies";
 import { SIDES } from "../match/matchSharedDependencies/sharedTypes";
 import { App } from "../match/system/App";
+import { TMatchResult } from "../pages/play/lobbyTyping";
+import { router } from "../routes/router";
 //import { lobbySocketService } from "./lobbySocketService";
 import { lobbySocketService } from "../testServices/testLobySocketService";
 
 
 class MatchService {
-
-    init(configs: CAppConfigs) {
+    startMatchOUT(configs: CAppConfigs) {
         configs.gameSceneConfigs.controls = this._controls;
         this._configs = configs;
+        router.navigateTo("/match")
     }
+
+    updateGame(updateDto: SGameDTO) {
+        App.severUpdate(updateDto);
+    }
+
+    onEndOfMatch(result: TMatchResult) {
+        console.log(result);
+    }
+
+    
 
     addControls(id: number, controls: TControls) {
         this._controls.push({

@@ -1,7 +1,7 @@
 import { lobbyService } from "../services/LobbyService";
 import { InboundDTO, OutboundDTO, InboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
-import { App } from "../match/system/App";
 import { tournamentService } from "../services/tournamentService";
+import { matchService } from "../services/matchService";
 
 class LobbySocketService {
     constructor() {
@@ -22,7 +22,6 @@ class LobbySocketService {
             
             this._ws.onmessage = (ev: MessageEvent) => {
                 //try {
-                    console.log(ev.data)
                     const data = JSON.parse(ev.data) as OutboundDTO;
                     if (data.requestType === "lobby") {
                         
@@ -90,6 +89,7 @@ class LobbySocketService {
     private _handleMessage(dto: OutboundDTO) {
         //console.log("The followind message type will be handled: ", dto.requestType)
         switch (dto.requestType) {
+            //Lobby messages
             case "updateSettings":
                 lobbyService.updateSettingsOUT(dto.data.settings, dto.data.users);
                 break;
@@ -120,9 +120,23 @@ class LobbySocketService {
             case "removeTournamentPlayer":
                 lobbyService.removeTournamentPlayerOUT(dto.data.userID);
                 break;
-            case "startMatch":
-                lobbyService.startMatchOUT(dto.data.configs); //TODO move the startMatch to the match service, as it can also be started from tournament
+            case "returnToLobby":
+                lobbyService.return(dto.data.lobby)
                 break;
+            case "actionBlock":
+                lobbyService.handleActionBlock(dto.data.blockType)
+                break;
+            //match messages
+            case "startMatch":
+                matchService.startMatchOUT(dto.data.configs);
+                break;
+            case "updateGame":
+                matchService.updateGame(dto.data);
+                break;
+            case "endOfMatch":
+                matchService.onEndOfMatch(dto.data.result);
+                break;
+            // tournament messages
             case "startTournament":
                 lobbyService.startTournamentOUT();
                 break;
@@ -140,19 +154,6 @@ class LobbySocketService {
                 break;
             case "displayTournamentEnd":
                 tournamentService.displayStandings(dto.data.standings);
-                break;
-            case "updateGame":
-                App.severUpdate(dto.data)
-                break;
-            case "endOfMatch":
-                //TODO: Display result
-                console.log("Results: ", dto.data.result);
-                break;
-            case "returnToLobby":
-                lobbyService.return(dto.data.lobby)
-                break;
-            case "actionBlock":
-                lobbyService.handleActionBlock(dto.data.blockType)
                 break;
             default:
                 throw Error(dto.requestType)

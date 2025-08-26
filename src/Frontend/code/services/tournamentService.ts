@@ -48,7 +48,9 @@ class TournamentService {
         TournamentPage.renderPairings();
     }
 
-    updateMatchResult(matchIndex: number, result: number) {
+    updateMatchResult(matchIndex: number, winnerID: number) {
+        const match = this.tournament.currentPairings[matchIndex];
+        const result = match.players[0].id === winnerID ? 1 : 0;
         const matchToUpdate = this.tournament.currentPairings[matchIndex].result = result;
         TournamentPage.renderPairings();
     }

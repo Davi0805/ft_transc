@@ -81,7 +81,7 @@ export const TournamentPage = {
         tournamentService.tournament.currentPairings.forEach(match => {
             const bg = `bg-gray-900/${board % 2 === 0 ? "25" : "50"}`;
             const isMyGame = match.players[0].id === lobbyService.myID || match.players[1].id === lobbyService.myID
-            const border = isMyGame ? "border-2 border-red-500" : ""
+            const border = isMyGame ? "border-2 border-red-500" : "";
             participantsTableBody += `<tr class="${bg} ${border}"><td class="px-${paddingLength}">${board++}</td>`;
             
             categories.forEach(category => {

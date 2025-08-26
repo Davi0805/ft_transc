@@ -89,7 +89,7 @@ class LobbySocketService {
     }
 
     private _handleMessage(dto: OutboundDTO) {
-        switch (dto.requestType) {
+        /* switch (dto.requestType) {
             case "updateSettings":
                 lobbyService.updateSettingsOUT(dto.data.settings, dto.data.users);
                 break;
@@ -138,7 +138,7 @@ class LobbySocketService {
                 break;
             default:
                 throw Error(`A message came in with a non registered type!! (${dto.requestType})`)
-        }
+        } */
     }
 }
 
