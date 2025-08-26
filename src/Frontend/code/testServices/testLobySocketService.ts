@@ -121,7 +121,7 @@ class LobbySocketService {
                 lobbyService.removeTournamentPlayerOUT(dto.data.userID);
                 break;
             case "startMatch":
-                lobbyService.startMatchOUT(dto.data.configs);
+                lobbyService.startMatchOUT(dto.data.configs); //TODO move the startMatch to the match service, as it can also be started from tournament
                 break;
             case "startTournament":
                 lobbyService.startTournamentOUT();
@@ -130,14 +130,23 @@ class LobbySocketService {
                 tournamentService.displayStandings(dto.data.standings);
                 break;
             case "displayPairings":
-                //lobbyService.displayPairingsOUT(dto.data.pairings);
+                tournamentService.displayPairings(dto.data.pairings)
+                break;
+            case "updateTournamentResult":
+                tournamentService.updateMatchResult(dto.data.matchIndex, dto.data.result);
+                break;
+            case "displayResults":
+                tournamentService.displayResults();
+                break;
+            case "displayTournamentEnd":
+                tournamentService.displayStandings(dto.data.standings);
                 break;
             case "updateGame":
                 App.severUpdate(dto.data)
                 break;
             case "endOfMatch":
                 //TODO: Display result
-                //console.log("Results: ", dto.data.result);
+                console.log("Results: ", dto.data.result);
                 break;
             case "returnToLobby":
                 lobbyService.return(dto.data.lobby)

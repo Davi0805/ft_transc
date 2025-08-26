@@ -208,11 +208,7 @@ class LobbyService {
         tournamentService.create()
         router.navigateTo("/tournament")
     }
-    displayPairingsOUT(tournPairings: [number, number][]) {
-        const side: SIDES = matchService.getTeamFromPairings(this.myID, tournPairings);
-        matchService.addDefaultControls(this.myID, side);
-        //tournamentService.loadPairings(tournPairings);
-    }
+
     startMatchOUT(configs: CAppConfigs) {
         matchService.init(configs);
         router.navigateTo("/match")

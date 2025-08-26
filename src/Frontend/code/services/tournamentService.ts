@@ -1,18 +1,14 @@
 import { SIDES } from "../match/matchSharedDependencies/sharedTypes";
 import { TTournamentParticipant } from "../pages/play/lobbyTyping"
 import { TournamentPage } from "../pages/play/tournament";
+import { router } from "../routes/router";
 import { lobbyService } from "./LobbyService";
 import { matchService } from "./matchService";
 
-/* export type TPairing = {
-    board: number,
-    players: [number, number],
-    result: number | null //points of player1
-} */
 
 type TTournamentMatch = {
     players: [TTournamentParticipant, TTournamentParticipant],
-    result: number | null //1 won LEFT, 0 otherwise 
+    result: number | null //Points of player[0] 
 }
 type TTournament = {
     currentRound: number,
@@ -52,9 +48,14 @@ class TournamentService {
         TournamentPage.renderPairings();
     }
 
+    updateMatchResult(matchIndex: number, result: number) {
+        const matchToUpdate = this.tournament.currentPairings[matchIndex].result = result;
+        TournamentPage.renderPairings();
+    }
 
-
-    //update
+    displayResults() {
+        router.navigateTo('/tournament');
+    }
 
     private _tournament: TTournament | null = null
     get tournament() {

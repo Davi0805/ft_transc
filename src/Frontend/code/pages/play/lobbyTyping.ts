@@ -146,7 +146,7 @@ export type InboundDTOMap = {
     addTournamentPlayer: null //None of the member variables are chosen by the user
     //user withdraws from the tournament
     removeTournamentPlayer: null
-    //host starts the game
+    //host starts the lobby
     start: null,
     
     //Game dto:
@@ -201,6 +201,10 @@ export type OutboundDTOMap = {
         userID: number
     }
 
+    startMatch: {
+        configs: CAppConfigs
+    }
+
     startTournament: null
     //host clicks start on tournament lobby
     displayStandings: {
@@ -210,13 +214,14 @@ export type OutboundDTOMap = {
         pairings: [number, number][]
     }
     updateTournamentResult: {
-        board: number,
+        matchIndex: number,
         result: number
     }
-    //host starts the match
-    startMatch: {
-        configs: CAppConfigs
+    displayResults: null
+    displayTournamentEnd: {
+        standings: TTournamentParticipant[]
     }
+    
 
     //Game dto:
     updateGame: SGameDTO //Dealt with in game

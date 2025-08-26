@@ -25,27 +25,6 @@ export const TournamentPage = {
     },
 
     async init() {
-        //TEST
-
-        lobbyService.init(3, {
-            id: 1,
-            hostID: 1,
-            name: "Test name",
-            type: "tournament",
-            matchSettings: {
-                map: "2-players-big",
-                duration: "classical",
-                mode: "classic"
-            },
-            users: [] //For now
-        })
-
-        tournamentService.create();
-        
-
-        //ENDTEST
-
-
         const titleElement = document.getElementById("tournament-title") as HTMLHeadingElement;
         titleElement.textContent = lobbyService.lobby.name;
         const currentRoundElement = document.getElementById("current-round") as HTMLHeadingElement;
@@ -56,52 +35,6 @@ export const TournamentPage = {
 
         const tournamentBody = document.getElementById("tournament-body") as HTMLDivElement;
         tournamentBody.textContent = "Waiting for tournament info..."
-
-
-        //TEST
-        tournamentService.displayStandings([
-            {
-                id: 1,
-                nick: "ndo-vale",
-                score: 3,
-                rating: 1800,
-                prevOpponents: [],
-                teamDist: 0,
-                participating: true
-            },
-            {
-                id: 2,
-                nick: "artuda-s",
-                score: 1,
-                rating: 1900,
-                prevOpponents: [],
-                teamDist: 0,
-                participating: true
-            },
-            {
-                id: 3,
-                nick: "dca-melo",
-                score: 0,
-                rating: 1600,
-                prevOpponents: [],
-                teamDist: 0,
-                participating: true
-            },
-            {
-                id: 4,
-                nick: "some other ass",
-                score: 0,
-                rating: 1500,
-                prevOpponents: [],
-                teamDist: 0,
-                participating: true
-            },
-        ])
-
-        tournamentService.displayPairings([
-            [1, 2],
-            [3, 4]
-        ])
     },
 
     renderStandings() {
@@ -150,9 +83,6 @@ export const TournamentPage = {
             const isMyGame = match.players[0].id === lobbyService.myID || match.players[1].id === lobbyService.myID
             const border = isMyGame ? "border-2 border-red-500" : ""
             participantsTableBody += `<tr class="${bg} ${border}"><td class="px-${paddingLength}">${board++}</td>`;
-            /* const player1 = participants.find(participant => participant.id === pair.players[0])
-            const player2 = participants.find(participant => participant.id === pair.players[1])
-            if (!player1 || !player2) { throw Error("Getting tired of this shit") } */
             
             categories.forEach(category => {
                 participantsTableBody += `<td class="px-${paddingLength}">${match.players[0][category]}</td>`;
