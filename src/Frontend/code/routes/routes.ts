@@ -92,8 +92,8 @@ export const routes: Array<Route> = [
         script: LobbyPage
     },
     {
-        path: '/tournament-pairings',
-        title: 'Tournament Pairings',
+        path: '/tournament',
+        title: 'Tournament',
         template: TournamentPage.template,
         script: TournamentPage
     },

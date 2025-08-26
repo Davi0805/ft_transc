@@ -89,16 +89,18 @@ export type OutboundDTOMap = {
         configs: CAppConfigs
     }
 
-    displaySettings: {
+    startTournament: null // No need (for now) to send anything
+
+    displayStandings: {
         standings: TournamentParticipantT[]
     }
 
     displayPairings: {
-        pairings: TournamentMatchT[]
+        pairings: [number, number][]
     }
 
     updateTournamentResult: {
-        matchID: number,
+        matchIndex: number, //basically board, but called index because it starts in 0
         winnerID: number
     }
 

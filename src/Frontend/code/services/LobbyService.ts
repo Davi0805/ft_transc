@@ -10,6 +10,7 @@ import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlay
 import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
 import { tournamentService } from "./tournamentService";
 import { flashButton } from "../pages/play/utils/stylingComponents";
+import { TournamentPage } from "../pages/play/tournament";
 
 
 
@@ -200,19 +201,17 @@ class LobbyService {
     removeTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
-        //(user.player as TTournamentPlayer).participating = false;
         user.player = null
         LobbyPage.renderer?.updatePlayers();
     }
-    displayStandingsOUT(tournStandings: number[]) {
-        
+    startTournamentOUT() {
+        tournamentService.create()
+        router.navigateTo("/tournament")
     }
     displayPairingsOUT(tournPairings: [number, number][]) {
         const side: SIDES = matchService.getTeamFromPairings(this.myID, tournPairings);
         matchService.addDefaultControls(this.myID, side);
-        tournamentService.loadPairings(tournPairings);
-        router.navigateTo("/tournament")
-        //LobbyPage.renderTournamentPairings(tournPairings);
+        //tournamentService.loadPairings(tournPairings);
     }
     startMatchOUT(configs: CAppConfigs) {
         matchService.init(configs);

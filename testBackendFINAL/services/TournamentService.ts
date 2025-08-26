@@ -20,13 +20,14 @@ class TournamentService {
         
         const tournamentID = tournamentRepository.createTournament(lobby.id, lobby.matchSettings, tournamentParticipants);
 
+        socketService.broadcastToLobby(lobby.id, "startTournament", null)
         this._displayStandings(tournamentID);
     }
 
     private _displayStandings(tournamentID: number) {
         const tournament = tournamentRepository.getTournamentByID(tournamentID);
         const standings = SwissService.getCurrentStandings(tournament.participants);
-        socketService.broadcastToLobby(tournament.lobbyID, "displaySettings", { standings: standings })
+        socketService.broadcastToLobby(tournament.lobbyID, "displayStandings", { standings: standings })
         
         setTimeout(() => {
             const tournamentDone = tournament.currentRound >= tournament.roundAmount
@@ -51,7 +52,7 @@ class TournamentService {
             if (!player1 || !player2) { throw Error("GAVE GIGANTIC SHIT"); }
             return [player1, player2];
         })
-        socketService.broadcastToLobby(tournament.lobbyID, "displayPairings", { pairings: pairings }); //TODO
+        socketService.broadcastToLobby(tournament.lobbyID, "displayPairings", { pairings: pairingsIDs });
 
         setTimeout(() => {
             tournament.rounds.push({
@@ -107,12 +108,14 @@ class TournamentService {
 
         const tournament = tournamentRepository.getTournamentByID(tournamentID);
 
-        const match = tournament.rounds[tournament.currentRound].matches.find(match => match.matchID === matchID);
+        const currentRoundMatches = tournament.rounds[tournament.currentRound].matches
+        const matchIndex = currentRoundMatches.findIndex(match => match.matchID === matchID);
+        const match = currentRoundMatches[matchIndex];
         if (!match) {throw Error("This match does not exist in the tournament!")}
         match.winner = result[SIDES.LEFT] === 1 ? match.playerIDs[0] : match.playerIDs[1]
 
         socketService.broadcastToLobby(tournament.lobbyID, "updateTournamentResult", {
-            matchID: matchID,
+            matchIndex: matchIndex,
             winnerID: match.winner
         })
 

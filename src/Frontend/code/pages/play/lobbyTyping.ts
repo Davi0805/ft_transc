@@ -195,12 +195,13 @@ export type OutboundDTOMap = {
     //user applies to a tournament
     addTournamentPlayer: {
         userID: number,
-        //player: TTournamentPlayer
     }
     //user withdraws from tournament
     removeTournamentPlayer: {
         userID: number
     }
+
+    startTournament: null
     //host clicks start on tournament lobby
     displayStandings: {
         standings: TTournamentParticipant[]

@@ -1,6 +1,7 @@
 import { lobbyService } from "../services/LobbyService";
 import { InboundDTO, OutboundDTO, InboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
 import { App } from "../match/system/App";
+import { tournamentService } from "../services/tournamentService";
 
 class LobbySocketService {
     constructor() {
@@ -119,11 +120,17 @@ class LobbySocketService {
             case "removeTournamentPlayer":
                 lobbyService.removeTournamentPlayerOUT(dto.data.userID);
                 break;
-            case "displayPairings":
-                lobbyService.displayPairingsOUT(dto.data.pairings);
-                break;
             case "startMatch":
                 lobbyService.startMatchOUT(dto.data.configs);
+                break;
+            case "startTournament":
+                lobbyService.startTournamentOUT();
+                break;
+            case "displayStandings": 
+                tournamentService.displayStandings(dto.data.standings);
+                break;
+            case "displayPairings":
+                //lobbyService.displayPairingsOUT(dto.data.pairings);
                 break;
             case "updateGame":
                 App.severUpdate(dto.data)
@@ -139,7 +146,7 @@ class LobbySocketService {
                 lobbyService.handleActionBlock(dto.data.blockType)
                 break;
             default:
-                throw Error("A message came in with a non registered type!!")
+                throw Error(dto.requestType)
         }
     }
 }
