@@ -18,6 +18,7 @@ class ChatWindow {
 
   private friendAvatar: string | null;
   private friendName: string | null;
+  private friendUsername: string | null;
   private friendID: number | null;
   private convID: number | null;
   private messages: Array<Message>;
@@ -30,7 +31,10 @@ class ChatWindow {
 
     this.friendAvatar = null;
     this.friendName = null;
+    this.friendUsername = null;
+
     this.friendID = null;
+
     this.convID = null;
     this.messages = [];
 
@@ -55,6 +59,7 @@ class ChatWindow {
     this.friendAvatar = friend.friendAvatar;
     this.friendName = friend.friendName;
     this.friendID = friend.friendID;
+    this.friendUsername = friend.friendUsername;
     this.convID = friend.convID;
 
     this.messages = await getMessagesByConvID(this.convID);
@@ -110,7 +115,7 @@ class ChatWindow {
     this.element.innerHTML = `
         <div class="chat-header">
             <img src="${this.friendAvatar}" width="30" height="30" alt="${this.friendName}">
-            <span class="friend-name">${this.friendName}</span>
+            <a href="/profile/${this.friendUsername}" data-link class="friend-name">${this.friendName}</a>
             <button class="minimize-btn">−</button>
             <button class="close-btn">×</button>
         </div>

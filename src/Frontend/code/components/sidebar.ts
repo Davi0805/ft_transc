@@ -24,6 +24,7 @@ import { ErrorPopup } from "../utils/popUpError";
 export interface Friend {
   convID: number;
   friendID: number;
+  friendUsername: string;
   friendName: string;
   friendAvatar: string;
   unreadMsg: number;
@@ -281,6 +282,7 @@ export class Chat {
           convID: conv.id,
           friendID: friendID,
           friendName: friendData.nickname,
+          friendUsername: friendData.username,
           friendAvatar: friendAvatarURL,
           unreadMsg: conv.unread_count,
           friendOn: false,
