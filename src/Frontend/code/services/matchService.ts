@@ -3,24 +3,28 @@ import { CAppConfigs, TControls } from "../match/matchSharedDependencies/SetupDe
 import { SIDES } from "../match/matchSharedDependencies/sharedTypes";
 import { App } from "../match/system/App";
 import { TMatchResult } from "../pages/play/lobbyTyping";
+import { MatchPage } from "../pages/play/match";
 import { router } from "../routes/router";
 //import { lobbySocketService } from "./lobbySocketService";
 import { lobbySocketService } from "../testServices/testLobySocketService";
 
 
 class MatchService {
-    startMatchOUT(configs: CAppConfigs) {
+    async startMatchOUT(configs: CAppConfigs) {
         configs.gameSceneConfigs.controls = this._controls;
         this._configs = configs;
-        router.navigateTo("/match")
+        await router.navigateTo("/match");
+        await this.start(MatchPage.getRoot());
     }
 
     updateGame(updateDto: SGameDTO) {
+
         App.severUpdate(updateDto);
     }
 
     onEndOfMatch(result: TMatchResult) {
         console.log(result);
+        this.destroy()
     }
 
     
@@ -67,7 +71,11 @@ class MatchService {
     }
 
     async start(root: HTMLElement) {
-        await App.init(this.configs, root, lobbySocketService.ws);
+        const sendToServerFunc = (event: Event) => {
+            const dto = (event as CustomEvent).detail;
+            lobbySocketService.send("updateGame", dto);
+        }
+        await App.init(this.configs, sendToServerFunc, root);
     }
 
     destroy() {

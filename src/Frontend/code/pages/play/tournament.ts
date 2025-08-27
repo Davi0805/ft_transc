@@ -35,6 +35,12 @@ export const TournamentPage = {
 
         const tournamentBody = document.getElementById("tournament-body") as HTMLDivElement;
         tournamentBody.textContent = "Waiting for tournament info..."
+
+
+        //TODO: Somehow figure out a way to either make the init show the standings or the results,
+        // or have these called from somewhere else
+
+
     },
 
     renderStandings() {

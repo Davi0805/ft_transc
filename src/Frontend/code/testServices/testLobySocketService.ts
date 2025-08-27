@@ -87,7 +87,6 @@ class LobbySocketService {
     }
 
     private _handleMessage(dto: OutboundDTO) {
-        //console.log("The followind message type will be handled: ", dto.requestType)
         switch (dto.requestType) {
             //Lobby messages
             case "updateSettings":
@@ -138,22 +137,22 @@ class LobbySocketService {
                 break;
             // tournament messages
             case "startTournament":
-                lobbyService.startTournamentOUT();
+                tournamentService.startTournamentOUT();
                 break;
             case "displayStandings": 
-                tournamentService.displayStandings(dto.data.standings);
+                tournamentService.displayStandingsOUT(dto.data.standings);
                 break;
             case "displayPairings":
-                tournamentService.displayPairings(dto.data.pairings)
+                tournamentService.displayPairingsOUT(dto.data.pairings)
                 break;
             case "updateTournamentResult":
-                tournamentService.updateMatchResult(dto.data.matchIndex, dto.data.result);
+                tournamentService.updateMatchResultOUT(dto.data.matchIndex, dto.data.result);
                 break;
             case "displayResults":
-                tournamentService.displayResults();
+                tournamentService.displayResultsOUT();
                 break;
             case "displayTournamentEnd":
-                tournamentService.displayStandings(dto.data.standings);
+                tournamentService.displayStandingsOUT(dto.data.standings);
                 break;
             default:
                 throw Error(dto.requestType)

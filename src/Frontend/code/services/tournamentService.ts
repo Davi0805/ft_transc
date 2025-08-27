@@ -18,20 +18,22 @@ type TTournament = {
 
 
 class TournamentService {
-    create() {
+
+    startTournamentOUT() {
         this._tournament = {
             currentRound: 0,
             currentPairings: [],
             participants: []
         }
+        router.navigateTo("/tournament")
     }
 
-    displayStandings(participants: TTournamentParticipant[]) {
+    displayStandingsOUT(participants: TTournamentParticipant[]) {
         this.tournament.participants = participants;
         TournamentPage.renderStandings();
     }
 
-    displayPairings(pairingsIDs: [number, number][]) {
+    displayPairingsOUT(pairingsIDs: [number, number][]) {
         const side: SIDES = matchService.getTeamFromPairings(lobbyService.myID, pairingsIDs);
         matchService.addDefaultControls(lobbyService.myID, side);
 
@@ -48,15 +50,18 @@ class TournamentService {
         TournamentPage.renderPairings();
     }
 
-    updateMatchResult(matchIndex: number, winnerID: number) {
+    updateMatchResultOUT(matchIndex: number, winnerID: number) {
         const match = this.tournament.currentPairings[matchIndex];
         const result = match.players[0].id === winnerID ? 1 : 0;
-        const matchToUpdate = this.tournament.currentPairings[matchIndex].result = result;
+        match.result = result;
+        
+        
         TournamentPage.renderPairings();
     }
 
-    displayResults() {
+    displayResultsOUT() {
         router.navigateTo('/tournament');
+        TournamentPage.renderPairings()
     }
 
     private _tournament: TTournament | null = null

@@ -13,7 +13,10 @@ class MatchService {
 
         const match = matchRepository.getMatchByID(matchID);
 
-        match.startGameLoop();
+        setTimeout(() => {
+            match.startGameLoop()
+        }, 5000)
+        //match.startGameLoop();
         
         return matchID
     }

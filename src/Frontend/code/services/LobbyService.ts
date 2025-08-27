@@ -201,10 +201,6 @@ class LobbyService {
         user.player = null
         LobbyPage.renderer?.updatePlayers();
     }
-    startTournamentOUT() {
-        tournamentService.create()
-        router.navigateTo("/tournament")
-    }
 
     //errors
     handleActionBlock(blockType: string) { //probably this should be strongly typed, but I am way too tired

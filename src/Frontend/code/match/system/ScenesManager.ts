@@ -27,10 +27,12 @@ export class ScenesManager {
             await this.currentScene.remove();
             this.container.removeChildren();
         }
-        this._currentScene = new this._SCENES[scene]();
+        const newScene = new this._SCENES[scene]();
+        
         // Runs each custom initialization, like asset loading, etc.
         // Needs to be separated from constructor because it may run asynchronous tasks
-        await this._currentScene.init(configs);
+        await newScene.init(configs);
+        this._currentScene = newScene;
         // Makes it so what the scene adds to its root shows up on screen
         this.container.addChild(this.currentScene!.root);
     }
