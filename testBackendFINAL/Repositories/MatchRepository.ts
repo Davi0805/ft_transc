@@ -51,33 +51,36 @@ class MatchRepository {
         return this._currentID++;
     }
 
-    getMatchByID(matchID: number): ServerGame {
+    getMatchByID(matchID: number): ServerGame | null {
         const match = this._matches.find(match => match.id === matchID);
-        if (!match) { throw Error("Match with this ID does not exist!") };
+        if (!match) { return null; };
         return match.match;
     }
 
-    getMatchByUserID(userID: number): ServerGame {
+    getMatchByUserID(userID: number): ServerGame | null {
         const match = this._matches.find(match => match.userIDs.includes(userID))
-        if (!match) { throw Error("This user is not present in any match!")}
+        if (!match) { return null }
         return match.match;
     }
 
     getMatchUsersByID(matchID: number) {
         const match = this._matches.find(match => match.id === matchID);
-        if (!match) { throw Error("Match with this ID does not exist!") };
+        if (!match) { return null; };
         return match.userIDs
     }
 
     getMatchBroadcastLoopByID(matchID: number) {
         const match = this._matches.find(match => match.id === matchID);
-        if (!match) { throw Error("Match with this ID does not exist!") };
+        if (!match) { return null };
         return match.broadcastLoop;
     }
 
     removeMatchByID(matchID: number) {
         const matchIndex = this._matches.findIndex(match => match.id === matchID);
-        if (matchIndex === -1) { throw new Error("Match with this ID does not exist!"); }
+        if (matchIndex === -1) {
+            console.log("Match already does not exist. Ignoring");
+            return;
+        }
         
         this._matches[matchIndex].broadcastLoop.stop();
         this._matches.splice(matchIndex, 1);

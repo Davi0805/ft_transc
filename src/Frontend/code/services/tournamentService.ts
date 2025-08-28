@@ -55,13 +55,15 @@ class TournamentService {
         const result = match.players[0].id === winnerID ? 1 : 0;
         match.result = result;
         
-        
-        TournamentPage.renderPairings();
+        if (!matchService.isMatchActive()) {
+            TournamentPage.renderPairings();
+        }
     }
 
-    displayResultsOUT() {
-        router.navigateTo('/tournament');
-        TournamentPage.renderPairings()
+    async displayResultsOUT() {
+        await router.navigateTo('/tournament');
+        await matchService.destroy();
+        TournamentPage.renderPairings();
     }
 
     private _tournament: TTournament | null = null

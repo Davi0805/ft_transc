@@ -7,6 +7,10 @@ import { CAppConfigs } from '../matchSharedDependencies/SetupDependencies';
 import { assetsManifest, scenesManifest } from '../game/Manifests';
 
 class FtApplication {
+    isAppActive() {
+        return this._app !== null ? true : false;
+    }
+
     async init(gameConfigs: CAppConfigs,
         sendToServerFnc: (event: Event) => void,
         rootElement: HTMLElement,

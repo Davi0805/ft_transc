@@ -17,10 +17,11 @@ class LobbyService {
         this._myID = myID;
     }
 
-    return(lobby: TLobby) {
+    async return(lobby: TLobby) {
         this._lobby = lobby;
-        matchService.destroy();
-        router.navigateTo("/lobby")
+        
+        await router.navigateTo("/lobby")
+        await matchService.destroy();
     }
 
     nullify() {

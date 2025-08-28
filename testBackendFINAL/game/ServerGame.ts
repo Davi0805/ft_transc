@@ -69,6 +69,7 @@ export default class ServerGame {
     //This should be called whenever a message is received by one of the clients. 
     //The message should be casted to a CGameDTO and then sent as argument
     processClientDTO(dto: CGameDTO) {
+        if (this._matchResult) { return; }
         this._humansManager.updateControlState(
             dto.controlsState.humanID,
             dto.controlsState.controlsState

@@ -24,7 +24,6 @@ class MatchService {
 
     onEndOfMatch(result: TMatchResult) {
         console.log(result);
-        this.destroy()
     }
 
     
@@ -78,9 +77,13 @@ class MatchService {
         await App.init(this.configs, sendToServerFunc, root);
     }
 
-    destroy() {
-        App.destroy()
+    async destroy() {
+        await App.destroy()
         this._controls = []
+    }
+
+    isMatchActive() {
+        return App.isAppActive()
     }
 
     private _configs: CAppConfigs | null = null;

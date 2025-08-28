@@ -12,17 +12,16 @@ class MatchService {
         socketService.broadcastToUsers(matchInfo.userIDs, "startMatch", { configs: matchInfo.clientConfigs });
 
         const match = matchRepository.getMatchByID(matchID);
+        if (!match) { throw Error("Match just created is not present in repo!")}
 
-        setTimeout(() => {
-            match.startGameLoop()
-        }, 5000)
-        //match.startGameLoop();
+        match.startGameLoop();
         
         return matchID
     }
 
     stopMatchByID(matchID: number) {
         const matchLoop = matchRepository.getMatchBroadcastLoopByID(matchID);
+        if (!matchLoop) { throw Error("MatchLoop was not found in repo!")}
         matchLoop.stop();
     }
 
@@ -32,11 +31,16 @@ class MatchService {
 
     updateControlsState(_lobbyID: number, senderID: number, controlsDTO: CGameDTO) {
         const match = matchRepository.getMatchByUserID(senderID);
-        match.processClientDTO(controlsDTO);
+        if (match) {
+            match.processClientDTO(controlsDTO);
+        } else {
+            console.log("Match does not exist. Ignoring client dto")
+        }
     }
 
     getMatchResultByID(matchID: number) {
         const match = matchRepository.getMatchByID(matchID);
+        if (!match) { throw Error("This match result does not exist in repo!")}
         return (match.matchResult);
     }
 }
