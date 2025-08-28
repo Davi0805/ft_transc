@@ -21,7 +21,7 @@ class LobbyService {
         this._lobby = lobby;
         
         await router.navigateTo("/lobby")
-        await matchService.destroy();
+        //await matchService.destroy();
     }
 
     nullify() {

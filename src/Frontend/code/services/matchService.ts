@@ -22,7 +22,8 @@ class MatchService {
         App.severUpdate(updateDto);
     }
 
-    onEndOfMatch(result: TMatchResult) {
+    async onEndOfMatch(result: TMatchResult) {
+        await this.destroy()
         console.log(result);
     }
 

@@ -64,7 +64,7 @@ class LobbySocketService {
                 requestType: type,
                 data: data
             }
-            console.log("The following message type will be send: ", type)
+            //console.log("The following message type will be send: ", type)
             this._ws.send(JSON.stringify(dto));
             return true;
         } else {

@@ -129,6 +129,7 @@ class TournamentService {
         console.log(`Match with ID ${matchID} just finished with the following result:`);
         console.log(result);
         const matchUsers = matchRepository.getMatchUsersByID(matchID);
+        if (!matchUsers) {throw Error("This match does not exist!")}
         socketService.broadcastToUsers(matchUsers, "endOfMatch", { result: result });
         matchService.destroyMatchByID(matchID);
 
