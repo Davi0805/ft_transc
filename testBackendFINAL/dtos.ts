@@ -1,11 +1,9 @@
 import { TMatchResult } from "./game/ServerGame.js"
 import { CGameDTO, SGameDTO } from "./game/shared/dtos.js"
 import { CAppConfigs } from "./game/shared/SetupDependencies.js"
-import { SIDES } from "./game/shared/sharedTypes.js"
 import { FriendlyPlayerT, LobbyT, LobbyUserT, RankedPlayerT } from "./Repositories/LobbyRepository.js"
 import { MatchSettingsT } from "./Repositories/MatchRepository.js"
 import { TournamentParticipantT } from "./Repositories/TournamentRepository.js"
-import { TournamentMatchT } from "./services/TournamentService.js"
 
 export type InboundDTOMap = {
     updateSettings: {
@@ -48,6 +46,9 @@ export type OutboundDTOMap = {
     addLobbyUser: {
         user: LobbyUserT
     },
+    removeLobbyUser: {
+        userID: number
+    }
 
     updateSettings: {
         settings: MatchSettingsT,

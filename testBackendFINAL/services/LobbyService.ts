@@ -28,6 +28,12 @@ class LobbyService {
         }
     }
 
+    removeUser(lobbyID: number, userID: number) {
+        const lobby = lobbyRepository.getLobbyByID(lobbyID);
+        lobby.users = lobby.users.filter(user => user.id !== userID);
+        socketService.broadcastToLobby(lobbyID, "removeLobbyUser", { userID: userID })
+    }
+
     updateSettings(lobbyID: number, senderID: number, newSettings: MatchSettingsT) {
         const lobby = lobbyRepository.getLobbyByID(lobbyID);
         if (lobby.hostID !== senderID) { console.log("Somehow a non host managed to send a settings change request!!")}
