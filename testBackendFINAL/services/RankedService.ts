@@ -10,7 +10,7 @@ class RankedService {
     start(lobby: LobbyT, senderID: number) {
         const matchPlayers = this._getMatchPlayers(lobby.users);
         if (!this._areAllSlotsFull(lobby.matchSettings.map, matchPlayers)) {
-            socketService.broadcastToUsers([senderID], "actionBlock", { blockType: "notAllSlotsFilled" })
+            socketService.broadcastToUsers([senderID], "actionBlock", { reason: "notAllSlotsFilled" })
             return;
         }
 

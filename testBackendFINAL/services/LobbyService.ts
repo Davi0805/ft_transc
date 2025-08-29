@@ -1,6 +1,6 @@
 import { FriendlyPlayerT, lobbyRepository, LobbyT, LobbyUserT, RankedPlayerT, TournamentPlayerT } from "../Repositories/LobbyRepository.js";
 import { MatchSettingsT } from "../Repositories/MatchRepository.js";
-import { socketRepository } from "../Repositories/SocketRepository.js";
+import { tournamentRepository } from "../Repositories/TournamentRepository.js";
 import { userRepository } from "../Repositories/UserRepository.js";
 import { friendlyService } from "./FriendlyService.js";
 import { rankedService } from "./RankedService.js";
@@ -8,7 +8,6 @@ import { socketService } from "./SocketService.js";
 import { tournamentService } from "./TournamentService.js";
 
 class LobbyService {
-
     addUser(lobbyID: number, userID: number) {
         const lobby = lobbyRepository.getLobbyByID(lobbyID);
         const userInfo = userRepository.getUserByID(userID);
@@ -20,12 +19,10 @@ class LobbyService {
             ready: false,
             player: null
         }
+        //Broadcast before adding, so the user that just arrived does NOT get the message
+        //This user will receive the entire lobby info instead, which already includes him/her
+        socketService.broadcastToLobby(lobbyID, "addLobbyUser", { user: user })
         lobby.users.push(user);
-
-        if (lobby.users.length > 1) {
-            console.log(lobby.users.length)
-            socketService.broadcastToLobby(lobbyID, "addLobbyUser", { user: user })
-        }
     }
 
     removeUser(lobbyID: number, userID: number) {
@@ -36,7 +33,11 @@ class LobbyService {
 
     updateSettings(lobbyID: number, senderID: number, newSettings: MatchSettingsT) {
         const lobby = lobbyRepository.getLobbyByID(lobbyID);
-        if (lobby.hostID !== senderID) { console.log("Somehow a non host managed to send a settings change request!!")}
+        if (lobby.hostID !== senderID) {
+            console.log("Somehow a non host managed to send a settings change request! It will be ignored.");
+            return;
+        }
+
         const updateUsers = lobby.matchSettings.map !== newSettings.map && lobby.type !== "tournament"
         lobby.matchSettings = newSettings;
 
@@ -58,7 +59,7 @@ class LobbyService {
     updateUserReadinesss(lobbyID: number, userID: number, ready: boolean) {
         const user = lobbyRepository.getLobbyUserByID(lobbyID, userID);
         if (!user.player) {
-            socketService.broadcastToUsers([userID], "actionBlock", { blockType: "setReadyWithoutJoining" })
+            socketService.broadcastToUsers([userID], "actionBlock", { reason: "setReadyWithoutJoining" })
             return;
         }
         user.ready = ready
@@ -126,12 +127,19 @@ class LobbyService {
     }
 
     addTournamentPlayer(lobbyID: number, userID: number) {
-        const user = lobbyRepository.getLobbyUserByID(lobbyID, userID);
-        user.player = {} as TournamentPlayerT
+        const lobby = lobbyRepository.getLobbyByID(lobbyID);
+        const participantsAmount = lobby.users.filter(user => user.player != null).length;
+
+        if (participantsAmount < tournamentRepository.MAX_PARTICIPANTS) {
+            const user = lobbyRepository.getLobbyUserByID(lobbyID, userID);
+            user.player = {} as TournamentPlayerT
+            socketService.broadcastToLobby(lobbyID, "addTournamentPlayer", {
+                userID: userID,
+            })
+        } else {
+            socketService.broadcastToUsers([userID], "actionBlock", { reason: "tooManyPlayersInTournament" })
+        }
         
-        socketService.broadcastToLobby(lobbyID, "addTournamentPlayer", {
-            userID: userID,
-        })
     }
 
     removeTournamentPlayer(lobbyID: number, userID: number) {
@@ -157,7 +165,7 @@ class LobbyService {
         }
 
         if (!this._isEveryoneReady(lobby.users)) {
-            socketService.broadcastToUsers([senderID], "actionBlock", { blockType: "notEveryoneReady" })
+            socketService.broadcastToUsers([senderID], "actionBlock", { reason: "notEveryoneReady" })
             return;
         }
 

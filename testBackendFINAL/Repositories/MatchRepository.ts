@@ -17,6 +17,8 @@ export type MatchSettingsT = {
     duration: MatchDurationT
 }
 
+//This type is only created for match creation purposes.
+// It is a unification that allows a match to parse players no matter the type
 export type MatchPlayerT = {
     id: number,
     userID: number,
@@ -51,6 +53,17 @@ class MatchRepository {
         return this._currentID++;
     }
 
+    removeMatchByID(matchID: number) {
+        const matchIndex = this._matches.findIndex(match => match.id === matchID);
+        if (matchIndex === -1) {
+            console.log("Match already does not exist. Ignoring");
+            return;
+        }
+        
+        this._matches[matchIndex].broadcastLoop.stop();
+        this._matches.splice(matchIndex, 1);
+    }
+
     getMatchByID(matchID: number): ServerGame | null {
         const match = this._matches.find(match => match.id === matchID);
         if (!match) { return null; };
@@ -75,19 +88,7 @@ class MatchRepository {
         return match.broadcastLoop;
     }
 
-    removeMatchByID(matchID: number) {
-        const matchIndex = this._matches.findIndex(match => match.id === matchID);
-        if (matchIndex === -1) {
-            console.log("Match already does not exist. Ignoring");
-            return;
-        }
-        
-        this._matches[matchIndex].broadcastLoop.stop();
-        this._matches.splice(matchIndex, 1);
-    }
-
     private _currentID: number = 0;
-
 
     private _matches: MatchT[] = []
 }

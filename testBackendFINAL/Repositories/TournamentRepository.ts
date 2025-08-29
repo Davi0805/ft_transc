@@ -1,4 +1,3 @@
-import { SIDES } from "../game/shared/sharedTypes.js"
 import { MatchSettingsT } from "./MatchRepository.js"
 
 export type TournamentParticipantT = {
@@ -30,6 +29,9 @@ type TournamentT = {
 }
 
 class TournamentRepository {
+    readonly MIN_PARTICIPANTS = 4;
+    readonly MAX_PARTICIPANTS = 100;
+
     createTournament(lobbyID: number, matchSettings: MatchSettingsT, participants: TournamentParticipantT[]) {
         this._tournaments.push({
             id: this._currentID,
@@ -42,6 +44,10 @@ class TournamentRepository {
         })
 
         return this._currentID++
+    }
+
+    removeTournamentByID(tournamentID: number) {
+        this._tournaments = this._tournaments.filter(tournament => tournament.id !== tournamentID)
     }
 
     getTournamentByID(tournamentID: number) {

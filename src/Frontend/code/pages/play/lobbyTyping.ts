@@ -153,6 +153,7 @@ export type InboundDTOMap = {
     updateGame: CGameDTO //Dealt with in game
 }
 
+type TActionBlockReason = "setReadyWithoutJoining" | "notEveryoneReady" | "notAllSlotsFilled" | "fewPlayersForTournament"
 //server should broadcast these after...
 export type OutboundDTOMap = {
     lobby: TLobby,
@@ -172,7 +173,7 @@ export type OutboundDTOMap = {
     },
     //user leaves a lobby
     removeLobbyUser: {
-        id: number
+        userID: number
     }
     //user chooses a slot in a friendly lobby
     addFriendlyPlayer: {
@@ -236,7 +237,7 @@ export type OutboundDTOMap = {
     }
 
     actionBlock: {
-        blockType: string
+        reason: TActionBlockReason
     }
 }
 

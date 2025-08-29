@@ -99,7 +99,7 @@ class LobbySocketService {
                 lobbyService.addLobbyUserOUT(dto.data.user)
                 break;
             case "removeLobbyUser":
-                lobbyService.removeLobbyUserOUT(dto.data.id)
+                lobbyService.removeLobbyUserOUT(dto.data.userID)
                 break;
             case "addFriendlyPlayer":
                 lobbyService.addFriendlyPlayerOUT(dto.data.userID, dto.data.player)
@@ -123,7 +123,7 @@ class LobbySocketService {
                 lobbyService.return(dto.data.lobby)
                 break;
             case "actionBlock":
-                lobbyService.handleActionBlock(dto.data.blockType)
+                lobbyService.handleActionBlock(dto.data.reason)
                 break;
             //match messages
             case "startMatch":

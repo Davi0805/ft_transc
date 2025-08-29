@@ -13,8 +13,8 @@ export type TournamentMatchT = [TournamentParticipantT, TournamentParticipantT];
 class TournamentService {
     start(lobby: LobbyT, senderID: number) {
         const tournamentParticipants = this._getTournamentParticipants(lobby.users);
-        if (tournamentParticipants.length < 4) {
-            socketService.broadcastToUsers([senderID], "actionBlock", { blockType: "fewPlayersForTournament" })
+        if (tournamentParticipants.length < tournamentRepository.MIN_PARTICIPANTS) {
+            socketService.broadcastToUsers([senderID], "actionBlock", { reason: "fewPlayersForTournament" })
             return;
         }
         
@@ -43,6 +43,7 @@ class TournamentService {
                 socketService.broadcastToLobby(tournament.lobbyID, "displayTournamentEnd", { standings: standings})
                 setTimeout(() => {
                     console.log("returning to lobby...")
+                    tournamentRepository.removeTournamentByID(tournamentID);
                     lobbyService.returnToLobby(tournament.lobbyID);
                 }, 10 * 1000)
             } else {
