@@ -1,8 +1,9 @@
 import { WebSocket } from "ws";
 import { socketRepository } from "../Repositories/SocketRepository.js";
-import { OutboundDTOMap, OutboundDTO, InboundDTO } from "../dtos.js";
+import { OutboundDTOMap, OutboundDTO, InboundDTO, InboundDTOMap } from "../dtos.js";
 import { lobbyService } from "./LobbyService.js";
 import { matchService } from "./MatchService.js";
+
 
 class SocketService {
 
@@ -43,6 +44,10 @@ class SocketService {
     }
 
     handleMessage(lobbyID: number, senderID: number, dto: InboundDTO) {
+        //It would be much better to save these in an object for a more data-driven approach
+        // But because I am a complete ignorant, I do not know the best way to type the function
+        // (either anonymous which calls the funcs or converting the actual signatures to accept the data directly
+        // and type the value as a reference to those funcs directly), I will keep it like this lol
         switch (dto.requestType) {
             case "updateSettings":
                 lobbyService.updateSettings(lobbyID, senderID, dto.data.settings);

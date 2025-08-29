@@ -1,32 +1,36 @@
-import { TMatchResult } from "../game/ServerGame.js";
-import { FriendlyPlayerT, LobbyT, LobbyUserT } from "../Repositories/LobbyRepository.js";
-import { MatchPlayerT } from "../Repositories/MatchRepository.js";
+import type { TMatchResult } from "../game/ServerGame.js";
+import type { FriendlyPlayerT, LobbyT, LobbyUserT } from "../Repositories/LobbyRepository.js";
+import type { MatchPlayerT } from "../Repositories/MatchRepository.js";
 import { lobbyService } from "./LobbyService.js";
 import { matchService } from "./MatchService.js";
 import { socketService } from "./SocketService.js";
 
+const CHECK_RESULT_FRQUENCY = 500 // in milliseconds
+
+//The service responsible to run a friendly match
 class FriendlyService {
     start(lobby: LobbyT, _senderID: number) {
-
         const matchPlayers = this._getMatchPlayers(lobby.users);
+        //Contrary to a ranked match, no checking if the slots are full is necessary,
+        // because they will be filled by bots
         const matchID = matchService.createAndStartMatch(lobby.matchSettings, matchPlayers);
 
+        //The service pools the match result to check if it is finished
         const loop = () => {
             const matchResult = matchService.getMatchResultByID(matchID);
             if (matchResult) {
                 this._onMatchFinished(lobby.id, matchID, matchResult)
             } else {
-                setTimeout(loop, 1 * 1000)
+                setTimeout(loop,  CHECK_RESULT_FRQUENCY)
             }
         }
         loop()
     }
 
-    _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult) {
+    private _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult) {
         matchService.destroyMatchByID(matchID);
         socketService.broadcastToLobby(lobbyID, "endOfMatch", { result: result })
         setTimeout(() => {
-            
             lobbyService.returnToLobby(lobbyID);
         }, 10 * 1000)
     }

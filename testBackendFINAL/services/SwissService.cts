@@ -1,5 +1,4 @@
 import { TournamentParticipantT } from "../Repositories/TournamentRepository.js";
-
 var blossom = require('edmonds-blossom')
 
 type Pairing = [number, number]
@@ -8,6 +7,8 @@ type PlayerGraph = [TournamentParticipantT, TournamentParticipantT][]
 type GraphEdge = [number, number, number];
 type WeightedGraph = GraphEdge[];
 
+
+//This is a fully static class that calculates standings and pairings according to the swiss system
 export class SwissService {
     static getNextRoundPairings(players: TournamentParticipantT[]): Pairing[] {
 
@@ -40,6 +41,7 @@ export class SwissService {
         return classificationTable
     }
 
+    
     private static _generatePlayerGraph(players: TournamentParticipantT[]): PlayerGraph {
         const playerGraph: PlayerGraph = [];
         for (let i: number = 0; i < players.length - 1; i++) {
@@ -73,7 +75,6 @@ export class SwissService {
                 this._calculateEdgeWeight(edge[0], edge[1], scoreGroupSize)
             ])
         })
-        //console.log(weightedGraph)
 
         return weightedGraph
     }

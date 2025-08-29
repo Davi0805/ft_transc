@@ -1,10 +1,10 @@
-import { getSlotsFromMap } from "../factories/matchFactory.js";
-import { TMatchResult } from "../game/ServerGame.js";
-import { LobbyT, LobbyUserT, RankedPlayerT } from "../Repositories/LobbyRepository.js";
-import { MatchMapT, MatchPlayerT } from "../Repositories/MatchRepository.js";
+import type { TMatchResult } from "../game/ServerGame.js";
+import type { LobbyT, LobbyUserT, RankedPlayerT } from "../Repositories/LobbyRepository.js";
+import type { MatchMapT, MatchPlayerT } from "../Repositories/MatchRepository.js";
 import { lobbyService } from "./LobbyService.js";
 import { matchService } from "./MatchService.js";
 import { socketService } from "./SocketService.js";
+import { getSlotsFromMap } from "../factories/matchFactory.js";
 
 class RankedService {
     start(lobby: LobbyT, senderID: number) {
@@ -13,7 +13,6 @@ class RankedService {
             socketService.broadcastToUsers([senderID], "actionBlock", { reason: "notAllSlotsFilled" })
             return;
         }
-
         const matchID = matchService.createAndStartMatch(lobby.matchSettings, matchPlayers);
 
         const loop = () => {

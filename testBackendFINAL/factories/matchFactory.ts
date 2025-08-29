@@ -70,7 +70,6 @@ class MatchFactory {
             availableSlots = availableSlots.filter(slot => slot.team !== player.team || slot.role !== player.role)
         })
 
-        console.log(availableSlots)
         availableSlots.forEach(slot => {
             userCustoms.paddles.push({
                 id: paddleID,

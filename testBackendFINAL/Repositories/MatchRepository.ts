@@ -38,17 +38,11 @@ class MatchRepository {
     createMatch(matchConfigs: SGameConfigs, users: number[]) {
         const match = matchFactory.create(matchConfigs)
 
-        const loop = new LoopController(60);
-        loop.start(() => {
-            if (!loop.isRunning) return;
-            const dto = match.getGameDTO()
-            socketService.broadcastToUsers(users, "updateGame", dto);
-        })
         this._matches.push({
             id: this._currentID,
             match: match,
             userIDs: users,
-            broadcastLoop: loop
+            broadcastLoop: new LoopController(60)
         });
         return this._currentID++;
     }
@@ -59,9 +53,16 @@ class MatchRepository {
             console.log("Match already does not exist. Ignoring");
             return;
         }
-        
-        this._matches[matchIndex].broadcastLoop.stop();
+        const match = this._matches[matchIndex];
+        match.broadcastLoop.stop();
+        match.match.stopGameLoop();
         this._matches.splice(matchIndex, 1);
+    }
+
+    getMatchInfoByID(matchID: number) {
+        const matchInfo = this._matches.find(match => match.id === matchID);
+        if (!matchInfo) { return null; };
+        return matchInfo;
     }
 
     getMatchByID(matchID: number): ServerGame | null {

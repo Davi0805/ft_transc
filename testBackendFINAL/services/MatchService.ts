@@ -1,32 +1,28 @@
+import type { CGameDTO } from "../game/shared/dtos.js";
 import { matchFactory } from "../factories/matchFactory.js"
-import { CGameDTO } from "../game/shared/dtos.js";
-import { MatchPlayerT, matchRepository, MatchSettingsT } from "../Repositories/MatchRepository.js"
+import { matchRepository, MatchPlayerT, MatchSettingsT } from "../Repositories/MatchRepository.js"
 import { socketService } from "./SocketService.js";
 
 class MatchService {
     createAndStartMatch(matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
         const matchInfo = matchFactory.generateMatchInfo(matchSettings, matchPlayers)
-        
         const matchID = matchRepository.createMatch(matchInfo.serverConfigs, matchInfo.userIDs);
 
         socketService.broadcastToUsers(matchInfo.userIDs, "startMatch", { configs: matchInfo.clientConfigs });
 
-        const match = matchRepository.getMatchByID(matchID);
-        if (!match) { throw Error("Match just created is not present in repo!")}
+        this._startMatchGameLoop(matchID);
+        this._startMatchBroadcastLoop(matchID);
 
-        match.startGameLoop();
-        
-        return matchID
-    }
-
-    stopMatchByID(matchID: number) {
-        const matchLoop = matchRepository.getMatchBroadcastLoopByID(matchID);
-        if (!matchLoop) { throw Error("MatchLoop was not found in repo!")}
-        matchLoop.stop();
+        return matchID;
     }
 
     destroyMatchByID(matchID: number) {
         matchRepository.removeMatchByID(matchID)
+    }
+
+    stopMatchByID(matchID: number) {
+        this._stopMatchBroadcastLoop(matchID);
+        this._stopMatchGameLoop(matchID);
     }
 
     updateControlsState(_lobbyID: number, senderID: number, controlsDTO: CGameDTO) {
@@ -34,7 +30,7 @@ class MatchService {
         if (match) {
             match.processClientDTO(controlsDTO);
         } else {
-            console.log("Match does not exist. Ignoring client dto")
+            console.log("Match does not exist. Ignoring client dto");
         }
     }
 
@@ -42,6 +38,32 @@ class MatchService {
         const match = matchRepository.getMatchByID(matchID);
         if (!match) { throw Error("This match result does not exist in repo!")}
         return (match.matchResult);
+    }
+
+
+    private _startMatchBroadcastLoop(matchID: number) {
+        const matchInfo = matchRepository.getMatchInfoByID(matchID);
+        if (!matchInfo) {throw Error("Match to start broadcastLoop is not present in repo!")};
+        matchInfo.broadcastLoop.start(() => {
+            if (!matchInfo.broadcastLoop.isRunning) return;
+            const dto = matchInfo.match.getGameDTO();
+            socketService.broadcastToUsers(matchInfo.userIDs, "updateGame", dto);
+        })
+    }
+    private _stopMatchBroadcastLoop(matchID: number) {
+        const matchBroadcastLoop = matchRepository.getMatchBroadcastLoopByID(matchID);
+        if (!matchBroadcastLoop) {throw Error("Match to stop broadcastLoop is not present in repo!")};
+        matchBroadcastLoop.stop();
+    }
+    private _startMatchGameLoop(matchID: number) {
+        const match = matchRepository.getMatchByID(matchID);
+        if (!match) { throw Error("Match to start is not present in repo!")}
+        match.startGameLoop();
+    }
+    private _stopMatchGameLoop(matchID: number) {
+        const match = matchRepository.getMatchByID(matchID);
+        if (!match) { throw Error("Match just created is not present in repo!")}
+        match.stopGameLoop();
     }
 }
 

@@ -138,7 +138,7 @@ class LobbyService {
     removeLobbyUserOUT(id: number) {
         const user = this._findUserByID(id);
         const index = this.lobby.users.indexOf(user);
-        this.lobby.users.splice(index, 1); //TODO: For tournament, this does not work!
+        this.lobby.users.splice(index, 1);
     }
     addFriendlyPlayerOUT(userID: number, player: TFriendlyPlayer) {
         console.log("addFriendlyPlayerOUT called!")

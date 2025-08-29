@@ -39,21 +39,25 @@ export default class ServerGame {
         this._teamsManager = new STeamsManager(gameOpts.teams)
         this._paddlesManager = new SPaddlesManager(gameOpts.paddles, this.windowSize);
         this._humansManager = new SHumansManager(gameOpts.humans, this._paddlesManager.paddles);
-        this._botsManager = new BotsManager(gameOpts.bots, this._paddlesManager.paddles, this.windowSize)
+        this._botsManager = new BotsManager(gameOpts.bots, this._paddlesManager.paddles, this.windowSize);
+        this._gameLoop = new LoopController(90);
     }
 
     //Starts the internal logic loop. Should be started once all players are connected and ready to play
     startGameLoop() {
-        const loop = new LoopController(90);
-        loop.start(() => {
-            if (loop.isRunning) {
+        this._gameLoop.start(() => {
+            if (this._gameLoop.isRunning) {
                 if (!this._matchHasStarted) {
-                    this._countdownLoop(loop);
+                    this._countdownLoop();
                 } else {
-                    this._matchLoop(loop);
+                    this._matchLoop();
                 }
             }
         })
+    }
+
+    stopGameLoop() {
+        this._gameLoop.stop();
     }
 
     getGameDTO(): SGameDTO {
@@ -93,10 +97,10 @@ export default class ServerGame {
     private _botsManager: BotsManager;
     private _paddlesManager: SPaddlesManager;
 
-    
+    private _gameLoop: LoopController;
 
-    private _countdownLoop(loop: LoopController) {
-        if (loop.isEventTime(1)) {
+    private _countdownLoop() {
+        if (this._gameLoop.isEventTime(1)) {
             this._timeLeft -= 1;
             if (this._timeLeft <= 0) {
                 this._ballsManager.addBallOfType(BALL_TYPES.BASIC);
@@ -106,15 +110,15 @@ export default class ServerGame {
         }
     }
 
-    private _matchLoop(loop: LoopController) {
+    private _matchLoop() {
         // Movement decision by players
         //console.log("Before update: " + this._humansManager.humans[0].controls.left.pressed)
         this._humansManager.update()
-        this._botsManager.update(loop, this._ballsManager.balls)
+        this._botsManager.update(this._gameLoop, this._ballsManager.balls)
         
         // Object movement
-        this._paddlesManager.update(loop);
-        this._ballsManager.update(loop);
+        this._paddlesManager.update(this._gameLoop);
+        this._ballsManager.update(this._gameLoop);
 
         // Collision handling
         // I do not like this very much... The collision handling is not uniform across all objects
@@ -125,13 +129,13 @@ export default class ServerGame {
         this._ballsManager.handleLimitCollision(this._teamsManager, this._paddlesManager);
         this._paddlesManager.handleCollisions(this._ballsManager, this._teamsManager);
         
-        if (loop.isEventTime(1)) {
+        if (this._gameLoop.isEventTime(1)) {
             this._timeLeft -= 1;
         }
         // Game state handling
         if (this._teamsManager.allTeamsFinished()
             || this._timeLeft <= 0) {
-            loop.pause();
+            this._gameLoop.pause();
             this._matchResult = this._teamsManager.getTeamsState();
         }
     }
