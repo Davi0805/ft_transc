@@ -1,7 +1,7 @@
 import { TournamentParticipantT } from "../Repositories/TournamentRepository.js";
 var blossom = require('edmonds-blossom')
 
-type Pairing = [number, number]
+export type Pairing = [number, number]
 type PlayerGraph = [TournamentParticipantT, TournamentParticipantT][]
 
 type GraphEdge = [number, number, number];
@@ -41,7 +41,7 @@ export class SwissService {
         return classificationTable
     }
 
-    
+
     private static _generatePlayerGraph(players: TournamentParticipantT[]): PlayerGraph {
         const playerGraph: PlayerGraph = [];
         for (let i: number = 0; i < players.length - 1; i++) {
