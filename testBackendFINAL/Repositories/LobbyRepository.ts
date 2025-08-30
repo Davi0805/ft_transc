@@ -1,6 +1,5 @@
 import { ROLES, SIDES } from "../game/shared/sharedTypes.js"
-import { getMaxPlayersFromMap, getParticipantsAm } from "../tempHelpers.js"
-import { MatchSettingsT } from "./MatchRepository.js"
+import { MatchMapT, MatchSettingsT } from "./MatchRepository.js"
 import { tournamentRepository } from "./TournamentRepository.js"
 import { userRepository } from "./UserRepository.js"
 
@@ -95,10 +94,10 @@ class LobbyRepository {
                 host: userRepository.getUserByID(lobby.hostID).username,
                 type: lobby.type,
                 capacity: {
-                    taken: getParticipantsAm(lobby.users),
+                    taken: this._getParticipantsAm(lobby.users),
                     max: lobby.type === "tournament"
                         ? tournamentRepository.MAX_PARTICIPANTS
-                        : getMaxPlayersFromMap(lobby.matchSettings.map)
+                        : this._getMaxPlayersFromMap(lobby.matchSettings.map)
                 },
             })
         })
@@ -108,6 +107,19 @@ class LobbyRepository {
     private _lobbies: LobbyT[] = []
 
     private _currentID: number = 0;
+
+
+    private _getParticipantsAm(users: LobbyUserT[]): number {
+        const participants = users.filter(user => user.player !== null);
+        return participants.length
+    }
+
+    private _getMaxPlayersFromMap(map: MatchMapT): number {
+        const [amountStr, type, _size] = map.split("-");
+        const amount = Number(amountStr);
+
+        return (amount * (type === "teams" ? 2 : 1))
+    }
 }
 
 export const lobbyRepository = new LobbyRepository()
