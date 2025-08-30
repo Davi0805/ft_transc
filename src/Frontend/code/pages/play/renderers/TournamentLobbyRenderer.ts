@@ -32,6 +32,9 @@ export class TournamentLobbyRenderer extends ALobbyRenderer {
     }
 
     private _renderTournamentTable() {
+        //Info from service
+        const tournamentParticipants = lobbyService.getTournPlayers();
+
         const tableElement = document.getElementById("participants-table");
         if (!tableElement) {throw Error("Tournament table element was not found")}
         tableElement.innerHTML = ""
@@ -45,7 +48,7 @@ export class TournamentLobbyRenderer extends ALobbyRenderer {
         let participantsTableBody = ""
         let place = 1
         const categories = ["nick", "rating", "score"] as const
-        for (let participant of lobbyService.getTournPlayers()) {
+        for (let participant of tournamentParticipants) {
             const opacity = `opacity-${participant.participating ? "100" : "25"}`
             const bg = `bg-gray-900/${place % 2 === 0 ? "25" : "50"}`;
             participantsTableBody += `<tr class="${bg} ${opacity}"><td>${place++}</td>`;

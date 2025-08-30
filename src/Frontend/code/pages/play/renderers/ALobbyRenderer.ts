@@ -87,8 +87,8 @@ export abstract class ALobbyRenderer {
         flashButton(buttonElement, "You must join first!")
     }
 
-    abstract renderPlayers(slots: TSlots, myID: number): Promise<void>;
-    abstract updatePlayers(slots: TSlots, myID: number): Promise<void>;
+    abstract renderPlayers(): Promise<void>;
+    abstract updatePlayers(): Promise<void>;
 
     protected abstract readonly subtitleText: string;
 }

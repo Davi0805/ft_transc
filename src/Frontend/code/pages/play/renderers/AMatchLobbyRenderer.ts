@@ -1,11 +1,16 @@
 import { ROLES, SIDES } from "../../../match/matchSharedDependencies/sharedTypes";
+import { lobbyService } from "../../../services/LobbyService";
 import { TPlayerInSlot, TSlots } from "../utils/helpers";
 import { ALobbyRenderer } from "./ALobbyRenderer";
 
 export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
     constructor() { super() }
 
-    async renderPlayers(slots: TSlots, myID: number): Promise<void> {
+    async renderPlayers(): Promise<void> {
+        //Info from Service
+        const slots = lobbyService.getSlots();
+        const myID = lobbyService.myID;
+
         const teamsElement = document.getElementById('players') as HTMLElement;
         teamsElement.innerHTML = "";
         const slotsTable = document.createElement('table');
@@ -38,8 +43,8 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
         teamsElement.appendChild(slotsTable);
     }
 
-    async updatePlayers(slots: TSlots, myID: number): Promise<void> {
-        this.renderPlayers(slots, myID)
+    async updatePlayers(): Promise<void> {
+        this.renderPlayers()
     }
 
     private _renderTeamName(slotsTable: HTMLTableElement, teamName: string) {

@@ -114,7 +114,7 @@ class LobbyService {
         LobbyPage.updateSettings();
         if (updatedUsers && this.lobby.type !== "tournament") {
             this.lobby.users = updatedUsers
-            LobbyPage.renderer?.renderPlayers(this.getSlots(), this.myID)
+            LobbyPage.renderer?.renderPlayers()
             LobbyPage.renderer?.updateReadyButton(false)
         }
     }
@@ -145,7 +145,7 @@ class LobbyService {
         } else {
             (user.player as TFriendlyPlayer[]).push(player)
         }
-        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
+        LobbyPage.renderer?.updatePlayers();
     }
     removeFriendlyPlayerOUT(playerID: number) {
         if (!this._isLobbyOfType("friendly")) { return; }
@@ -164,7 +164,7 @@ class LobbyService {
                 if (user.id === this.myID) {
                     matchService.removeControls(playerID);
                 }
-                LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
+                LobbyPage.renderer?.updatePlayers();
                 return ;
             }
         }
@@ -175,25 +175,25 @@ class LobbyService {
 
         const user = this._findUserByID(userID);
         user.player = player;
-        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
+        LobbyPage.renderer?.updatePlayers();
     }
     removeRankedPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("ranked")) { return; }
         const user = this._findUserByID(userID);
         user.player = null
-        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
+        LobbyPage.renderer?.updatePlayers();
     }
     addTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         user.player = {};
-        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
+        LobbyPage.renderer?.updatePlayers();
     }
     removeTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         user.player = null
-        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
+        LobbyPage.renderer?.updatePlayers();
     }
 
     //errors

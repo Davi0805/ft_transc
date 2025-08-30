@@ -28,7 +28,7 @@ export const LobbyPage = {
     async init() {
         this.renderer = createLobbyRenderer(lobbyService.lobby.type)
         this.renderer.renderTitles(lobbyService.lobby.name);
-        this.renderer.renderPlayers(lobbyService.getSlots(), lobbyService.myID);
+        this.renderer.renderPlayers();
 
         await this.renderer.renderSettings(
             lobbyService.lobby.type,
