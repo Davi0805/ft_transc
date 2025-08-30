@@ -1,33 +1,32 @@
-import { lobbyService } from "../../../services/LobbyService";
 import { applySettingsClicked, inviteUserClicked, leaveClicked, readyClicked, startClicked } from "../buttonCallbacks";
-import { TDynamicLobbySettings, TLobby } from "../lobbyTyping";
+import { TDynamicLobbySettings, TLobbyType } from "../lobbyTyping";
 import { getLobbyOptionsHTML } from "../utils/concreteComponents";
 import { flashButton, getButton, toggleButton } from "../utils/stylingComponents";
 
 export abstract class ALobbyRenderer {
     constructor() {}
 
-    renderTitles() {
+    renderTitles(lobbyName: string) {
         const titleElement = document.getElementById('lobby-title') as HTMLElement;
-        titleElement.textContent = lobbyService.lobby.name;
+        titleElement.textContent = lobbyName;
         const subtitleElement = document.getElementById('lobby-subtitle') as HTMLElement;
         subtitleElement.textContent = this.subtitleText;
     }
 
-    async renderSettings() {
+    async renderSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings, amIHost: boolean) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        const lobbySettingsListing: TLobby = lobbyService.lobby;
+        //&const lobbySettingsListing: TLobby = lobbyService.lobby;
         
-        lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyService.lobby.type, lobbySettingsListing.matchSettings)
+        lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyType, matchSettings)
 
-        if (lobbyService.amIHost()) {
+        if (amIHost) {
             const buttonChangeSettings = getButton("btn-change-settings", "button", "Change lobby settings", false);
-            buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbySettingsListing.matchSettings))
+            buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbyType, matchSettings))
             lobbySettingsElement.appendChild(buttonChangeSettings);
         }
     }
     
-    async renderActionButtons() {
+    async renderActionButtons(amIHost: boolean) {
         const buttonsDiv = document.getElementById("lobby-buttons") as HTMLElement;
 
         const inviteButton = getButton("btn-invite", "button", "Invite");
@@ -42,7 +41,7 @@ export abstract class ALobbyRenderer {
         readyButton.addEventListener('click', () => readyClicked())
         buttonsDiv.appendChild(readyButton);
 
-        if (lobbyService.amIHost()) {
+        if (amIHost) {
             const startButton = getButton("btn-start", "button", "Start");
             startButton.addEventListener('click', () => startClicked(/*startButton*/))
             buttonsDiv.appendChild(startButton);
@@ -81,11 +80,11 @@ export abstract class ALobbyRenderer {
     }
 
 
-    renderChangeSettings(lobbySettingsListing: TDynamicLobbySettings) {
+    renderChangeSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         let lobbySettingsHtml = `
             <form id="settings-change-form" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(true, lobbyService.lobby.type, lobbySettingsListing)}
+                ${getLobbyOptionsHTML(true, lobbyType, matchSettings)}
                 ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
             </div>
         `;

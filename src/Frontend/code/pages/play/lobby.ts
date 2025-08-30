@@ -27,28 +27,26 @@ export const LobbyPage = {
 
     async init() {
         this.renderer = createLobbyRenderer(lobbyService.lobby.type)
-        this.renderer.renderTitles();
+        this.renderer.renderTitles(lobbyService.lobby.name);
         this.renderer.renderPlayers();
 
-        await this.renderer.renderSettings(); //TODO check with other functions if it is possible to simply pass whatever the renderer needs from lobby service, so it is not dependent of it
-        
-
-        await this.renderer.renderActionButtons();
-
-        //this.updateRound();
+        await this.renderer.renderSettings(
+            lobbyService.lobby.type,
+            lobbyService.lobby.matchSettings,
+            lobbyService.amIHost()
+        );
+        await this.renderer.renderActionButtons(lobbyService.amIHost());
 
         console.log('Lobby Ranked page loaded!')
     },
 
     updateSettings() {
         if (this.renderer) {
-            this.renderer.renderSettings();
+            this.renderer.renderSettings(
+                lobbyService.lobby.type,
+                lobbyService.lobby.matchSettings,
+                lobbyService.amIHost()
+            );
         }
     },
-
-    /* updateRound() {
-        const roundElement = document.getElementById("current-round") as HTMLElement;
-        roundElement.textContent = `Current round: ${lobbyService.lobby.round}`
-    }, */
-
 }
