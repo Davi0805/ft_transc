@@ -63,3 +63,13 @@ export function getMaxPlayersFromMap(map: TMap): number {
 
     return (amount * (type === "teams" ? 2 : 1))
 }
+
+export function getDirectionsFromTeam(team: SIDES): {left: string, right: string} {
+    const teamToDirections: Record<SIDES, {left: string, right: string}> = {
+        [SIDES.LEFT]: {left: "Up", right: "Down"},
+        [SIDES.TOP]: {left: "Right", right: "Left"},
+        [SIDES.RIGHT]: {left: "Down", right: "Up"},
+        [SIDES.BOTTOM]: {left: "Left", right: "Right"}
+    }
+    return (teamToDirections[team])
+}

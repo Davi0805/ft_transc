@@ -3,15 +3,6 @@ import { tournamentService } from "../../services/tournamentService";
 import { getTable } from "./utils/stylingComponents";
 
 
-
-
-//TODO TAKE CARE OF DIFFERENT RENDERINGS!! START WITH DISPLAY OF CLASSIFICATION TABLE
-
-
-
-
-
-
 export const TournamentPage = {
     template() {
         return `
@@ -35,12 +26,6 @@ export const TournamentPage = {
 
         const tournamentBody = document.getElementById("tournament-body") as HTMLDivElement;
         tournamentBody.textContent = "Waiting for tournament info..."
-
-
-        //TODO: Somehow figure out a way to either make the init show the standings or the results,
-        // or have these called from somewhere else
-
-
     },
 
     renderStandings() {
@@ -71,8 +56,6 @@ export const TournamentPage = {
 
         const pairingsTable = getTable("standings", standingsHead, standingsBody)
         tournamentBody.innerHTML = pairingsTable.outerHTML
-
-        console.log(tournamentBody.innerHTML)
     },
 
     renderPairings() {

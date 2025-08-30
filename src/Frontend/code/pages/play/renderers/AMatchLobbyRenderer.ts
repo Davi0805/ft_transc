@@ -1,14 +1,11 @@
 import { ROLES, SIDES } from "../../../match/matchSharedDependencies/sharedTypes";
-import { lobbyService } from "../../../services/LobbyService";
-import { TPlayerInSlot } from "../utils/helpers";
+import { TPlayerInSlot, TSlots } from "../utils/helpers";
 import { ALobbyRenderer } from "./ALobbyRenderer";
 
 export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
     constructor() { super() }
 
-    async renderPlayers(): Promise<void> {
-        const slots = lobbyService.getSlots();
-
+    async renderPlayers(slots: TSlots, myID: number): Promise<void> {
         const teamsElement = document.getElementById('players') as HTMLElement;
         teamsElement.innerHTML = "";
         const slotsTable = document.createElement('table');
@@ -29,7 +26,7 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
                 const slotSpaceElement = document.createElement("td");
                 slotSpaceElement.className = "text-center"
                 if (player != null) {
-                    this._renderOccupiedSlot(slotSpaceElement, player);
+                    this._renderOccupiedSlot(slotSpaceElement, player, myID);
                 } else if (this._canUserJoin()) {
                     this._renderJoinButton(slotSpaceElement, teamName, roleName);
                 }
@@ -41,8 +38,8 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
         teamsElement.appendChild(slotsTable);
     }
 
-    async updatePlayers(): Promise<void> {
-        this.renderPlayers()
+    async updatePlayers(slots: TSlots, myID: number): Promise<void> {
+        this.renderPlayers(slots, myID)
     }
 
     private _renderTeamName(slotsTable: HTMLTableElement, teamName: string) {
@@ -62,7 +59,7 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
         slotElement.appendChild(roleNameElement)
     }
 
-    private _renderOccupiedSlot(slotSpaceElement: HTMLTableCellElement, player: TPlayerInSlot) {
+    private _renderOccupiedSlot(slotSpaceElement: HTMLTableCellElement, player: TPlayerInSlot, myID: number) {
         const playerDiv = document.createElement("div");
         playerDiv.className = "flex flex-row"
         
@@ -70,7 +67,7 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
         playerElement.className = "w-full text-xl p-2"
         playerElement.textContent = player.nickname.toString();
         playerDiv.appendChild(playerElement);
-        if (player.userID === lobbyService.myID) {
+        if (player.userID === myID) {
             this._renderWithdrawButton(playerDiv, player);
         }
         slotSpaceElement.appendChild(playerDiv)

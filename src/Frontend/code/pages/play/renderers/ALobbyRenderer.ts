@@ -1,6 +1,7 @@
 import { applySettingsClicked, inviteUserClicked, leaveClicked, readyClicked, startClicked } from "../buttonCallbacks";
 import { TDynamicLobbySettings, TLobbyType } from "../lobbyTyping";
 import { getLobbyOptionsHTML } from "../utils/concreteComponents";
+import { TSlots } from "../utils/helpers";
 import { flashButton, getButton, toggleButton } from "../utils/stylingComponents";
 
 export abstract class ALobbyRenderer {
@@ -15,7 +16,6 @@ export abstract class ALobbyRenderer {
 
     async renderSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings, amIHost: boolean) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        //&const lobbySettingsListing: TLobby = lobbyService.lobby;
         
         lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyType, matchSettings)
 
@@ -24,6 +24,20 @@ export abstract class ALobbyRenderer {
             buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbyType, matchSettings))
             lobbySettingsElement.appendChild(buttonChangeSettings);
         }
+    }
+
+    renderChangeSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings) {
+        const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
+        let lobbySettingsHtml = `
+            <form id="settings-change-form" class="flex flex-col gap-1">
+                ${getLobbyOptionsHTML(true, lobbyType, matchSettings)}
+                ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
+            </div>
+        `;
+        lobbySettingsElement.innerHTML = lobbySettingsHtml;
+
+        const formChangeSettings = document.getElementById('settings-change-form') as HTMLElement;
+        formChangeSettings.addEventListener('submit', (e: SubmitEvent) => applySettingsClicked(e))
     }
     
     async renderActionButtons(amIHost: boolean) {
@@ -43,7 +57,7 @@ export abstract class ALobbyRenderer {
 
         if (amIHost) {
             const startButton = getButton("btn-start", "button", "Start");
-            startButton.addEventListener('click', () => startClicked(/*startButton*/))
+            startButton.addEventListener('click', () => startClicked())
             buttonsDiv.appendChild(startButton);
         }
     }
@@ -51,12 +65,6 @@ export abstract class ALobbyRenderer {
     updateReadyButton(ready: boolean) {
         const readyButton = document.getElementById('btn-ready') as HTMLButtonElement;
         if (readyButton.classList.contains("active") !== ready) {
-            toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
-        }
-    }
-    resetReadyButton() {
-        const readyButton = document.getElementById('btn-ready') as HTMLButtonElement;
-        if (readyButton.classList.contains("active")) {
             toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
         }
     }
@@ -79,23 +87,8 @@ export abstract class ALobbyRenderer {
         flashButton(buttonElement, "You must join first!")
     }
 
-
-    renderChangeSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings) {
-        const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        let lobbySettingsHtml = `
-            <form id="settings-change-form" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(true, lobbyType, matchSettings)}
-                ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
-            </div>
-        `;
-        lobbySettingsElement.innerHTML = lobbySettingsHtml;
-
-        const formChangeSettings = document.getElementById('settings-change-form') as HTMLElement;
-        formChangeSettings.addEventListener('submit', (e: SubmitEvent) => applySettingsClicked(e))
-    }
-
-    abstract renderPlayers(): Promise<void>;
-    abstract updatePlayers(): Promise<void>;
+    abstract renderPlayers(slots: TSlots, myID: number): Promise<void>;
+    abstract updatePlayers(slots: TSlots, myID: number): Promise<void>;
 
     protected abstract readonly subtitleText: string;
 }

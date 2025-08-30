@@ -1,7 +1,6 @@
 import { ROLES, SIDES } from "../../../match/matchSharedDependencies/sharedTypes";
-import { matchService } from "../../../services/matchService";
 import { joinFriendlyClicked, withdrawFriendlyClicked } from "../buttonCallbacks";
-import { TPlayerInSlot } from "../utils/helpers";
+import { getDirectionsFromTeam, TPlayerInSlot } from "../utils/helpers";
 import { getButton, setupKeyCaptureButton } from "../utils/stylingComponents";
 import { AMatchLobbyRenderer } from "./AMatchLobbyRenderer";
 
@@ -31,7 +30,7 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
     }
 
     renderCustomizePlayerWindow(team: SIDES, role: ROLES) {
-        const directions = matchService.getDirectionsFromTeam(team);
+        const directions = getDirectionsFromTeam(team);
         
         const leftKey = "Arrow" + directions.left
         const rightKey = "Arrow" + directions.right

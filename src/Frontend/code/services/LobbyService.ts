@@ -114,8 +114,8 @@ class LobbyService {
         LobbyPage.updateSettings();
         if (updatedUsers && this.lobby.type !== "tournament") {
             this.lobby.users = updatedUsers
-            LobbyPage.renderer?.renderPlayers()
-            LobbyPage.renderer?.resetReadyButton()
+            LobbyPage.renderer?.renderPlayers(this.getSlots(), this.myID)
+            LobbyPage.renderer?.updateReadyButton(false)
         }
     }
     updateReadinessOUT(id: number, ready: boolean) {
@@ -145,7 +145,7 @@ class LobbyService {
         } else {
             (user.player as TFriendlyPlayer[]).push(player)
         }
-        LobbyPage.renderer?.updatePlayers();
+        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
     }
     removeFriendlyPlayerOUT(playerID: number) {
         if (!this._isLobbyOfType("friendly")) { return; }
@@ -164,7 +164,7 @@ class LobbyService {
                 if (user.id === this.myID) {
                     matchService.removeControls(playerID);
                 }
-                LobbyPage.renderer?.updatePlayers();
+                LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
                 return ;
             }
         }
@@ -175,25 +175,25 @@ class LobbyService {
 
         const user = this._findUserByID(userID);
         user.player = player;
-        LobbyPage.renderer?.updatePlayers();
+        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
     }
     removeRankedPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("ranked")) { return; }
         const user = this._findUserByID(userID);
         user.player = null
-        LobbyPage.renderer?.updatePlayers();
+        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
     }
     addTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         user.player = {};
-        LobbyPage.renderer?.updatePlayers();
+        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
     }
     removeTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
         user.player = null
-        LobbyPage.renderer?.updatePlayers();
+        LobbyPage.renderer?.updatePlayers(this.getSlots(), this.myID);
     }
 
     //errors
@@ -290,9 +290,7 @@ class LobbyService {
         if (!me) {throw Error("How can't I be in the lobby???"); }
         return me.ready
     }
-    isEveryoneReady(): boolean {
-        return this.lobby.users.find(user => (this.isUserParticipating(user.id) && !user.ready)) ? false : true
-    }
+ 
     isUserParticipating(userID: number): boolean {
         const me = this.lobby.users.find(user => user.id == userID);
         if (!me) {throw Error("How can't I be in the lobby???"); }
@@ -303,7 +301,6 @@ class LobbyService {
         }
     }
 
-    private _isInit: boolean = false;
     private _lobby: TLobby | null = null;
     get lobby(): TLobby {
         if (!this._lobby) { throw Error("Settings are trying to be accessed when lobby hasn't been initialized yet!"); }

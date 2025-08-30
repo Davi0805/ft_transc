@@ -1,5 +1,5 @@
 import { SIDES, ROLES } from "../../../match/matchSharedDependencies/sharedTypes";
-import { lobbyService } from "../../../services/LobbyService";
+import { lobbyService } from "../../../services/LobbyService"; //I tried, but I do not know how to get rid of this dependency
 import { joinRankedClicked, withdrawRankedClicked } from "../buttonCallbacks";
 import { TPlayerInSlot } from "../utils/helpers";
 import { getButton } from "../utils/stylingComponents";
@@ -11,7 +11,7 @@ export class RankedLobbyRenderer extends AMatchLobbyRenderer {
     }
 
     protected _canUserJoin(): boolean {
-        return !(lobbyService.isUserParticipating(lobbyService.myID))
+        return !lobbyService.isUserParticipating(lobbyService.myID)
     }
 
     protected _renderJoinButton(

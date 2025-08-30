@@ -1,4 +1,4 @@
-import { lobbyService } from "../../../services/LobbyService";
+import { lobbyService } from "../../../services/LobbyService"; //I tried, but I do not know how to get rid of this dependency
 import { joinWithdrawTournamentClicked } from "../buttonCallbacks";
 import { getButton, getTable, toggleButton } from "../utils/stylingComponents";
 import { ALobbyRenderer } from "./ALobbyRenderer";
@@ -17,7 +17,6 @@ export class TournamentLobbyRenderer extends ALobbyRenderer {
 
         this._renderTournamentTable()
         
-        const participating = lobbyService.isUserParticipating(lobbyService.myID);
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", "Join", false)
         joinWithdrawButton.addEventListener("click", () => {
             const state = toggleButton(joinWithdrawButton, "Withdraw", "Join")

@@ -4,6 +4,7 @@ import { SIDES } from "../match/matchSharedDependencies/sharedTypes";
 import { App } from "../match/system/App";
 import { TMatchResult } from "../pages/play/lobbyTyping";
 import { MatchPage } from "../pages/play/match";
+import { getDirectionsFromTeam } from "../pages/play/utils/helpers";
 import { router } from "../routes/router";
 //import { lobbySocketService } from "./lobbySocketService";
 import { lobbySocketService } from "../testServices/testLobySocketService";
@@ -42,22 +43,14 @@ class MatchService {
     }
 
     addDefaultControls(id: number, team: SIDES) {
-        const directions = this.getDirectionsFromTeam(team)
+        const directions = getDirectionsFromTeam(team)
         this.addControls(id, {left: "Arrow" + directions.left, right: "Arrow" + directions.right})
     }
     removeControls(id: number) {
         this._controls = this._controls.filter(player => player.humanID !== id)
     }
 
-    getDirectionsFromTeam(team: SIDES): {left: string, right: string} {
-        const teamToDirections: Record<SIDES, {left: string, right: string}> = {
-            [SIDES.LEFT]: {left: "Up", right: "Down"},
-            [SIDES.TOP]: {left: "Right", right: "Left"},
-            [SIDES.RIGHT]: {left: "Down", right: "Up"},
-            [SIDES.BOTTOM]: {left: "Left", right: "Right"}
-        }
-        return (teamToDirections[team])
-    }
+    
 
     getTeamFromPairings(playerID: number, tournPairings: [number, number][]): SIDES {
         for (let i =0; i < tournPairings.length; i++) {
