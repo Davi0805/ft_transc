@@ -2,10 +2,7 @@ import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes";
 import { router } from "../../routes/router";
 import { lobbyService } from "../../services/LobbyService";
 import { matchService } from "../../services/matchService";
-import { LobbyPage } from "./lobby";
-import { TDuration, TDynamicLobbySettings, TLobbyType, TMap, TMode } from "./lobbyTyping";
-import { areAllSlotsFull } from "./utils/helpers";
-import { flashButton, toggleButton } from "./utils/stylingComponents";
+import { TDuration, TMap, TMode } from "./lobbyTyping";
 
 export function applySettingsClicked(e: SubmitEvent) {
     e.preventDefault();
@@ -39,7 +36,7 @@ export function startClicked() {
 
 export function joinFriendlyClicked(e: SubmitEvent, team: SIDES, role: ROLES) {
     e.preventDefault()
-    const form = e.target as HTMLFormElement;
+    const form = e.currentTarget as HTMLFormElement;
     if (!form.reportValidity()) return;
     const formData = new FormData(form);
 

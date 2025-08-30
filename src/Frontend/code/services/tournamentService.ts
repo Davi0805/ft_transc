@@ -54,10 +54,6 @@ class TournamentService {
         const match = this.tournament.currentPairings[matchIndex];
         const result = match.players[0].id === winnerID ? 1 : 0;
         match.result = result;
-        
-        /* if (!matchService.isMatchActive()) {
-            TournamentPage.renderPairings();
-        } */
     }
 
     async displayResultsOUT() {

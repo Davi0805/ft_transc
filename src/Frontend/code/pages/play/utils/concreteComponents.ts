@@ -38,7 +38,7 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
         } 
         
         for (let option of mapOptions) {
-            mapOptionsHtml += `<option value="${option}" ${lobbySettings?.map === option ? "selected" : ""}>${option}</option>`;
+            mapOptionsHtml += `<option value="${option}" ${lobbySettings.map === option ? "selected" : ""}>${option}</option>`;
         }
         const modeOptions = [
             "classic",
@@ -46,7 +46,7 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
         ]
         
         for (let option of modeOptions) {
-            modeOptionsHtml += `<option value="${option}" ${lobbySettings?.mode === option ? "selected" : ""}>${option}</option>`;
+            modeOptionsHtml += `<option value="${option}" ${lobbySettings.mode === option ? "selected" : ""}>${option}</option>`;
         }
     
         const lengthOptions = [
@@ -58,13 +58,13 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
         ]
         
         for (let option of lengthOptions) {
-            durationOptionsHtml += `<option value="${option}" ${lobbySettings?.duration === option ? "selected" : ""}>${option}</option>`;
+            durationOptionsHtml += `<option value="${option}" ${lobbySettings.duration === option ? "selected" : ""}>${option}</option>`;
         }
     } else {
         tagType = "p";
-        mapOptionsHtml = lobbySettings?.map;
-        modeOptionsHtml = lobbySettings?.mode
-        durationOptionsHtml = lobbySettings?.duration;
+        mapOptionsHtml = lobbySettings.map;
+        modeOptionsHtml = lobbySettings.mode
+        durationOptionsHtml = lobbySettings.duration;
     }
 
 

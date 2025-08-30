@@ -78,8 +78,8 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
         setupKeyCaptureButton(leftListener, leftInput)
         setupKeyCaptureButton(rightListener, rightInput)
 
-        const closeDialogButton = document.getElementById("player-settings") as HTMLElement;
-        closeDialogButton.addEventListener("submit", (e: SubmitEvent) => {
+        const playerSettingsForm = document.getElementById("player-settings") as HTMLElement;
+        playerSettingsForm.addEventListener("submit", (e: SubmitEvent) => {
             joinFriendlyClicked(e, team, role);
             settingsDialog.close();
             settingsDialog.remove();

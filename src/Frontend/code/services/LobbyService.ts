@@ -7,7 +7,6 @@ import { router } from "../routes/router";
 import { matchService} from "./matchService";
 import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournamentParticipant, TMatchPlayer } from "../pages/play/lobbyTyping";
 import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
-import { tournamentService } from "./tournamentService";
 
 
 
@@ -17,16 +16,15 @@ class LobbyService {
         this._myID = myID;
     }
 
+    destroy() {
+        this._lobby = null;
+        this._myID = null;
+    }
+
     async return(lobby: TLobby) {
         this._lobby = lobby;
         
         await router.navigateTo("/lobby")
-        //await matchService.destroy();
-    }
-
-    nullify() {
-        this._lobby = null;
-        this._myID = null;
     }
 
 
@@ -60,10 +58,6 @@ class LobbyService {
         return mapSlots
     }
 
-    getPlayersAmount(): number {
-        return this.lobby.users.length;
-    }
-
     //inbound
     updateSettingsIN(settings: TDynamicLobbySettings) {
         lobbySocketService.send("updateSettings", { settings: settings })
@@ -74,7 +68,6 @@ class LobbyService {
     }
 
     addFriendlyPlayerIN(player: TFriendlyPlayer) {
-        console.log("addFriendlyPlayerIN called!")
         lobbySocketService.send("addFriendlyPlayer", { player: player });
     }
 
@@ -105,7 +98,7 @@ class LobbyService {
 
     leave() {
         lobbySocketService.disconnect();
-        this.nullify();
+        this.destroy();
     }
 
     startMatchIN() {

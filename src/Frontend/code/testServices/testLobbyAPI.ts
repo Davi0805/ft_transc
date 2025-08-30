@@ -1,3 +1,5 @@
+//TODO do not forget to update the actual api!
+
 import { LobbiesListDTO, LobbyCreationConfigsDTO } from "../pages/play/lobbyTyping";
 
 export async function getAllLobbies(): Promise<LobbiesListDTO> {

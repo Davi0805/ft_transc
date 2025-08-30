@@ -1,3 +1,5 @@
+//TODO: do not forget to update the actual socket service!
+
 import { lobbyService } from "../services/LobbyService";
 import { InboundDTO, OutboundDTO, InboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
 import { tournamentService } from "../services/tournamentService";
