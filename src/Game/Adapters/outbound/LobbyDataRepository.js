@@ -167,12 +167,17 @@ class LobbyDataRepository {
         })) {
             const data = await redis.hGetAll(key);
             data.id = key.substring(6);
-            lobbies.push(data);
+            data.users = JSON.parse(data.users);
+            if (data.users.length != 0) lobbies.push(data);
         }
         return lobbies;
-}
+    }
 
+    async deleteLobby(lobbyId)
+    {
+        const result = await redis.del(`lobby:${lobbyId}`);
 
+    }
 }
 
 module.exports = new LobbyDataRepository();

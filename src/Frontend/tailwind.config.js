@@ -13,6 +13,7 @@ module.exports = {
       },
       colors: {
         'myWhite': '#fff',
+        'abyssblue': '#172332',
         'myBlack': '#333',
         'popup-success-bg': '#d4edda',
         'popup-success-border': '#28a745',
@@ -25,6 +26,9 @@ module.exports = {
       scale: {
         '85': '0.85',
       },
+      borderWidth: {
+        '1': '1px',
+      },
       keyframes: {
         progressBar: {
           'from': { width: '100%' },
@@ -36,8 +40,6 @@ module.exports = {
       }
     },
   },
-  plugins: [
-    require('tailwind-scrollbar-hide')
-  ],
+  plugins: [],
 };
 

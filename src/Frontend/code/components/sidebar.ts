@@ -97,36 +97,38 @@ export class Chat {
 
     this.insertContactsOnSidebar();
   }
-
+//todo add friend from class to id
   renderHTML(): string {
     return `
-      <div id="chat-sidebar" class="chat-sidebar content w-[200px] flex-shrink-0">
+      <div id="chat-sidebar" class="chat-sidebar content overflow-hidden">
         <!-- Topbar with friend + search -->
 
-        <div class="chat-sidebar-topbar">
-          <button class="icon-btn add-friend">
+        <div class="flex items-center gap-2 p-1 border-b-1 border-white/10 rounded-b-sm bg-abyssblue min-h-10">
+          <button class="icon-btn add-friend"> 
             <img src="./Assets/icons/person-add.svg" alt="Add Friend" />
           </button>
           
           <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
         </div>
 
-        <div class="friend-requests-btn-wrapper">
-          <button class="friend-requests-btn icon-btn" id="friend-requests-btn">
+        <div class="p-0 m-0 border-b-1 border-white/10 bg-abyssblue transition-colors duration-300 ease">
+          <button class="w-full justify-between py-1.5 px-2.5 border-none rounded-none text-myWhite text-sm font-medium flex items-center gap-2 overflow-hidden bg-abyssblue active:scale-95 filter hover:brightness-125 transition-all duration-400 ease-in" id="friend-requests-btn">
             <span class="friend-requests-text">Friend Requests</span>
-            <span class="friend-requests-count">${this.friendRequestCount}</span>
+            <span id="friend-requests-count" class="py-1 px-1.5 min-w-5 rounded-full text-sm leading-none font-bold text-myWhite text-center h-5 bg-[#007bff33]">${this.friendRequestCount}</span>
           </button>
         </div>
 
-        <div class="chat-contacts-wrapper">
-          <div class="chat-contacts"></div>
-        </div>  
+        <div class="chat-contacts-wrapper h-full relative overflow-hidden bg-gray-800 rounded-lg
+                    before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-5 before:z-20 before:pointer-events-none before:bg-gradient-to-b before:from-gray-900/80 before:to-transparent
+                    after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-8 after:z-20 after:pointer-events-none after:bg-gradient-to-t after:from-gray-900 after:to-transparent">
+          <div class="chat-contacts h-full overflow-y-auto flex flex-col gap-2.5 py-2.5 px-1.5"></div>
+        </div> 
 
       </div>
 
-      <div id="add-friend-popover" class="add-friend-popover hidden">
-        <input type="text" id="friend-username-input" placeholder="Username..." />
-        <button id="send-friend-request-btn">Add</button>
+      <div id="add-friend-popover" class="flex items-center fixed top-[60px] right-[200px] z-50 p-[5px] w-[200px] min-h-8 gap-1.5 bg-abyssblue border-1 border-r-0 border-white/10 rounded-tl-lg rounded-bl-lg shadow-lg shadow-black/30 opacity-0 transition-all duration-150 ease-in-out">
+        <input type="text" id="friend-username-input" class="outline-none flex-1 py-1 px-1.5 h-7 min-w-0 bg-white/5 border-1 border-white/10 rounded text-myWhite text-sm"  placeholder="Username..." />
+        <button id="send-friend-request-btn" class="flex items-center justify-center w-9 h-7 p-1 text-myWhite text-sm font-medium cursor-pointer rounded bg-[#007bff33] hover:bg-[#007bff59] transition-colors duration-200 ease-in-out ">Add</button>
       </div>  
 
         `;
@@ -134,7 +136,7 @@ export class Chat {
 
   renderFriendRequestsHTML(): string {
     return `
-      <dialog class="friend-requests-wrapper scrollbar-hide" id="friendRequestsDialog" >
+      <dialog class="friend-requests-wrapper" id="friendRequestsDialog" >
         <button class="close-dialog-btn">&times;</button> <!-- onclick="closeDialog()" -->
 
         <h1 class="title friend-request-header">Friend Requests</h1>
@@ -160,15 +162,15 @@ export class Chat {
 
     addFriendBtn.addEventListener("click", (e: MouseEvent) => {
       e.stopPropagation();
-      popover.classList.toggle("hidden");
-      if (popover.classList.contains("hidden")) popoverInput.value = "";
+      popover.classList.replace("opacity-0", "opacity-100");
+      if (popover.classList.contains("opacity-0")) popoverInput.value = "";
       else popoverInput.focus();
     });
 
     document.addEventListener("click", (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!popover.contains(target) && !addFriendBtn.contains(target)) {
-        popover.classList.add("hidden");
+        popover.classList.replace("opacity-100", "opacity-0");
         popoverInput.value = "";
       }
     });
@@ -218,9 +220,9 @@ export class Chat {
             element.style.display = "flex";
             return;
           }
-          const username = element.classList[1].slice(2).toLowerCase(); // skip the f- from class name
+          const username = element.dataset.friend; // skip the f- from class name
 
-          element.style.display = username.includes(value) ? "flex" : "none";
+          element.style.display = username?.includes(value) ? "flex" : "none";
         });
       });
     }
@@ -299,11 +301,14 @@ export class Chat {
     unreadMsg: number
   ): HTMLButtonElement {
     const newContact = document.createElement("button") as HTMLButtonElement;
-    newContact.className = `contact f-${friendName}`;
+    newContact.setAttribute("data-friend", friendName);
+    newContact.className = `contact hover:bg-[#007bff33] hover:scale-105 transition-all duration-200 ease-in-out active:scale-95`;
     newContact.innerHTML = `
-                  <img src="${friendAvatar}" width="40px" height="40px">
+                  <img class="rounded-full w-10 h-10 border-2 border-[#676768]" src="${friendAvatar}" width="40px" height="40px">
                   <span>${friendName}</span>
-                  <span class="unread-badge" style="display: ${
+                  <span class="unread-badge -top-0.5 -right-0.5 absolute min-w-[18px] h-[18px] px-1 text-center text-xs font-bold text-myWhite
+                bg-gradient-to-br from-red-500 to-red-400 rounded-full border-2 border-black/80 
+                shadow-[0_0_4px_rgba(255,71,87,0.4),0_0_6px_rgba(255,71,87,0.2),inset_0_1px_2px_rgba(255,255,255,0.3)]" style="display: ${
                     unreadMsg ? "inline" : "none"
                   };">${unreadMsg}</span>
                   `;
@@ -311,7 +316,7 @@ export class Chat {
   }
 
   updateFriendRequestsNumber(number: number): void {
-    const count = this.sidebar.querySelector(".friend-requests-count");
+    const count = document.getElementById("friend-requests-count");
     if (!(count instanceof HTMLSpanElement)) return;
     count.textContent = `${number}`;
   }

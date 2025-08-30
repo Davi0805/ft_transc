@@ -65,6 +65,12 @@ class UserController {
         return reply.send(user);
     }
 
+    async getProfileData(req, reply)
+    {
+        const profileData = await userService.getProfileData(req.params.username
+                                                            , req.session.user_id);
+        return reply.send(profileData);
+    }
 
     /* 
     *    @brief Endpoint to create user
@@ -102,6 +108,13 @@ class UserController {
     async updateName(req, reply)
     {
         await userService.updateName({name: req.body.name, id: req.session.user_id});
+        return reply.send();
+    }
+
+
+    async updateEmail(req, reply)
+    {
+        await userService.updateEmail({email: req.body.email, id: req.session.user_id});
         return reply.send();
     }
 
