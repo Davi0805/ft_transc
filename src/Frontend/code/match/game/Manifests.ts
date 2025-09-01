@@ -69,6 +69,34 @@ export const assetsManifest: AssetsManifest = {
                     src: "Assets/sprites/paddle0.png"
                 },
                 {
+                    alias: "paddle1",
+                    src: "Assets/sprites/paddle1.png"
+                },
+                {
+                    alias: "paddle2",
+                    src: "Assets/sprites/paddle2.png"
+                },
+                {
+                    alias: "paddle3",
+                    src: "Assets/sprites/paddle3.png"
+                },
+                {
+                    alias: "paddle4",
+                    src: "Assets/sprites/paddle4.png"
+                },
+                {
+                    alias: "paddle5",
+                    src: "Assets/sprites/paddle5.png"
+                },
+                {
+                    alias: "paddle6",
+                    src: "Assets/sprites/paddle6.png"
+                },
+                {
+                    alias: "paddle7",
+                    src: "Assets/sprites/paddle7.png"
+                },
+                {
                     alias: "gameFont",
                     src: "Assets/sprites/gameFont.ttf"
                 }
