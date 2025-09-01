@@ -9,14 +9,15 @@ import SPaddlesManager from "./SPaddlesManager.js";
 
 
 export default class SBallsManager {
-    constructor(windowSize: point) {
+    constructor(windowSize: point, powerupsActive: boolean) {
         this._windowSize = windowSize;
         this._ballSpawnRate = 4;
         this._currentID = 0;
+        this._powerupsActive = powerupsActive;
     }
 
     update(loop: LoopController) {
-        if (loop.isEventTime(this._ballSpawnRate)) {
+        if (this._powerupsActive && loop.isEventTime(this._ballSpawnRate)) {
             this.addBallOfType(getRandomInt(1, BALL_TYPES.BALL_TYPE_AM)) // 0 is basic, so this way only powerups are spawned
         }
         this.balls.forEach(ball => {
@@ -24,19 +25,23 @@ export default class SBallsManager {
         })
     }
 
-    addBallOfType(type: BALL_TYPES) {
-        const damage = getRandomInt(1, 5);
+    addFirstBall() {
+        this.addBallOfType(BALL_TYPES.BASIC, 1);
+    }
+
+    addBallOfType(type: BALL_TYPES, damage?: number) {
+        const finalDamage = damage ?? getRandomInt(1, 5);
         const direction = {
             x: (Math.random() + 0.3) * (Math.floor(Math.random() * 2) === 1 ? 1 : -1),
             y: (Math.random() + 0.3) * (Math.floor(Math.random() * 2) === 1 ? 1 : -1)
         }
         const configs = {
             type: type,
-            size: { x: 8 + damage * 8, y: 8 + damage * 8 },
+            size: { x: 8 + finalDamage * 8, y: 8 + finalDamage * 8 },
             pos: { x: this._windowSize.x / 2, y: this._windowSize.y / 2 },
             direction: direction,
-            speed: 500 - (damage * 75),
-            damage: damage
+            speed: 500 - (finalDamage * 75),
+            damage: finalDamage
         };
         this.addBall(configs);
     }
@@ -131,6 +136,8 @@ export default class SBallsManager {
 
     private _ballSpawnRate;
     get ballSpawnRate() { return this._ballSpawnRate; }
+
+    private _powerupsActive: boolean;
 
     private _currentID: number;
 

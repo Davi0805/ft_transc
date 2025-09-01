@@ -9,6 +9,7 @@ import SPaddlesManager from "./Objects/SPaddlesManager.js";
 
 export type SGameConfigs = {
     window: Pick<TWindow, "size">,
+    powerupsActive: boolean,
     matchLength: number
     teams: {
         side: SIDES,
@@ -35,7 +36,7 @@ export default class ServerGame {
         this._windowSize = gameOpts.window.size;
         this._matchLength = gameOpts.matchLength;
         this._timeLeft = 3; // the initial countdown before the match starts
-        this._ballsManager = new SBallsManager(this._windowSize);
+        this._ballsManager = new SBallsManager(this._windowSize, gameOpts.powerupsActive);
         this._teamsManager = new STeamsManager(gameOpts.teams)
         this._paddlesManager = new SPaddlesManager(gameOpts.paddles, this.windowSize);
         this._humansManager = new SHumansManager(gameOpts.humans, this._paddlesManager.paddles);
@@ -103,7 +104,7 @@ export default class ServerGame {
         if (this._gameLoop.isEventTime(1)) {
             this._timeLeft -= 1;
             if (this._timeLeft <= 0) {
-                this._ballsManager.addBallOfType(BALL_TYPES.BASIC);
+                this._ballsManager.addFirstBall();
                 this._timeLeft = this._matchLength;
                 this._matchHasStarted = true;
             }

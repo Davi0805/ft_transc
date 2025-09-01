@@ -10,6 +10,7 @@ export type TUserCustoms = {
         size: point
         backgroundSpriteID: number
     },
+    powerupsActive: boolean,
     matchLength: number,
     startingScore: number,
     paddles: {
@@ -38,6 +39,7 @@ export type TGameConfigs = {
         size: point
         backgroundSpriteID: number
     },
+    powerupsActive: boolean,
     matchLength: number,
     teams: {
         side: SIDES,

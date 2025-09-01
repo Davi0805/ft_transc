@@ -35,6 +35,7 @@ class MatchFactory {
                 size: this._getSizeFromMap(settings.map),
                 backgroundSpriteID: 0 //TODO: Generate randomly
             },
+            powerupsActive: settings.mode === "modern",
             matchLength: this._getSecondsFromDuration(settings.duration),
             startingScore: this._getStartingScoreFromDuration(settings.duration),
             paddles: [],
@@ -89,6 +90,7 @@ class MatchFactory {
     private _applyDevCustoms(userCustoms: TUserCustoms): TGameConfigs {
         const out: TGameConfigs = {
             field: userCustoms.field,
+            powerupsActive: userCustoms.powerupsActive,
             matchLength: userCustoms.matchLength,
             teams: [],
             paddles: [],
@@ -153,6 +155,7 @@ class MatchFactory {
             window: {
             size: gameConfigs.field.size
             },
+            powerupsActive: gameConfigs.powerupsActive,
             matchLength: gameConfigs.matchLength,
             teams: [],
             humans: [],
