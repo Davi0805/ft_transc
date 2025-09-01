@@ -86,14 +86,14 @@ class TournamentService {
             currentRound.matches.push({
                 matchID: matchID,
                 playerIDs: pairingsIDs[i],
-                winner: null
+                winnerID: null
             });
 
             //poll result
             const checkResult = () => {
                 const matchResult = matchService.getMatchResultByID(matchID);
                 if (matchResult) {
-                    this._onMatchFinished(tournamentID, matchID, matchResult)
+                    this._onMatchFinished(tournamentID, matchID, matchResult, matchPlayers)
                 } else {
                     setTimeout(checkResult, RESULT_POLLING_FREQUENCY)
                 }
@@ -102,10 +102,11 @@ class TournamentService {
         };
     }
 
-    private _onMatchFinished(tournamentID: number, matchID: number, result: TMatchResult) {
+    private _onMatchFinished(tournamentID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
         const matchUsers = matchRepository.getMatchUsersByID(matchID);
         if (!matchUsers) {throw Error("This match does not exist!")}
         socketService.broadcastToUsers(matchUsers, "endOfMatch", { result: result });
+        matchService.updatePlayersRating(players, result);
         matchService.destroyMatchByID(matchID);
 
         //Get reference to match saved in tournament
@@ -118,21 +119,25 @@ class TournamentService {
         if (!match) {throw Error("This match does not exist in the tournament!")}
         
         //Update result of match
-        match.winner = result[SIDES.LEFT] === 1 ? match.playerIDs[0] : match.playerIDs[1] //TODO: It seems this is always giving victory to RIGHT... check what is wrong
-        const winnerPlayer = tournament.participants.find(participant => participant.id === match.winner)
-        if (!winnerPlayer) { throw Error("The winner does not exist in the participants??")}
+        const playerLeft = tournament.participants.find(participant => participant.id === match.playerIDs[0]);
+        const playerRight = tournament.participants.find(participant => participant.id === match.playerIDs[1]);
+        if (!playerLeft || !playerRight) {throw Error("Players in match do not exist in participants!")}
+        const winnerPlayer = result[SIDES.LEFT] === 1 ? playerLeft : playerRight;
+
+        match.winnerID = winnerPlayer.id
         winnerPlayer.score++;
+
 
         const updateResultDTO = {
             matchIndex: matchIndex,
-            winnerID: match.winner
+            winnerID: match.winnerID
         }
         socketService.broadcastToLobby(tournament.lobbyID, "updateTournamentResult", updateResultDTO)
 
         //Note: It is awkward to create this variable now when it will only be used after the timeout, but it is necessary.
         // This makes sure that the results are up to date. If this was only done inside the setTimeout below and a two matches end within a END_OF_GAME_DISPLAY_DURATION window,
         // both of them would consider themselves to be the last and they would both call "displayStandings", which would be disasterous
-        const allGamesDone = currentRoundMatches.every(match => match.winner !== null);
+        const allGamesDone = currentRoundMatches.every(match => match.winnerID !== null);
 
         setTimeout(() => {
             socketService.broadcastToUsers(matchUsers, "displayResults", null);

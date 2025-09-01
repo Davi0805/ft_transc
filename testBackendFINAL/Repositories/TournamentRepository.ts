@@ -21,7 +21,7 @@ type TournamentT = {
         matches: {
             matchID: number,
             playerIDs: [number, number],
-            winner: number | null
+            winnerID: number | null
         }[]
     }[],
     roundAmount: number,

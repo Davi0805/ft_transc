@@ -2,6 +2,8 @@ import type { CGameDTO } from "../game/shared/dtos.js";
 import { matchFactory } from "../factories/matchFactory.js"
 import { matchRepository, MatchPlayerT, MatchSettingsT } from "../Repositories/MatchRepository.js"
 import { socketService } from "./SocketService.js";
+import { TMatchResult } from "../game/ServerGame.js";
+import { userRepository, UserT } from "../Repositories/UserRepository.js";
 
 class MatchService {
     createAndStartMatch(matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
@@ -40,6 +42,21 @@ class MatchService {
         return (match.matchResult);
     }
 
+    updatePlayersRating(players: MatchPlayerT[], result: TMatchResult) {
+        for (let player1I = 0; player1I < players.length; player1I++) {
+            const user1 = userRepository.getUserByID(players[player1I].userID);
+            for (let player2I = player1I + 1; player2I < players.length; player2I++) {
+                const user2 = userRepository.getUserByID(players[player2I].userID);
+                if (result[players[player1I].team] < result[players[player2I].team]) {
+                    this._updateRatings(user1, user2);
+                } else {
+                    this._updateRatings(user2, user1);
+                }
+            }
+            console.log(`the new rating of ${players[player1I].nickname} is ${user1.rating}`)
+        }
+    }
+
 
     private _startMatchBroadcastLoop(matchID: number) {
         const matchInfo = matchRepository.getMatchInfoByID(matchID);
@@ -64,6 +81,21 @@ class MatchService {
         const match = matchRepository.getMatchByID(matchID);
         if (!match) { throw Error("Match just created is not present in repo!")}
         match.stopGameLoop();
+    }
+
+
+    private _updateRatings(winner: UserT, loser: UserT) {
+        const winnerExpectedResult = this._getExpectedResult(winner.rating, loser.rating)
+        const loserExpectedResult = 1 - winnerExpectedResult;
+        const winnerK = winner.rating < 2400 ? 20 : 10;
+        const loserK = loser.rating < 2400 ? 20 : 10;
+
+        winner.rating += Math.round(winnerK * (1 - winnerExpectedResult));
+        loser.rating += Math.round(loserK * (-loserExpectedResult));
+    }
+
+    private _getExpectedResult(ratingA: number, ratingB: number) {
+        return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400))
     }
 }
 

@@ -19,7 +19,7 @@ class FriendlyService {
         const loop = () => {
             const matchResult = matchService.getMatchResultByID(matchID);
             if (matchResult) {
-                this._onMatchFinished(lobby.id, matchID, matchResult)
+                this._onMatchFinished(lobby.id, matchID, matchResult, matchPlayers)
             } else {
                 setTimeout(loop,  CHECK_RESULT_FRQUENCY)
             }
@@ -27,7 +27,7 @@ class FriendlyService {
         loop()
     }
 
-    private _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult) {
+    private _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
         matchService.destroyMatchByID(matchID);
         socketService.broadcastToLobby(lobbyID, "endOfMatch", { result: result })
         setTimeout(() => {

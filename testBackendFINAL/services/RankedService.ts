@@ -18,7 +18,7 @@ class RankedService {
         const loop = () => {
             const matchResult = matchService.getMatchResultByID(matchID);
             if (matchResult) {
-                this._onMatchFinished(lobby.id, matchID, matchResult)
+                this._onMatchFinished(lobby.id, matchID, matchResult, matchPlayers)
             } else {
                 setTimeout(loop, 1 * 1000)
             }
@@ -26,7 +26,8 @@ class RankedService {
         loop()
     }
 
-    _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult) {
+    _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
+        matchService.updatePlayersRating(players, result);
         matchService.destroyMatchByID(matchID);
         socketService.broadcastToLobby(lobbyID, "endOfMatch", { result: result })
         setTimeout(() => {

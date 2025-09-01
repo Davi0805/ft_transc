@@ -1,9 +1,11 @@
-type TUser = {
+export type UserT = {
     id: number,
     username: string,
     spriteID: number,
     rating: number
 }
+
+const testUserRatings = [1500, 1600, 1700, 1800]
 
 class UserRepository {
     getUserByID(userID: number) {
@@ -14,14 +16,16 @@ class UserRepository {
                 id: userID,
                 username: `User${userID}`,
                 spriteID: 0,
-                rating: 1500
+                rating: testUserRatings[this._counter++]
             }
             this._users.push(userInfo)
         }
         return userInfo
     }
 
-    private _users: TUser[] = []
+    private _users: UserT[] = []
+
+    private _counter = 0
 }
 
 export const userRepository = new UserRepository()
