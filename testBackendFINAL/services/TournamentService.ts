@@ -170,7 +170,7 @@ class TournamentService {
                 id: users[i].id,
                 nickname: users[i].nick,
                 spriteID: users[i].spriteID,
-                team: i === 0 ? SIDES.LEFT : SIDES.RIGHT, //TODO: Change to taking team preference into account
+                team: i === 0 ? SIDES.LEFT : SIDES.RIGHT,
                 role: ROLES.BACK,
             })
         }

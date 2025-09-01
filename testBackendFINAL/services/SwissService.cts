@@ -61,7 +61,6 @@ export class SwissService {
     private static _generateWeightedGraph(
         playerGraph: PlayerGraph,
         scoreGroupSizes: Map<number, number>): WeightedGraph {
-        //console.log("GRAPH: ")
         const weightedGraph: WeightedGraph = []
         playerGraph.forEach(edge => {
             const scoreGroupSize = edge[0].score === edge[1].score
@@ -108,10 +107,12 @@ export class SwissService {
             const player2 = normalizedPlayers.find(player => player.rating - 1 === pairingsIndexes[i])
             if (player1 && player2) {
                 if (!player1.id || !player2.id) { throw Error("Player not initialized when it should!"); }
-                pairings.push([
-                    player1.id,
-                    player2.id
-                ])
+                
+                pairings.push(
+                    player1.teamDist < player2.teamDist
+                    ? [player1.id, player2.id]
+                    : [player2.id, player1.id]
+                )
                 usedIDs.push(pairingsIndexes[i])
             }
             
