@@ -16,9 +16,15 @@ export class SwissService {
             if (a.score !== b.score) return b.score - a.score;
             else return b.rating - a.rating;
         });
+        //Remove the player that will receive a bye (if any) after ordering but before normalizing
+        let byePlayer: TournamentParticipantT | null = null;
+        if (normalizedPlayers.length % 2 === 1) {
+            const byePlayerID = this._getByePlayerIndex(players);
+            byePlayer = normalizedPlayers.splice(byePlayerID, 1)[0];
+        }
+
         let playerRank = 1;
         normalizedPlayers.forEach(player => { player.rating = playerRank++; })
-
 
         const playerGraph: PlayerGraph = this._generatePlayerGraph(normalizedPlayers);
         const scoreGroupSizes: Map<number, number> = this._getScoreGroupSizes(players.map(player => player.score))
@@ -26,6 +32,10 @@ export class SwissService {
 
         const pairingsIndexes: number[] = blossom(weightedGraph);
         const pairings: Pairing[] = this._convertToPairings(normalizedPlayers, pairingsIndexes)
+
+        if (byePlayer) {
+            pairings.push([byePlayer.id, -1])
+        }
 
         return pairings;
     }
@@ -42,8 +52,27 @@ export class SwissService {
     }
 
 
+    private static _getByePlayerIndex(players: TournamentParticipantT[]) {
+        let lowestByeAm = Infinity;
+        let byePlayerIndex = -1;
+        //Starting from the last guarantees that it is the last player that gets the bye in case of a lowestByeAm tie
+        for (let i = players.length - 1; i >= 0; i--) {
+            const byeAm = players[i].prevOpponents.filter(opponent => opponent === -1).length
+            if (byeAm < lowestByeAm) {
+                lowestByeAm = byeAm;
+                byePlayerIndex = i;
+            }
+        }
+        if (byePlayerIndex === -1) {
+            throw Error("Error in code, as any bye amount should be less than infinity")
+        }
+        return byePlayerIndex;
+    }
+
+
     private static _generatePlayerGraph(players: TournamentParticipantT[]): PlayerGraph {
         const playerGraph: PlayerGraph = [];
+
         for (let i: number = 0; i < players.length - 1; i++) {
             for (let j: number = i + 1; j < players.length; j++) {
                 const possibleOpponent = players[j];
@@ -60,7 +89,8 @@ export class SwissService {
 
     private static _generateWeightedGraph(
         playerGraph: PlayerGraph,
-        scoreGroupSizes: Map<number, number>): WeightedGraph {
+        scoreGroupSizes: Map<number, number>
+    ): WeightedGraph {
         const weightedGraph: WeightedGraph = []
         playerGraph.forEach(edge => {
             const scoreGroupSize = edge[0].score === edge[1].score
