@@ -68,22 +68,30 @@ export const TournamentPage = {
         const categories = ["nick", "rating", "score"] as const
         const paddingLength = 6
         tournamentService.tournament.currentPairings.forEach(match => {
+            const playerLeft = match.players[0];
+            const playerRight = match.players[1];
+
             const bg = `bg-gray-900/${board % 2 === 0 ? "25" : "50"}`;
-            const isMyGame = match.players[0].id === lobbyService.myID || match.players[1].id === lobbyService.myID
+            const isMyGame = playerLeft.id === lobbyService.myID || playerRight?.id === lobbyService.myID
             const border = isMyGame ? "border-2 border-red-500" : "";
             participantsTableBody += `<tr class="${bg} ${border}"><td class="px-${paddingLength}">${board++}</td>`;
             
             categories.forEach(category => {
-                participantsTableBody += `<td class="px-${paddingLength}">${match.players[0][category]}</td>`;
+                participantsTableBody += `<td class="px-${paddingLength}">${playerLeft[category]}</td>`;
             })
             if (match.result === null) {
                 participantsTableBody += `<td class="px-${paddingLength}">?</td><td class="px-${paddingLength}">?</td>`
             } else {
                 participantsTableBody += `<td class="px-${paddingLength}">${match.result}</td><td class="px-${paddingLength}">${(match.result + 1) % 2}</td>`
             }
-            for (let i = categories.length - 1; i >= 0; i--) {
-                participantsTableBody += `<td class="px-${paddingLength}">${match.players[1][categories[i]]}</td>`;
+            if (playerRight) {
+                for (let i = categories.length - 1; i >= 0; i--) {
+                    participantsTableBody += `<td class="px-${paddingLength}">${playerRight[categories[i]]}</td>`;
+                }
+            } else {
+                participantsTableBody += `<td class="px-${paddingLength}" colspan="${categories.length}">Bye</td>`
             }
+            
             participantsTableBody += "</tr>";
         })
 

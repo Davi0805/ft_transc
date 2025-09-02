@@ -7,7 +7,7 @@ import { matchService } from "./matchService";
 
 
 type TTournamentMatch = {
-    players: [TTournamentParticipant, TTournamentParticipant],
+    players: [TTournamentParticipant, TTournamentParticipant | null], //null if bye
     result: number | null //Points of player[0] 
 }
 type TTournament = {
@@ -37,13 +37,17 @@ class TournamentService {
         const side: SIDES = matchService.getTeamFromPairings(lobbyService.myID, pairingsIDs);
         matchService.addDefaultControls(lobbyService.myID, side);
 
+
         this.tournament.currentPairings = pairingsIDs.map(pair => {
+            const player1 = this.tournament.participants.find(participant => participant.id === pair[0])
+            const player2 = pair[1] !== -1
+                ? this.tournament.participants.find(participant => participant.id === pair[1])
+                : null;
+            if (player1 === undefined || player2 === undefined) { throw Error("PlayerID was not found in players!")}
+
             return {
-                players: [
-                    this.tournament.participants.find(participant => participant.id === pair[0]),
-                    this.tournament.participants.find(participant => participant.id === pair[1])
-                ] as [TTournamentParticipant, TTournamentParticipant],
-                result: null
+                players: [ player1, player2 ] as [TTournamentParticipant, TTournamentParticipant | null],
+                result: player2 === null ? 1 : null //Give victory immediately if player has bye
             }
         })
         this.tournament.currentRound++;

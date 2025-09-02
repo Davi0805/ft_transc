@@ -22,10 +22,10 @@ const RESULT_POLLING_FREQUENCY = 1000
 class TournamentService {
     start(lobby: LobbyT, senderID: number) {
         const tournamentParticipants = this._getTournamentParticipants(lobby.users);
-        if (tournamentParticipants.length < tournamentRepository.MIN_PARTICIPANTS) {
+        /* if (tournamentParticipants.length < tournamentRepository.MIN_PARTICIPANTS) {
             socketService.broadcastToUsers([senderID], "actionBlock", { reason: "fewPlayersForTournament" })
             return;
-        }
+        } */
         
         const tournamentID = tournamentRepository.createTournament(lobby.id, lobby.matchSettings, tournamentParticipants);
 
@@ -75,6 +75,12 @@ class TournamentService {
             roundNo: tournament.currentRound,
             matches: []
         })
+
+        const byePairing = pairingsIDs.find(pair => pair.includes(-1));
+        console.log(byePairing)
+        if (byePairing) {
+            this._displayResults(tournamentID, [byePairing[0]], pairingsIDs.length === 1);
+        }
 
         //Start all matches
         for (let i = 0; i < pairings.length; i++) {
@@ -140,14 +146,25 @@ class TournamentService {
         const allGamesDone = currentRoundMatches.every(match => match.winnerID !== null);
 
         setTimeout(() => {
-            socketService.broadcastToUsers(matchUsers, "displayResults", null);
+            this._displayResults(tournamentID, matchUsers, allGamesDone);
+            /* socketService.broadcastToUsers(matchUsers, "displayResults", null);
             if (allGamesDone) {
                 //Only runs the following if this game is the last one
                 setTimeout(() => {
                     this._displayStandings(tournamentID);
                 }, RESULTS_DISPLAY_DURATION);
-            }
+            } */
         }, END_OF_GAME_DISPLAY_DURATION) 
+    }
+
+    private _displayResults(tournamentID: number, matchUsers: number[], allGamesDone: boolean) {
+        socketService.broadcastToUsers(matchUsers, "displayResults", null);
+        if (allGamesDone) {
+            //Only runs the following if this game is the last one
+            setTimeout(() => {
+                this._displayStandings(tournamentID);
+            }, RESULTS_DISPLAY_DURATION);
+        }
     }
 
     private _getTournamentParticipants(users: LobbyUserT[]) {
@@ -183,7 +200,15 @@ class TournamentService {
     }
 
     private _updateAndGetPlayerPairingsFromIDs(players: TournamentParticipantT[], pairingsIDs: Pairing[]): TournamentMatchT[] {
-        return pairingsIDs.map(pair => {
+        const byePairings = pairingsIDs.filter(pairing => pairing.includes(-1));
+        byePairings.forEach(pair => {
+            const player = players.find(user => user.id === pair[0]);
+            if (!player) { throw Error("The playerID in the pairing does not exist in the player list"); }
+            player.score++;
+            player.prevOpponents.push(-1);
+        })
+        
+        return pairingsIDs.filter(pair => pair[1] !== -1).map(pair => {
             const player1 = players.find(user => user.id === pair[0]);
             const player2 = players.find(user => user.id === pair[1]);
             if (!player1 || !player2) { throw Error("The playerID in the pairing does not exist in the player list"); }
