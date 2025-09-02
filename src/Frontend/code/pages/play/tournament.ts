@@ -9,7 +9,7 @@ export const TournamentPage = {
             <div class="flex flex-col items-center h-full max-h-[650px] justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 gap-3 overflow-hidden">
                 <h1 id="tournament-title" class="text-3xl p-2"></h1>
                 <h3 id="tournament-subtitle" class="text-xl p-1">Tournament</h3>
-                <h3 id="current-round"></h3>
+                <h3 id="info-on-display"></h3>
                 <div id="tournament-body" class="flex flex-row w-full min-h-0 gap-3 "></div>
             </div>
         `
@@ -18,17 +18,23 @@ export const TournamentPage = {
     async init() {
         const titleElement = document.getElementById("tournament-title") as HTMLHeadingElement;
         titleElement.textContent = lobbyService.lobby.name;
-        const currentRoundElement = document.getElementById("current-round") as HTMLHeadingElement;
+        /* const currentRoundElement = document.getElementById("info-on-display") as HTMLHeadingElement;
         const round = tournamentService.tournament.currentRound;
         currentRoundElement.textContent = round === 0
             ? "Initial Standings"
-            : `Standings after round ${round}`;
+            : `Standings after round ${round}`; */
 
         const tournamentBody = document.getElementById("tournament-body") as HTMLDivElement;
         tournamentBody.textContent = "Waiting for tournament info..."
     },
 
     renderStandings() {
+        const infoOnDisplayElement = document.getElementById("info-on-display") as HTMLHeadingElement;
+        const round = tournamentService.tournament.currentRound;
+        infoOnDisplayElement.textContent = round === 0
+            ? "Initial Standings"
+            : `Standings after round ${round}`;
+        
         const tournamentBody = document.getElementById("tournament-body") as HTMLDivElement;
         const standings = tournamentService.tournament.participants;
 
@@ -59,6 +65,10 @@ export const TournamentPage = {
     },
 
     renderPairings() {
+        const infoOnDisplayElement = document.getElementById("info-on-display") as HTMLHeadingElement;
+        const round = tournamentService.tournament.currentRound;
+        infoOnDisplayElement.textContent = `Round ${round} pairings`;
+
         const tournamentBody = document.getElementById("tournament-body") as HTMLElement;
 
         let participantsTableBody = ""

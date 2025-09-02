@@ -148,7 +148,7 @@ class LobbySocketService {
                 tournamentService.displayPairingsOUT(dto.data.pairings)
                 break;
             case "updateTournamentResult":
-                tournamentService.updateMatchResultOUT(dto.data.matchIndex, dto.data.result);
+                tournamentService.updateMatchResultOUT(dto.data.matchIndex, dto.data.winnerID);
                 break;
             case "displayResults":
                 tournamentService.displayResultsOUT();

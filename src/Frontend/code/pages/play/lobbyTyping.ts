@@ -216,7 +216,7 @@ export type OutboundDTOMap = {
     }
     updateTournamentResult: {
         matchIndex: number,
-        result: number
+        winnerID: number
     }
     displayResults: null
     displayTournamentEnd: {

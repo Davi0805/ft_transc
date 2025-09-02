@@ -56,6 +56,8 @@ class TournamentService {
 
     updateMatchResultOUT(matchIndex: number, winnerID: number) {
         const match = this.tournament.currentPairings[matchIndex];
+        console.log("winnerID: ", winnerID)
+        console.log("Left ID: ", match.players[0].id);
         const result = match.players[0].id === winnerID ? 1 : 0;
         match.result = result;
         if (!matchService.isMatchActive()) {
