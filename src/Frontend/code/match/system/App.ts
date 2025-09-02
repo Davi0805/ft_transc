@@ -11,22 +11,12 @@ class FtApplication {
         return this._app !== null ? true : false;
     }
 
-    async init(gameConfigs: CAppConfigs,
+    async init(
+        gameConfigs: CAppConfigs,
         sendToServerFnc: (event: Event) => void,
         rootElement: HTMLElement,
-        /*websocket: WebSocket*/) {
-        // Socket setup
-        //this._socket = websocket;
-        
-        // And when a message needs to be sent, the scene will send it as a signal, and the App will catch it
-        // and forward it to the socket. This avoids the scenes to hold references to higher objects in the tree
-        /* EventBus.addEventListener("sendToServer", (event: Event) => {
-            const dto = (event as CustomEvent).detail;
-            lobbySocketService.send("updateGame", dto);
-        }) */
-        this._sendToServerFunc = sendToServerFnc;
-        EventBus.addEventListener("sendToServer", this._sendToServerFunc)
-
+    ) {
+        this.setSendToServerFunc(sendToServerFnc);
         this._app = new Application(gameConfigs.appConfigs);
         
         //await this._app.init(gameConfigs.appConfigs);
@@ -46,7 +36,7 @@ class FtApplication {
 
     async destroy() {
         this.scenesManager.removeCurrentScene();
-        EventBus.removeEventListener("sendToServer", this._sendToServerFunc);
+        this.unsetSendToServerFunc();
         this._app = null
         //Maybe something else is necessary?
     }
@@ -55,6 +45,18 @@ class FtApplication {
         if (this._scenesManager && this.scenesManager.currentScene){
             this.scenesManager.currentScene.serverUpdate(dto);
         }
+    }
+
+    setSendToServerFunc(sendToServerFnc: (event: Event) => void) {
+        this._sendToServerFunc = sendToServerFnc;
+        EventBus.addEventListener("sendToServer", this._sendToServerFunc)
+    }
+    unsetSendToServerFunc() {
+        if (!this._sendToServerFunc) {
+            return;
+        }
+        EventBus.removeEventListener("sendToServer", this._sendToServerFunc);
+        this._sendToServerFunc = null;
     }
 
     private _app: Application | null = null;

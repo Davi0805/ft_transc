@@ -19,13 +19,11 @@ class MatchService {
     }
 
     updateGame(updateDto: SGameDTO) {
-
         App.severUpdate(updateDto);
     }
 
     async onEndOfMatch(result: TMatchResult) {
-        await this.destroy()
-        console.log(result);
+        App.unsetSendToServerFunc();
     }
 
     
