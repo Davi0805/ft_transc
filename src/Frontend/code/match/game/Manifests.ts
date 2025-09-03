@@ -3,6 +3,7 @@ import { CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies"
 
 import AScene from "../system/AScene"
 import GameScene from "./GameScene"
+import { AudioManifestT } from "../system/framework/AudioPlayer"
 
 export type SceneConfigMap = {
     gameScene: CGameSceneConfigs
@@ -12,8 +13,6 @@ export type SceneConfigMap = {
 export type ScenesManifest = {
     [K in keyof SceneConfigMap]: new () => AScene<SceneConfigMap[K]>
 }
-
-
 
 export const scenesManifest: ScenesManifest = {
     gameScene: GameScene
@@ -113,3 +112,34 @@ export const assetsManifest: AssetsManifest = {
         }
     ]
 }
+
+export const audioManifest: AudioManifestT = [
+    {
+        audioName: "start",
+        audioTrack: {
+            tempoBPM: 60,
+            notes: [
+                {
+                    frequency: 440,
+                    startBeat: 1,
+                    durationBeats: 0.5
+                },
+                {
+                    frequency: 440,
+                    startBeat: 2,
+                    durationBeats: 0.5
+                },
+                {
+                    frequency: 440,
+                    startBeat: 3,
+                    durationBeats: 0.5
+                },
+                {
+                    frequency: 880,
+                    startBeat: 4,
+                    durationBeats: 1
+                }
+            ]
+        }
+    }
+]

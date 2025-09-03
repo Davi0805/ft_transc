@@ -4,7 +4,8 @@ import { ScenesManager } from './ScenesManager';
 import { EventBus } from './EventBus';
 import { SGameDTO } from '../matchSharedDependencies/dtos';
 import { CAppConfigs } from '../matchSharedDependencies/SetupDependencies';
-import { assetsManifest, scenesManifest } from '../game/Manifests';
+import { assetsManifest, audioManifest, scenesManifest } from '../game/Manifests';
+import { audioPlayer } from './framework/AudioPlayer';
 
 class FtApplication {
     isAppActive() {
@@ -25,6 +26,7 @@ class FtApplication {
         // assetsManifest has the assets bundles, which include all paths to all sprites and their alias
         // This makes the bundles available directly in Assets, which is globally accessible
         Assets.init(assetsManifest) //It is kinda shitty that I have to load this every game, but it is what it is
+        audioPlayer.loadAudioManifest(audioManifest);
         
         // Creates the scenes manager and feeds to it all the scenes of the game through the manifest
         this._scenesManager = new ScenesManager(scenesManifest);
