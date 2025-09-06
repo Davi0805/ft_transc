@@ -23,6 +23,7 @@ class Router {
       if (link) {
         e.preventDefault(); // Previne o comportamento padrão do navegador
         const href = link.getAttribute("href"); // Obtém o valor do href
+        //TODO ver se o socket do jogo esta open, se tiver close
         this.navigateTo(href!); // Navega para a rota usando o router
       }
     });

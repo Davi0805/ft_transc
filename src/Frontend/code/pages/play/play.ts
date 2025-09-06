@@ -10,18 +10,46 @@ import { lobbyService } from "../../services/LobbyService";
 export const PlayPage = {
     template() {
         return `
-            <div class="flex flex-col items-center justify-center h-full backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12">
-                <h1 class="text-3xl p-3">Play Center</h1>
-                <div id="match-center-body" class="flex flex-col min-h-0 gap-4">
-                    <div id="lobby-list" class="flex flex-col min-h-0 gap-4">
-                        <div class="flex flex-row justify-between">
-                            <h2 class="text-2xl p-2">Lobby list</h2>
-                            <button id="btn-refresh" type="button" class="bg-gray-900/50 p-2 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Refresh</button>
+            <div class="relative h-[650px] w-[800px] overflow-hidden bg-gradient-to-b from-blue-500 via-blue-800 to-neutral-900 shadow-2xl shadow-black border-y border-black text-myWhite rounded-xl p-8">
+            
+                <!-- Content Container -->
+                <div class="flex items-center h-full flex-col p-8">
+    
+                    <!-- Container Title -->
+                    <h1 class="mb-6 text-3xl font-bold text-myWhite">Play Center</h1>
+
+                    <!-- Lobby listing section -->
+                    <div class="flex min-h-0 flex-1 flex-col gap-4">
+
+                        <!-- Subtitle and refresh header -->
+                        <div class="flex items-center justify-start gap-5">
+                            <label for="btn-refresh" class="cursor-pointer text-2xl font-bold text-white hover:text-white/80 active:scale-95 transition-all duration-200">Lobby list</label>
+                            <button id="btn-refresh" type="button" class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-none bg-gray-900/50 text-white transition-all duration-200 hover:bg-gray-900/90 active:bg-gray-900/50 active:scale-95">
+                                <svg class="h-[18px] w-[18px] fill-current" viewBox="0 0 24 24">
+                                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+                                </svg>
+                            </button>
                         </div>
-                        ${getTable("lobbies", "", "").outerHTML}
+
+                        <!-- Table with a sticky head. Allways 5 entries min (empty or filled) -->
+                        <div class="min-h-0 flex-1 overflow-y-auto rounded-xl border border-white/10 bg-gray-900/30">
+                            <table class="w-[600px] border-collapse table-fixed">
+                                <thead id="lobbies-head" class="sticky top-0 z-10 bg-gray-900 h-14">
+                                    <tr>
+                                        <th class="h-14 px-6 py-3 text-center text-lg font-bold tracking-wider text-gray-300 uppercase">NAME</th>
+                                        <th class="h-14 px-6 py-3 text-center text-lg font-bold tracking-wider text-gray-300 uppercase">HOST</th>
+                                        <th class="h-14 px-6 py-3 text-center text-lg font-bold tracking-wider text-gray-300 uppercase">TYPE</th>
+                                        <th class="h-14 px-6 py-3 text-center text-lg font-bold tracking-wider text-gray-300 uppercase">CAPACITY</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lobbies-body">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div id="new-buttons" class="flex flex-row gap-4 items-center justify-center text-xl">
-                        <button id="btn-new-lobby" type="button" class="bg-gray-900/50 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">New Lobby</button>
+
+                     <div id="new-buttons" class="mt-4 flex items-center justify-center">
+                        <button id="btn-new-lobby" type="button" class="cursor-pointer rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white transform active:scale-85 transition-all duration-100 hover:bg-blue-700">New Lobby</button>
                     </div>
                 </div>
             </div>
@@ -33,7 +61,6 @@ export const PlayPage = {
         // This is for the case the user exits a lobby in an unintended way, like disconnecting
 
         const lobbiesHead = document.getElementById('lobbies-head') as HTMLElement; //"lobbies-head" is an id created by getTable()
-        lobbiesHead.innerHTML = this.getLobbyCategoriesHtml();
         this.updateCurrentLobbiesHtml();
 
         const buttonRefresh = document.getElementById('btn-refresh') as HTMLElement;
@@ -41,17 +68,6 @@ export const PlayPage = {
 
         const buttonNewLobby = document.getElementById('btn-new-lobby') as HTMLElement;
         buttonNewLobby.addEventListener('click', () => router.navigateTo('/create-lobby'));
-    },
-
-    getLobbyCategoriesHtml() {
-        const lobbyCategories = ["NAME", "HOST", "TYPE", "CAPACITY"]
-        let lobbyCategoriesHtml = "";
-        lobbyCategoriesHtml += `<tr class="backdrop-brightness-60 text-left">`;
-        for (let category of lobbyCategories) {
-            lobbyCategoriesHtml += `<th class="border-l border-white/50 px-6 py-2 relative">${category}</th>`
-        }
-        lobbyCategoriesHtml += `</tr>`
-        return lobbyCategoriesHtml;
     },
 
     async updateCurrentLobbiesHtml() {
@@ -64,22 +80,25 @@ export const PlayPage = {
 
         for (let i = 0; i < lobbiesInfo.length; i++) {
             const lobby = lobbiesInfo[i]
+            let rowData: string[] = [];
+                
+            categories.forEach(category => {
+                if (category === "capacity") {
+                    rowData.push(`${lobby["capacity"].taken}/${lobby["capacity"].max}`);
+                } else {
+                    rowData.push(lobby[category].toString());
+                }
+            })
 
             const row = document.createElement("tr");
-            const bgBrightness = i % 2 === 0 ? "bg-gray-900/0" : "bg-gray-900/25";
-            row.className = `${bgBrightness} hover:bg-gray-900/90 active:bg-gray-900/25`
+            row.classList = "w-full h-12 cursor-pointer text-center border-b border-white/10 bg-gray-900/20 transition-colors duration-200 hover:bg-gray-900/60 active:bg-gray-900/25";
             
-            categories.forEach(category => {
-                const tdata = document.createElement('td');
-                tdata.className = `px-6 py-2 wrap-anywhere`;
-                
-                if (category === "capacity") {
-                    tdata.textContent = `${lobby["capacity"].taken}/${lobby["capacity"].max}`
-                } else {
-                    tdata.textContent = lobby[category].toString();
-                }
-                row.appendChild(tdata);
-            })
+            row.innerHTML = `
+                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[178px] truncate">${rowData[0]}</td>
+                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[178px] truncate">${rowData[1]}</td>
+                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[96px] truncate capitalize">${rowData[2]}</td>
+                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[148px] truncate">${rowData[3]}</td>
+            `;
 
             //Allows the user to click on a lobby in the list and go to it
             row.addEventListener('click', () => this.goToLobby(lobbiesInfo[i].id))
