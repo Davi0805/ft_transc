@@ -1,10 +1,10 @@
-import type { AudioTrackManifestT, SoundsManifestT } from "../system/framework/AudioPlayer";
+import type { AudioTrackManifestT, SoundsManifestT } from "../system/framework/Audio/AudioPlayer";
 
 import { AssetsManifest } from "../system/framework/Assets"
 import { CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies"
 import AScene from "../system/AScene"
 import GameScene from "./GameScene"
-import { decreasing, falling, increasing, kick, rising, sine, tone1, triangle, hollow, explosion } from "../system/framework/sounds";
+import { decreasing, falling, increasing, kick, rising, sine, tone1, triangle, hollow, explosion } from "../system/framework/Audio/sounds";
 
 export type SceneConfigMap = {
     gameScene: CGameSceneConfigs
@@ -414,20 +414,20 @@ export const audioTrackManifest: AudioTrackManifestT = [
         }
     },
     {
-        trackName: "healing",
+        trackName: "heal",
         track: {
             tempoBPM: 60,
             maxIndividualGain: 0.3,
             notes: [
                 {
                     sound: "sine",
-                    pitch: "C#5",
+                    pitch: "D5",
                     startBeat: 1, 
                     durationInBeats: 1
                 },
                 {
                     sound: "sine",
-                    pitch: "F5",
+                    pitch: "F#5",
                     startBeat: 1, 
                     durationInBeats: 1
                 },

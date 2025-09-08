@@ -1,4 +1,4 @@
-import { pitchToFrequency } from "./pitchToFrequency.js"
+import { pitchToFrequency } from "./pitchToFrequency"
 
 export type NoteT = {
     sound: string,

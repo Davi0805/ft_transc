@@ -37,7 +37,11 @@ export type SGameDTO = {
         speed: number
     }[],
     timeLeft: number
+    audioEvent: AudioEvent | null
 }
+
+export type AudioEvent = "paddleHit" | "wallHit" | "damageHit" | "faster" | "slower" | "longer" | "shorter" | "heal" | "bomb" | "skull" | "noHealth"
+
 
 // Client to server
 export type CGameDTO = {

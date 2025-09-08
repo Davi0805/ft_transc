@@ -1,4 +1,4 @@
-import { SGameDTO } from "../match/matchSharedDependencies/dtos";
+import { AudioEvent, SGameDTO } from "../match/matchSharedDependencies/dtos";
 import { CAppConfigs, TControls } from "../match/matchSharedDependencies/SetupDependencies";
 import { SIDES } from "../match/matchSharedDependencies/sharedTypes";
 import { App } from "../match/system/App";

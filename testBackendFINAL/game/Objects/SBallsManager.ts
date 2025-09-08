@@ -6,6 +6,7 @@ import { getRandomInt } from "../shared/sharedUtils.js";
 import STeamsManager from "../STeamsManager.js";
 import LoopController from "../LoopController.js";
 import SPaddlesManager from "./SPaddlesManager.js";
+import { GameEventBus } from "../EventBus.js";
 
 
 export default class SBallsManager {
@@ -85,6 +86,7 @@ export default class SBallsManager {
                 team = SIDES.BOTTOM
             }
             if (team != null) {
+                GameEventBus.emit("audioEvent", "wallHit")
                 const died = teamsManager.damageTeam(team, ball.damage);
                 if (died) {
                     paddlesManager.deactivatePaddles(team);
@@ -98,6 +100,7 @@ export default class SBallsManager {
             const ball = this.balls[i];
             const collisionSide = ball.cbox.areColliding(paddle.cbox);
             if (collisionSide !== null) {
+                GameEventBus.emit("audioEvent", "paddleHit")
                 if (ball.type === BALL_TYPES.BASIC) {
                     this._computeCollisionResult(collisionSide, ball, paddle);
                 } else {
@@ -174,26 +177,32 @@ export default class SBallsManager {
         switch (type) {
             case (BALL_TYPES.EXPAND): {
                 paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: 20 }))
+                GameEventBus.emit("audioEvent", "longer")
                 break;
             }
             case (BALL_TYPES.SHRINK): {
                 paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: -20 }))
+                GameEventBus.emit("audioEvent", "shorter")
                 break;
             }
             case (BALL_TYPES.SPEED_UP): {
                 paddle.speed += 100
+                GameEventBus.emit("audioEvent", "faster")
                 break;
             }
             case (BALL_TYPES.SLOW_DOWN): {
                 paddle.speed -= 100
+                GameEventBus.emit("audioEvent", "slower")
                 break;
             }
             case (BALL_TYPES.EXTRA_BALL): {
                 this.addBallOfType(BALL_TYPES.BASIC)
+                GameEventBus.emit("audioEvent", "spawn")
                 break;
             }
             case (BALL_TYPES.RESTORE): {
                 teamsManager.damageTeam(paddle.side, -ball.damage)
+                GameEventBus.emit("audioEvent", "heal")
                 break;
             }
             case (BALL_TYPES.DESTROY): {
@@ -202,10 +211,12 @@ export default class SBallsManager {
                         teamsManager.damageTeam(team, ball.damage);
                     }
                 }
+                GameEventBus.emit("audioEvent", "bomb");
                 break;
             }
             case (BALL_TYPES.MASSIVE_DAMAGE): {
                 teamsManager.damageTeam(paddle.side, ball.damage * 10)
+                GameEventBus.emit("audioEvent", "skull")
                 break;
             }
             case (BALL_TYPES.MYSTERY): {

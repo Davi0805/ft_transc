@@ -9,7 +9,7 @@ import CPaddle from "./CPaddle";
 import CTeam from "./CTeam";
 import CNumbersText from "./CNumbersText";
 import CPaddleControls from "./CPaddleControls";
-import { audioPlayer } from "../system/framework/AudioPlayer";
+import { audioPlayer } from "../system/framework/Audio/AudioPlayer";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
@@ -91,7 +91,11 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 team.update(teamState.score);
             } 
         })
-        this.timer?.update(gameDto.timeLeft, false); 
+        this.timer?.update(gameDto.timeLeft, false);
+        console.log("audio event: ", gameDto.audioEvent)
+        if (gameDto.audioEvent) {
+            audioPlayer.playTrack(gameDto.audioEvent, 1);
+        }
     }
 
     override tickerUpdate(delta: number, counter: number): void {

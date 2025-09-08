@@ -1,4 +1,4 @@
-import type { SoundT } from "./AudioPlayer.ts"
+import type { SoundT } from "./AudioPlayer"
 
 export function hollow(ctx: AudioContext, output: GainNode, sound: SoundT) {
     const osc = ctx.createOscillator();
