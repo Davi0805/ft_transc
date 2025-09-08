@@ -48,7 +48,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             this._controls.set(human.humanID, new CPaddleControls(human.humanID, human.controls))
         })
 
-        audioPlayer.playAudio("start", 1);
+        audioPlayer.playTrack("start", 1);
     }
 
     override async destroy(): Promise<void> {
