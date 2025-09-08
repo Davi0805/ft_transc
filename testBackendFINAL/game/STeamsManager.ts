@@ -1,3 +1,4 @@
+import { GameEventBus } from "./EventBus.js";
 import { SIDES } from "./shared/sharedTypes.js";
 import STeam from "./STeam.js";
 
@@ -14,6 +15,7 @@ export default class STeamsManager {
         const team = this._teams.find(team => team.side == side)
         if (team && team.place === 0) {
             team.score -= damage;
+            GameEventBus.emit("audioEvent", "damageHit")
             if (team.score <= 0) {
                 const losers = this.teams.filter(team => team.place !== 0);
                 team.place = this.teams.length - losers.length

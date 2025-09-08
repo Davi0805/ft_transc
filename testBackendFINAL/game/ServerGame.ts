@@ -1,11 +1,12 @@
-import { BALL_TYPES, point, SIDES, TPaddle, TWindow, } from "./shared/sharedTypes.js"
-import { SGameDTO, CGameDTO } from "./shared/dtos.js";
+import { point, SIDES, TPaddle, TWindow, } from "./shared/sharedTypes.js"
+import { SGameDTO, CGameDTO, AudioEvent } from "./shared/dtos.js";
 import LoopController from "./LoopController.js";
 import SHumansManager from "./Players/SHumansManager.js";
 import STeamsManager from "./STeamsManager.js";
 import BotsManager from "./Players/SBotsManager.js";
 import SBallsManager from "./Objects/SBallsManager.js";
 import SPaddlesManager from "./Objects/SPaddlesManager.js";
+import { GameEventBus } from "./EventBus.js";
 
 export type SGameConfigs = {
     window: Pick<TWindow, "size">,
@@ -42,6 +43,12 @@ export default class ServerGame {
         this._humansManager = new SHumansManager(gameOpts.humans, this._paddlesManager.paddles);
         this._botsManager = new BotsManager(gameOpts.bots, this._paddlesManager.paddles, this.windowSize);
         this._gameLoop = new LoopController(90);
+        this._audioEvent = null;
+        
+        GameEventBus.on("audioEvent", (audioEvent) => {
+            //console.log(`The audio event is: ${audioEvent}`)
+            this._audioEvent = audioEvent;
+        })
     }
 
     //Starts the internal logic loop. Should be started once all players are connected and ready to play
@@ -66,8 +73,12 @@ export default class ServerGame {
             balls: this._ballsManager.getBallsDTO(),
             teams: this._teamsManager.getTeamsDTO(),
             paddles: this._paddlesManager.getPaddlesDTO(),
-            timeLeft: this._timeLeft
+            timeLeft: this._timeLeft,
+            audioEvent: this._audioEvent
         }
+        console.log("before: ", out);
+        this._audioEvent = null;
+        console.log("after: ", out)
         return out
     }
 
@@ -99,6 +110,7 @@ export default class ServerGame {
     private _paddlesManager: SPaddlesManager;
 
     private _gameLoop: LoopController;
+    private _audioEvent: AudioEvent | null;
 
     private _countdownLoop() {
         if (this._gameLoop.isEventTime(1)) {

@@ -2,13 +2,14 @@ import AScene from "../system/AScene";
 import Point from "../matchSharedDependencies/Point";
 import Assets from "../system/framework/Assets";
 import { SIDES } from "../matchSharedDependencies/sharedTypes";
-import { CGameSceneConfigs, TControls } from "../matchSharedDependencies/SetupDependencies";
+import { CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies";
 import { SGameDTO } from "../matchSharedDependencies/dtos";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
 import CTeam from "./CTeam";
 import CNumbersText from "./CNumbersText";
 import CPaddleControls from "./CPaddleControls";
+import { audioPlayer } from "../system/framework/Audio/AudioPlayer";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
@@ -46,6 +47,8 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         gameSceneConfigs.controls.forEach( human => {
             this._controls.set(human.humanID, new CPaddleControls(human.humanID, human.controls))
         })
+
+        audioPlayer.playTrack("start", 1);
     }
 
     override async destroy(): Promise<void> {
@@ -88,7 +91,11 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 team.update(teamState.score);
             } 
         })
-        this.timer?.update(gameDto.timeLeft, false); 
+        this.timer?.update(gameDto.timeLeft, false);
+        console.log("audio event: ", gameDto.audioEvent)
+        if (gameDto.audioEvent) {
+            audioPlayer.playTrack(gameDto.audioEvent, 1);
+        }
     }
 
     override tickerUpdate(delta: number, counter: number): void {
