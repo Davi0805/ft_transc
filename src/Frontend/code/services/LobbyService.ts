@@ -1,8 +1,8 @@
 import { LobbyPage } from "../pages/play/lobby";
 import { TSlots } from "../pages/play/utils/helpers";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
-//import { lobbySocketService } from "./lobbySocketService";
-import { lobbySocketService } from "../testServices/testLobySocketService"; //TEST
+import { lobbySocketService } from "./lobbySocketService";
+//import { lobbySocketService } from "../testServices/testLobySocketService"; //TEST
 import { router } from "../routes/router";
 import { matchService} from "./matchService";
 import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournamentParticipant, TMatchPlayer } from "../pages/play/lobbyTyping";

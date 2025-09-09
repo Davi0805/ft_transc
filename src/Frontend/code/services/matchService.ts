@@ -6,8 +6,8 @@ import { TMatchResult } from "../pages/play/lobbyTyping";
 import { MatchPage } from "../pages/play/match";
 import { getDirectionsFromTeam } from "../pages/play/utils/helpers";
 import { router } from "../routes/router";
-//import { lobbySocketService } from "./lobbySocketService";
-import { lobbySocketService } from "../testServices/testLobySocketService";
+import { lobbySocketService } from "./lobbySocketService";
+//import { lobbySocketService } from "../testServices/testLobySocketService";
 
 
 class MatchService {

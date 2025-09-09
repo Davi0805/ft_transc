@@ -1,4 +1,4 @@
-//TODO do not forget to update the actual api!
+/* //TODO do not forget to update the actual api!
 
 import { LobbiesListDTO, LobbyCreationConfigsDTO } from "../pages/play/lobbyTyping";
 
@@ -45,4 +45,4 @@ export async function createLobby(lobbySettings: LobbyCreationConfigsDTO, userID
   } catch (error) {
     throw error;
   }
-}
+} */

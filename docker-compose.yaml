@@ -76,13 +76,13 @@ services:
 
   game-backend:
     init: true
-    build: ./src/Game
+    build: ./src/GameTS #CHANGE BACK TO GAME WHEN DONE
     ports:
       - "8084:8084"
     environment:
       - NODE_ENV=development
     volumes:
-      - ./src/Game:/app
+      - ./src/GameTS:/app #CHANGE BACK TO GAME WHEN DONE
       - /app/node_modules
     depends_on:
       - redis
