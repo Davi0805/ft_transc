@@ -76,9 +76,7 @@ export default class ServerGame {
             timeLeft: this._timeLeft,
             audioEvent: this._audioEvent
         }
-        console.log("before: ", out);
         this._audioEvent = null;
-        console.log("after: ", out)
         return out
     }
 

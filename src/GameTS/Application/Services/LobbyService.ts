@@ -1,23 +1,13 @@
-
-
-/* import { FriendlyPlayerT, lobbyRepository, LobbyT, LobbyUserT, RankedPlayerT, TournamentPlayerT } from "../Repositories/LobbyRepository.js";
-import { MatchSettingsT } from "../Repositories/MatchRepository.js";
-import { tournamentRepository } from "../Repositories/TournamentRepository.js";
-import { userRepository } from "../Repositories/UserRepository.js";
-import { friendlyService } from "./FriendlyService.js";
-import { rankedService } from "./RankedService.js";
-import { socketService } from "./SocketService.js";
-import { tournamentService } from "./TournamentService.js"; */
-
 import type { FriendlyPlayerT, LobbyCreationConfigsT, LobbyTypeT, LobbyUserT, RankedPlayerT, TournamentPlayerT } from "../Factories/LobbyFactory.js";
 import type { MatchMapT, MatchSettingsT } from "../Factories/MatchFactory.js";
 
-import lobbyRepository from "../../Adapters/Outbound/LobbyRepository.js";
-import tournamentService, { MAX_TOURNAMENT_PARTICIPANTS } from "./TournamentService.js";
-import userRepository from "../../Adapters/Outbound/UserRepository.js";
 import lobbyFactory from "../Factories/LobbyFactory.js";
+import lobbyRepository from "../../Adapters/Outbound/LobbyRepository.js";
+import userRepository from "../../Adapters/Outbound/UserRepository.js";
 import socketService from "./SocketService.js";
-
+import friendlyService from "./FriendlyService.js";
+import rankedService from "./RankedService.js";
+import tournamentService from "./TournamentService.js";
 
 //When a client wants to see the list of lobbies available, receives an array of these
 export type LobbyForDisplayT = {
@@ -188,7 +178,7 @@ class LobbyService {
         const lobby = lobbyRepository.getByID(lobbyID);
         const participantsAmount = lobby.users.filter(user => user.player != null).length;
 
-        if (participantsAmount < MAX_TOURNAMENT_PARTICIPANTS) {
+        if (participantsAmount < tournamentService.MAX_PARTICIPANTS) {
             const user = this._getLobbyUserByID(lobbyID, userID);
             user.player = {} as TournamentPlayerT
             socketService.broadcastToLobby(lobbyID, "addTournamentPlayer", {
@@ -228,7 +218,7 @@ class LobbyService {
         }
 
         //Lobby's job is done. Delegate work to the corresponding service
-        /* switch (lobby.type) {
+        switch (lobby.type) {
             case "friendly":
                 friendlyService.start(lobby, senderID);
                 break;
@@ -240,7 +230,7 @@ class LobbyService {
                 break;
             default:
                 throw Error("lobby type not recognized!");
-        } */
+        }
     }
 
     returnToLobby(lobbyID: number) {

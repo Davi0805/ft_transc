@@ -1,5 +1,7 @@
+import type { MatchSettingsT } from "./MatchFactory.js"
+
 import { ROLES, SIDES } from "../game/shared/sharedTypes.js"
-import { MatchSettingsT } from "./MatchFactory.js"
+
 
 export type LobbyTypeT = "friendly" | "ranked" | "tournament"
 

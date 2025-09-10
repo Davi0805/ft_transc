@@ -1,5 +1,6 @@
 import type { FriendlyPlayerT, LobbyT, LobbyUserT, RankedPlayerT } from "./Application/Factories/LobbyFactory.js"
 import type { MatchSettingsT } from "./Application/Factories/MatchFactory.js"
+import type { TournamentParticipantT } from "./Application/Factories/TournamentFactory.js"
 import type { TMatchResult } from "./Application/game/ServerGame.js"
 import type { CGameDTO, SGameDTO } from "./Application/game/shared/dtos.js"
 import type { CAppConfigs } from "./Application/game/shared/SetupDependencies.js"
@@ -115,9 +116,9 @@ export type OutboundDTOMap = {
     startTournament: null // No need (for now) to send anything
 
     //Standings must be displayed (and updated)
-    /* displayStandings: {
+    displayStandings: {
         standings: TournamentParticipantT[]
-    } */
+    }
     //Pairings must be displayed
     displayPairings: {
         pairings: [number, number][]
@@ -130,9 +131,9 @@ export type OutboundDTOMap = {
     //Results must be displayed
     displayResults: null
     //End of tournament must be displayed (with final standings)
-    /* displayTournamentEnd: {
+    displayTournamentEnd: {
         standings: TournamentParticipantT[]
-    } */
+    }
 
     //MATCH DTOS
     //A match is about to start (Either on its own or as part of a tournament)
