@@ -1,4 +1,4 @@
-import type { RedisDataT } from "../../Infrastructure/config/Redis.js";
+//import type { RedisDataT } from "../../Infrastructure/config/Redis.js";
 
 import redis from "../../Infrastructure/config/Redis.js";
 

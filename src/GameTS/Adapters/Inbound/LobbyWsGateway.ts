@@ -11,12 +11,12 @@ class LobbyWsGateway {
     async join(socket: WebSocket, req: FastifyRequest<{ Params: {lobbyID: string}}>)
     {
         const session = await wsAuth.authenticate(req, socket);
-        if (!session) return; //TODO: shouldn't the socket close if session is not returned?
+        if (!session) return;
 
 
         const lobbyID: number = Number(req.params.lobbyID);
         const userID: number = Number(session.user_id);
-        if (isNaN(lobbyID) || isNaN(userID)) {return;} //TODO probably return some error instead?
+        if (isNaN(lobbyID) || isNaN(userID)) {return;} //TODO: probably return some error instead?
 
         lobbyService.addUser(lobbyID, userID);
         socketService.addSocketToRepository(lobbyID, userID, socket);

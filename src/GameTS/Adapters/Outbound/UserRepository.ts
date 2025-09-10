@@ -8,7 +8,7 @@ export type UserT = {
 const testUserRatings = [1500, 1600, 1700, 1800]
 
 class UserRepository {
-    getUserByID(userID: number) {
+    getUserByID(userID: number): UserT {
 
         //TODO: this is a mock data function. Must change this to access the user-friends micro-service
         let userInfo = this._users.find(user => user.id === userID)
