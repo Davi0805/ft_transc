@@ -1,9 +1,6 @@
 import { router } from "../../routes/router";
-//import { lobbySocketService } from "../../services/lobbySocketService";
-import { lobbySocketService } from "../../testServices/testLobySocketService";
-//import { getAllLobbies } from "../../api/lobbyMatchAPI/getAllLobbiesAPI";
-import { getAllLobbies } from "../../testServices/testLobbyAPI";
-import { getTable } from "./utils/stylingComponents";
+import { lobbySocketService } from "../../services/lobbySocketService";
+import { getAllLobbies } from "../../api/lobbyMatchAPI/getAllLobbiesAPI";
 import { getSelfData } from "../../api/userData/getSelfDataAPI";
 import { lobbyService } from "../../services/LobbyService";
 
@@ -110,7 +107,7 @@ export const PlayPage = {
     //Logic to get into a lobby
     async goToLobby(lobbyId: number) {
         const selfData = await getSelfData();
-        const lobby = await lobbySocketService.connect(lobbyId, selfData.id);
+        const lobby = await lobbySocketService.connect(lobbyId);
         if (!lobby) {throw Error("Socket was already connected somehow!")}
         lobbyService.init(selfData.id, lobby)
         router.navigateTo('/lobby')

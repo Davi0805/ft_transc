@@ -1,4 +1,4 @@
-//TODO: do not forget to update the actual socket service!
+/* //TODO: do not forget to update the actual socket service!
 
 import { lobbyService } from "../services/LobbyService";
 import { InboundDTO, OutboundDTO, InboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
@@ -162,4 +162,4 @@ class LobbySocketService {
     }
 }
 
-export const lobbySocketService = new LobbySocketService();
+export const lobbySocketService = new LobbySocketService(); */

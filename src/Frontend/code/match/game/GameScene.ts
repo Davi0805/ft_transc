@@ -92,7 +92,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             } 
         })
         this.timer?.update(gameDto.timeLeft, false);
-        console.log("audio event: ", gameDto.audioEvent)
         if (gameDto.audioEvent) {
             audioPlayer.playTrack(gameDto.audioEvent, 1);
         }

@@ -1,4 +1,4 @@
-import { AudioEvent, SGameDTO } from "../match/matchSharedDependencies/dtos";
+import { SGameDTO } from "../match/matchSharedDependencies/dtos";
 import { CAppConfigs, TControls } from "../match/matchSharedDependencies/SetupDependencies";
 import { SIDES } from "../match/matchSharedDependencies/sharedTypes";
 import { App } from "../match/system/App";
@@ -6,8 +6,7 @@ import { TMatchResult } from "../pages/play/lobbyTyping";
 import { MatchPage } from "../pages/play/match";
 import { getDirectionsFromTeam } from "../pages/play/utils/helpers";
 import { router } from "../routes/router";
-//import { lobbySocketService } from "./lobbySocketService";
-import { lobbySocketService } from "../testServices/testLobySocketService";
+import { lobbySocketService } from "./lobbySocketService";
 
 
 class MatchService {
@@ -34,15 +33,23 @@ class MatchService {
             controls: controls
         })
     }
-    updateLatestControlsID(id: number) { //This design is complete and utter shit
-        if (this._controls.length !== 0) {
-            this._controls[this._controls.length - 1].humanID = id;
-        }
-    }
-
     addDefaultControls(id: number, team: SIDES) {
         const directions = getDirectionsFromTeam(team)
         this.addControls(id, {left: "Arrow" + directions.left, right: "Arrow" + directions.right})
+    }
+    saveTempControls(controls: TControls) {
+        this._tempControls = controls;
+    }
+    updateLatestControlsID(id: number) {
+        if (!this._tempControls) {
+            return;
+        }
+
+        this._controls.push({
+            humanID: id,
+            controls: this._tempControls
+        })
+        this._tempControls = null;
     }
     removeControls(id: number) {
         this._controls = this._controls.filter(player => player.humanID !== id)
@@ -88,6 +95,8 @@ class MatchService {
         humanID: number,
         controls: TControls
     }[] = []
+
+    private _tempControls: TControls | null = null;
 }
 
 export const matchService = new MatchService()
