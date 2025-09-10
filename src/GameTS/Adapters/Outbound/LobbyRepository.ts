@@ -9,6 +9,12 @@ class LobbyRepository {
         return this._lobbies
     }
 
+    getByID(lobbyID: number) {
+        const lobby = this._lobbies.find(lobby => lobby.id === lobbyID)
+        if (!lobby) { throw Error(`Lobby with lobbyID ${lobbyID} not found!`)} //TODO: Should it be so strict?
+        return lobby
+    }
+
     private _lobbies: LobbyT[] = [];
 }
 

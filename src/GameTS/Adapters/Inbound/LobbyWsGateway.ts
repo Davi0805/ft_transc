@@ -1,0 +1,45 @@
+import type { FastifyRequest } from "fastify";
+import type { WebSocket } from "ws";
+import type { InboundDTO, OutboundDTO } from "../../dtos.js";
+
+import wsAuth from "../../Application/Services/WsAuth.js";
+import lobbyService from "../../Application/Services/LobbyService.js";
+import socketService from "../../Application/Services/SocketService.js";
+
+
+class LobbyWsGateway {
+    async join(socket: WebSocket, req: FastifyRequest<{ Params: {lobbyID: string}}>)
+    {
+        const session = await wsAuth.authenticate(req, socket);
+        if (!session) return; //TODO: shouldn't the socket close if session is not returned?
+
+
+        const lobbyID: number = Number(req.params.lobbyID);
+        const userID: number = Number(session.user_id);
+        if (isNaN(lobbyID) || isNaN(userID)) {return;} //TODO probably some error?
+
+        lobbyService.addUser(lobbyID, userID);
+        socketService.addSocketToRepository(lobbyID, userID, socket);
+
+        const lobby = lobbyService.getLobbyByID(lobbyID)
+        const dto: OutboundDTO = {
+            requestType: "lobby",
+            data: lobby
+        };
+        socket.send(JSON.stringify(dto));
+
+        socket.onmessage = (ev: WebSocket.MessageEvent) => {
+            const dto: InboundDTO = JSON.parse(ev.data.toString()) as InboundDTO //Maybe there should be a more robust casting
+            socketService.handleMessage(lobbyID, userID, dto)
+        }
+
+        socket.onclose = (ev: WebSocket.CloseEvent) => {
+            lobbyService.removeUser(lobbyID, userID);
+            socketService.removeSocketFromRepository(userID);
+            socket.close();
+        }
+    }
+}
+
+const lobbyWsGateway = new LobbyWsGateway();
+export default lobbyWsGateway;

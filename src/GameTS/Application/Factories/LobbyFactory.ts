@@ -60,7 +60,7 @@ class LobbyFactory {
         return newLobby
     }
 
-    private _currentID: number = 0;
+    private _currentID: number = 1;
 }
 
 const lobbyFactory = new LobbyFactory();

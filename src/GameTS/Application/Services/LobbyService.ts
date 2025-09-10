@@ -9,13 +9,14 @@ import { rankedService } from "./RankedService.js";
 import { socketService } from "./SocketService.js";
 import { tournamentService } from "./TournamentService.js"; */
 
-import type { LobbyT, LobbyTypeT, LobbyUserT } from "../Factories/LobbyFactory.js";
+import type { LobbyCreationConfigsT, LobbyTypeT, LobbyUserT } from "../Factories/LobbyFactory.js";
 import type { MatchMapT } from "../Factories/MatchFactory.js";
 
 import lobbyRepository from "../../Adapters/Outbound/LobbyRepository.js";
 import tournamentService from "./TournamentService.js";
 import userRepository from "../../Adapters/Outbound/UserRepository.js";
 import lobbyFactory from "../Factories/LobbyFactory.js";
+import socketService from "./SocketService.js";
 
 
 //When a client wants to see the list of lobbies available, receives an array of these
@@ -49,12 +50,18 @@ class LobbyService {
         })
     }
 
-    createLobby() {
-         
+    getLobbyByID(lobbyID: number) {
+        return lobbyRepository.getByID(lobbyID);
     }
 
-    /* addUser(lobbyID: number, userID: number) {
-        const lobby = lobbyRepository.getLobbyByID(lobbyID);
+    createLobby(lobbyCreationConfigs: LobbyCreationConfigsT, hostID: number) {
+        const newLobby = lobbyFactory.createLobby(lobbyCreationConfigs, hostID);
+        lobbyRepository.add(newLobby);
+        return newLobby.id;
+    }
+
+    addUser(lobbyID: number, userID: number) {
+        const lobby = lobbyRepository.getByID(lobbyID);
         const userInfo = userRepository.getUserByID(userID);
         const user = {
             id: userInfo.id,
@@ -71,12 +78,12 @@ class LobbyService {
     }
 
     removeUser(lobbyID: number, userID: number) {
-        const lobby = lobbyRepository.getLobbyByID(lobbyID);
+        const lobby = lobbyRepository.getByID(lobbyID);
         lobby.users = lobby.users.filter(user => user.id !== userID);
         socketService.broadcastToLobby(lobbyID, "removeLobbyUser", { userID: userID })
     }
 
-    updateSettings(lobbyID: number, senderID: number, newSettings: MatchSettingsT) {
+    /*updateSettings(lobbyID: number, senderID: number, newSettings: MatchSettingsT) {
         const lobby = lobbyRepository.getLobbyByID(lobbyID);
         if (lobby.hostID !== senderID) {
             console.log("Somehow a non host managed to send a settings change request! It will be ignored.");

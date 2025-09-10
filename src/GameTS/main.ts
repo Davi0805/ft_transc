@@ -4,6 +4,7 @@ import fastifyMetrics from 'fastify-metrics'
 import fastifySensible from "@fastify/sensible";
 import cors from '@fastify/cors';
 import { lobbyRoutes } from "./Infrastructure/routes/LobbyRoutes.js";
+import { LobbyWsGatewayRoutes } from "./Infrastructure/routes/LobbyWsRoutes.js";
 
 const setup = () => {
     const fastify = Fastify({ 
@@ -30,7 +31,8 @@ const setup = () => {
     fastify.register(fastifySensible);
 
     //TODO: register the custom stuff
-    fastify.register(lobbyRoutes)
+    fastify.register(lobbyRoutes);
+    fastify.register(LobbyWsGatewayRoutes);
 
     return fastify;
 }
