@@ -9,11 +9,48 @@ import { rankedService } from "./RankedService.js";
 import { socketService } from "./SocketService.js";
 import { tournamentService } from "./TournamentService.js"; */
 
+import type { LobbyT, LobbyTypeT, LobbyUserT } from "../Factories/LobbyFactory.js";
+import type { MatchMapT } from "../Factories/MatchFactory.js";
+
 import lobbyRepository from "../../Adapters/Outbound/LobbyRepository.js";
+import tournamentService from "./TournamentService.js";
+import userRepository from "../../Adapters/Outbound/UserRepository.js";
+import lobbyFactory from "../Factories/LobbyFactory.js";
+
+
+//When a client wants to see the list of lobbies available, receives an array of these
+export type LobbyForDisplayT = {
+    id: number,
+    name: string,
+    host: string,
+    type: LobbyTypeT
+    capacity: { taken: number, max: number }
+}
+
 
 class LobbyService {
-    getAllLobbies() {
-        return lobbyRepository.getAllLobbies();
+    getLobbiesForDisplay(): LobbyForDisplayT[] {
+        const lobbies = lobbyRepository.getAll();
+
+        //TODO: Maybe I should make a mapper for this
+        return lobbies.map(lobby => {
+            return {
+                id: lobby.id,
+                name: lobby.name,
+                host: userRepository.getUserByID(lobby.hostID).username,
+                type: lobby.type,
+                capacity: {
+                    taken: this._getParticipantsAm(lobby.users),
+                    max: lobby.type === "tournament"
+                        ? tournamentService.MAX_PARTICIPANTS
+                        : this._getMaxPlayersFromMap(lobby.matchSettings.map)
+                }, 
+            }
+        })
+    }
+
+    createLobby() {
+         
     }
 
     /* addUser(lobbyID: number, userID: number) {
@@ -213,6 +250,18 @@ class LobbyService {
     private _isEveryoneReady(lobbyUsers: LobbyUserT[]): boolean {
         return lobbyUsers.find(user => (user.player && !user.ready)) ? false : true
     } */
+
+    private _getParticipantsAm(users: LobbyUserT[]): number {
+        const participants = users.filter(user => user.player !== null);
+        return participants.length
+    }
+
+    private _getMaxPlayersFromMap(map: MatchMapT): number {
+        const [amountStr, type, _size] = map.split("-");
+        const amount = Number(amountStr);
+
+        return (amount * (type === "teams" ? 2 : 1))
+    }
 }
 
 const lobbyService = new LobbyService();

@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-import { lobbyService } from "../../Application/Services/LobbyService.js";
+import lobbyService from "../../Application/Services/LobbyService.js";
+
 
 class LobbyController {
 
@@ -18,10 +19,11 @@ class LobbyController {
         return reply.send(lobby);
     } */
 
-    async getAllLobbies(req: FastifyRequest, reply: FastifyReply)
+    async getLobbiesForDisplay(_req: FastifyRequest, reply: FastifyReply)
     {
-        const lobby = await lobbyService.getAllLobbies();
-        return reply.send(lobby);
+        console.log("This shit was called!");
+        const lobbiesForDisplay = await lobbyService.getLobbiesForDisplay();
+        return reply.send(lobbiesForDisplay);
     }
 
     // When i want to test something, i just put it here
