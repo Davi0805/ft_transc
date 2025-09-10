@@ -16,7 +16,7 @@ class LobbyWsGateway {
 
         const lobbyID: number = Number(req.params.lobbyID);
         const userID: number = Number(session.user_id);
-        if (isNaN(lobbyID) || isNaN(userID)) {return;} //TODO probably some error?
+        if (isNaN(lobbyID) || isNaN(userID)) {return;} //TODO probably return some error instead?
 
         lobbyService.addUser(lobbyID, userID);
         socketService.addSocketToRepository(lobbyID, userID, socket);
@@ -29,7 +29,7 @@ class LobbyWsGateway {
         socket.send(JSON.stringify(dto));
 
         socket.onmessage = (ev: WebSocket.MessageEvent) => {
-            const dto: InboundDTO = JSON.parse(ev.data.toString()) as InboundDTO //Maybe there should be a more robust casting
+            const dto: InboundDTO = JSON.parse(ev.data.toString()) as InboundDTO //TODO: Maybe there should be a more robust casting
             socketService.handleMessage(lobbyID, userID, dto)
         }
 

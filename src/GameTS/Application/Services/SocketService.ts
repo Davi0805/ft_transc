@@ -48,7 +48,7 @@ class SocketService {
         // But because I am a complete ignorant, I do not know the best way to type the function
         // (either anonymous which calls the funcs or converting the actual signatures to accept the data directly
         // and type the value as a reference to those funcs directly), I will keep it like this lol
-        /* switch (dto.requestType) {
+        switch (dto.requestType) {
             case "updateSettings":
                 lobbyService.updateSettings(lobbyID, senderID, dto.data.settings);
                 break;
@@ -80,11 +80,11 @@ class SocketService {
                 lobbyService.start(lobbyID, senderID);
                 break;
             case "updateGame":
-                matchService.updateControlsState(lobbyID, senderID, dto.data)
+                //matchService.updateControlsState(lobbyID, senderID, dto.data)
                 break;
             default:
                 console.log(`Socket does not recognize the request type`)
-        } */
+        }
     }
 
 }
