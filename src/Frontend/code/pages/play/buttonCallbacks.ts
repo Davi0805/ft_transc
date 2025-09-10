@@ -53,7 +53,7 @@ export function joinFriendlyClicked(e: SubmitEvent, team: SIDES, role: ROLES) {
 
     const leftKey = formData.get("left-key") as string
     const rightKey = formData.get("right-key") as string
-    matchService.addControls(-1, {
+    matchService.saveTempControls({
         left: leftKey,
         right: rightKey
     })

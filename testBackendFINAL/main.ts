@@ -14,7 +14,6 @@ await fastify.register(cors);
 // API
 
 fastify.get('/getAllLobbies', (_req, _res) => {
-    console.log("Lobbies requested!")
     return lobbyRepository.getAllLobbiesForDisplay()
 })
 
@@ -24,7 +23,6 @@ fastify.post('/createLobby', (req, _res) => {
         userID: number
     }
     const lobbyID = lobbyRepository.createLobby(dto.lobbySettings, dto.userID)
-    console.log("lobby created!")
     return { id: lobbyID }
 })
 

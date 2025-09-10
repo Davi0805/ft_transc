@@ -2,6 +2,7 @@ import { WebSocket } from "ws";
 import { socketRepository } from "../../Adapters/Outbound/SocketRepository.js";
 import lobbyService from "./LobbyService.js";
 import { InboundDTO, OutboundDTO, OutboundDTOMap } from "../../dtos.js";
+import matchService from "./MatchService.js";
 
 
 
@@ -80,7 +81,7 @@ class SocketService {
                 lobbyService.start(lobbyID, senderID);
                 break;
             case "updateGame":
-                //matchService.updateControlsState(lobbyID, senderID, dto.data)
+                matchService.updateControlsState(lobbyID, senderID, dto.data)
                 break;
             default:
                 console.log(`Socket does not recognize the request type`)

@@ -53,7 +53,6 @@ class MatchService {
                     this._updateRatings(user2, user1);
                 }
             }
-            console.log(`the new rating of ${players[player1I].nickname} is ${user1.rating}`)
         }
     }
 

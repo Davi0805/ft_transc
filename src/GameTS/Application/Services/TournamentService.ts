@@ -83,7 +83,6 @@ class TournamentService {
         })
 
         const byePairing = pairingsIDs.find(pair => pair.includes(-1));
-        console.log(byePairing)
         if (byePairing) {
             this._displayResults(tournamentID, [byePairing[0]], pairingsIDs.length === 1);
         }

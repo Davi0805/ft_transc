@@ -46,7 +46,6 @@ export default class ServerGame {
         this._audioEvent = null;
         
         GameEventBus.on("audioEvent", (audioEvent) => {
-            //console.log(`The audio event is: ${audioEvent}`)
             this._audioEvent = audioEvent;
         })
     }
@@ -76,9 +75,7 @@ export default class ServerGame {
             timeLeft: this._timeLeft,
             audioEvent: this._audioEvent
         }
-        console.log("before: ", out);
         this._audioEvent = null;
-        console.log("after: ", out)
         return out
     }
 
@@ -125,7 +122,6 @@ export default class ServerGame {
 
     private _matchLoop() {
         // Movement decision by players
-        //console.log("Before update: " + this._humansManager.humans[0].controls.left.pressed)
         this._humansManager.update()
         this._botsManager.update(this._gameLoop, this._ballsManager.balls)
         

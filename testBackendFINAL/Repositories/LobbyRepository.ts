@@ -58,7 +58,6 @@ export type LobbyCreationConfigsT = {
 class LobbyRepository {
     
     createLobby(configs: LobbyCreationConfigsT, userID: number) {
-        console.log(configs.matchSettings)
         const newLobby: LobbyT = {
             id: this._currentID,
             hostID: userID,

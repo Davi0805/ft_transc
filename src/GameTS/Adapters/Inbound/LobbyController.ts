@@ -27,7 +27,6 @@ class LobbyController {
 
     async getLobbiesForDisplay(_req: FastifyRequest, reply: FastifyReply)
     {
-        console.log("This shit was called!");
         const lobbiesForDisplay = await lobbyService.getLobbiesForDisplay();
         return reply.send(lobbiesForDisplay);
     }

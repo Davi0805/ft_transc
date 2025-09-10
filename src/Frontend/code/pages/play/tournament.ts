@@ -74,7 +74,6 @@ export const TournamentPage = {
         let participantsTableBody = ""
         let board = 1
         const participants = lobbyService.getTournPlayers();
-        console.log("participants: ", participants)
         const categories = ["nick", "rating", "score"] as const
         const paddingLength = 6
         tournamentService.tournament.currentPairings.forEach(match => {
