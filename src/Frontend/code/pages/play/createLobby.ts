@@ -12,37 +12,67 @@ import { lobbyService } from "../../services/LobbyService";
 export const CreateLobbyPage = {
   template() {
     return `
-            <div class="flex flex-col items-center justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12">
-                <form id="lobby-creation-form" class="flex flex-col items-center justify-center gap-6">
-                    <h1 id="create-lobby-title" class="text-3xl p-3"></h1>
-                    <div id="lobby-options" class="flex flex-col items-center gap-4">
-                        <div class="flex flex-row w-full justify-between gap-4">
-                            <label for="lobby-name" class="text-xl">Name:</label>
-                            <input id="lobby-name" name="lobby-name" class="bg-gray-900/50 rounded-2xl px-4 text-center" required></input>
-                        </div>
-                        <div class="flex flex-row w-full justify-between gap-4">
-                            <label for="lobby-type" class="text-xl">Type:</label>
-                            <select id="lobby-type" name="lobby-type" class="bg-gray-900/50 rounded-2xl px-4 text-center" required>
-                                <option value="friendly">Friendly Match</option>
-                                <option value="ranked">Ranked Match</option>
-                                <option value="tournament">Tournament</option>
-                            </select>
-                        </div>
-                        <div id="mutable-settings" class="flex flex-col w-full gap-4"></div>
-                    </div>
-                    <div id="create-lobby-form-buttons" class="flex flex-row gap-6">
-                        <button id="btn-return" type="button" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Return</button>
-                        <button type="submit" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Create Lobby</button>
-                    </div>
-                </form>
+    <div class="h-[550px] w-[510px] bg-gradient-to-b from-blue-500 via-blue-800 to-neutral-900 shadow-2xl shadow-black border-y border-black text-myWhite rounded-xl p-8">
+      <!-- Title and description -->
+      <div class="text-center mb-8">
+          <h1 class="text-3xl font-semibold text-white mb-2">New Lobby</h1>
+          <p class="text-white/70">Create a new game lobby</p>
+      </div>
+    
+      <!-- Lobby creation form -->
+      <form id="lobby-creation-form" class="space-y-6">
+        <!-- Lobby Name -->
+        <div class="flex flex-row items-center justify-between gap-4">
+          <label for="lobby-name" class="text-base font-medium text-myWhite/90 min-w-fit">Name</label>
+          <input 
+              id="lobby-name" 
+              name="lobby-name" 
+              type="text" 
+              class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in"
+              placeholder="Enter lobby name"
+              required
+          >
+        </div>
+
+
+        <div class="flex flex-row items-center justify-between gap-4">
+            <label for="lobby-type" class="text-base font-medium text-myWhite/90 min-w-fit">Type</label>
+            <select 
+                id="lobby-type" 
+                name="lobby-type" 
+                class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-[20px] font-medium  text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in"
+                required
+            >
+                <option value="friendly">Friendly Match</option>
+                <option value="ranked">Ranked Match</option>
+                <option value="tournament">Tournament</option>
+            </select>
+        </div>
+
+
+        <div id="mutable-settings" class="flex flex-col w-full gap-4"></div>
+
+        <div class="flex flex-row items-center justify-center gap-4 mt-8">
+                <button 
+                    type="button" 
+                    id="btn-return" 
+                    class="rounded-lg bg-slate-600/80 px-6 py-2 font-semibold text-myWhite transform active:scale-85 transition-all duration-100 hover:bg-blue-700"
+                >
+                    Return
+                </button>
+                <button 
+                    type="submit" 
+                    class="rounded-lg bg-blue-600  px-6 py-2 font-semibold text-myWhite transform active:scale-85 transition-all duration-100 hover:bg-blue-700"
+                >
+                    Create Lobby
+                </button>
             </div>
+      </form>
+    </div>            
         `;
   },
 
   init() {
-    const title = document.getElementById("create-lobby-title") as HTMLElement;
-    title.textContent = "New Lobby";
-
     const lobbyTypeInput = document.getElementById(
       "lobby-type"
     ) as HTMLSelectElement;

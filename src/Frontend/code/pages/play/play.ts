@@ -13,7 +13,10 @@ export const PlayPage = {
                 <div class="flex items-center h-full flex-col p-8">
     
                     <!-- Container Title -->
-                    <h1 class="mb-6 text-3xl font-bold text-myWhite">Play Center</h1>
+                    <div class="text-center mb-8">
+                        <h1 class="text-3xl font-bold text-myWhite mb-2">Play Center</h1>
+                        <p class="text-white/70">Choose a lobby to join</p>
+                    </div>
 
                     <!-- Lobby listing section -->
                     <div class="flex min-h-0 flex-1 flex-col gap-4">
@@ -31,7 +34,7 @@ export const PlayPage = {
                         <!-- Table with a sticky head. Allways 5 entries min (empty or filled) -->
                         <div class="min-h-0 flex-1 overflow-y-auto rounded-xl border border-white/10 bg-gray-900/30">
                             <table class="w-[600px] border-collapse table-fixed">
-                                <thead id="lobbies-head" class="sticky top-0 z-10 bg-gray-900 h-14">
+                                <thead id="lobbies-head" class="sticky top-0  bg-gray-900 h-14">
                                     <tr>
                                         <th class="h-14 px-6 py-3 text-center text-lg font-bold tracking-wider text-gray-300 uppercase">NAME</th>
                                         <th class="h-14 px-6 py-3 text-center text-lg font-bold tracking-wider text-gray-300 uppercase">HOST</th>

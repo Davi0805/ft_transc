@@ -70,21 +70,21 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
 
 
     return `
-        <div class="flex flex-row w-full justify-between gap-1">
-            <label for="match-map" class="text-xl">Map:</label>
-            <${tagType} id="match-map" name="match-map" class="bg-gray-900/50 rounded-2xl px-4 text-center">
+        <div class="flex flex-row items-center justify-between gap-4">
+            <label for="match-map" class="text-base font-medium text-white/90 min-w-fit">Map</label>
+            <${tagType} id="match-map" name="match-map" class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-[20px] font-medium  text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in">
                 ${mapOptionsHtml}
             </${tagType}>
         </div>
-        <div class="flex flex-row w-full justify-between gap-1">
-            <label for="match-mode" class="text-xl">Mode:</label>
-            <${tagType} id="match-mode" name="match-mode" class="bg-gray-900/50 rounded-2xl px-4 text-center">
+        <div class="flex flex-row items-center justify-between gap-4">
+            <label for="match-mode" class="text-base font-medium text-white/90 min-w-fit">Mode</label>
+            <${tagType} id="match-mode" name="match-mode" class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-[20px] font-medium  text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in">
                 ${modeOptionsHtml}
             </${tagType}>
         </div>
-        <div class="flex flex-row w-full justify-between gap-1">
-            <label for="match-duration" class="text-xl">Match duration:</label>
-            <${tagType} id="match-duration" name="match-duration" class="bg-gray-900/50 rounded-2xl px-4 text-center">
+        <div class="flex flex-row items-center justify-between gap-4">
+            <label for="match-duration" class="text-base font-medium text-white/90 min-w-fit">Duration</label>
+            <${tagType} id="match-duration" name="match-duration" class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-[20px] font-medium  text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in">
                 ${durationOptionsHtml}
             </${tagType}>
         </div>
