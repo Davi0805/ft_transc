@@ -7,6 +7,7 @@ import { getSlotsFromMap } from "../Factories/MatchFactory.js";
 import lobbyService from "./LobbyService.js";
 import matchService from "./MatchService.js";
 import socketService from "./SocketService.js";
+import dbConnection from "../../Adapters/Outbound/DbConnection.js";
 
 
 class RankedService {
@@ -29,9 +30,11 @@ class RankedService {
         loop()
     }
 
-    _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
+    async _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
+        const dbMatchID = dbConnection.saveMatch(result);
+        players.forEach(player => dbConnection.savePlayerMatch(player.id, player.team, matchID));
         matchService.updatePlayersRating(players, result);
-        matchService.saveAndDestroyMatchByID(matchID, result);
+        matchService.destroyMatchByID(matchID);
         socketService.broadcastToLobby(lobbyID, "endOfMatch", { result: result })
         setTimeout(() => {
             lobbyService.returnToLobby(lobbyID);

@@ -1,5 +1,6 @@
 import LoopController from "../../Application/game/LoopController.js";
 import ServerGame, { TMatchResult } from "../../Application/game/ServerGame.js";
+import db from "../../Infrastructure/config/Sqlite.js";
 
 type MatchT = {
     id: number,
@@ -11,17 +12,6 @@ type MatchT = {
 class MatchRepository {
     add(match: MatchT) {
         this._matches.push(match);
-    }
-
-    saveMatchInDB(matchID: number, result: TMatchResult, tournamentID: number | null = null) {
-        //TODO
-        const stuffToSave = {
-            first_team_id: result.at(0),
-            second_team_id: result.at(1),
-            third_team_id: result.at(2),
-            fourth_team_id: result.at(3),
-            tournament_id: tournamentID
-        }
     }
 
     removeByID(matchID: number) {
@@ -51,6 +41,9 @@ class MatchRepository {
     private _currentID: number = 0;
 
     private _matches: MatchT[] = []
+
+
+
 }
 
 const matchRepository = new MatchRepository()

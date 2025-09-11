@@ -13,9 +13,8 @@ class LobbyController {
         const creationConfigs = req.body as LobbyCreationConfigsT;
         //TODO: Make extensive check of this.
 
-
-
-        const lobbyID = await lobbyService.createLobby(creationConfigs, req.session.user_id);
+        const userID = Number(req.session.user_id) as number;
+        const lobbyID = await lobbyService.createLobby(creationConfigs, userID);
         return reply.send({ id: lobbyID });
     }
 

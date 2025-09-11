@@ -23,7 +23,8 @@ CREATE TABLE player_matches (
     user_id INTEGER NOT NULL,
     match_id INTEGER NOT NULL,
 
-    FOREIGN KEY (match_id) REFERENCES match(id)
+    FOREIGN KEY (match_id) REFERENCES match(id),
+    FOREIGN KEY (team_id) REFERENCES teams(id)
 );
 
 CREATE TABLE tournament (

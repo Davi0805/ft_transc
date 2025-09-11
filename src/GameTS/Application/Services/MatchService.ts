@@ -49,12 +49,7 @@ class MatchService {
         return matchInfo.broadcastLoop;
     }
 
-    saveMatchByID(matchID: number) {
-
-    }
-
-    saveAndDestroyMatchByID(matchID: number, result: TMatchResult, tournamentID: number | null = null) {
-        matchRepository.saveMatchInDB(matchID, result, tournamentID);
+    async destroyMatchByID(matchID: number) {        
         matchRepository.removeByID(matchID)
     }
 
