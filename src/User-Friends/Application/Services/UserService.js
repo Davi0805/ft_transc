@@ -95,7 +95,7 @@ class UserService {
             /* await this.fastify.bcrypt.compare(User.password, result[0].password_hash); */
             if ( !result || User.password != result[0].password_hash)
                 throw exception('Login failed!', 401);
-            return {user_id: result[0].user_id, twofa_secret: result[0].twofa_secret};
+            return result[0];
         } catch (error) {
             throw exception('Login failed!', 401);
         }

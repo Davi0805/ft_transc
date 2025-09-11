@@ -161,7 +161,7 @@ class UserController {
     */
     async Login(req, reply)
     {
-        const { user_id, twofa_secret } = await userService.Login(req.body);
+        const { user_id, twofa_secret, sprite_id, rating, username } = await userService.Login(req.body);
         const token = await jwtService.generate(user_id);
         await redisService.postMessage('cacheFriends', JSON.stringify({ user_id: user_id }));
         if (twofa_secret) // if the user have 2FA activated
@@ -169,7 +169,7 @@ class UserController {
             await redisService.saveSession(token, { user_id: user_id, twofa_verified: 0 });
             return reply.send({ token: token, verified: false });
         }
-        await redisService.saveSession(token, { user_id: user_id, twofa_verified: 1 });
+        await redisService.saveSession(token, { user_id: user_id, twofa_verified: 1, rating: rating, sprite_id: sprite_id, username: username });
         return reply.send({ token: token, verified: true });
     }
 
