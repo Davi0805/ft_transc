@@ -10,7 +10,7 @@ export type TMap = "2-players-small" | "2-players-medium" | "2-players-big" | "4
 export type TMode = "classic" | "modern"
 export type TDuration = "blitz" | "rapid" | "classical" | "long" | "marathon"
 
-export type TMatchResult = Record<SIDES, number>
+export type TMatchResult = SIDES[]
 
 
 //SET TO NULL IF IT BECOMES EMPTY

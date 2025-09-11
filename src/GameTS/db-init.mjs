@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-const db = require('./Infrastructure/config/Sqlite');
-const fs = require('fs'); // fstream equivalent
+import db from "./dist/Infrastructure/config/Sqlite.js" //= require('./dist/Infrastructure/config/Sqlite');
+import fs from "fs"
+//const fs = require('fs'); // fstream equivalent
 
 // used the readFileSync cause the original ReadSync is async (non-blocking)
 const sql_scheme = fs.readFileSync('./Infrastructure/config/init.sql', 'utf-8');

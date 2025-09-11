@@ -1,3 +1,4 @@
+import dbConnection from "../../Adapters/Outbound/DbConnection.js";
 import { tournamentRepository } from "../../Adapters/Outbound/TournamentRepository.js";
 import { LobbyT, LobbyUserT } from "../Factories/LobbyFactory.js";
 import { MatchPlayerT } from "../Factories/MatchFactory.js";
@@ -49,12 +50,7 @@ class TournamentService {
         setTimeout(() => {
             const tournamentDone = tournament.currentRound >= tournament.roundAmount
             if (tournamentDone) {
-                socketService.broadcastToLobby(tournament.lobbyID, "displayTournamentEnd", { standings: standings})
-                setTimeout(() => {
-                    console.log("returning to lobby...")
-                    tournamentRepository.removeByID(tournamentID);
-                    lobbyService.returnToLobby(tournament.lobbyID);
-                }, FINAL_STANDINGS_DISPLAY_DURATION)
+                this._onTournamentFinished(tournamentID, standings);
             } else {
                 this._displayPairings(tournamentID)
             }
@@ -152,13 +148,6 @@ class TournamentService {
 
         setTimeout(() => {
             this._displayResults(tournamentID, matchUsers, allGamesDone);
-            /* socketService.broadcastToUsers(matchUsers, "displayResults", null);
-            if (allGamesDone) {
-                //Only runs the following if this game is the last one
-                setTimeout(() => {
-                    this._displayStandings(tournamentID);
-                }, RESULTS_DISPLAY_DURATION);
-            } */
         }, END_OF_GAME_DISPLAY_DURATION) 
     }
 
@@ -170,6 +159,33 @@ class TournamentService {
                 this._displayStandings(tournamentID);
             }, RESULTS_DISPLAY_DURATION);
         }
+    }
+
+    private async _onTournamentFinished(tournamentID: number, standings: TournamentParticipantT[]) {
+        const tournament = tournamentRepository.getByID(tournamentID);
+        const firstPlace = standings.at(0);
+        const secondPlace = standings.at(1);
+        const thirdPlace = standings.at(2);
+        if (!firstPlace || !secondPlace || !thirdPlace) {
+            throw Error("The tournament was supposed to have at least 4 players!!!")
+        }
+        const dbTournamentID = await dbConnection.saveTournament([firstPlace.id, secondPlace.id, thirdPlace.id]);
+        tournament.rounds.forEach(round => {
+            round.matches.forEach(async match => {
+                const winnerTeam = match.winnerID === match.playerIDs[0] ? SIDES.LEFT : SIDES.RIGHT;
+                const dbMatchID = await dbConnection.saveMatch([winnerTeam, winnerTeam === SIDES.LEFT ? SIDES.RIGHT : SIDES.LEFT], tournamentID);
+                dbConnection.savePlayerMatch(match.playerIDs[0], SIDES.LEFT, dbMatchID);
+                dbConnection.savePlayerMatch(match.playerIDs[1], SIDES.RIGHT, dbMatchID);
+            })
+        })
+
+        socketService.broadcastToLobby(tournament.lobbyID, "displayTournamentEnd", { standings: standings})
+        setTimeout(() => {
+
+            console.log("returning to lobby...")
+            tournamentRepository.removeByID(tournamentID);
+            lobbyService.returnToLobby(tournament.lobbyID);
+        }, FINAL_STANDINGS_DISPLAY_DURATION)
     }
 
     private _getTournamentParticipants(users: LobbyUserT[]) {
