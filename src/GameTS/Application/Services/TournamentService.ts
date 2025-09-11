@@ -118,7 +118,7 @@ class TournamentService {
         if (!matchUsers) {throw Error("This match does not exist!")}
         socketService.broadcastToUsers(matchUsers, "endOfMatch", { result: result });
         matchService.updatePlayersRating(players, result);
-        matchService.destroyMatchByID(matchID);
+        matchService.saveAndDestroyMatchByID(matchID, result, tournamentID);
 
         //Get reference to match saved in tournament
         const tournament = tournamentRepository.getByID(tournamentID);
@@ -152,13 +152,6 @@ class TournamentService {
 
         setTimeout(() => {
             this._displayResults(tournamentID, matchUsers, allGamesDone);
-            /* socketService.broadcastToUsers(matchUsers, "displayResults", null);
-            if (allGamesDone) {
-                //Only runs the following if this game is the last one
-                setTimeout(() => {
-                    this._displayStandings(tournamentID);
-                }, RESULTS_DISPLAY_DURATION);
-            } */
         }, END_OF_GAME_DISPLAY_DURATION) 
     }
 

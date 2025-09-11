@@ -1,5 +1,5 @@
 import LoopController from "../../Application/game/LoopController.js";
-import ServerGame from "../../Application/game/ServerGame.js";
+import ServerGame, { TMatchResult } from "../../Application/game/ServerGame.js";
 
 type MatchT = {
     id: number,
@@ -11,6 +11,17 @@ type MatchT = {
 class MatchRepository {
     add(match: MatchT) {
         this._matches.push(match);
+    }
+
+    saveMatchInDB(matchID: number, result: TMatchResult, tournamentID: number | null = null) {
+        //TODO
+        const stuffToSave = {
+            first_team_id: result.at(0),
+            second_team_id: result.at(1),
+            third_team_id: result.at(2),
+            fourth_team_id: result.at(3),
+            tournament_id: tournamentID
+        }
     }
 
     removeByID(matchID: number) {

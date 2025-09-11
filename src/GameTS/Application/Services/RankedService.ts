@@ -31,10 +31,9 @@ class RankedService {
 
     _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
         matchService.updatePlayersRating(players, result);
-        matchService.destroyMatchByID(matchID);
+        matchService.saveAndDestroyMatchByID(matchID, result);
         socketService.broadcastToLobby(lobbyID, "endOfMatch", { result: result })
         setTimeout(() => {
-            
             lobbyService.returnToLobby(lobbyID);
         }, 10 * 1000)
     }

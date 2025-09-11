@@ -3,11 +3,11 @@ import type { MatchMapT, MatchSettingsT } from "../Factories/MatchFactory.js";
 
 import lobbyFactory from "../Factories/LobbyFactory.js";
 import lobbyRepository from "../../Adapters/Outbound/LobbyRepository.js";
-import userRepository from "../../Adapters/Outbound/UserRepository.js";
 import socketService from "./SocketService.js";
 import friendlyService from "./FriendlyService.js";
 import rankedService from "./RankedService.js";
 import tournamentService from "./TournamentService.js";
+import userService from "./UserService.js";
 
 //When a client wants to see the list of lobbies available, receives an array of these
 export type LobbyForDisplayT = {
@@ -28,7 +28,7 @@ class LobbyService {
             return {
                 id: lobby.id,
                 name: lobby.name,
-                host: userRepository.getUserByID(lobby.hostID).username,
+                host: userService.getUsernameByID(lobby.hostID),
                 type: lobby.type,
                 capacity: {
                     taken: this._getParticipantsAm(lobby.users),
@@ -52,7 +52,7 @@ class LobbyService {
 
     addUser(lobbyID: number, userID: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
-        const userInfo = userRepository.getUserByID(userID);
+        const userInfo = userService.getUserByID(userID);
         const user = {
             id: userInfo.id,
             username: userInfo.username,

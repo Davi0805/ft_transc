@@ -30,7 +30,7 @@ class FriendlyService {
     }
 
     private _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
-        matchService.destroyMatchByID(matchID);
+        matchService.saveAndDestroyMatchByID(matchID, result);
         socketService.broadcastToLobby(lobbyID, "endOfMatch", { result: result })
         setTimeout(() => {
             lobbyService.returnToLobby(lobbyID);
