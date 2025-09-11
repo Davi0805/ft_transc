@@ -7,7 +7,6 @@ import socketService from "./SocketService.js";
 import friendlyService from "./FriendlyService.js";
 import rankedService from "./RankedService.js";
 import tournamentService from "./TournamentService.js";
-import userService from "./UserService.js";
 
 //When a client wants to see the list of lobbies available, receives an array of these
 export type LobbyForDisplayT = {

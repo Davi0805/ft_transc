@@ -31,8 +31,8 @@ class RankedService {
     }
 
     async _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
-        const dbMatchID = dbConnection.saveMatch(result);
-        players.forEach(player => dbConnection.savePlayerMatch(player.id, player.team, matchID));
+        const dbMatchID = await dbConnection.saveMatch(result);
+        players.forEach(player => dbConnection.savePlayerMatch(player.id, player.team, dbMatchID));
         matchService.updatePlayersRating(players, result);
         matchService.destroyMatchByID(matchID);
         socketService.broadcastToLobby(lobbyID, "endOfMatch", { result: result })
