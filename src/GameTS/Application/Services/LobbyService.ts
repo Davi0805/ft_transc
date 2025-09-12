@@ -3,7 +3,6 @@ import type { MatchMapT, MatchSettingsT } from "../Factories/MatchFactory.js";
 
 import lobbyFactory from "../Factories/LobbyFactory.js";
 import lobbyRepository from "../../Adapters/Outbound/LobbyRepository.js";
-import userRepository from "../../Adapters/Outbound/UserRepository.js";
 import socketService from "./SocketService.js";
 import friendlyService from "./FriendlyService.js";
 import rankedService from "./RankedService.js";
@@ -28,7 +27,7 @@ class LobbyService {
             return {
                 id: lobby.id,
                 name: lobby.name,
-                host: userRepository.getUserByID(lobby.hostID).username,
+                host: lobby.users.find(u => u.id == lobby.hostID)?.username ?? "",
                 type: lobby.type,
                 capacity: {
                     taken: this._getParticipantsAm(lobby.users),
@@ -50,14 +49,13 @@ class LobbyService {
         return newLobby.id;
     }
 
-    addUser(lobbyID: number, userID: number) {
+    addUser(lobbyID: number, userID: number, username: string, spriteID: number, rating: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
-        const userInfo = userRepository.getUserByID(userID);
         const user = {
-            id: userInfo.id,
-            username: userInfo.username,
-            spriteID: userInfo.spriteID,
-            rating: userInfo.rating,
+            id: userID,
+            username: username,
+            spriteID: spriteID,
+            rating: rating,
             ready: false,
             player: null
         }

@@ -1,4 +1,5 @@
 import { GameEventBus } from "./EventBus.js";
+import { TMatchResult } from "./ServerGame.js";
 import { SIDES } from "./shared/sharedTypes.js";
 import STeam from "./STeam.js";
 
@@ -39,11 +40,9 @@ export default class STeamsManager {
         return (true)
     }
 
-    getTeamsState(): Record<SIDES, number> {
-        const out: Record<SIDES, number> = {} as Record<SIDES, number>;
-        this.teams.forEach(team => {
-            out[team.side] = team.place;
-        })
+    getTeamsState(): TMatchResult {
+        const sortedTeams = [...this.teams].sort((team1, team2) => team1.place - team2.place);
+        const out = sortedTeams.map(team => team.side);
         return out
     }
 

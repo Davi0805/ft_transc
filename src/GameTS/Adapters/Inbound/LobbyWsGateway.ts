@@ -16,9 +16,11 @@ class LobbyWsGateway {
 
         const lobbyID: number = Number(req.params.lobbyID);
         const userID: number = Number(session.user_id);
+        const sprite_id: number = Number(session.sprite_id);
+        const rating: number = Number(session.rating)
         if (isNaN(lobbyID) || isNaN(userID)) {return;} //TODO: probably return some error instead?
 
-        lobbyService.addUser(lobbyID, userID);
+        lobbyService.addUser(lobbyID, userID, session.username, sprite_id, rating);
         socketService.addSocketToRepository(lobbyID, userID, socket);
 
         const lobby = lobbyService.getLobbyByID(lobbyID)

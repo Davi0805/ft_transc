@@ -1,12 +1,14 @@
 import type { CGameDTO } from "../game/shared/dtos.js";
 import type { MatchPlayerT, MatchSettingsT } from "../Factories/MatchFactory.js";
 import type { TMatchResult } from "../game/ServerGame.js";
-import userRepository, { UserT } from "../../Adapters/Outbound/UserRepository.js";
+import type { UserT } from "../../Adapters/Outbound/UserRepository.js";
 
 import matchFactory from "../Factories/MatchFactory.js";
 import matchRepository from "../../Adapters/Outbound/MatchRepository.js";
 import socketService from "./SocketService.js";
 import ServerGame from "../game/ServerGame.js";
+import userService from "./UserService.js";
+import { SIDES } from "../game/shared/sharedTypes.js";
 
 class MatchService {
     createAndStartMatch(matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
@@ -47,7 +49,7 @@ class MatchService {
         return matchInfo.broadcastLoop;
     }
 
-    destroyMatchByID(matchID: number) {
+    async destroyMatchByID(matchID: number) {        
         matchRepository.removeByID(matchID)
     }
 
@@ -72,17 +74,37 @@ class MatchService {
     }
 
     updatePlayersRating(players: MatchPlayerT[], result: TMatchResult) {
-        for (let player1I = 0; player1I < players.length; player1I++) {
-            const user1 = userRepository.getUserByID(players[player1I].userID);
-            for (let player2I = player1I + 1; player2I < players.length; player2I++) {
-                const user2 = userRepository.getUserByID(players[player2I].userID);
-                if (result[players[player1I].team] < result[players[player2I].team]) {
-                    this._updateRatings(user1, user2);
-                } else {
-                    this._updateRatings(user2, user1);
+        const playerRatings = new Map<number, number>();
+        const updatedRatings = new Map<number, number>();
+        const teamToPlayerID = new Map<SIDES, number>();
+
+        players.forEach(player => {
+            const currentRating = userService.getUserRatingByID(player.id);
+            playerRatings.set(player.id, currentRating);
+            updatedRatings.set(player.id, currentRating);
+            teamToPlayerID.set(player.team, player.id);
+        })
+
+        for (let i = 0; i < result.length - 1; i++) {
+            for (let j = i + 1; j < result.length; j++) {
+                const winnerID = teamToPlayerID.get(result[i]);
+                const loserID = teamToPlayerID.get(result[j]);
+                if (!winnerID || !loserID) {throw Error()}
+                const winnerRating = playerRatings.get(winnerID);
+                const loserRating = playerRatings.get(loserID);
+                const updatedWinnerRating = updatedRatings.get(winnerID);
+                const updatedLoserRating = updatedRatings.get(loserID);
+                if (!winnerRating || !loserRating || !updatedWinnerRating || !updatedLoserRating) {
+                    throw Error();
                 }
+                
+                const ratingDiffs = this._getRatingChanges(winnerRating, loserRating);
+                updatedRatings.set(winnerID, updatedWinnerRating + ratingDiffs.winnerRatingDiff);
+                updatedRatings.set(loserID, updatedLoserRating + ratingDiffs.loserRatingDiff);
             }
         }
+
+        updatedRatings.forEach((rating, id) => {userService.updateUserRating(id, rating)})
     }
 
 
@@ -112,14 +134,18 @@ class MatchService {
     }
 
 
-    private _updateRatings(winner: UserT, loser: UserT) {
-        const winnerExpectedResult = this._getExpectedResult(winner.rating, loser.rating)
+    private _getRatingChanges(winnerRating: number, loserRating: number) {
+        const winnerExpectedResult = this._getExpectedResult(winnerRating, loserRating)
         const loserExpectedResult = 1 - winnerExpectedResult;
-        const winnerK = winner.rating < 2400 ? 20 : 10;
-        const loserK = loser.rating < 2400 ? 20 : 10;
+        const winnerK = winnerRating < 2400 ? 20 : 10;
+        const loserK = loserRating < 2400 ? 20 : 10;
+        const winnerRatingDiff = Math.round(winnerK * (1 - winnerExpectedResult));
+        const loserRatingDiff = Math.round(loserK * (-loserExpectedResult));
 
-        winner.rating += Math.round(winnerK * (1 - winnerExpectedResult));
-        loser.rating += Math.round(loserK * (-loserExpectedResult));
+        return {
+            winnerRatingDiff: winnerRatingDiff,
+            loserRatingDiff: loserRatingDiff
+        }
     }
 
     private _getExpectedResult(ratingA: number, ratingB: number) {

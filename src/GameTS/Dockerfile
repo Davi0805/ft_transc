@@ -16,13 +16,11 @@ COPY package.json .
 
 RUN npm install
 
-RUN npm install jsonwebtoken
-
-RUN npm install -g typescript
+#RUN node db-init.mjs
 
 # trying to fix an issue i think related to bind volume
 #RUN npm install bcrypt
 
 EXPOSE 8084
 
-CMD ["npm", "run", "game"]
+CMD ["npm", "run" ,"start"]

@@ -22,6 +22,7 @@ class MatchService {
     }
 
     async onEndOfMatch(result: TMatchResult) {
+        //TODO render the end page
         App.unsetSendToServerFunc();
     }
 

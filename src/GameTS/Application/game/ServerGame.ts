@@ -27,7 +27,7 @@ export type SGameConfigs = {
     paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "speed">[]
 }
 
-export type TMatchResult = Record<SIDES, number>
+export type TMatchResult = SIDES[]
 
 export default class ServerGame {
     //Creates the game. To pass the correct configuration, must build a UserCustoms object (see in file src/misc/gameOptions.ts)

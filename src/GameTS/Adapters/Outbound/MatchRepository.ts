@@ -1,5 +1,6 @@
 import LoopController from "../../Application/game/LoopController.js";
-import ServerGame from "../../Application/game/ServerGame.js";
+import ServerGame, { TMatchResult } from "../../Application/game/ServerGame.js";
+import db from "../../Infrastructure/config/Sqlite.js";
 
 type MatchT = {
     id: number,
@@ -40,6 +41,9 @@ class MatchRepository {
     private _currentID: number = 0;
 
     private _matches: MatchT[] = []
+
+
+
 }
 
 const matchRepository = new MatchRepository()

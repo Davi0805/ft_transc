@@ -23,7 +23,7 @@ CREATE TABLE player_matches (
     user_id INTEGER NOT NULL,
     match_id INTEGER NOT NULL,
 
-    FOREIGN KEY (match_id) REFERENCES match(id)
+    FOREIGN KEY (match_id) REFERENCES match(id),
     FOREIGN KEY (team_id) REFERENCES teams(id)
 );
 
@@ -60,30 +60,6 @@ INSERT INTO teams (enum_value, team_name) VALUES
 (1, "TOP"),
 (2, "RIGHT"),
 (3, "BOTTOM");
-
--- Insert mock matches
-INSERT INTO match (score_team_1, score_team_2, score_team_3, score_team_4, tournament_id) VALUES
-(3, 2, NULL, NULL, NULL),
-(1, 1, 0, 2, NULL),
-(4, 4, 2, NULL, NULL);
-
--- Insert mock player_matches
-INSERT INTO player_matches (team_id, user_id, match_id) VALUES
-(1, 101, 1),
-(1, 102, 1),
-(2, 103, 1),
-(2, 104, 1),
-
-(1, 201, 2),
-(1, 202, 2),
-(2, 203, 2),
-(3, 204, 2),
-(4, 205, 2),
-
-(1, 301, 3),
-(2, 302, 3),
-(2, 303, 3),
-(3, 304, 3);
 
 -- Insert maps
 INSERT INTO maps (name, max_slots) VALUES
