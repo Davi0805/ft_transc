@@ -134,9 +134,11 @@ class LobbyService {
         this.lobby.users.splice(index, 1);
     }
     addFriendlyPlayerOUT(userID: number, player: TFriendlyPlayer) {
+        console.log("Calledddddd")
         if (!this._isLobbyOfType("friendly")) { return; }
         const user = this._findUserByID(userID);
         if (user.id === this.myID) {
+            console.log(`Player with id ${player.id} was added`)
             matchService.updateLatestControlsID(player.id)
         }
         if (user.player === null) {

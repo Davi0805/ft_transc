@@ -64,7 +64,7 @@ class TournamentService {
     }
 
     async displayResultsOUT() {
-        matchService.destroy();
+        //matchService.destroy();
         await router.navigateTo('/tournament');
         //await matchService.destroy();
         TournamentPage.renderPairings();

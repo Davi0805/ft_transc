@@ -23,7 +23,7 @@ class MatchService {
 
     async onEndOfMatch(result: TMatchResult) {
         //TODO render the end page
-        App.unsetSendToServerFunc();
+        this.destroy()
     }
 
     
@@ -55,6 +55,9 @@ class MatchService {
     removeControls(id: number) {
         this._controls = this._controls.filter(player => player.humanID !== id)
     }
+    resetAllControls() {
+        this._controls = [];
+    }
 
     
 
@@ -74,6 +77,8 @@ class MatchService {
             const dto = (event as CustomEvent).detail;
             lobbySocketService.send("updateGame", dto);
         }
+        console.log("The following configs will be used: ");
+        console.log(this.configs);
         await App.init(this.configs, sendToServerFunc, root);
     }
 

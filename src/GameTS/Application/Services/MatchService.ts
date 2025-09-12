@@ -59,6 +59,8 @@ class MatchService {
     }
 
     updateControlsState(_lobbyID: number, senderID: number, controlsDTO: CGameDTO) {
+        console.log("UpdateControlsState was called. The controlsDTO is: ")
+        console.log(controlsDTO)
         const match = this.getMatchByUserID(senderID);
         if (match) {
             match.processClientDTO(controlsDTO);
