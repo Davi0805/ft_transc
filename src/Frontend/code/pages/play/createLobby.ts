@@ -15,7 +15,7 @@ export const CreateLobbyPage = {
     <div class="h-[550px] w-[510px] bg-gradient-to-b from-blue-500 via-blue-800 to-neutral-900 shadow-2xl shadow-black border-y border-black text-myWhite rounded-xl p-8">
       <!-- Title and description -->
       <div class="text-center mb-8">
-          <h1 class="text-3xl font-semibold text-white mb-2">New Lobby</h1>
+          <h1 class="text-3xl font-bold text-white mb-2">New Lobby</h1>
           <p class="text-white/70">Create a new game lobby</p>
       </div>
     

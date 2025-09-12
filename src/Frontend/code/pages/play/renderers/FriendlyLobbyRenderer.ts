@@ -1,3 +1,4 @@
+import { PaddleCarrossel } from "../../../components/carrossel/paddleCarrossel";
 import { ROLES, SIDES } from "../../../match/matchSharedDependencies/sharedTypes";
 import { joinFriendlyClicked, withdrawFriendlyClicked } from "../buttonCallbacks";
 import { getDirectionsFromTeam, TPlayerInSlot } from "../utils/helpers";
@@ -35,42 +36,72 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
         const leftKey = "Arrow" + directions.left
         const rightKey = "Arrow" + directions.right
 
+  
+
         const settingsDialog = document.createElement('dialog');
-        settingsDialog.className = "fixed m-auto overflow-hidden rounded-lg"
+        settingsDialog.className = "flex flex-col m-auto px-16 py-10 rounded-xl bg-[rgb(20,20,20)] shadow-2xl shadow-black border-y border-black text-white"
         settingsDialog.innerHTML = `
-            <form id="player-settings" method="dialog" class="flex flex-col items-center justify-center bg-gray-900/75 border-2 border-black/40 shadow-sm text-white rounded-lg gap-3 p-3 overflow-hidden">
-                <h2>Configure player</h2>
-                <div id="choose-alias" class="flex flex-row gap-3">
-                    <label for="player-alias" class="text-xl">Alias:</label>
-                    <input id="player-alias" name="player-alias" class="bg-gray-900/50 rounded-2xl px-4 text-center" required></input>
-                </div>
-                <div id="choose-paddle" class="flex flex-row gap-3">
-                    <label for="player-paddle" class="text-xl">Paddle:</label>
-                    <select id="player-paddle" name="player-paddle" class="bg-gray-900/50 rounded-2xl px-4 text-center">
-                        <option>0</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                    </select>
-                </div>
-                <div id="choose-left-ctr" class="flex flex-row gap-3">
-                    <input type="hidden" id="left-key" name="left-key" value="${leftKey}">
-                    <label for="left-listener" class="text-xl">${directions.left} button:</label>
-                    ${getButton("left-listener", "button", leftKey, false).outerHTML}
-                </div>
-                <div id="choose-right-ctr" class="flex flex-row gap-3">
-                    <input type="hidden" id="right-key" name="right-key" value="${rightKey}">
-                    <label for="right-listener" class="text-xl">${directions.right} button:</label>
-                    ${getButton("right-listener", "button", rightKey, false).outerHTML}
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-white mb-2">Game Settings</h1>
+                    <p class="text-white/70">Customize your game settings</p>
                 </div>
 
-                ${getButton("btn-close-dialog", "submit", "Join", false).outerHTML}
-            </form>
+                <form id="player-settings" method="dialog" class="space-y-6">
+                    <!-- Alias Section -->
+                    <div>
+                        <label for="player-alias" class="block text-base font-semibold text-white mb-2">Alias</label>
+                        <input 
+                            id="player-alias" 
+                            name="player-alias" 
+                            type="text" 
+                            class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in" 
+                            placeholder="Enter your alias"
+                            required
+                        />
+                    </div>
+
+                    <!-- Paddle Section -->
+                    <div>
+                        <label class="block text-base font-semibold text-white mb-2">Paddle</label>
+                        ${PaddleCarrossel.getPaddleCarrosselHTML()}
+                    </div>
+
+
+
+                    <!-- Controls Section -->
+                    <div class="flex flex-col gap-2 items-center">
+                        <h2 class="text-base font-semibold text-white mb-2">Controls</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-2 ">
+                                <label for="left-listener" class="block text-base font-semibold text-white text-center">Up Button</label>
+                                <button 
+                                    type="button" 
+                                    id="left-listener" 
+                                    class="px-4 py-3 bg-slate-600/80 border border-slate-500/50 rounded-xl text-white text-base cursor-pointer transition-all duration-200 text-center font-semibold hover:bg-slate-600/90 hover:border-blue-500 active:bg-blue-500/20"
+                                >ArrowUp</button>
+                                <input type="hidden" id="left-key" name="left-key" value="ArrowUp">
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label for="right-listener" class="block text-base font-semibold text-white text-center">Down Button</label>
+                                <button 
+                                    type="button" 
+                                    id="right-listener" 
+                                    class="px-4 py-3 bg-slate-600/80 border border-slate-500/50 rounded-xl text-white text-base cursor-pointer transition-all duration-200 text-center font-semibold hover:bg-slate-600/90 hover:border-blue-500 active:bg-blue-500/20"
+                                >ArrowDown</button>
+                                <input type="hidden" id="right-key" name="right-key" value="ArrowDown">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="btn-close-dialog" class="block mx-auto rounded-lg bg-blue-600  px-6 py-2 font-semibold text-myWhite transform active:scale-85 transition-all duration-100 hover:bg-blue-700">
+                        Join Game
+                    </button>
+                </form>
         `;
+
+
         document.body.appendChild(settingsDialog);
 
         
@@ -81,6 +112,16 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
 
         setupKeyCaptureButton(leftListener, leftInput)
         setupKeyCaptureButton(rightListener, rightInput)
+
+        // constructor inits event listeners
+        const paddleCarrossel = new PaddleCarrossel(
+            "paddle-prev",
+            "paddle-next",
+            "paddle-image",
+            "player-paddle"
+        );
+
+
 
         const playerSettingsForm = document.getElementById("player-settings") as HTMLElement;
         playerSettingsForm.addEventListener("submit", (e: SubmitEvent) => {
