@@ -7,7 +7,7 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "start": "node db-init.mjs && tsc && node dist/main.js"
+    "start": "tsc && node db-init.mjs && node dist/main.js"
   },
   "devDependencies": {
     "@types/node": "^22.18.1",

@@ -45,7 +45,7 @@ export default class ServerGame {
         this._gameLoop = new LoopController(90);
         this._audioEvent = null;
         
-        GameEventBus.on("audioEvent", (audioEvent) => {
+        GameEventBus.on("audioEvent", (audioEvent: AudioEvent) => {
             this._audioEvent = audioEvent;
         })
     }
