@@ -13,6 +13,11 @@
 const db = require('./Infrastructure/config/Sqlite');
 const fs = require('fs'); // fstream equivalent
 
+if (fs.existsSync("./Infrastructure/config/dev.sqlite3")) {
+    console.log("Database already exists. Ignoring initialization");
+    process.exit(0);
+}
+
 // used the readFileSync cause the original ReadSync is async (non-blocking)
 const sql_scheme = fs.readFileSync('./Infrastructure/config/init.sql', 'utf-8');
 

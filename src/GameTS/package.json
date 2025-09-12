@@ -7,7 +7,7 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "game": "npx tsc && node dist/main.js"
+    "start": "node db-init.mjs && tsc && node dist/main.js"
   },
   "devDependencies": {
     "@types/node": "^22.18.1",
