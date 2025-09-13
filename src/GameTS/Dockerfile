@@ -15,11 +15,7 @@ RUN apt-get update && \
 COPY package.json .
 
 RUN npm install
-
-#RUN node db-init.mjs
-
-# trying to fix an issue i think related to bind volume
-#RUN npm install bcrypt
+RUN npm install -g typescript
 
 EXPOSE 8084
 
