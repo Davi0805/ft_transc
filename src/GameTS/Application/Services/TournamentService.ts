@@ -64,6 +64,7 @@ class TournamentService {
         const activePlayers = tournament.participants.filter(participant => participant.participating === true);
         const pairingsIDs = SwissService.getNextRoundPairings(activePlayers);
         socketService.broadcastToLobby(tournament.lobbyID, "displayPairings", { pairings: pairingsIDs });
+        //TODO: Add chat warning that the matches will start
 
         setTimeout(() => {
             this._startRound(tournamentID, pairingsIDs);

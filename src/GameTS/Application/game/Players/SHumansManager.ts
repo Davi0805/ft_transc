@@ -27,7 +27,6 @@ export default class SHumansManager {
     }
 
     updateControlState(humanID: number, controlsState: TControlsState) {
-        console.log(this.humans);
         const human = this.humans.find((human => human.id === humanID))
         if (human === undefined) {
             throw new Error (`Server cannot find a human with id ${humanID}, which was requesteb by a client!`)

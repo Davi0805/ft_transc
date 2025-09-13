@@ -113,7 +113,7 @@ class MatchFactory {
                 spriteID: 0 //Maybe should be random? Or a specific bot one?
             })
             userCustoms.bots.push({
-                paddleID: paddleID,
+                paddleID: paddleID++,
                 difficulty: 1
             })
         })

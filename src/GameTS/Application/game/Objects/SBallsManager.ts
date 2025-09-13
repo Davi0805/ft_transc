@@ -88,7 +88,9 @@ export default class SBallsManager {
             if (team != null) {
                 GameEventBus.emit("audioEvent", "wallHit")
                 const died = teamsManager.damageTeam(team, ball.damage);
+                console.log(`After impact, team ${team} died: ${died}`)
                 if (died) {
+                    console.log(`team ${team} died!`)
                     paddlesManager.deactivatePaddles(team);
                 }
             }           
