@@ -5,7 +5,6 @@ import type { InboundDTO, OutboundDTO } from "../../dtos.js";
 import wsAuth from "../../Application/Services/WsAuth.js";
 import lobbyService from "../../Application/Services/LobbyService.js";
 import socketService from "../../Application/Services/SocketService.js";
-import matchService from "../../Application/Services/MatchService.js";
 
 
 class LobbyWsGateway {
@@ -24,14 +23,9 @@ class LobbyWsGateway {
         lobbyService.addUser(lobbyID, userID, session.username, sprite_id, rating);
         socketService.addSocketToRepository(lobbyID, userID, socket);
 
-        const lobby = lobbyService.getLobbyByID(lobbyID);
-        const matchConfigs = matchService.getMatchClientConfigsByUserID(userID);
         const dto: OutboundDTO = {
             requestType: "lobbyInit",
-            data: {
-                lobby: lobby,
-                matchConfigs: matchConfigs
-            }
+            data: lobbyService.getLobbyAndMatchInfoForClient(lobbyID, userID)
         };
         socket.send(JSON.stringify(dto));
         

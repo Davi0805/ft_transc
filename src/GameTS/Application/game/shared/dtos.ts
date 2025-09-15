@@ -40,7 +40,7 @@ export type SGameDTO = {
     audioEvent: AudioEvent | null
 }
 
-export type AudioEvent = "paddleHit" | "wallHit" | "damageHit" | "faster" | "slower" | "longer" | "shorter" | "heal" | "bomb" | "skull" | "noHealth"
+export type AudioEvent = "start" | "paddleHit" | "wallHit" | "damageHit" | "faster" | "slower" | "longer" | "shorter" | "heal" | "bomb" | "skull" | "noHealth"
 
 
 // Client to server

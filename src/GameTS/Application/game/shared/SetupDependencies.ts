@@ -1,4 +1,4 @@
-import { SIDES, ROLES, point, TPaddle } from "./sharedTypes.js"
+import { SIDES, ROLES, point, TPaddle, TBall } from "./sharedTypes.js"
 
 export type TControls = {
     left: string,
@@ -72,6 +72,7 @@ export type CGameState = {
         }
     }[]
     paddles: Pick<TPaddle, "id" | "side" | "size" | "speed" | "pos" | "spriteID">[],
+    balls: TBall[],
     gameLength: number
 }
 

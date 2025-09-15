@@ -7,6 +7,7 @@ import socketService from "./SocketService.js";
 import friendlyService from "./FriendlyService.js";
 import rankedService from "./RankedService.js";
 import tournamentService from "./TournamentService.js";
+import matchService from "./MatchService.js";
 
 //When a client wants to see the list of lobbies available, receives an array of these
 export type LobbyForDisplayT = {
@@ -41,6 +42,20 @@ class LobbyService {
 
     getLobbyByID(lobbyID: number) {
         return lobbyRepository.getByID(lobbyID);
+    }
+
+    getLobbyAndMatchInfoForClient(lobbyID: number, userID: number) {
+        const lobby = lobbyService.getLobbyByID(lobbyID);
+        const matchConfigs = matchService.getMatchClientConfigsByUserID(userID);
+        if (matchConfigs) {
+            const match = matchService.getMatchByUserID(userID);
+            if (!match) {throw Error("Match configs exist but no match??")}
+            matchConfigs.gameSceneConfigs.gameInitialState.balls = match.getBallsFullState()
+        }
+        return {
+            lobby: lobby,
+            matchConfigs: matchConfigs
+        }
     }
 
     createLobby(lobbyCreationConfigs: LobbyCreationConfigsT, hostID: number) {

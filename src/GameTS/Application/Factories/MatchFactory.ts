@@ -239,6 +239,7 @@ class MatchFactory {
                 gameInitialState: {
                 teams: [],
                 paddles: [],
+                balls: [],
                 gameLength: gameConfigs.matchLength
                 }
             }

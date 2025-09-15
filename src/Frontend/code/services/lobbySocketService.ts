@@ -40,6 +40,7 @@ class LobbySocketService {
                 }
                 if (!data) {return}
                 if (data.requestType === "lobbyInit") {
+                    console.log(data.data.matchConfigs)
                     resolve(data.data);
                 } else {
                     this._handleMessage(data)
