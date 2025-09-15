@@ -153,6 +153,14 @@
         p-5 pr-[45px] caret-myWhite rounded-3xl;
     }
 
+    .input-box input::placeholder {
+        @apply text-white text-base;
+    }
+
+    .input-box img {
+        @apply absolute right-5 top-1/2 -translate-y-1/2 fill-black;
+    }
+
     .input-settings-disable {
         @apply h-11 rounded-3xl border-2 border-white/20 bg-black/20 px-[20px] py-[20px] pr-[45px] text-base font-medium text-myWhite caret-myWhite outline-none cursor-not-allowed opacity-60;
     }
@@ -249,4 +257,3 @@
         all: unset;
     }
 }
-    
