@@ -9,9 +9,9 @@ export const TwoFactorAuth = {
   renderHTML(): string {
     return `
       <div id="twofa-wrapper" class="w-420 content">
-        <h1 class="title" data-i18n="2fa-title">Two-Factor Authentication</h1>
+        <h1 class="title mb-4" data-i18n="2fa-title">Two-Factor Authentication</h1>
         <p class="text text-center" data-i18n="2fa-text">Enter the verification code to continue</p>
-        <form id="twofa-form">
+        <form id="twofa-form" class="flex flex-col">
           <div id="otp-container">
             <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" autofocus/>
             <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
@@ -20,9 +20,8 @@ export const TwoFactorAuth = {
             <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
             <input type="text" placeholder='X' inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
           </div>
-          <div id="twofacode-error" aria-live="polite" hidden></div>
           <div class="flex justify-center">
-            <button type="submit" class="button" data-i18n="2fa-btn">Verify</button>
+            <button type="submit" class="button active:bg-[#bdbdbd]" data-i18n="2fa-btn">Verify</button>
           </div>
         </form>
       </div>
@@ -73,18 +72,17 @@ export const TwoFactorAuth = {
         const redirectPath = authService.getRedirectAfterLogin();
         router.navigateTo(redirectPath);
       } catch (error) {
-        if ((error as any).status == 401) {
-          const loginError = document.getElementById(
-            "twofacode-error"
-          ) as HTMLElement;
-          loginError.textContent = "Verification code is incorrect!";
-          loginError.hidden = false;
+        if ((error as any).status == 400) {
+          const errorPopup = new ErrorPopup();
+          errorPopup.create(
+            "Invalid Code",
+            "The code you entered is incorrect. Please try again."
+          );
           console.error("DEBUG 2FA code wrong");
         } else {
           console.error(
             "DEBUG: Something went wrong:",
-            (error as any)?.message
-          );
+            (error as any)?.message);
           const errPopup = new ErrorPopup();
           errPopup.create(
             "Error Logging In",
