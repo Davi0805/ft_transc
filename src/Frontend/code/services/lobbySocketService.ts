@@ -40,8 +40,13 @@ class LobbySocketService {
                 }
                 if (!data) {return}
                 if (data.requestType === "lobbyInit") {
-                    console.log(data.data.matchConfigs)
-                    resolve(data.data);
+                    if (data.data === null) {
+                        console.log("the user is already active in a match of another lobby!")
+                        resolve(null);
+                    } else {
+                        console.log(data.data.matchConfigs)
+                        resolve(data.data);
+                    }
                 } else {
                     this._handleMessage(data)
                 }

@@ -20,6 +20,11 @@ class LobbyWsGateway {
         const rating: number = Number(session.rating)
         if (isNaN(lobbyID) || isNaN(userID)) {return;} //TODO: probably return some error instead?
 
+        if (lobbyService.isUserInAnotherMatch(lobbyID, userID)) {
+            console.log("A user is trying to enter in a lobby while active in another match!")
+            socket.close(1000, "The user is already active in another match");
+            return;
+        }
         lobbyService.addUser(lobbyID, userID, session.username, sprite_id, rating);
         socketService.addSocketToRepository(lobbyID, userID, socket);
 

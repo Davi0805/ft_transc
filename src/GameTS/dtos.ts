@@ -59,7 +59,7 @@ export type OutboundDTOMap = {
     lobbyInit: {
         lobby: LobbyT,
         matchConfigs: CAppConfigs | null
-    },
+    } | null, //In case the user is already in a lobby
 
     //Client joins lobby. THIS IS SENT TO EVERYONE BUT THE CLIENT WHO JUST JOINED
     addLobbyUser: {

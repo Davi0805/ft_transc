@@ -24,8 +24,13 @@ class LobbyService {
     isUserInAnotherMatch(lobbyID: number, userID: number) {
         console.log("isUserInALobbyCalled")
         const matchInfo = matchService.getMatchInfoByUserID(userID);
-        console.log(matchInfo)
-        console.log("\n\n\n\n\n\n\n\n\n\n");
+        if (matchInfo) {
+            console.log(`The matchInfo says that the lobby where the match is has an id of ${matchInfo?.lobbyID}`)
+            console.log(`And the lobbyID that the user is trying to get into is ${lobbyID}`)
+            console.log(`Therefore the user is in another lobby: ${matchInfo && matchInfo.lobbyID != lobbyID}`)            
+            console.log("\n\n\n\n\n\n\n\n\n\n");
+        }
+        
         return matchInfo && matchInfo.lobbyID != lobbyID;
     }
 
@@ -74,11 +79,6 @@ class LobbyService {
     }
 
     addUser(lobbyID: number, userID: number, username: string, spriteID: number, rating: number) {
-        const userMatch = matchService.getMatchByUserID(userID);
-        if (this.isUserInAnotherMatch(lobbyID, userID)) {
-            console.log("A user is trying to get in a lobby when they are already in one! Ignoring");
-            return;
-        }
         const lobby = lobbyRepository.getByID(lobbyID);
         const user = {
             id: userID,

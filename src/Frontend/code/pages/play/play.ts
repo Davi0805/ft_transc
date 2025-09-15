@@ -112,7 +112,8 @@ export const PlayPage = {
     async goToLobby(lobbyId: number) {
         const selfData = await getSelfData();
         const lobbyInfo = await lobbySocketService.connect(lobbyId);
-        if (!lobbyInfo) {throw Error("Socket was already connected somehow!")}
+        if (!lobbyInfo) {return;}
+        
         lobbyService.init(selfData.id, lobbyInfo.lobby);
         if (lobbyInfo.matchConfigs) {
             matchService.startMatchOUT(lobbyInfo.matchConfigs);
