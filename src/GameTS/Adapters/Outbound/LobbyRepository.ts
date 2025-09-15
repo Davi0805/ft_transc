@@ -11,8 +11,14 @@ class LobbyRepository {
 
     getByID(lobbyID: number) {
         const lobby = this._lobbies.find(lobby => lobby.id === lobbyID)
-        if (!lobby) { throw Error(`Lobby with lobbyID ${lobbyID} not found!`)} //TODO: Should it be so strict?
+        //TODO: Currently working because there is a try-catch in the top level, but probably should not. Doublecheck what is the best way
+        //It is genuinely possible for the lobby to not exist, for example, when one it is closed but the /play page in another client is not updated
+        if (!lobby) { throw Error(`Lobby with lobbyID ${lobbyID} not found!`)} 
         return lobby
+    }
+
+    remove(lobbyID: number) {
+        this._lobbies = this._lobbies.filter(lobby => lobby.id !== lobbyID);
     }
 
     private _lobbies: LobbyT[] = [];
