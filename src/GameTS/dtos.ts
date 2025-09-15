@@ -56,7 +56,10 @@ export type InboundDTOMap = {
 export type OutboundDTOMap = {
     //LOBBY DTOS
     //Client joins lobby. THIS IS SENT ONLY TO CLIENT WHO JOINED FOR INITIALIZATION PURPOSES
-    lobby: LobbyT,
+    lobbyInit: {
+        lobby: LobbyT,
+        matchConfigs: CAppConfigs | null
+    },
 
     //Client joins lobby. THIS IS SENT TO EVERYONE BUT THE CLIENT WHO JUST JOINED
     addLobbyUser: {

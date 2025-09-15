@@ -3,6 +3,7 @@ import { lobbySocketService } from "../../services/lobbySocketService";
 import { getAllLobbies } from "../../api/lobbyMatchAPI/getAllLobbiesAPI";
 import { getSelfData } from "../../api/userData/getSelfDataAPI";
 import { lobbyService } from "../../services/LobbyService";
+import { matchService } from "../../services/matchService";
 
 export const PlayPage = {
     template() {
@@ -110,9 +111,14 @@ export const PlayPage = {
     //Logic to get into a lobby
     async goToLobby(lobbyId: number) {
         const selfData = await getSelfData();
-        const lobby = await lobbySocketService.connect(lobbyId);
-        if (!lobby) {throw Error("Socket was already connected somehow!")}
-        lobbyService.init(selfData.id, lobby)
-        router.navigateTo('/lobby')
+        const lobbyInfo = await lobbySocketService.connect(lobbyId);
+        if (!lobbyInfo) {throw Error("Socket was already connected somehow!")}
+        lobbyService.init(selfData.id, lobbyInfo.lobby);
+        if (lobbyInfo.matchConfigs) {
+            matchService.startMatchOUT(lobbyInfo.matchConfigs);
+        } else {
+            router.navigateTo('/lobby');
+        }
+        
     }
 }

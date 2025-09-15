@@ -8,11 +8,12 @@ import socketService from "./SocketService.js";
 import ServerGame from "../game/ServerGame.js";
 import userService from "./UserService.js";
 import { SIDES } from "../game/shared/sharedTypes.js";
+import { CAppConfigs } from "../game/shared/SetupDependencies.js";
 
 class MatchService {
     createAndStartMatch(matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
         const matchInfo = matchFactory.generateMatchInfo(matchSettings, matchPlayers)
-        const match = matchFactory.create(matchInfo.serverConfigs, matchInfo.userIDs);
+        const match = matchFactory.create(matchInfo);
         matchRepository.add(match);
 
         socketService.broadcastToUsers(matchInfo.userIDs, "startMatch", { configs: matchInfo.clientConfigs });
@@ -34,6 +35,12 @@ class MatchService {
         const matchInfo = matchRepository.getInfoByUserID(userID)
         if (!matchInfo) { return null }
         return matchInfo.match;
+    }
+
+    getMatchClientConfigsByUserID(userID: number) {
+        const matchInfo = matchRepository.getInfoByUserID(userID)
+        if (!matchInfo) { return null }
+        return matchInfo.clientConfigs;
     }
 
     getMatchUsersByID(matchID: number) {

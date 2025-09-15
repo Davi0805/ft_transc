@@ -28,9 +28,14 @@ export type MatchMapT = "2-players-small" | "2-players-medium" | "2-players-big"
 export type MatchModeT = "classic" | "modern"
 export type MatchDurationT = "blitz" | "rapid" | "classical" | "long" | "marathon"
 
+export type MatchInfoT = {
+    clientConfigs: CAppConfigs,
+    serverConfigs: SGameConfigs,
+    userIDs: number[]
+}
 
 class MatchFactory {
-    generateMatchInfo(settings: MatchSettingsT, players: MatchPlayerT[]) {
+    generateMatchInfo(settings: MatchSettingsT, players: MatchPlayerT[]): MatchInfoT {
         const userCustoms: TUserCustoms = this._buildUserCustoms(settings, players);
         const gameSettings: TGameConfigs = this._applyDevCustoms(userCustoms);
         const serverConfigs: SGameConfigs = this._buildSGameConfigs(gameSettings);
@@ -50,12 +55,13 @@ class MatchFactory {
         };
     }
 
-    create(matchConfigs: SGameConfigs, users: number[]) {
-        const game = new ServerGame(matchConfigs);
+    create(matchInfo: MatchInfoT) {
+        const game = new ServerGame(matchInfo.serverConfigs);
         const matchToSave = {
             id: this._currentID++,
+            clientConfigs: matchInfo.clientConfigs,
             match: game,
-            userIDs: users,
+            userIDs: matchInfo.userIDs,
             broadcastLoop: new LoopController(60)
         }
         return matchToSave

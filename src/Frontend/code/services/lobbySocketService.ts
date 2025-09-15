@@ -1,9 +1,14 @@
+import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies";
 import { InboundDTOMap, InboundDTO, OutboundDTO, TLobby } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
 import { lobbyService } from "./LobbyService";
 import { matchService } from "./matchService";
 import { tournamentService } from "./tournamentService";
 
+type TLobbyInfo = {
+    lobby: TLobby,
+    matchConfigs: CAppConfigs | null
+}
 
 class LobbySocketService {
     constructor() {
@@ -11,7 +16,7 @@ class LobbySocketService {
         this._lobbyID = 0;
     }
 
-    connect(lobbyID: number): Promise<TLobby | null> {
+    connect(lobbyID: number): Promise<TLobbyInfo | null> {
         return new Promise((resolve, _reject) => {
             if (this._ws && this._ws.readyState === WebSocket.OPEN) {
                 console.log("DEBUG: lobbySocket already connected");
@@ -34,7 +39,7 @@ class LobbySocketService {
                     console.error("Error parsing websocket message");
                 }
                 if (!data) {return}
-                if (data.requestType === "lobby") {
+                if (data.requestType === "lobbyInit") {
                     resolve(data.data);
                 } else {
                     this._handleMessage(data)

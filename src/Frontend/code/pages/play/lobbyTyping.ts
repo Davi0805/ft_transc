@@ -156,7 +156,10 @@ export type InboundDTOMap = {
 type TActionBlockReason = "setReadyWithoutJoining" | "notEveryoneReady" | "notAllSlotsFilled" | "fewPlayersForTournament"
 //server should broadcast these after...
 export type OutboundDTOMap = {
-    lobby: TLobby,
+    lobbyInit: {
+        lobby: TLobby,
+        matchConfigs: CAppConfigs | null
+    },
     //host updates the settings. If map changes, users should be filled with the current users so slots can be updated accordingly
     updateSettings: {
         settings: TDynamicLobbySettings
