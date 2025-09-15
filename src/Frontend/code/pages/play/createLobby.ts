@@ -139,6 +139,10 @@ export const CreateLobbyPage = {
     }
 
     const lobbyID = await createLobby(lobbySettings)
+    if (lobbyID === -1) {
+      console.log("ERROR: You are already in a lobby!");
+      return;
+    }
     const lobbyInfo = await lobbySocketService.connect(lobbyID);
     if (!lobbyInfo) {throw Error("Socket was already connected somehow!")}
     lobbyService.init(selfData.id, lobbyInfo.lobby)

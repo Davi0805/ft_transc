@@ -17,7 +17,7 @@ class RankedService {
             socketService.broadcastToUsers([senderID], "actionBlock", { reason: "notAllSlotsFilled" })
             return;
         }
-        const matchID = matchService.createAndStartMatch(lobby.matchSettings, matchPlayers);
+        const matchID = matchService.createAndStartMatch(lobby.id, lobby.matchSettings, matchPlayers);
 
         const loop = () => {
             const matchResult = matchService.getMatchResultByID(matchID);

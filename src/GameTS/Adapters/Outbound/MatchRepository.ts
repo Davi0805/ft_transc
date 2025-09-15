@@ -6,6 +6,7 @@ import ServerGame from "../../Application/game/ServerGame.js";
 
 type MatchT = {
     id: number,
+    lobbyID: number,
     clientConfigs: CAppConfigs
     match: ServerGame,
     userIDs: number[],
@@ -39,6 +40,12 @@ class MatchRepository {
         const match = this._matches.find(match => match.userIDs.includes(userID))
         if (!match) { return null }
         return match;
+    }
+
+    getInfoByLobbyID(lobbyID: number) {
+        const matchInfo = this._matches.find(match => match.lobbyID === lobbyID);
+        if (!matchInfo) { return null };
+        return matchInfo;
     }
 
     private _matches: MatchT[] = []

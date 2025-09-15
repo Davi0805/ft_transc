@@ -87,7 +87,7 @@ class TournamentService {
         //Start all matches
         for (let i = 0; i < pairings.length; i++) {
             const matchPlayers = this._getMatchPlayers(pairings[i]);
-            const matchID = matchService.createAndStartMatch(tournament.matchSettings, matchPlayers)
+            const matchID = matchService.createAndStartMatch(tournament.lobbyID, tournament.matchSettings, matchPlayers)
             const currentRound = tournament.rounds.find(round => round.roundNo === tournament.currentRound);
             if (!currentRound) { throw Error("The current round was not initialized")}
 

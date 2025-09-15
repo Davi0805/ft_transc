@@ -11,9 +11,9 @@ import { SIDES } from "../game/shared/sharedTypes.js";
 import { CAppConfigs } from "../game/shared/SetupDependencies.js";
 
 class MatchService {
-    createAndStartMatch(matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
+    createAndStartMatch(lobbyID: number, matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
         const matchInfo = matchFactory.generateMatchInfo(matchSettings, matchPlayers)
-        const match = matchFactory.create(matchInfo);
+        const match = matchFactory.create(lobbyID, matchInfo);
         matchRepository.add(match);
 
         socketService.broadcastToUsers(matchInfo.userIDs, "startMatch", { configs: matchInfo.clientConfigs });
@@ -29,6 +29,12 @@ class MatchService {
         const matchInfo = matchRepository.getInfoByID(matchID);
         if (!matchInfo) { return null; };
         return matchInfo.match;
+    }
+
+    getMatchInfoByUserID(userID: number) {
+        const matchInfo = matchRepository.getInfoByUserID(userID)
+        if (!matchInfo) { return null }
+        return matchInfo;
     }
 
     getMatchByUserID(userID: number): ServerGame | null {

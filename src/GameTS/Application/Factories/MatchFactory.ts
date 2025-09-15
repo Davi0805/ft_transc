@@ -55,10 +55,11 @@ class MatchFactory {
         };
     }
 
-    create(matchInfo: MatchInfoT) {
+    create(lobbyID: number, matchInfo: MatchInfoT) {
         const game = new ServerGame(matchInfo.serverConfigs);
         const matchToSave = {
             id: this._currentID++,
+            lobbyID: lobbyID,
             clientConfigs: matchInfo.clientConfigs,
             match: game,
             userIDs: matchInfo.userIDs,

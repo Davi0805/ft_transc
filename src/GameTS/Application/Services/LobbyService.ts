@@ -8,6 +8,7 @@ import friendlyService from "./FriendlyService.js";
 import rankedService from "./RankedService.js";
 import tournamentService from "./TournamentService.js";
 import matchService from "./MatchService.js";
+import matchRepository from "../../Adapters/Outbound/MatchRepository.js";
 
 //When a client wants to see the list of lobbies available, receives an array of these
 export type LobbyForDisplayT = {
@@ -20,6 +21,14 @@ export type LobbyForDisplayT = {
 
 
 class LobbyService {
+    isUserInAnotherMatch(lobbyID: number, userID: number) {
+        console.log("isUserInALobbyCalled")
+        const matchInfo = matchService.getMatchInfoByUserID(userID);
+        console.log(matchInfo)
+        console.log("\n\n\n\n\n\n\n\n\n\n");
+        return matchInfo && matchInfo.lobbyID != lobbyID;
+    }
+
     getLobbiesForDisplay(): LobbyForDisplayT[] {
         const lobbies = lobbyRepository.getAll();
 
@@ -65,6 +74,11 @@ class LobbyService {
     }
 
     addUser(lobbyID: number, userID: number, username: string, spriteID: number, rating: number) {
+        const userMatch = matchService.getMatchByUserID(userID);
+        if (this.isUserInAnotherMatch(lobbyID, userID)) {
+            console.log("A user is trying to get in a lobby when they are already in one! Ignoring");
+            return;
+        }
         const lobby = lobbyRepository.getByID(lobbyID);
         const user = {
             id: userID,
@@ -84,8 +98,8 @@ class LobbyService {
         const lobby = lobbyRepository.getByID(lobbyID);
         lobby.users = lobby.users.filter(user => user.id !== userID);
         socketService.broadcastToLobby(lobbyID, "removeLobbyUser", { userID: userID })
-        //Automatically close lobby if nobody is in there
-        if (lobby.users.length === 0) {
+        //Automatically close lobby if nobody is in there and no match is active
+        if (lobby.users.length === 0 && !matchRepository.getInfoByLobbyID(lobbyID)) {
             lobbyRepository.remove(lobbyID);
         }
     }

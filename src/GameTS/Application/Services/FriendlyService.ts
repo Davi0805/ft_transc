@@ -15,7 +15,7 @@ class FriendlyService {
         const matchPlayers = this._getMatchPlayers(lobby.users);
         //Contrary to a ranked match, no checking if the slots are full is necessary,
         // because they will be filled by bots
-        const matchID = matchService.createAndStartMatch(lobby.matchSettings, matchPlayers);
+        const matchID = matchService.createAndStartMatch(lobby.id, lobby.matchSettings, matchPlayers);
 
         //The service pools the match result to check if it is finished
         const loop = () => {

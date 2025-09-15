@@ -17,6 +17,12 @@ class LobbyRepository {
         return lobby
     }
 
+    getByUserID(userID: number) {
+        const lobby = this._lobbies.find(lobby => lobby.users.some(user => user.id == userID))
+        if (!lobby) {return null}
+        return lobby
+    }
+
     remove(lobbyID: number) {
         this._lobbies = this._lobbies.filter(lobby => lobby.id !== lobbyID);
     }
