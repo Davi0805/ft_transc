@@ -8,8 +8,10 @@ export class TournamentLobbyRenderer extends ALobbyRenderer {
         super()
     }
 
+    //In the tournament's case, the player table is a simple list of participants
     async renderPlayers(): Promise<void> {
         const participantsElement = document.getElementById('players') as HTMLElement;
+        //Prepares the table of participants that will be updated when someone joins
         const participantsTableElement = document.createElement("div");
         participantsTableElement.id = "participants-table";
         participantsTableElement.className = "h-full"
@@ -17,6 +19,7 @@ export class TournamentLobbyRenderer extends ALobbyRenderer {
 
         this._renderTournamentTable()
         
+        //The join/withdraw button at the bottom
         const joinWithdrawButton = getButton("btn-join-withdraw", "button", "Join", false)
         joinWithdrawButton.addEventListener("click", () => {
             const state = toggleButton(joinWithdrawButton, "Withdraw", "Join")
@@ -28,11 +31,13 @@ export class TournamentLobbyRenderer extends ALobbyRenderer {
     }
 
     async updatePlayers(): Promise<void> {
+        //Only updates the table (NOT the join button!)
         this._renderTournamentTable()
     }
 
     private _renderTournamentTable() {
         //Info from service
+        // Check TTournamentParticipant type for the info that is returned
         const tournamentParticipants = lobbyService.getTournPlayers();
 
         const tableElement = document.getElementById("participants-table");

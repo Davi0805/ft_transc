@@ -2,7 +2,6 @@ import { LobbyPage } from "../pages/play/lobby";
 import { TSlots } from "../pages/play/utils/helpers";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
-//import { lobbySocketService } from "../testServices/testLobySocketService"; //TEST
 import { router } from "../routes/router";
 import { matchService} from "./matchService";
 import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournamentParticipant, TMatchPlayer } from "../pages/play/lobbyTyping";
@@ -29,9 +28,7 @@ class LobbyService {
 
 
 
-    getSlots(): TSlots {
-        if (!this._lobby) { throw Error("getSlots should not be called before lobby is initialized!")}
-        
+    getSlots(): TSlots {        
         const mapSlots = getSlotsFromMap(this.lobby.matchSettings.map);
         const matchPlayers = this.getMatchPlayers()
 
@@ -111,7 +108,11 @@ class LobbyService {
         this.lobby.matchSettings.map = settings.map
         this.lobby.matchSettings.mode = settings.mode
         this.lobby.matchSettings.duration = settings.duration
-        LobbyPage.updateSettings();
+        LobbyPage.renderer?.renderSettings(
+            this.lobby.type,
+            this.lobby.matchSettings,
+            this.amIHost()
+        )
         if (updatedUsers && this.lobby.type !== "tournament") {
             this.lobby.users = updatedUsers
             LobbyPage.renderer?.renderPlayers()

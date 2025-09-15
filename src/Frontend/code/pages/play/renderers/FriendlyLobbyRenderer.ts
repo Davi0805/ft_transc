@@ -20,17 +20,20 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
         roleName: (keyof typeof ROLES)
     ): void {
         const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
+        //As this is a friendly match, the customize player window should show up when the join button is clicked
         slotJoinElement.addEventListener('click', async () => this.renderCustomizePlayerWindow(SIDES[teamName], ROLES[roleName]))
         slotSpaceElement.appendChild(slotJoinElement);
     }
 
+
     protected _renderWithdrawButton(playerDiv: HTMLDivElement, player: TPlayerInSlot): void {
         const withdrawButton = getButton("btn-withdraw", "button", "X", false);
+        //Withdraw the right type of player when the withdraw button is clicked
         withdrawButton.addEventListener("click", () => withdrawFriendlyClicked(player.id))
         playerDiv.appendChild(withdrawButton);
     }
 
-    renderCustomizePlayerWindow(team: SIDES, role: ROLES) {
+    private renderCustomizePlayerWindow(team: SIDES, role: ROLES) {
         const directions = getDirectionsFromTeam(team);
         
         const leftKey = "Arrow" + directions.left

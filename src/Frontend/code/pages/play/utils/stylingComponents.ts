@@ -26,6 +26,7 @@ export function setupKeyCaptureButton(button: HTMLButtonElement, inputElement: H
   });
 }
 
+//This helper simply creates a button with the specified options
 export function getButton(id: string, type: TButton, text: string, big = true) {
     const out = document.createElement("button");
     out.id = id;
@@ -61,7 +62,9 @@ export function getTable(id: string, headHtml: string, bodyHtml: string) {
 }
 
 export function toggleButton(button: HTMLButtonElement, onText: string, offText: string): boolean {
+    //First toggle the button by changing its "active" state
     const isActive = button.classList.toggle('active');
+    //Then change the visual aspects of the button
     button.textContent = isActive ? onText : offText;
     button.classList.toggle('bg-gray-900/50', !isActive);
     button.classList.toggle('bg-gray-900/25', isActive);

@@ -26,27 +26,24 @@ export const LobbyPage = {
     },
 
     async init() {
+        //Creates the correct renderer according to the lobby type
+        //See Doc at /Doc/Game/LobbyRenderersStructure for details
         this.renderer = createLobbyRenderer(lobbyService.lobby.type)
+        //Renders the title and subtitle
         this.renderer.renderTitles(lobbyService.lobby.name);
+        //Renders the players of the lobby (left half of the screen). Either the slots or the tournament participants
         this.renderer.renderPlayers();
 
+        //Renders the settings (right half, top)
         await this.renderer.renderSettings(
             lobbyService.lobby.type,
             lobbyService.lobby.matchSettings,
             lobbyService.amIHost()
         );
+
+        //Renders the buttons on the bottom right half of the screen
         await this.renderer.renderActionButtons(lobbyService.amIHost());
 
         console.log('Lobby Ranked page loaded!')
-    },
-
-    updateSettings() {
-        if (this.renderer) {
-            this.renderer.renderSettings(
-                lobbyService.lobby.type,
-                lobbyService.lobby.matchSettings,
-                lobbyService.amIHost()
-            );
-        }
     },
 }
