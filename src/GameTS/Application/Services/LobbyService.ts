@@ -69,6 +69,10 @@ class LobbyService {
         const lobby = lobbyRepository.getByID(lobbyID);
         lobby.users = lobby.users.filter(user => user.id !== userID);
         socketService.broadcastToLobby(lobbyID, "removeLobbyUser", { userID: userID })
+        //Automatically close lobby if nobody is in there
+        if (lobby.users.length === 0) {
+            lobbyRepository.remove(lobbyID);
+        }
     }
 
     updateSettings(lobbyID: number, senderID: number, newSettings: MatchSettingsT) {
