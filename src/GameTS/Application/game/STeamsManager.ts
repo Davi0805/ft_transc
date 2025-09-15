@@ -1,10 +1,11 @@
-import { GameEventBus } from "./EventBus.js";
+import EventEmitter from "events";
 import { TMatchResult } from "./ServerGame.js";
 import { SIDES } from "./shared/sharedTypes.js";
 import STeam from "./STeam.js";
 
 export default class STeamsManager {
-    constructor(teamsConfig: { side: SIDES; score: number; }[]) {
+    constructor(teamsConfig: { side: SIDES; score: number; }[], audioBus: EventEmitter) {
+        this._audioBus = audioBus;
         teamsConfig.forEach(team => {
             this._teams.push(new STeam(
                 team.side, team.score
@@ -16,7 +17,7 @@ export default class STeamsManager {
         const team = this._teams.find(team => team.side == side)
         if (team && team.place === 0) {
             team.score -= damage;
-            GameEventBus.emit("audioEvent", "damageHit")
+            this._audioBus.emit("audioEvent", "damageHit")
             if (team.score <= 0) {
                 const losers = this.teams.filter(team => team.place !== 0);
                 team.place = this.teams.length - losers.length
@@ -55,4 +56,6 @@ export default class STeamsManager {
 
     private _teams: STeam[] = []
     get teams(): STeam[] { return this._teams; }
+
+    private _audioBus: EventEmitter;
 }

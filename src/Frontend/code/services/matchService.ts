@@ -77,8 +77,6 @@ class MatchService {
             const dto = (event as CustomEvent).detail;
             lobbySocketService.send("updateGame", dto);
         }
-        console.log("The following configs will be used: ");
-        console.log(this.configs);
         await App.init(this.configs, sendToServerFunc, root);
     }
 

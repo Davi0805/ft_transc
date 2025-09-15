@@ -6,7 +6,7 @@ import STeamsManager from "./STeamsManager.js";
 import BotsManager from "./Players/SBotsManager.js";
 import SBallsManager from "./Objects/SBallsManager.js";
 import SPaddlesManager from "./Objects/SPaddlesManager.js";
-import { GameEventBus } from "./EventBus.js";
+import EventEmitter from "events";
 
 export type SGameConfigs = {
     window: Pick<TWindow, "size">,
@@ -34,18 +34,20 @@ export default class ServerGame {
     //and then apply to it applyDevCustoms() and buildSGameConfigs() to the result of that.
     //See server.ts for example
     constructor(gameOpts: SGameConfigs) {
+        const audioBus = new EventEmitter()
+
         this._windowSize = gameOpts.window.size;
         this._matchLength = gameOpts.matchLength;
         this._timeLeft = 3; // the initial countdown before the match starts
-        this._ballsManager = new SBallsManager(this._windowSize, gameOpts.powerupsActive);
-        this._teamsManager = new STeamsManager(gameOpts.teams)
+        this._ballsManager = new SBallsManager(this._windowSize, gameOpts.powerupsActive, audioBus);
+        this._teamsManager = new STeamsManager(gameOpts.teams, audioBus)
         this._paddlesManager = new SPaddlesManager(gameOpts.paddles, this.windowSize);
         this._humansManager = new SHumansManager(gameOpts.humans, this._paddlesManager.paddles);
         this._botsManager = new BotsManager(gameOpts.bots, this._paddlesManager.paddles, this.windowSize);
         this._gameLoop = new LoopController(90);
         this._audioEvent = null;
         
-        GameEventBus.on("audioEvent", (audioEvent: AudioEvent) => {
+        audioBus.on("audioEvent", (audioEvent: AudioEvent) => {
             this._audioEvent = audioEvent;
         })
     }

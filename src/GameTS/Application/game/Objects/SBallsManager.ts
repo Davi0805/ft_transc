@@ -6,15 +6,17 @@ import { getRandomInt } from "../shared/sharedUtils.js";
 import STeamsManager from "../STeamsManager.js";
 import LoopController from "../LoopController.js";
 import SPaddlesManager from "./SPaddlesManager.js";
-import { GameEventBus } from "../EventBus.js";
+import EventEmitter from "events";
 
 
 export default class SBallsManager {
-    constructor(windowSize: point, powerupsActive: boolean) {
+    constructor(windowSize: point, powerupsActive: boolean, audioBus: EventEmitter) {
         this._windowSize = windowSize;
         this._ballSpawnRate = 4;
         this._currentID = 0;
         this._powerupsActive = powerupsActive;
+
+        this._audioBus = audioBus;
     }
 
     update(loop: LoopController) {
@@ -86,11 +88,9 @@ export default class SBallsManager {
                 team = SIDES.BOTTOM
             }
             if (team != null) {
-                GameEventBus.emit("audioEvent", "wallHit")
+                this._audioBus.emit("audioEvent", "wallHit")
                 const died = teamsManager.damageTeam(team, ball.damage);
-                console.log(`After impact, team ${team} died: ${died}`)
                 if (died) {
-                    console.log(`team ${team} died!`)
                     paddlesManager.deactivatePaddles(team);
                 }
             }           
@@ -102,7 +102,7 @@ export default class SBallsManager {
             const ball = this.balls[i];
             const collisionSide = ball.cbox.areColliding(paddle.cbox);
             if (collisionSide !== null) {
-                GameEventBus.emit("audioEvent", "paddleHit")
+                this._audioBus.emit("audioEvent", "paddleHit")
                 if (ball.type === BALL_TYPES.BASIC) {
                     this._computeCollisionResult(collisionSide, ball, paddle);
                 } else {
@@ -146,6 +146,8 @@ export default class SBallsManager {
 
     private _currentID: number;
 
+    private _audioBus: EventEmitter;
+
     private _computeCollisionResult(collisionSide: SIDES, ball: SBall, paddle: SPaddle) {
         switch (collisionSide) {
             case SIDES.LEFT: {
@@ -179,32 +181,32 @@ export default class SBallsManager {
         switch (type) {
             case (BALL_TYPES.EXPAND): {
                 paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: 20 }))
-                GameEventBus.emit("audioEvent", "longer")
+                this._audioBus.emit("audioEvent", "longer")
                 break;
             }
             case (BALL_TYPES.SHRINK): {
                 paddle.size = paddle.size.add(Point.fromObj({ x: 0, y: -20 }))
-                GameEventBus.emit("audioEvent", "shorter")
+                this._audioBus.emit("audioEvent", "shorter")
                 break;
             }
             case (BALL_TYPES.SPEED_UP): {
                 paddle.speed += 100
-                GameEventBus.emit("audioEvent", "faster")
+                this._audioBus.emit("audioEvent", "faster")
                 break;
             }
             case (BALL_TYPES.SLOW_DOWN): {
                 paddle.speed -= 100
-                GameEventBus.emit("audioEvent", "slower")
+                this._audioBus.emit("audioEvent", "slower")
                 break;
             }
             case (BALL_TYPES.EXTRA_BALL): {
                 this.addBallOfType(BALL_TYPES.BASIC)
-                GameEventBus.emit("audioEvent", "spawn")
+                this._audioBus.emit("audioEvent", "spawn")
                 break;
             }
             case (BALL_TYPES.RESTORE): {
                 teamsManager.damageTeam(paddle.side, -ball.damage)
-                GameEventBus.emit("audioEvent", "heal")
+                this._audioBus.emit("audioEvent", "heal")
                 break;
             }
             case (BALL_TYPES.DESTROY): {
@@ -213,12 +215,12 @@ export default class SBallsManager {
                         teamsManager.damageTeam(team, ball.damage);
                     }
                 }
-                GameEventBus.emit("audioEvent", "bomb");
+                this._audioBus.emit("audioEvent", "bomb");
                 break;
             }
             case (BALL_TYPES.MASSIVE_DAMAGE): {
                 teamsManager.damageTeam(paddle.side, ball.damage * 10)
-                GameEventBus.emit("audioEvent", "skull")
+                this._audioBus.emit("audioEvent", "skull")
                 break;
             }
             case (BALL_TYPES.MYSTERY): {

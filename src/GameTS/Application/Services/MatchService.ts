@@ -1,7 +1,6 @@
 import type { CGameDTO } from "../game/shared/dtos.js";
 import type { MatchPlayerT, MatchSettingsT } from "../Factories/MatchFactory.js";
 import type { TMatchResult } from "../game/ServerGame.js";
-import type { UserT } from "../../Adapters/Outbound/UserRepository.js";
 
 import matchFactory from "../Factories/MatchFactory.js";
 import matchRepository from "../../Adapters/Outbound/MatchRepository.js";
