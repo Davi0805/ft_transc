@@ -411,11 +411,25 @@ export class Chat {
 
     // Close on backdrop click
     dialog.addEventListener("click", (e: MouseEvent) => {
-      if (e.target === dialog) {
-        // if i click on something that is a child its not the dialog(backdrop is tho!)
+      const rect = dialog.getBoundingClientRect();
+      const clickInside =
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom;
+
+      if (!clickInside) {
         closeHandler();
       }
     });
+
+    // esc key closes dialog
+    dialog.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeHandler();
+      }
+    });
+
 
     const requestsContainer = document.querySelector(".requests-container");
     if (requestsContainer instanceof HTMLDivElement) {

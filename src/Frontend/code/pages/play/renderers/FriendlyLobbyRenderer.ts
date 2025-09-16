@@ -133,6 +133,30 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
             settingsDialog.remove();
         })
         settingsDialog.showModal();
+
+         // Close on backdrop click
+        settingsDialog.addEventListener("click", (e: MouseEvent) => {
+            const rect = settingsDialog.getBoundingClientRect();
+            const clickInside =
+                e.clientX >= rect.left &&
+                e.clientX <= rect.right &&
+                e.clientY >= rect.top &&
+                e.clientY <= rect.bottom;
+
+            if (!clickInside) {
+                settingsDialog.close();
+                settingsDialog.remove();
+            }
+        });
+
+        // esc key closes settingsDialog
+        settingsDialog.addEventListener("keydown", (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                settingsDialog.close();
+                settingsDialog.remove();
+            }
+        });
+
     }
 
     protected readonly subtitleText: string = "Friendly Match Lobby";
