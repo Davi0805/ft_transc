@@ -22,8 +22,8 @@ class MatchService {
     }
 
     async onEndOfMatch(result: TMatchResult) {
-        //TODO render the end page
-        this.destroy()
+        //TODO render the end page. Still in App?
+        App.unsetSendToServerFunc();
     }
 
     

@@ -47,14 +47,6 @@ class Header {
             class="nav-link"
             >Play</a
           >
-          <a
-            id="about-link"
-            href="/about"
-            data-link
-            data-i18n="header-about"
-            class="nav-link"
-            >About</a
-          >
 
           <!-- <div id="log-reg" class="log-reg flex gap-24"></div>
 
