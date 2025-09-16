@@ -106,11 +106,11 @@ class ChatWindow {
 
   createElement(): void {
     this.element = document.createElement("div");
-    this.element.className = "chat-window";
+    this.element.className = "chat-window animate-slideInUp";
     this.element.innerHTML = `
         <div class="chat-header">
             <img src="${this.friendAvatar}" width="30" height="30" alt="${this.friendName}">
-            <span class="friend-name">${this.friendName}</span>
+            <span class="friend-name truncate">${this.friendName}</span>
             <button class="minimize-btn">−</button>
             <button class="close-btn">×</button>
         </div>

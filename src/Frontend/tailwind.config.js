@@ -33,10 +33,16 @@ module.exports = {
         progressBar: {
           'from': { width: '100%' },
           'to': { width: '0%' },
-        }
+        },
+        slideInUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         progressBar: 'progressBar 5s linear forwards',
+        slideInUp: "slideInUp 0.3s ease-out",
+        
       }
     },
   },

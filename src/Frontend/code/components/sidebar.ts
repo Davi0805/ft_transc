@@ -139,7 +139,7 @@ export class Chat {
       <dialog class="friend-requests-wrapper" id="friendRequestsDialog" >
         <button class="close-dialog-btn">&times;</button> <!-- onclick="closeDialog()" -->
 
-        <h1 class="title friend-request-header">Friend Requests</h1>
+        <h1 class="friend-request-header">Friend Requests</h1>
 
         <div class="requests-container"></div>
       </dialog>
