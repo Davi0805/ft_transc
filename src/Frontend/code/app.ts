@@ -1,7 +1,4 @@
 import "../css/tailwind.css";
-import "../css/sidebar/chat.css";
-import "../css/sidebar/friend-requests.css";
-
 
 import { authService } from "./services/authService";
 import { header } from "./components/header";
