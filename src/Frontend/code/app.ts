@@ -1,5 +1,4 @@
 import "../css/tailwind.css";
-import "../css/header/header.css";
 import "../css/sidebar/chat.css";
 import "../css/sidebar/friend-requests.css";
 

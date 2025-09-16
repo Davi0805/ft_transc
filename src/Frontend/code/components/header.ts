@@ -18,7 +18,7 @@ class Header {
     headerElement.className = "fixed top-0 left-0 right-0 z-10 h-[60px] py-2 px-6 \
                               flex gap-6 bg-[#172332] border-b-2 border-b-[#00000066]";
     headerElement.innerHTML = `
-      <div class="flex items-center justify-center flex-0">
+      <div class="flex items-center justify-center flex-none">
         <a href="/" class="flex items-center justify-center gap-2" data-link>
           <img
             class="mr-6 h-10 w-auto"
