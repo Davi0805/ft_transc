@@ -21,8 +21,9 @@ class LobbyService {
     }
 
     async return(lobby: TLobby) {
+        matchService.destroy();
+
         this._lobby = lobby;
-        
         await router.navigateTo("/lobby")
     }
 
