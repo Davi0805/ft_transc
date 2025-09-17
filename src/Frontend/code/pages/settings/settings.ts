@@ -12,6 +12,11 @@ import { BlockedStatus, getBlockedUsers } from "../../api/block/getAllBlockedAPI
 import { getUserAvatarById } from "../../api/userData/getUserAvatarAPI";
 import { unblockByUserID } from "../../api/block/unblockByIDAPI";
 import { blockByUserName } from "../../api/block/blockByUsernameAPI";
+import { PaddleCarrossel } from "../../components/carrossel/paddleCarrossel";
+import { setupKeyCaptureButton } from "../play/utils/stylingComponents";
+import { savePlayerPreferences } from "../../api/settings/preferences/savePlayerPreferencesAPI";
+import { getPlayerPreferences} from "../../api/settings/preferences/getPlayerPreferencesAPI";
+import { PlayerPreferences } from "../../api/settings/preferences/PreferenceInterface";
 
 export const SettingsPage = {
   template() {
@@ -52,6 +57,7 @@ export const SettingsPage = {
                 <!-- NAVBAR -->
                 <div class="navbar mt-4 w-full text-center">
                   <button id="settings-account" class="transition- w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100 settings-active">Account</button>
+                  <button id="settings-preferences" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Preferences</button>
                   <button id="settings-security" class="w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Security</button>
                   <button id="settings-social" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Social</button>
                 </div>
@@ -79,44 +85,44 @@ export const SettingsPage = {
     const email = authService.userEmail;
 
     return `
-                    <h1 class="mb-6 text-4xl font-bold">Settings</h1>
-                    <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Account</h2>
+            <h1 class="mb-6 text-4xl font-bold">Settings</h1>
+            <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Account</h2>
 
-                    <div class="info flex-1 space-y-6">
-                      <!-- Username -->
-                      <div class="flex items-center space-x-3">
-                        <label for="settings-username" class="w-20 font-semibold">Username</label>
-                        <input id="settings-username" type="text" value="${username}" disabled readonly 
-                        class="input-settings-disable" />
-                        <span class="text-sm text-gray-400">🔒</span>
-                      </div>
+            <div class="info flex-1 space-y-6">
+              <!-- Username -->
+              <div class="flex items-center space-x-3">
+                <label for="settings-username" class="w-20 font-semibold">Username</label>
+                <input id="settings-username" type="text" value="${username}" disabled readonly 
+                class="input-settings-disable" />
+                <span class="text-sm text-gray-400">🔒</span>
+              </div>
 
-                      <!-- Email -->
-                      <div class="flex items-center space-x-3">
-                        <label for="settings-email" class="w-20 font-semibold">Email</label>
-                        <input id="settings-email" type="text" value="${email}" disabled readonly 
-                        class="input-settings-disable" />
-                        <span class="text-sm text-gray-400">🔒</span>
-                      </div>
-                      
-                      <!-- Name -->
-                      <form>
-                        <div class="flex items-center space-x-3">
-                          <label for="settings-name" class="w-20 font-semibold">Name</label>
-                          <input id="settings-name" type="text" value="${nickname}" 
-                            pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
-                            required
-                            title="Name must be 2–40 characters long and can include letters and spaces"
-                            class="input-settings" />
-                          <span class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</span>
-                        </div>
-                        
-                        <!-- Save button -->
-                        <div class="mt-auto flex justify-end pt-6">
-                          <button id="save-btn" type="submit" class="btn-settings ">Save</button>
-                        </div>
-                      </form>
-                     `;
+              <!-- Email -->
+              <div class="flex items-center space-x-3">
+                <label for="settings-email" class="w-20 font-semibold">Email</label>
+                <input id="settings-email" type="text" value="${email}" disabled readonly 
+                class="input-settings-disable" />
+                <span class="text-sm text-gray-400">🔒</span>
+              </div>
+              
+              <!-- Name -->
+              <form>
+                <div class="flex items-center space-x-3">
+                  <label for="settings-name" class="w-20 font-semibold">Name</label>
+                  <input id="settings-name" type="text" value="${nickname}" 
+                    pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
+                    required
+                    title="Name must be 2–40 characters long and can include letters and spaces"
+                    class="input-settings" />
+                  <span class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</span>
+                </div>
+                
+                <!-- Save button -->
+                <div class="mt-auto flex justify-end pt-6">
+                  <button id="save-btn" type="submit" class="btn-settings ">Save</button>
+                </div>
+              </form>
+              `;
   },
 
   getSecurityHTML(): string {
@@ -204,6 +210,66 @@ export const SettingsPage = {
     `;
   },
 
+  getPreferencesHTML(): string {
+    return `
+          <h1 class="mb-6 text-4xl font-bold">Settings</h1>
+          <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Preferences</h2>
+
+          <form id="player-settings" method="dialog">
+            <!-- Alias Section -->
+            <div class="flex items-center space-x-3 mb-6">
+              <label for="player-alias" class="w-20 block text-base font-semibold text-white mb-2">Alias</label>
+              <input
+                id="player-alias"
+                name="player-alias"
+                type="text"
+                class="input-settings"
+                placeholder="Enter your alias"
+                required
+              />
+            </div>
+
+            <!-- Paddle Section -->
+            <div class="flex items-center space-x-3 mb-6">
+              <h3 class="w-20 block text-base font-semibold text-white mb-2">Paddle</h3>
+              ${PaddleCarrossel.getPaddleCarrosselHTML()}
+            </div>
+
+
+
+            <!-- Controls Section -->
+            <div class="flex gap-20 items-center justify-center mb-6">
+              <div class="flex flex-col justify-center gap-1">
+                  <label for="up-config" class="block text-base font-semibold text-white text-center">Up Button</label>
+                  <button 
+                      type="button" 
+                      id="up-config" 
+                      class="px-2 py-1.5 bg-slate-600/80 border border-slate-500/50 rounded-xl text-white text-base cursor-pointer transition-all duration-200 text-center font-semibold hover:bg-slate-600/90 hover:border-blue-500 active:bg-blue-500/20"
+                  >ArrowUp</button>
+                  <input type="hidden" id="up-key" name="up-key" value="ArrowUp">
+              </div>
+
+              <div class="flex flex-col justify-center gap-1">
+                  <label for="down-config" class="block text-base font-semibold text-white text-center">Down Button</label>
+                  <button 
+                      type="button" 
+                      id="down-config" 
+                      class="px-2 py-1.5 bg-slate-600/80 border border-slate-500/50 rounded-xl text-white text-base cursor-pointer transition-all duration-200 text-center font-semibold hover:bg-slate-600/90 hover:border-blue-500 active:bg-blue-500/20"
+                  >ArrowDown</button>
+                  <input type="hidden" id="down-key" name="down-key" value="ArrowDown">
+              </div>
+            </div>
+
+
+            <!-- Submit Button -->
+            <div class="-mt-4 flex justify-end ">
+             <button id="save-btn" type="submit" class="btn-settings">Save</button>
+            </div>
+          </form>
+    `;
+
+  },
+
   createBlockedFriendElement(userData: UserData, avatar: string): HTMLElement {
     const newElement = document.createElement("div") as HTMLDivElement;
     newElement.classList = `blocked flex items-center justify-between bg-white/10 rounded-lg px-4 py-2`;
@@ -223,9 +289,9 @@ export const SettingsPage = {
     return newElement;
   },
 
-  currentSection: "account" as "account" | "security" | "social",
+  currentSection: "account" as "account" | "security" | "social" | "preferences",
 
-  setCurretSection(section: "account" | "security" | "social"): void {
+  setCurrentSection(section: "account" | "security" | "social" | "preferences"): void {
     if (SettingsPage.currentSection === section) {
       return;
     }
@@ -287,6 +353,9 @@ export const SettingsPage = {
         content.innerHTML = await SettingsPage.getSocialHTML();
         SettingsPage.initSocialEvents();
         break;
+      case "preferences":
+        content.innerHTML = SettingsPage.getPreferencesHTML();
+        SettingsPage.initPreferencesEvents();
     }
   },
 
@@ -773,6 +842,140 @@ export const SettingsPage = {
     }
   },
 
+  async initPreferencesEvents(): Promise<void> {
+    // load player preferences
+    let prefs: PlayerPreferences;
+    try {
+      //todo  const prefs = await getPlayerPreferences();
+      prefs = {
+        alias: "",
+        paddleID: 3,
+        keybinds: {
+          upKey: "w",
+          downKey: "s",
+        },
+      };
+    } catch (error) {
+      console.error("DEBUG: Error loading player preferences:", error);
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like there was an error loading your preferences. Please refresh and try again."
+      );
+
+      // default prefs
+      prefs = {
+        alias: "",
+        paddleID: 1,
+        keybinds: {
+          upKey: "ArrowUp",
+          downKey: "ArrowDown",
+        },
+      };
+    }
+
+    const aliasInput = document.getElementById("player-alias") as HTMLInputElement;
+    const upKeyInput = document.getElementById("up-key") as HTMLInputElement;
+    const downKeyInput = document.getElementById("down-key") as HTMLInputElement;
+    const paddleInput = document.getElementById("player-paddle") as HTMLInputElement;
+
+    if (prefs && aliasInput && upKeyInput && downKeyInput && paddleInput) {
+      aliasInput.value = prefs.alias;
+      upKeyInput.value = prefs.keybinds.upKey;
+      downKeyInput.value = prefs.keybinds.downKey;
+      paddleInput.value = prefs.paddleID.toString();
+
+      // update button text
+      const upButton = document.getElementById("up-config");
+      const downButton = document.getElementById("down-config");
+      if (upButton) upButton.textContent = prefs.keybinds.upKey;
+      if (downButton) downButton.textContent = prefs.keybinds.downKey;
+    }
+
+    // constructor inits event listeners
+    const paddleCarrossel = new PaddleCarrossel(
+      "paddle-prev",
+      "paddle-next",
+      "paddle-image",
+      "player-paddle"
+    );
+
+    // key capture buttons
+    const upListener = document.getElementById("up-config") as HTMLButtonElement
+    const downListener = document.getElementById("down-config") as HTMLButtonElement
+    const upInput = document.getElementById("up-key") as HTMLInputElement
+    const downInput = document.getElementById("down-key") as HTMLInputElement
+
+    setupKeyCaptureButton(upListener, upInput)
+    setupKeyCaptureButton(downListener, downInput)
+
+
+    // form submit
+    const form = document.getElementById("player-settings");
+    if (!(form instanceof HTMLFormElement)) {
+      console.warn("DEBUG: Form element not found or incorrect.");
+
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly..."
+      );
+      return;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const aliasInput = form.querySelector<HTMLInputElement>("#player-alias");
+      const upKeyInput = form.querySelector<HTMLInputElement>("#up-key");
+      const downKeyInput = form.querySelector<HTMLInputElement>("#down-key");
+      const paddleInput = form.querySelector<HTMLInputElement>("#player-paddle");
+
+      if (!aliasInput || !upKeyInput || !downKeyInput || !paddleInput) {
+        console.error("DEBUG: Preferences inputs not found.");
+
+        const warnPopup = new WarningPopup();
+        warnPopup.create(
+          "Something is strange...",
+          "Seems like the page was not loaded correctly..."
+        );
+        return;
+      }
+
+      try {
+        const newAlias = aliasInput.value.trim();
+        const newUpKey = upKeyInput.value;
+        const newDownKey = downKeyInput.value;
+        const newPaddle = parseInt(paddleInput.value, 10);
+
+        const playerPreferences: PlayerPreferences = {
+          alias: newAlias,
+          paddleID: newPaddle,
+          keybinds: {
+            upKey: newUpKey,
+            downKey: newDownKey,
+          },
+        };
+
+        console.log("DEBUG: Saving player Preferences:", playerPreferences);  
+        // todo await savePlayerPreferences(playerPreferences);
+
+        // UI feedback
+        const succPopup = new SuccessPopup();
+        succPopup.create("Preferences Saved", "Your player preferences have been successfully saved!"); 
+      } catch (error) {
+        console.error("DEBUG: Error parsing preferences input:", error);
+
+        const errPopup = new ErrorPopup();
+        errPopup.create(
+          "Error Saving Preferences",
+          "Seems like there was an error saving your preferences. Please refresh and try again."
+        );
+        return;
+      }
+    });
+
+  },
+
   init(): void {
     SettingsPage.currentSection = "account";
 
@@ -787,11 +990,13 @@ export const SettingsPage = {
         const target = event.target as HTMLElement;
 
         if (target.matches("#settings-account")) {
-          SettingsPage.setCurretSection("account");
+          SettingsPage.setCurrentSection("account");
+        } else if (target.matches("#settings-preferences")) {
+          SettingsPage.setCurrentSection("preferences");
         } else if (target.matches("#settings-security")) {
-          SettingsPage.setCurretSection("security");
+          SettingsPage.setCurrentSection("security");
         } else if (target.matches("#settings-social")) {
-          SettingsPage.setCurretSection("social");
+          SettingsPage.setCurrentSection("social");
         } else if (target.matches("#settings-logout")) {
           authService.logout();
         }
