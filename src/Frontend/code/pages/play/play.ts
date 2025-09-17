@@ -4,6 +4,7 @@ import { getAllLobbies } from "../../api/lobbyMatchAPI/getAllLobbiesAPI";
 import { getSelfData } from "../../api/userData/getSelfDataAPI";
 import { lobbyService } from "../../services/LobbyService";
 import { matchService } from "../../services/matchService";
+import { tournamentService } from "../../services/tournamentService";
 
 export const PlayPage = {
     template() {
@@ -116,6 +117,9 @@ export const PlayPage = {
         
         lobbyService.init(selfData.id, lobbyInfo.lobby);
         if (lobbyInfo.matchConfigs) {
+            if (lobbyInfo.tournamentConfigs) {
+                tournamentService.init(lobbyInfo.tournamentConfigs)
+            }
             matchService.startMatchOUT(lobbyInfo.matchConfigs);
         } else {
             router.navigateTo('/lobby');

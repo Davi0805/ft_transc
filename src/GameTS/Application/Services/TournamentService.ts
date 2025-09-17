@@ -2,7 +2,7 @@ import dbConnection from "../../Adapters/Outbound/DbConnection.js";
 import { tournamentRepository } from "../../Adapters/Outbound/TournamentRepository.js";
 import { LobbyT, LobbyUserT } from "../Factories/LobbyFactory.js";
 import { MatchPlayerT } from "../Factories/MatchFactory.js";
-import tournamentFactory, { TournamentParticipantT } from "../Factories/TournamentFactory.js";
+import tournamentFactory, { ClientTournamentT, TournamentParticipantT } from "../Factories/TournamentFactory.js";
 import { TMatchResult } from "../game/ServerGame.js";
 import { ROLES, SIDES } from "../game/shared/sharedTypes.js";
 import lobbyService from "./LobbyService.js";
@@ -13,16 +13,30 @@ import { Pairing, SwissService } from "./SwissService.cjs";
 
 export type TournamentMatchT = [TournamentParticipantT, TournamentParticipantT];
 
-const STANDINGS_DISPLAY_DURATION = 10 * 1000
-const FINAL_STANDINGS_DISPLAY_DURATION = 10 * 1000
-const PAIRINGS_DISPLAY_DURATION = 10 * 1000
-const END_OF_GAME_DISPLAY_DURATION = 5 * 1000
-const RESULTS_DISPLAY_DURATION = 10 * 1000
+const STANDINGS_DISPLAY_DURATION = 1 * 1000
+const FINAL_STANDINGS_DISPLAY_DURATION = 1 * 1000
+const PAIRINGS_DISPLAY_DURATION = 1 * 1000
+const END_OF_GAME_DISPLAY_DURATION = 1 * 1000
+const RESULTS_DISPLAY_DURATION = 1 * 1000
 const RESULT_POLLING_FREQUENCY = 1000
 
 //The Service responsible for the tournament cycle
 //Note: the tournament is always passed by ID and fetched at each step, just to make sure that the most updated version of it is used
 class TournamentService {
+    getCurrentInfoByLobbyID(lobbyID: number): ClientTournamentT | null {
+        const tournament = tournamentRepository.getByLobbyID(lobbyID);
+        if (!tournament) {return null;}
+        
+        const currentRound = tournament.rounds.find(round => round.roundNo === tournament.currentRound);
+        if (!currentRound) {throw Error("This round must exist")}
+
+        return {
+            currentRound: tournament.currentRound,
+            currentPairings: currentRound.matches.map(pair => pair.playerIDs),
+            participants: tournament.participants
+        }
+    }
+
     start(lobby: LobbyT, senderID: number) {
         const tournamentParticipants = this._getTournamentParticipants(lobby.users);
         if (tournamentParticipants.length < this.MIN_PARTICIPANTS) {
@@ -31,7 +45,7 @@ class TournamentService {
         }
         
         const tournament = tournamentFactory.create(lobby.id, lobby.matchSettings, tournamentParticipants);
-        const tournamentID = tournamentRepository.add(tournament);
+        tournamentRepository.add(tournament);
 
         socketService.broadcastToLobby(lobby.id, "startTournament", null)
         console.log("Tournament starts!");

@@ -15,7 +15,12 @@ class TournamentRepository {
         return tournament;
     }
 
-    private _currentID: number = 0;
+    getByLobbyID(lobbyID: number) {
+        const tournament = this._tournaments.find(tournament => tournament.lobbyID === lobbyID);
+        if (!tournament) {return null}
+        return tournament
+    }
+
     private _tournaments: TournamentT[] = [];
 }
 

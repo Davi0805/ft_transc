@@ -3,11 +3,12 @@ import { InboundDTOMap, InboundDTO, OutboundDTO, TLobby } from "../pages/play/lo
 import { authService } from "./authService";
 import { lobbyService } from "./LobbyService";
 import { matchService } from "./matchService";
-import { tournamentService } from "./tournamentService";
+import { tournamentService, TTournamentDTO } from "./tournamentService";
 
 type TLobbyInfo = {
     lobby: TLobby,
-    matchConfigs: CAppConfigs | null
+    matchConfigs: CAppConfigs | null,
+    tournamentConfigs: TTournamentDTO | null
 }
 
 class LobbySocketService {
@@ -44,7 +45,6 @@ class LobbySocketService {
                         console.log("the user is already active in a match of another lobby!")
                         resolve(null);
                     } else {
-                        console.log(data.data.matchConfigs)
                         resolve(data.data);
                     }
                 } else {

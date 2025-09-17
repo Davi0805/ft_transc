@@ -58,7 +58,7 @@ class LobbyService {
         return lobbyRepository.getByID(lobbyID);
     }
 
-    getLobbyAndMatchInfoForClient(lobbyID: number, userID: number) {
+    getLobbyInfoForClient(lobbyID: number, userID: number) {
         const lobby = lobbyService.getLobbyByID(lobbyID);
         const matchConfigs = matchService.getMatchClientConfigsByUserID(userID);
         if (matchConfigs) {
@@ -66,9 +66,11 @@ class LobbyService {
             if (!match) {throw Error("Match configs exist but no match??")}
             matchConfigs.gameSceneConfigs.gameInitialState.balls = match.getBallsFullState()
         }
+        const tournamentConfigs = tournamentService.getCurrentInfoByLobbyID(lobbyID);
         return {
             lobby: lobby,
-            matchConfigs: matchConfigs
+            matchConfigs: matchConfigs,
+            tournamentConfigs: tournamentConfigs
         }
     }
 

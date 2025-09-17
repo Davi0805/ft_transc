@@ -1,6 +1,6 @@
 import type { FriendlyPlayerT, LobbyT, LobbyUserT, RankedPlayerT } from "./Application/Factories/LobbyFactory.js"
 import type { MatchSettingsT } from "./Application/Factories/MatchFactory.js"
-import type { TournamentParticipantT } from "./Application/Factories/TournamentFactory.js"
+import type { ClientTournamentT, TournamentParticipantT } from "./Application/Factories/TournamentFactory.js"
 import type { TMatchResult } from "./Application/game/ServerGame.js"
 import type { CGameDTO, SGameDTO } from "./Application/game/shared/dtos.js"
 import type { CAppConfigs } from "./Application/game/shared/SetupDependencies.js"
@@ -58,7 +58,8 @@ export type OutboundDTOMap = {
     //Client joins lobby. THIS IS SENT ONLY TO CLIENT WHO JOINED FOR INITIALIZATION PURPOSES
     lobbyInit: {
         lobby: LobbyT,
-        matchConfigs: CAppConfigs | null
+        matchConfigs: CAppConfigs | null,
+        tournamentConfigs: ClientTournamentT | null
     } | null, //In case the user is already in a lobby
 
     //Client joins lobby. THIS IS SENT TO EVERYONE BUT THE CLIENT WHO JUST JOINED

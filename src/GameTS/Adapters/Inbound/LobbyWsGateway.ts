@@ -30,7 +30,7 @@ class LobbyWsGateway {
 
         const dto: OutboundDTO = {
             requestType: "lobbyInit",
-            data: lobbyService.getLobbyAndMatchInfoForClient(lobbyID, userID)
+            data: lobbyService.getLobbyInfoForClient(lobbyID, userID)
         };
         socket.send(JSON.stringify(dto));
         
