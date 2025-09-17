@@ -1,4 +1,4 @@
-import { UserData } from "../../api/userData/getUserDataAPI";
+import { getUserDataById, UserData } from "../../api/userData/getUserDataAPI";
 import { authService } from "../../services/authService";
 import { updateName } from "../../api/settings/updateNameAPI";
 import { updatePassword } from "../../api/settings/updatePasswordAPI";
@@ -8,6 +8,10 @@ import { uploadAvatar } from "../../api/settings/uploadAvatarAPI";
 import { WarningPopup } from "../../utils/popUpWarn";
 import { ErrorPopup } from "../../utils/popUpError";
 import { SuccessPopup } from "../../utils/popUpSuccess";
+import { BlockedStatus, getBlockedUsers } from "../../api/block/getAllBlockedAPI";
+import { getUserAvatarById } from "../../api/userData/getUserAvatarAPI";
+import { unblockByUserID } from "../../api/block/unblockByIDAPI";
+import { blockByUserName } from "../../api/block/blockByUsernameAPI";
 
 export const SettingsPage = {
   template() {
@@ -156,33 +160,63 @@ export const SettingsPage = {
     `;
   },
 
-  getSocialHTML(): string {
+  async getSocialHTML(): Promise<string> {
+    let blockListHTML: string = "";
+
+    try {
+      // fetch all blocked users
+      const blockedUsers = await getBlockedUsers() as BlockedStatus[];
+      for (const block of blockedUsers) {
+        // redundant check cuz davi is a monkey
+        if (block.blocked_user_id !== authService.userID) {
+
+          const userData: UserData = await getUserDataById(block.blocked_user_id);
+          const userAvatar: string = await getUserAvatarById(block.blocked_user_id);
+
+          blockListHTML += this.createBlockedFriendElement(userData, userAvatar).outerHTML; 
+        }
+      }
+    } catch (error) {
+      
+    }
+
+
     return `
           <h1 class="mb-6 text-4xl font-bold">Settings</h1>
           <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Social</h2>
 
           <!-- Blocked Users List -->
-          <h3 class="text-lg font-semibold mb-2">Blocked users</h3>
+          <h3 class="font-semibold mb-2">Blocked users</h3>
 
-          <div id="blocked-users-list" class="overflow-y-auto max-h-[240px] pr-2 space-y-3">
+          <div id="blocked-users-list" class="overflow-y-auto h-[240px] pr-2 space-y-3 no-scrollbar">
             <!-- Will insert blocked users dynamically -->
-            
+              ${blockListHTML.trim() === "" ? "<p>No users on this list.</p>" : blockListHTML}
+          </div>
+
+          <!-- Block User by Username -->
+          <div class="mt-4">
+            <h3 class="font-semibold mb-1">Block User</h3>
+            <div class="flex items-center space-x-3">
+              <input id="username-to-block" type="text" class="input-settings" placeholder="Enter username" />
+              <button id="block-btn"  class="btn-settings">Block</button>
+            </div>
           </div>
     `;
   },
 
   createBlockedFriendElement(userData: UserData, avatar: string): HTMLElement {
     const newElement = document.createElement("div") as HTMLDivElement;
-    newElement.classList = `blocked-${userData.username} flex items-center justify-between bg-white/10 rounded-lg px-4 py-2`;
+    newElement.classList = `blocked flex items-center justify-between bg-white/10 rounded-lg px-4 py-2`;
+    newElement.setAttribute("data-id", userData.user_id.toString());
     newElement.innerHTML = `
         <div class="flex items-center gap-3">
           <img src="${avatar}"
               alt="user-avatar"
               class="w-10 h-10 rounded-full border-2 border-yellow-400" />
-          <span class="font-medium">${userData.name}</span>
+          <span class="font-medium">${userData.username}</span>
         </div>
         <button class="unblock-btn bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-white font-semibold transition duration-200"
-                data-username="${userData.user_id}">
+                data-id="${userData.user_id}">
           Unblock
         </button>
          `;
@@ -229,7 +263,7 @@ export const SettingsPage = {
     test2?.classList.toggle("settings-active");
   },
 
-  updateContent(): void {
+  async updateContent(): Promise<void> {
     const content = document.getElementById("settings-content");
     if (!content) {
       const warnPopup = new WarningPopup();
@@ -250,15 +284,13 @@ export const SettingsPage = {
         SettingsPage.initSecurityEvents();
         break;
       case "social":
-        content.innerHTML = SettingsPage.getSocialHTML();
+        content.innerHTML = await SettingsPage.getSocialHTML();
         SettingsPage.initSocialEvents();
         break;
     }
   },
 
   async initAccountEvents(): Promise<void> {
-    console.log("initAccountEvents called"); // Add this line
-
     const form = document.querySelector("form");
     if (!(form instanceof HTMLFormElement)) {
       console.warn("DEBUG: Form element not found or incorrect.");
@@ -270,10 +302,7 @@ export const SettingsPage = {
       return;
     }
 
-    console.log("About to attach event listener"); // Add this line
-
     form.addEventListener("submit", async (event) => {
-      console.log("submit");
 
       event.preventDefault();
 
@@ -332,8 +361,6 @@ export const SettingsPage = {
         return;
       }
     });
-
-    console.log("Event listener attached successfully"); // Add this line
   },
 
   initEnable2FAEventListeners(): void {
@@ -542,66 +569,127 @@ export const SettingsPage = {
   },
 
   initSocialEvents(): void {
-    // Add blocked friends list
-    // need endpoint for that
-    // this is mock data
-    // add a loop after getting all blocked users and append with somehting like that
-    let user1: UserData = {
-      user_id: 1,
-      name: "panela",
-      username: "aaa-s",
-      email: "a@example.com",
-      spriteID: 0,
-      rating: 1500,
-    };
-
-    let user2: UserData = {
-      user_id: 1,
-      name: "puta",
-      username: "www-s",
-      email: "a@example.com",
-      spriteID: 0,
-      rating: 1600,
-    };
-
-    let user3: UserData = {
-      user_id: 1,
-      name: "pariu",
-      username: "qweqwe-s",
-      email: "a@example.com",
-      spriteID: 0,
-      rating: 1700,
-    };
-
-    let avatar =
-      "https://occ-0-8407-92.1.nflxso.net/dnm/api/v6/Z-WHgqd_TeJxSuha8aZ5WpyLcX8/AAAABUqatshN8F7cMuNtNde6DqnltLSeN4ZVpl00kvU65RKdUO0HqEL1q3hAf3Zfdc2FlRn14S9eBrpEwHDb_LdsWH_iMRbDxdhy8KJx.jpg?r=9b9";
-
-    const blockList = document.getElementById("blocked-users-list");
-    if (!blockList) return;
-
-    const newFriendElement: HTMLElement = this.createBlockedFriendElement(
-      user1,
-      avatar
-    );
-    blockList.insertAdjacentElement("beforeend", newFriendElement);
-
-    const newFriendElement2: HTMLElement = this.createBlockedFriendElement(
-      user2,
-      avatar
-    );
-    blockList.insertAdjacentElement("beforeend", newFriendElement2);
-
-    const newFriendElement3: HTMLElement = this.createBlockedFriendElement(
-      user3,
-      avatar
-    );
-    blockList.insertAdjacentElement("beforeend", newFriendElement3);
-
     // block user by username
     // add the event listener
+    const blockedList = document.getElementById("blocked-users-list");
+    if (!blockedList) {
+      console.error("DEBUG: No blocked list container found.");
+      
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly..."
+      );
+      return;
+    }
 
-    // unblock contact for specific user
-    // btn unblock has data-username="${userData.user_id} so we can use that
+    // event delegation for unblock buttons
+    blockedList.addEventListener("click", async (event) => {
+      const target = event.target as HTMLElement;
+      if (target.classList.contains("unblock-btn")) {
+        const userID = parseInt(target.getAttribute("data-id") || "");
+        if (isNaN(userID)) {
+          console.error("DEBUG: Invalid user id on unblock button.");
+          return;
+        }
+
+        try {
+          // call the unblock API
+          await unblockByUserID(userID);
+          // remove from DOM
+          const blockedDiv = target.closest(
+            ".blocked"
+          ) as HTMLDivElement | null;
+          if (blockedDiv) {
+            blockedDiv.remove();
+          }
+
+          // UI feedback
+          const succPopup = new SuccessPopup();
+          succPopup.create("User Unblocked", "The user was successfully unblocked.");
+        } catch (error) {
+          console.error("DEBUG: Error unblocking user:", error);
+
+          const errPopup = new ErrorPopup();
+          errPopup.create(
+            "Error Unblocking User",
+            "Seems like there was an error unblocking the user. Please refresh and try again."
+          );
+        }
+      }
+    });
+
+
+    // block user by username
+    const blockBtn = document.getElementById("block-btn");
+    const usernameInput = document.getElementById("username-to-block");
+    if (!blockBtn || !usernameInput) {
+      console.error("DEBUG: Block button or username input not found.");
+
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly..."
+      );
+      return;
+    }
+
+    blockBtn.addEventListener("click", async () => {
+      const username = (usernameInput as HTMLInputElement).value.trim();
+      if (!username) {
+        const warnPopup = new WarningPopup();
+        warnPopup.create("Invalid Username", "Please enter a valid username to block.");
+        return;
+      }
+      // todo sanitize check
+      
+      if (username === authService.userUsername) {
+        const warnPopup = new WarningPopup();
+        warnPopup.create("Invalid Username", "You cannot block yourself.");
+        return;
+      }
+
+      try {
+        await blockByUserName(username);
+
+        // refresh the blocked list
+        const socialHTML = await SettingsPage.getSocialHTML();
+        const content = document.getElementById("settings-content");
+        if (content) {
+          content.innerHTML = socialHTML;
+          SettingsPage.initSocialEvents();
+        }
+
+        // check if blocked a friend and update friends list if so
+        if (authService.isUserAuthenticated()) {
+          // returns null if not found
+          const friendConvID = authService.sidebar?.getConvIDByFriendUsername(username);
+          if (friendConvID) {
+            authService.sidebar?.deleteContact(friendConvID);
+          }
+        }
+
+        // UI feedback
+        const succPopup = new SuccessPopup();
+        succPopup.create("User Blocked", `The user ${username} was successfully blocked.`);
+      } catch (error: any) {
+        // todo add code for when username is invalid and for when user has been already blocked
+        // todo note that the backend returns 400 for both cases
+        // todo note that both users can be blocked by each other
+        if (error?.status == 400) {
+          const warnPopup = new WarningPopup();
+          warnPopup.create("Invalid Username", `The username ${username} is invalid. Please check and try again.`);
+          return;
+        }
+        else {
+          const errPopup = new ErrorPopup();
+          errPopup.create("Unexpected Error", `The username ${username} could not be blocked.`);
+          return;
+        } 
+        console.error("DEBUG: Error blocking user:", error);
+      }
+    });
+
   },
 
   initChangeAvatarEventListener(): void {
