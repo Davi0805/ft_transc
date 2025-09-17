@@ -590,4 +590,18 @@ export class Chat {
       }
     });
   }
+
+  // returns null if not found
+  // returns conversation ID
+  getConvIDByFriendID(friendID: number): number | null {
+    const friend = this.friends.find((f) => f.friendID === friendID);
+    return friend ? friend.convID : null;
+  }
+
+  // returns null if not found
+  // returns conversation ID
+  getConvIDByFriendUsername(friendUsername: string): number | null {
+    const friend = this.friends.find((f) => f.friendName === friendUsername);
+    return friend ? friend.convID : null;
+  }
 }
