@@ -39,13 +39,16 @@ export class PaddleCarrossel {
 
     static getPaddleCarrosselHTML(): string {
         return `
-                <div>
+                <div class="w-full">
                     <div class="flex items-center gap-4">
                         <div class="flex-1 flex items-center justify-center h-14 gap-3 p-4 bg-transparent border border-white/30 rounded-lg shadow-lg">
                             <button type="button" class="w-9 h-9 bg-blue-500/20 border border-blue-500/30 rounded-lg text-white flex items-center justify-center cursor-pointer transition-all duration-200 text-lg hover:bg-blue-500/30 hover:border-blue-500/50 active:bg-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed" id="paddle-prev">‹</button>
-                            <div class="flex-1 flex flex-col items-center gap-2">
-                                <img src="Assets/sprites/paddle0.png" class="rotate-90 w-9 h-44 rounded border-2 border-white/30 shadow-lg flex items-center justify-center" id="paddle-image">
+                            <div class="w-44 h-9 flex items-center justify-center relative">
+                            <img src="Assets/sprites/paddle0.png"
+                                class="rotate-90 origin-center w-9 h-44 rounded border-2 border-white/30 shadow-lg"
+                                id="paddle-image">
                             </div>
+
                             <button type="button" class="w-9 h-9 bg-blue-500/20 border border-blue-500/30 rounded-lg text-white flex items-center justify-center cursor-pointer transition-all duration-200 text-lg hover:bg-blue-500/30 hover:border-blue-500/50 active:bg-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed" id="paddle-next">›</button>
                         </div>
                     </div>
