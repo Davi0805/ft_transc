@@ -11,7 +11,7 @@ export async function loginAsUser(
 ): Promise<UserSession> {
   const context = await browser.newContext({
     viewport: { width: 1280, height: 800 }
-  }); // 🔒 Isolated session
+  });
   const page = await context.newPage();
   const loginPage = new LoginPage(page);
 

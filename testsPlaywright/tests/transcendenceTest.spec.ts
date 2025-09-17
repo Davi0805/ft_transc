@@ -41,7 +41,7 @@ test('simply enter', async ({ browser }) => {
     await expect(aPage).toHaveTitle("Lobby");
     const aLobby = new TournamentPage(aPage);
     await aLobby.join(players[0].username);
-    await aLobby.setReady();
+    await aLobby.toggleReady();
     await expect(aPage.getByRole('button', { name: "I'm ready! (cancel...)"})).toHaveText("I'm ready! (cancel...)")
 
 
@@ -58,7 +58,7 @@ test('simply enter', async ({ browser }) => {
         await expect(pPage).toHaveTitle("Lobby");
         const pLobby = new TournamentPage(pPage);
         await pLobby.join(players[i].username);
-        await pLobby.setReady();
+        await pLobby.toggleReady();
         await expect(pPage.getByRole('button', { name: "I'm ready! (cancel...)"})).toHaveText("I'm ready! (cancel...)")
 
 

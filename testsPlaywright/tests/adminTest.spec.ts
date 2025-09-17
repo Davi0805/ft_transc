@@ -6,7 +6,39 @@ import PlayPage from "../dependencies/pages/PlayPage";
 import CreateLobbyPage from "../dependencies/pages/CreateLobbyPage";
 import MatchPage from "../dependencies/pages/MatchPage";
 
-test('Delete repos', async ({ browser }) => {
+test('admin actions are protected', async ({ browser}) => {
+    const { context: uContext, page: uPage } = await loginAsUser(
+        browser, "ndo-vale", "Qwer123$"
+    );
+    await expect(uPage.getByAltText("logout icon")).toBeVisible();
+
+    await uPage.goto(BASE_URL + "/admin");
+    const actionButtons = await uPage.locator('main').getByRole('button').all();
+    for (let i = 0; i < actionButtons.length; i++) {
+        await actionButtons[i].click();
+        await expect(uPage.getByTestId('admin-message')).toHaveText("You cannot do that");
+    }
+    await uPage.waitForTimeout(3000)
+})
+
+test('admin page', async ({ browser }) => {
+    const { context: aContext, page: aPage } = await loginAsUser(
+        browser, "admin", "Qwer123$"
+    );
+    await expect(aPage.getByAltText("logout icon")).toBeVisible();
+
+
+    await aPage.goto(BASE_URL + "/admin");
+    const actionButtons = await aPage.locator('main').getByRole('button').all();
+    for (let i = 0; i < actionButtons.length; i++) {
+        await actionButtons[i].click();
+        await expect(aPage.getByTestId('admin-message')).toHaveText("Action successfull");
+    }
+    await aPage.waitForTimeout(3000)
+
+})
+
+/* test('Delete repos', async ({ browser }) => {
     const { context: aContext, page: aPage } = await loginAsUser(
         browser, "admin", "Qwer123$"
     )
@@ -61,4 +93,4 @@ test('Delete repos', async ({ browser }) => {
     await aPage.waitForTimeout(5000);
 
 
-})
+}) */

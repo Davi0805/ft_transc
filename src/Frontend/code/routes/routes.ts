@@ -9,6 +9,7 @@ import { LobbyPage } from '../pages/play/lobby'
 import { CreateLobbyPage } from '../pages/play/createLobby'
 import { MatchPage } from '../pages/play/match'
 import { TournamentPage } from '../pages/play/tournament'
+import { AdminPage } from '../admin/adminPage'
 
 export interface Route {
     path: string;
@@ -94,6 +95,13 @@ export const routes: Array<Route> = [
         title: 'Match',
         template: MatchPage.template,
         script: MatchPage
+    },
+    //Admin page
+    {
+        path: '/admin',
+        title: 'Admin',
+        template: AdminPage.template,
+        script: AdminPage
     }
     //? additional pages would be put here
 ];
