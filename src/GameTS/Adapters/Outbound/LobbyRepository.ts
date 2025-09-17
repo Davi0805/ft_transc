@@ -27,6 +27,10 @@ class LobbyRepository {
         this._lobbies = this._lobbies.filter(lobby => lobby.id !== lobbyID);
     }
 
+    removeAll() {
+        this._lobbies = [];
+    }
+
     private _lobbies: LobbyT[] = [];
 }
 

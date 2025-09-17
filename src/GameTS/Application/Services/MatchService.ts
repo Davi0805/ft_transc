@@ -81,7 +81,7 @@ class MatchService {
 
     getMatchResultByID(matchID: number) {
         const match = this.getMatchByID(matchID);
-        if (!match) { throw Error("This match result does not exist in repo!")}
+        if (!match) { return undefined }
         return (match.matchResult);
     }
 

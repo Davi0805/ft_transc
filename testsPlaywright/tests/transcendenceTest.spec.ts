@@ -1,119 +1,10 @@
-import { test, expect, Page, Browser, BrowserContext } from '@playwright/test'
+import { test, expect } from '@playwright/test'
+import { loginAsUser } from '../dependencies/helpers';
+import HomePage from '../dependencies/pages/HomePage';
+import PlayPage from '../dependencies/pages/PlayPage';
+import CreateLobbyPage from '../dependencies/pages/CreateLobbyPage';
+import TournamentPage from '../dependencies/pages/TournamentPage';
 
-const BASE_URL = '127.0.0.1:8888';
-
-abstract class APage {
-    constructor(page: Page, url: string | null = null) {
-        this._page = page;
-        this._url = url;
-    }
-
-    async goto() {
-        await this._page.goto(this.url);
-    }
-
-    protected _page: Page;
-
-    private _url: string | null;
-    get url() {
-        if (!this._url) {throw Error("There is no url for this page")}
-        return this._url
-    }
-}
-
-class LoginPage extends APage {
-    constructor(page: Page) {
-        super(page, BASE_URL + "/login");
-    }
-
-    async login(username: string, password: string) {
-        await this._page.getByPlaceholder('Username').fill(username);
-        await this._page.getByPlaceholder('Password').fill(password);
-        await this._page.getByRole("button", { name: "Login"}).click();
-    }
-}
-
-class HomePage extends APage {
-    constructor(page: Page) {
-        super(page, BASE_URL);
-    }
-
-    async goToPlayPage() {
-        await this._page.getByRole("link", { name: "Play Now"}).click();
-    }
-}
-
-class PlayPage extends APage {
-    constructor(page: Page) {
-        super(page, BASE_URL + "/play")
-    }
-
-    async goToCreateLobbyPage() {
-        await this._page.getByRole("button", { name: "New Lobby"}).click();
-    }
-
-    async enterFirstLobby() {
-        await this._page.waitForSelector('table tbody tr');
-        const firstRow = await this._page.locator('table tbody tr:first-child');
-        if (firstRow) {
-                await firstRow.click();
-        }
-    }
-}
-
-class CreateLobbyPage extends APage {
-    constructor(page: Page) {
-        super(page, BASE_URL + "/create-lobby")
-    }
-
-    async createLobby(lobbyName: string, type: string) {
-        await this._page.getByLabel("Name").fill(lobbyName);
-        await this._page.getByLabel("Type").selectOption(type);
-        await this._page.getByRole("button", { name: "Create Lobby"}).click();
-    }
-}
-
-class LobbyPage extends APage {
-    constructor(page: Page) {
-        super(page, BASE_URL + "/lobby")
-    }
-
-    async joinTournament(player: string) {
-        await this._page.getByRole('button', { name: "Join"}).click();
-        await this._page.waitForSelector(`#participants-table tr td:nth-child(2):text("${player}")`);
-    }
-
-    async setReady() {
-        await this._page.getByRole('button', { name: "Ready"}).click();
-        await this._page.getByRole('button', { name: "I'm ready! (cancel...)"}).waitFor();
-    }
-
-    async startTournament() {
-        await this._page.getByRole('button', { name: "Start"}).click();
-        
-    }
-}
-
-type UserSession = {
-  context: BrowserContext;
-  page: Page;
-};
-
-export async function loginAsUser(
-  browser: Browser,
-  username: string,
-  password: string = "PasswordExample",
-  URL: string = BASE_URL + "/login",
-): Promise<UserSession> {
-  const context = await browser.newContext(); // 🔒 Isolated session
-  const page = await context.newPage();
-  const loginPage = new LoginPage(page);
-
-  await loginPage.goto();
-  await loginPage.login(username, password);
-
-  return { context, page};
-}
 
 test('simply enter', async ({ browser }) => {
     const players = [
@@ -148,8 +39,8 @@ test('simply enter', async ({ browser }) => {
     const aCreatePage = new CreateLobbyPage(aPage);
     await aCreatePage.createLobby("tournamentTest", "Tournament");
     await expect(aPage).toHaveTitle("Lobby");
-    const aLobby = new LobbyPage(aPage);
-    await aLobby.joinTournament(players[0].username);
+    const aLobby = new TournamentPage(aPage);
+    await aLobby.join(players[0].username);
     await aLobby.setReady();
     await expect(aPage.getByRole('button', { name: "I'm ready! (cancel...)"})).toHaveText("I'm ready! (cancel...)")
 
@@ -165,8 +56,8 @@ test('simply enter', async ({ browser }) => {
         const ePlayPage = new PlayPage(pPage);
         await ePlayPage.enterFirstLobby();
         await expect(pPage).toHaveTitle("Lobby");
-        const pLobby = new LobbyPage(pPage);
-        await pLobby.joinTournament(players[i].username);
+        const pLobby = new TournamentPage(pPage);
+        await pLobby.join(players[i].username);
         await pLobby.setReady();
         await expect(pPage.getByRole('button', { name: "I'm ready! (cancel...)"})).toHaveText("I'm ready! (cancel...)")
 
@@ -174,7 +65,7 @@ test('simply enter', async ({ browser }) => {
 
     }
 
-    await aLobby.startTournament();
+    await aLobby.start();
     await expect(aPage).toHaveTitle("Tournament");
     await aPage.waitForTimeout(10000);
     await expect(aPage).toHaveTitle("Match")

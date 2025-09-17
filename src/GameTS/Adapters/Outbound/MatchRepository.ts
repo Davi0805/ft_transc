@@ -30,6 +30,14 @@ class MatchRepository {
         this._matches.splice(matchIndex, 1);
     }
 
+    removeAll() {
+        this._matches.forEach(match => {
+            match.broadcastLoop.stop();
+            match.match.stopGameLoop();
+        })
+        this._matches = []
+    }
+
     getInfoByID(matchID: number) {
         const matchInfo = this._matches.find(match => match.id === matchID);
         if (!matchInfo) { return null; };

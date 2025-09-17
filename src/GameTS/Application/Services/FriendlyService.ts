@@ -22,8 +22,10 @@ class FriendlyService {
             const matchResult = matchService.getMatchResultByID(matchID);
             if (matchResult) {
                 this._onMatchFinished(lobby.id, matchID, matchResult, matchPlayers)
-            } else {
+            } else if (matchResult === null) {
                 setTimeout(loop,  CHECK_RESULT_FRQUENCY)
+            } else {
+                console.log("The match being polled for result no longer extsts. Stopping poll");
             }
         }
         loop()
