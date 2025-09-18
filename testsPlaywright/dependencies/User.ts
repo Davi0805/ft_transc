@@ -1,0 +1,37 @@
+import { Browser, BrowserContext, expect, Page } from "@playwright/test";
+
+export interface ILoginPage{
+  goto(): Promise<void>; //Goes to the login page
+  login(username: string, password: string): Promise<void>;
+}
+
+export default class UserSession {
+    get ctx() { return this._ctx; }
+    get page() { return this._page; }
+    get username() { return this._username; }
+
+    static async create(
+        browser: Browser,
+        username: string,
+        password: string,
+        LoginPage: new (page: Page) => ILoginPage
+    ) {
+        const ctx = await browser.newContext();
+        const page = await ctx.newPage();
+        const loginPage = new LoginPage(page);
+        await loginPage.goto();
+        await loginPage.login(username, password);
+        return new UserSession(ctx, page, username);
+    }
+
+
+    private _ctx: BrowserContext;
+    private _page: Page;
+    private _username: string;
+    
+    private constructor(ctx: BrowserContext, page: Page, username: string) {
+        this._ctx = ctx;
+        this._page = page;
+        this._username = username;
+    }
+}

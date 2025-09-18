@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 import APage from "./APage";
 import { BASE_URL } from "../typesAndConsts";
@@ -12,5 +12,6 @@ export default class CreateLobbyPage extends APage {
         await this._page.getByLabel("Name").fill(lobbyName);
         await this._page.getByLabel("Type").selectOption(type);
         await this._page.getByRole("button", { name: "Create Lobby"}).click();
+        await expect(this._page).toHaveTitle("Lobby");
     }
 }

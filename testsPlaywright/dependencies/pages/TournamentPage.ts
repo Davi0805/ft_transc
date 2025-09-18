@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 import ALobbyPage from "./ALobbyPage";
 
@@ -9,7 +9,8 @@ export default class TournamentPage extends ALobbyPage {
 
     async join(player: string) {
         await this._page.getByRole('button', { name: "Join"}).click();
-        await this._page.waitForSelector(`#participants-table tr td:nth-child(2):text("${player}")`);
+        const playerInList = this._page.locator(`#participants-table tr td:nth-child(2):text("${player}")`);
+        await expect(playerInList).toBeVisible();
     }
 
 }

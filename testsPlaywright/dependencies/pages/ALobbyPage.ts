@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { BASE_URL } from "../typesAndConsts";
 import APage from "./APage";
 
@@ -8,7 +8,9 @@ export default abstract class ALobbyPage extends APage {
     }
 
     async toggleReady() {
-        await this._page.getByRole('button', { name: "Ready"}).click();
+        const button = this._page.getByRole('button', { name: "Ready"});
+        await button.click();
+        await expect(button).toHaveText("I'm ready! (cancel...)")
     }
 
     async start() {

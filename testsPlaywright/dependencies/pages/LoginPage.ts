@@ -1,9 +1,10 @@
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 import APage from "./APage";
 import { BASE_URL } from "../typesAndConsts";
+import { ILoginPage } from "../User";
 
-export default class LoginPage extends APage {
+export default class LoginPage extends APage implements ILoginPage{
     constructor(page: Page) {
         super(page, BASE_URL + "/login");
     }
@@ -12,5 +13,6 @@ export default class LoginPage extends APage {
         await this._page.getByPlaceholder('Username').fill(username);
         await this._page.getByPlaceholder('Password').fill(password);
         await this._page.getByRole("button", { name: "Login"}).click();
+        await expect(this._page.getByAltText("logout icon")).toBeVisible();
     }
 }
