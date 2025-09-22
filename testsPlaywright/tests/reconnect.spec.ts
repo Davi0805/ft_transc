@@ -52,7 +52,7 @@ import { fourUsers, twoUsers } from "../LobbyFixtures";
 }) */
 
 fourUsers("ReconnectTournament", async ({ users }) => {
-    fourUsers.setTimeout(300000);
+    fourUsers.setTimeout(1000 * 1000);
 
     const host = users[0];
     const lobbySettings: LobbySettings = {
@@ -84,6 +84,13 @@ fourUsers("ReconnectTournament", async ({ users }) => {
 
     const reconnectingUser = users[1];
     await expect(reconnectingUser.page).toHaveTitle("Tournament", { timeout: 20000 });
+    const rPlay = new PlayPage(reconnectingUser.page);
+    await rPlay.goto();
+    await rPlay.enterLobby(lobbySettings.name, "Tournament");
+
+    const infoLocator = reconnectingUser.page.locator("#info-on-display");
+    await expect(infoLocator).toHaveText("Round 1 pairings", { timeout: 20000});
+
     await expect(reconnectingUser.page).toHaveTitle("Match", { timeout: 20000 });
 
     await reconnectingUser.page.waitForTimeout(4 * 1000);
@@ -92,7 +99,6 @@ fourUsers("ReconnectTournament", async ({ users }) => {
     await reconnectingUser.page.keyboard.up("ArrowDown");
     await reconnectingUser.page.screenshot({ path: 'screenshots/beforeReconnectMove.png'})
 
-    const rPlay = new PlayPage(reconnectingUser.page);
     await rPlay.goto();
     await rPlay.enterLobby(lobbySettings.name, "Match");
 
@@ -102,5 +108,8 @@ fourUsers("ReconnectTournament", async ({ users }) => {
     await reconnectingUser.page.keyboard.up("ArrowUp");
     await reconnectingUser.page.waitForTimeout(1 * 1000);
     await reconnectingUser.page.screenshot({ path: 'screenshots/afterReconnectMove.png' });
+    await expect(reconnectingUser.page).toHaveTitle("Tournament", { timeout: 90000 });
 
+    const infoLocator2 = reconnectingUser.page.locator("#info-on-display");
+    await expect(infoLocator2).toHaveText("Round 2 pairings", { timeout: 20000});
 })

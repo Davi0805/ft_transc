@@ -13,11 +13,11 @@ import { Pairing, SwissService } from "./SwissService.cjs";
 
 export type TournamentMatchT = [TournamentParticipantT, TournamentParticipantT];
 
-const STANDINGS_DISPLAY_DURATION = 1 * 1000
-const FINAL_STANDINGS_DISPLAY_DURATION = 1 * 1000
-const PAIRINGS_DISPLAY_DURATION = 1 * 1000
-const END_OF_GAME_DISPLAY_DURATION = 1 * 1000
-const RESULTS_DISPLAY_DURATION = 1 * 1000
+const STANDINGS_DISPLAY_DURATION = 10 * 1000
+const FINAL_STANDINGS_DISPLAY_DURATION = 10 * 1000
+const PAIRINGS_DISPLAY_DURATION = 10 * 1000
+const END_OF_GAME_DISPLAY_DURATION = 10 * 1000
+const RESULTS_DISPLAY_DURATION = 10 * 1000
 const RESULT_POLLING_FREQUENCY = 1000
 
 //The Service responsible for the tournament cycle
@@ -27,12 +27,18 @@ class TournamentService {
         const tournament = tournamentRepository.getByLobbyID(lobbyID);
         if (!tournament) {return null;}
         
+        console.log(`get current tournament info was called. The current round is ${tournament.currentRound}`)
+        
+        let pairings: [number, number][] = [];
         const currentRound = tournament.rounds.find(round => round.roundNo === tournament.currentRound);
-        if (!currentRound) {throw Error("This round must exist")}
+        //Only send the pairings if there are matches still to finish, otherwise it is not necessary
+        if (currentRound && currentRound.matches.some(match => match.winnerID === null)) {
+            pairings = currentRound.matches.map(pair => pair.playerIDs);
+        }
 
         return {
             currentRound: tournament.currentRound,
-            currentPairings: currentRound.matches.map(pair => pair.playerIDs),
+            currentPairings: pairings ,
             participants: tournament.participants
         }
     }

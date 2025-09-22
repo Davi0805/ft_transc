@@ -116,11 +116,19 @@ export const PlayPage = {
         if (!lobbyInfo) {return;}
         
         lobbyService.init(selfData.id, lobbyInfo.lobby);
+        if (lobbyInfo.tournamentConfigs) {
+            tournamentService.init(lobbyInfo.tournamentConfigs)
+        }
         if (lobbyInfo.matchConfigs) {
-            if (lobbyInfo.tournamentConfigs) {
-                tournamentService.init(lobbyInfo.tournamentConfigs)
+            await matchService.startMatchOUT(lobbyInfo.matchConfigs);
+        } else if (lobbyInfo.tournamentConfigs) {
+            await router.navigateTo("/tournament");
+            const pairings = lobbyInfo.tournamentConfigs.currentPairings;
+            if (pairings.length !== 0){
+                tournamentService.displayPairingsOUT(pairings);
+            } else {
+                tournamentService.displayStandingsOUT(lobbyInfo.tournamentConfigs.participants);
             }
-            matchService.startMatchOUT(lobbyInfo.matchConfigs);
         } else {
             router.navigateTo('/lobby');
         }

@@ -15,7 +15,7 @@ export type TournamentParticipantT = {
 export type TournamentT = {
     id: number,
     lobbyID: number,
-    matchSettings: MatchSettingsT,
+    matchSettings: MatchSettingsT, 
     participants: TournamentParticipantT[]
     rounds: {
         roundNo: number,
@@ -31,7 +31,7 @@ export type TournamentT = {
 
 export type ClientTournamentT = {
     currentRound: number,
-    currentPairings: [number, number][]
+    currentPairings: [number, number][] //In case there are no pairings yet for the next round
     participants: TournamentParticipantT[]
 }
 

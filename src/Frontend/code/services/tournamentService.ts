@@ -29,7 +29,9 @@ class TournamentService {
         if (tournament) {
             this._tournament = {
                 currentRound: tournament.currentRound,
-                currentPairings: this._getMatchFromPairing(tournament.participants, tournament.currentPairings),
+                currentPairings: tournament.currentPairings ? 
+                    this._getMatchFromPairing(tournament.participants, tournament.currentPairings)
+                    : [],
                 participants: tournament.participants
             }
         } else {

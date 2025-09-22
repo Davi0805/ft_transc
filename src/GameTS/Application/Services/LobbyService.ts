@@ -31,17 +31,18 @@ class LobbyService {
         return (matchInfos && matchInfos.length !== 0) ? true : false;
     }
 
-    isUserInActiveLobbyEvent(lobbyID: number, userID: number) {
-        const matchInfos = matchService.getMatchInfosByLobbyID(lobbyID);
-        console.log(`The user ID ${userID} is trying to enter a lobby with matches:`)
-        
+    isUserInActiveLobbyEvent(lobbyID: number, userID: number): boolean {
+        const matchInfos = matchService.getMatchInfosByLobbyID(lobbyID);        
         if (matchInfos && matchInfos.length !== 0) {
-            for (const match of matchInfos) {
-                console.log(match.userIDs);
-            }
             return matchInfos.find(matchInfo => matchInfo.userIDs.includes(userID)) ? true : false;
         }
-        //TODO: for now it works for individual matches. Add logic for tournament
+
+        const tournamentInfo = tournamentService.getCurrentInfoByLobbyID(lobbyID);
+        if (tournamentInfo) {
+            return tournamentInfo.participants.find(player => player.id === userID && player.participating) ? true : false
+        }
+
+        return false;
     }
 
     getLobbiesForDisplay(): LobbyForDisplayT[] {
