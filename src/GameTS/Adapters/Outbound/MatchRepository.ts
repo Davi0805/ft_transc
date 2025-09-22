@@ -50,8 +50,8 @@ class MatchRepository {
         return match;
     }
 
-    getInfoByLobbyID(lobbyID: number) {
-        const matchInfo = this._matches.find(match => match.lobbyID === lobbyID);
+    getInfosByLobbyID(lobbyID: number) {
+        const matchInfo = this._matches.filter(match => match.lobbyID === lobbyID);
         if (!matchInfo) { return null };
         return matchInfo;
     }

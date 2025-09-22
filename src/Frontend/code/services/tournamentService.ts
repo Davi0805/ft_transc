@@ -86,10 +86,11 @@ class TournamentService {
         participants: TTournamentParticipant[],
         pairingsIDs: [number, number][]
     ): TTournamentMatch[] {
+        console.log("Does this run?")
         return pairingsIDs.map(pair => {
-            const player1 = this.tournament.participants.find(participant => participant.id === pair[0])
+            const player1 = participants.find(participant => participant.id === pair[0])
             const player2 = pair[1] !== -1
-                ? this.tournament.participants.find(participant => participant.id === pair[1])
+                ? participants.find(participant => participant.id === pair[1])
                 : null;
             if (player1 === undefined || player2 === undefined) { throw Error("PlayerID was not found in players!")}
 

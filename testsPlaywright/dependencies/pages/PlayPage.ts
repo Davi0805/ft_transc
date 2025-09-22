@@ -13,12 +13,12 @@ export default class PlayPage extends APage {
         await expect(this._page).toHaveTitle("Create Lobby")
     }
 
-    async enterLobby(lobbyName: string) {
+    async enterLobby(lobbyName: string, pageExpected: string) {
         await this._page.locator('#btn-refresh').click();
         const row = this._page.locator(`//table/tbody/tr[td[1][contains(text(), ${lobbyName})]]`);
         if (row) {
             await row.click();
-            await expect(this._page).toHaveTitle(/^(Lobby|Tournament|Match)$/); //Depends whether there is an event active in the lobby or not
+            await expect(this._page).toHaveTitle(pageExpected); //Depends whether there is an event active in the lobby or not
         } else {
             console.log("There is no lobby with this name");
             await expect(this._page).toHaveTitle("Play");

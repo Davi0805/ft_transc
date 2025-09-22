@@ -84,9 +84,9 @@ class MatchService {
         return (match.matchResult);
     }
 
-    getMatchInfoByLobbyID(lobbyID: number) {
-        const matchInfo = matchRepository.getInfoByLobbyID(lobbyID);
-        return matchInfo
+    getMatchInfosByLobbyID(lobbyID: number) {
+        const matchInfos = matchRepository.getInfosByLobbyID(lobbyID);
+        return matchInfos
     }
 
     updatePlayersRating(players: MatchPlayerT[], result: TMatchResult) {

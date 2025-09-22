@@ -21,6 +21,17 @@ export default class UserSession {
         const loginPage = new LoginPage(page);
         await loginPage.goto();
         await loginPage.login(username, password);
+        page.on('console', async msg => {
+            const args = msg.args();
+            for (const arg of args) {
+                try {
+                const val = await arg.jsonValue();
+                console.log(`[${msg.type()}]`, val);
+                } catch {
+                console.log(`[${msg.type()}]`, arg.toString());
+                }
+            }
+        });
         return new UserSession(ctx, page, username);
     }
 

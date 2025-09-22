@@ -27,14 +27,19 @@ class LobbyService {
     }
 
     isLobbyWithActiveEvent(lobbyID: number) {
-        const matchInfo = matchService.getMatchInfoByLobbyID(lobbyID);
-        return matchInfo ? true : false;
+        const matchInfos = matchService.getMatchInfosByLobbyID(lobbyID);
+        return (matchInfos && matchInfos.length !== 0) ? true : false;
     }
 
     isUserInActiveLobbyEvent(lobbyID: number, userID: number) {
-        const matchInfo = matchService.getMatchInfoByLobbyID(lobbyID);
-        if (matchInfo) {
-            return matchInfo.userIDs.includes(userID);
+        const matchInfos = matchService.getMatchInfosByLobbyID(lobbyID);
+        console.log(`The user ID ${userID} is trying to enter a lobby with matches:`)
+        
+        if (matchInfos && matchInfos.length !== 0) {
+            for (const match of matchInfos) {
+                console.log(match.userIDs);
+            }
+            return matchInfos.find(matchInfo => matchInfo.userIDs.includes(userID)) ? true : false;
         }
         //TODO: for now it works for individual matches. Add logic for tournament
     }
@@ -106,7 +111,7 @@ class LobbyService {
         lobby.users = lobby.users.filter(user => user.id !== userID);
         socketService.broadcastToLobby(lobbyID, "removeLobbyUser", { userID: userID })
         //Automatically close lobby if nobody is in there and no match is active
-        if (lobby.users.length === 0 && !matchRepository.getInfoByLobbyID(lobbyID)) {
+        if (lobby.users.length === 0 && matchRepository.getInfosByLobbyID(lobbyID)?.length !== 0) {
             lobbyRepository.remove(lobbyID);
         }
     }

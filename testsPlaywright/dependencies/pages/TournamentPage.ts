@@ -12,5 +12,4 @@ export default class TournamentPage extends ALobbyPage {
         const playerInList = this._page.locator(`#participants-table tr td:nth-child(2):text("${player}")`);
         await expect(playerInList).toBeVisible();
     }
-
 }
