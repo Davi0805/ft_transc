@@ -22,16 +22,21 @@ export type LobbyForDisplayT = {
 
 class LobbyService {
     isUserInAnotherMatch(lobbyID: number, userID: number) {
-        console.log("isUserInALobbyCalled")
         const matchInfo = matchService.getMatchInfoByUserID(userID);
-        if (matchInfo) {
-            console.log(`The matchInfo says that the lobby where the match is has an id of ${matchInfo?.lobbyID}`)
-            console.log(`And the lobbyID that the user is trying to get into is ${lobbyID}`)
-            console.log(`Therefore the user is in another lobby: ${matchInfo && matchInfo.lobbyID != lobbyID}`)            
-            console.log("\n\n\n\n\n\n\n\n\n\n");
-        }
-        
         return matchInfo && matchInfo.lobbyID != lobbyID;
+    }
+
+    isLobbyWithActiveEvent(lobbyID: number) {
+        const matchInfo = matchService.getMatchInfoByLobbyID(lobbyID);
+        return matchInfo ? true : false;
+    }
+
+    isUserInActiveLobbyEvent(lobbyID: number, userID: number) {
+        const matchInfo = matchService.getMatchInfoByLobbyID(lobbyID);
+        if (matchInfo) {
+            return matchInfo.userIDs.includes(userID);
+        }
+        //TODO: for now it works for individual matches. Add logic for tournament
     }
 
     getLobbiesForDisplay(): LobbyForDisplayT[] {
@@ -268,11 +273,15 @@ class LobbyService {
 
     returnToLobby(lobbyID: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
-        lobby.users.forEach(user => {
-            user.player = null;
-            user.ready = false;
-        })
-        socketService.broadcastToLobby(lobbyID, "returnToLobby", { lobby: lobby })
+        if (lobby.users.length === 0) {
+            lobbyRepository.remove(lobbyID);
+        } else {
+            lobby.users.forEach(user => {
+                user.player = null;
+                user.ready = false;
+            })
+            socketService.broadcastToLobby(lobbyID, "returnToLobby", { lobby: lobby })
+        }
     }
 
     private _currentID: number = 0; //Necessary to tag the friendly players

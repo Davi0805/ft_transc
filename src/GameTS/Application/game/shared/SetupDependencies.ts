@@ -87,6 +87,7 @@ export type CGameSceneConfigs = {
 
 
 export type CAppConfigs = {
+    matchID: number,
     appConfigs: { width: number, height: number },
     gameSceneConfigs: CGameSceneConfigs
 }

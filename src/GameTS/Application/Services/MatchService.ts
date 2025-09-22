@@ -12,13 +12,12 @@ import { CAppConfigs } from "../game/shared/SetupDependencies.js";
 
 class MatchService {
     createAndStartMatch(lobbyID: number, matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
-        const matchInfo = matchFactory.generateMatchInfo(matchSettings, matchPlayers)
-        const match = matchFactory.create(lobbyID, matchInfo);
-        matchRepository.add(match);
+        const matchInfo = matchFactory.create(lobbyID, matchSettings, matchPlayers);
+        matchRepository.add(matchInfo);
 
         socketService.broadcastToUsers(matchInfo.userIDs, "startMatch", { configs: matchInfo.clientConfigs });
 
-        const matchID = match.id;
+        const matchID = matchInfo.id;
         this._startMatchGameLoop(matchID);
         this._startMatchBroadcastLoop(matchID);
 
@@ -83,6 +82,11 @@ class MatchService {
         const match = this.getMatchByID(matchID);
         if (!match) { return undefined }
         return (match.matchResult);
+    }
+
+    getMatchInfoByLobbyID(lobbyID: number) {
+        const matchInfo = matchRepository.getInfoByLobbyID(lobbyID);
+        return matchInfo
     }
 
     updatePlayersRating(players: MatchPlayerT[], result: TMatchResult) {

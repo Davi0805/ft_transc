@@ -35,11 +35,12 @@ export type MatchInfoT = {
 }
 
 class MatchFactory {
-    generateMatchInfo(settings: MatchSettingsT, players: MatchPlayerT[]): MatchInfoT {
+    create(lobbyID: number, settings: MatchSettingsT, players: MatchPlayerT[]) {
+        const matchID = this._currentID++;
         const userCustoms: TUserCustoms = this._buildUserCustoms(settings, players);
         const gameSettings: TGameConfigs = this._applyDevCustoms(userCustoms);
         const serverConfigs: SGameConfigs = this._buildSGameConfigs(gameSettings);
-        const clientConfigs: CAppConfigs = this._buildCAppConfigs(gameSettings);
+        const clientConfigs: CAppConfigs = this._buildCAppConfigs(matchID, gameSettings);
 
         const userIDs: number[] = []
         players.forEach(player => {
@@ -47,25 +48,16 @@ class MatchFactory {
                 userIDs.push(player.userID)
             }
         })
-
-        return {
-            clientConfigs: clientConfigs,
-            serverConfigs: serverConfigs,
-            userIDs: userIDs
-        };
-    }
-
-    create(lobbyID: number, matchInfo: MatchInfoT) {
-        const game = new ServerGame(matchInfo.serverConfigs);
-        const matchToSave = {
-            id: this._currentID++,
+        const game = new ServerGame(serverConfigs);
+        const matchInfo = {
+            id: matchID,
             lobbyID: lobbyID,
-            clientConfigs: matchInfo.clientConfigs,
+            clientConfigs: clientConfigs,
             match: game,
-            userIDs: matchInfo.userIDs,
+            userIDs: userIDs,
             broadcastLoop: new LoopController(60)
         }
-        return matchToSave
+        return matchInfo
     }
 
     private _currentID: number = 0;
@@ -228,8 +220,9 @@ class MatchFactory {
         return out;
     }
 
-    private _buildCAppConfigs(gameConfigs: TGameConfigs): CAppConfigs {        
+    private _buildCAppConfigs(matchID: number, gameConfigs: TGameConfigs): CAppConfigs {        
         const out: CAppConfigs = {
+            matchID: matchID,
             appConfigs: {
                 width: gameConfigs.field.size.x,
                 height: gameConfigs.field.size.y

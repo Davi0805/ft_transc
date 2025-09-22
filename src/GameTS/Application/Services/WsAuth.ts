@@ -20,7 +20,7 @@ class WsAuth {
             }
         }
         if (!token) {
-            socket.close();
+            
             return;
         }
         const session = await redisService.getSession('Bearer ' + token);

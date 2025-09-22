@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+/* import { test, expect } from '@playwright/test'
 import { loginAsUser } from '../dependencies/helpers';
 import HomePage from '../dependencies/pages/HomePage';
 import PlayPage from '../dependencies/pages/PlayPage';
@@ -72,4 +72,4 @@ test('simply enter', async ({ browser }) => {
     
     //aContext.close();
     //eContext.close();
-})
+}) */

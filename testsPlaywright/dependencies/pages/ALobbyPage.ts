@@ -15,6 +15,5 @@ export default abstract class ALobbyPage extends APage {
 
     async start() {
         await this._page.getByRole('button', { name: "Start"}).click();
-        
     }
 }

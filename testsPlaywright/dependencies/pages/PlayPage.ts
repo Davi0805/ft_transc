@@ -14,19 +14,12 @@ export default class PlayPage extends APage {
     }
 
     async enterFirstLobby() {
-        /* const buttons = await this._page.getByRole("button").all();
-        for (const button of buttons) {
-            console.log("NEW BUTTON:")
-            const text = await button.textContent();
-            console.log(text)
-            console.log("-----------------")
-        } */
         await this._page.locator('#btn-refresh').click();
         await this._page.waitForSelector('table tbody tr');
         const firstRow = this._page.locator('table tbody tr:first-child');
         if (firstRow) {
             await firstRow.click();
-            await expect(this._page).toHaveTitle("Lobby");
+            await expect(this._page).toHaveTitle(/^(Lobby|Tournament|Match)$/); //Depends whether there is an event active in the lobby or not
         } else {
             console.log("There are no lobbies to be entered!");
             await expect(this._page).toHaveTitle("Play");

@@ -11,7 +11,21 @@ import { lobbySocketService } from "./lobbySocketService";
 
 class MatchService {
     async startMatchOUT(configs: CAppConfigs) {
-        configs.gameSceneConfigs.controls = this._controls;
+        const noControlsMsg = "No controls are saved! Game is starting, but you wont be able to control it";
+        
+        const storedControls = localStorage.getItem("controls");
+        const parsedControls = storedControls ? JSON.parse(storedControls) : null;
+        if (parsedControls && parsedControls.matchID === configs.matchID) {
+            configs.gameSceneConfigs.controls = parsedControls.controls;
+        } else if (this._controls.length !== 0) {
+            localStorage.setItem("controls", JSON.stringify({
+                matchID: configs.matchID,
+                controls: this._controls
+            }));
+            configs.gameSceneConfigs.controls = this._controls;
+        } else {
+            console.log(noControlsMsg);
+        }
         this._configs = configs;
         await router.navigateTo("/match");
         await this.start(MatchPage.getRoot());
@@ -45,11 +59,7 @@ class MatchService {
         if (!this._tempControls) {
             return;
         }
-
-        this._controls.push({
-            humanID: id,
-            controls: this._tempControls
-        })
+        this.addControls(id, this._tempControls);
         this._tempControls = null;
     }
     removeControls(id: number) {
@@ -57,6 +67,7 @@ class MatchService {
     }
     resetAllControls() {
         this._controls = [];
+
     }
 
     

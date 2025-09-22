@@ -38,7 +38,7 @@ export default class ServerGame {
 
         this._windowSize = gameOpts.window.size;
         this._matchLength = gameOpts.matchLength;
-        this._timeLeft = 3; // the initial countdown before the match starts
+        this._timeLeft = 3; // the initial countdown before the match starts TODO change back
         this._ballsManager = new SBallsManager(this._windowSize, gameOpts.powerupsActive, this._audioBus);
         this._teamsManager = new STeamsManager(gameOpts.teams, this._audioBus)
         this._paddlesManager = new SPaddlesManager(gameOpts.paddles, this.windowSize);
@@ -150,6 +150,12 @@ export default class ServerGame {
             this._timeLeft -= 1;
         }
         // Game state handling
+
+        /* //TODO the following func is to speed up the game result. Change back to the official one!
+        if (this._matchLength - this._timeLeft > 3) {
+            this._gameLoop.pause();
+            this._matchResult = this._teamsManager.getTeamsState();
+        } */
         if (this._teamsManager.allTeamsFinished()
             || this._timeLeft <= 0) {
             this._gameLoop.pause();

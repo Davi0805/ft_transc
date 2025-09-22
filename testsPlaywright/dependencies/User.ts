@@ -24,6 +24,16 @@ export default class UserSession {
         return new UserSession(ctx, page, username);
     }
 
+    async destroy() {
+        await this.logout();
+        await this.ctx.close();
+    }
+
+    async logout() {
+        await this.page.getByAltText("logout icon").click();
+        expect(this.page.getByText("Login"));
+    }
+
 
     private _ctx: BrowserContext;
     private _page: Page;

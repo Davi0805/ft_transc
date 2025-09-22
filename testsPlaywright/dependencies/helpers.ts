@@ -1,23 +1,15 @@
-import type { Browser } from "@playwright/test";
+import { Page } from "@playwright/test";
+import HomePage from "./pages/HomePage";
+import PlayPage from "./pages/PlayPage";
+import CreateLobbyPage, { LobbySettings } from "./pages/CreateLobbyPage";
 
-import { BASE_URL, UserSession } from "./typesAndConsts";
-import LoginPage from "./pages/LoginPage";
 
- 
 
-export async function loginAsUser(
-  browser: Browser,
-  username: string,
-  password: string = "PasswordExample",
-): Promise<UserSession> {
-  const context = await browser.newContext({
-    viewport: { width: 1280, height: 800 }
-  });
-  const page = await context.newPage();
-  const loginPage = new LoginPage(page);
-
-  await loginPage.goto();
-  await loginPage.login(username, password);
-
-  return { context, page};
+export async function fromHomeCreateLobby(page: Page, lobbySettings: LobbySettings) {
+  const homePage = new HomePage(page);
+  await homePage.goToPlayPage();
+  const playPage = new PlayPage(page);
+  await playPage.goToCreateLobbyPage();
+  const createPage = new CreateLobbyPage(page);
+  await createPage.createLobby(lobbySettings);
 }

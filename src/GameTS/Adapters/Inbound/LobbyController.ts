@@ -23,7 +23,8 @@ class LobbyController {
 
     async getLobbiesForDisplay(_req: FastifyRequest, reply: FastifyReply)
     {
-        const lobbiesForDisplay = await lobbyService.getLobbiesForDisplay();
+        //TODO: Maybe it should only send one if it is already on another lobby?
+        const lobbiesForDisplay = lobbyService.getLobbiesForDisplay();
         return reply.send(lobbiesForDisplay);
     }
 }
