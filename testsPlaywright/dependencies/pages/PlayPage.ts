@@ -13,15 +13,14 @@ export default class PlayPage extends APage {
         await expect(this._page).toHaveTitle("Create Lobby")
     }
 
-    async enterFirstLobby() {
+    async enterLobby(lobbyName: string) {
         await this._page.locator('#btn-refresh').click();
-        await this._page.waitForSelector('table tbody tr');
-        const firstRow = this._page.locator('table tbody tr:first-child');
-        if (firstRow) {
-            await firstRow.click();
+        const row = this._page.locator(`//table/tbody/tr[td[1][contains(text(), ${lobbyName})]]`);
+        if (row) {
+            await row.click();
             await expect(this._page).toHaveTitle(/^(Lobby|Tournament|Match)$/); //Depends whether there is an event active in the lobby or not
         } else {
-            console.log("There are no lobbies to be entered!");
+            console.log("There is no lobby with this name");
             await expect(this._page).toHaveTitle("Play");
         }
     }

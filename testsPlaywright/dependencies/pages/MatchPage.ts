@@ -7,8 +7,8 @@ export default class MatchPage extends ALobbyPage {
         super(page)
     }
 
-    async chooseSlot() {
-        await this._page.getByRole('button', { name: "Join"}).first().click(); //TODO allow to choose specific
+    async chooseSlot(team: string, role: string) {
+        await this._page.click(`#join-${team}-${role}`);
     }
 
 }
