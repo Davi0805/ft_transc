@@ -56,6 +56,7 @@ class TournamentService {
     displayPairingsOUT(pairingsIDs: [number, number][]) {
         const side: SIDES = matchService.getTeamFromPairings(lobbyService.myID, pairingsIDs);
         matchService.addDefaultControls(lobbyService.myID, side);
+        matchService.setControlsPermanent(); //This makes sure that, in case the connection drops, the user can reconnect and keep the controls saved
 
 
         this.tournament.currentPairings = this._getMatchFromPairing(this.tournament.participants, pairingsIDs);
@@ -88,7 +89,6 @@ class TournamentService {
         participants: TTournamentParticipant[],
         pairingsIDs: [number, number][]
     ): TTournamentMatch[] {
-        console.log("Does this run?")
         return pairingsIDs.map(pair => {
             const player1 = participants.find(participant => participant.id === pair[0])
             const player2 = pair[1] !== -1

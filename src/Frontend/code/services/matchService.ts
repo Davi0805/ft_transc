@@ -8,14 +8,25 @@ import { getDirectionsFromTeam } from "../pages/play/utils/helpers";
 import { router } from "../routes/router";
 import { lobbySocketService } from "./lobbySocketService";
 
+type MyControlsT = {
+    used: boolean,
+    controls: {
+        humanID: number,
+        controls: TControls
+    }[]
+};
 
 class MatchService {
     async startMatchOUT(configs: CAppConfigs) {
         const noControlsMsg = "No controls are saved! Game is starting, but you wont be able to control it";
         
-        const storedControls = localStorage.getItem("controls");
-        const parsedControls = storedControls ? JSON.parse(storedControls) : null;
-        if (parsedControls && parsedControls.matchID === configs.matchID) {
+        const myControls = this._getControls();
+        myControls.used = true;
+        this._saveControls(myControls);
+        configs.gameSceneConfigs.controls = myControls.controls;
+
+        console.log(`startMatchOUT was called. The parsed controls are ${myControls}`)
+        /* if (myControls.matchID === configs.matchID) {
             configs.gameSceneConfigs.controls = parsedControls.controls;
         } else if (this._controls.length !== 0) {
             localStorage.setItem("controls", JSON.stringify({
@@ -25,7 +36,7 @@ class MatchService {
             configs.gameSceneConfigs.controls = this._controls;
         } else {
             console.log(noControlsMsg);
-        }
+        } */
         this._configs = configs;
         await router.navigateTo("/match");
         await this.start(MatchPage.getRoot());
@@ -43,10 +54,17 @@ class MatchService {
     
 
     addControls(id: number, controls: TControls) {
-        this._controls.push({
+        const myControls = this._getControls();
+        //Makes sure any lingering controls are erased before adding new ones
+        if (myControls.used === true) {
+            myControls.controls = [];
+            myControls.used = false;
+        }
+        myControls.controls.push({
             humanID: id,
             controls: controls
         })
+        this._saveControls(myControls);
     }
     addDefaultControls(id: number, team: SIDES) {
         const directions = getDirectionsFromTeam(team)
@@ -62,12 +80,22 @@ class MatchService {
         this.addControls(id, this._tempControls);
         this._tempControls = null;
     }
-    removeControls(id: number) {
-        this._controls = this._controls.filter(player => player.humanID !== id)
+    setControlsPermanent() {
+        const myControls = this._getControls();
+        myControls.used = true;
+        this._saveControls(myControls);
     }
-    resetAllControls() {
-        this._controls = [];
-
+    removeControls(id: number) {
+        let myControls = this._getControls();
+        myControls.controls = myControls.controls.filter(player => player.humanID !== id);
+        this._saveControls(myControls);
+    }
+    eraseUnusedControls() {
+        let myControls = this._getControls();
+        if (myControls.used === false) {
+            myControls.controls = [];
+            this._saveControls(myControls);
+        }
     }
 
     
@@ -93,7 +121,6 @@ class MatchService {
 
     async destroy() {
         await App.destroy()
-        this._controls = []
     }
 
     isMatchActive() {
@@ -106,12 +133,27 @@ class MatchService {
         return this._configs;
     }
 
-    private _controls: {
+    /* private _controls: {
         humanID: number,
         controls: TControls
-    }[] = []
+    }[] = [] */
 
     private _tempControls: TControls | null = null;
+
+    private _getControls(): MyControlsT {
+        const storedControls = localStorage.getItem("controls");
+        const parsedControls = storedControls
+            ? JSON.parse(storedControls) as MyControlsT
+            : {
+                used: false,
+                controls: []
+            };
+        return parsedControls;
+    }
+
+    private _saveControls(controls: MyControlsT) {
+        localStorage.setItem("controls", JSON.stringify(controls));
+    } 
 }
 
 export const matchService = new MatchService()

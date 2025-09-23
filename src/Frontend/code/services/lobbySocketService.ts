@@ -49,8 +49,7 @@ class LobbySocketService {
 
             this._ws.onclose = (ev: CloseEvent) => {
                 console.log("DEBUG: websocket closed:", ev.code, ev.reason);
-                this._ws = null;
-                this._lobbyID = null;
+                lobbyService.destroy();
             };
 
             this._ws.onerror = (error: Event) => {

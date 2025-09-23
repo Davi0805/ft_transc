@@ -70,46 +70,47 @@ fourUsers("ReconnectTournament", async ({ users }) => {
     await hTourn.join("ndo-vala");
     await hTourn.toggleReady();
 
-    for (let i = 1; i < users.length; i++) {
-        const user = users[i];
-        const uPlay = new PlayPage(user.page);
-        await uPlay.goto();
-        await uPlay.enterLobby(lobbySettings.name, "Lobby");
-        const uTourn = new TournamentPage(user.page);
-        await uTourn.join(user.username);
-        await uTourn.toggleReady();
-    }
+    const userFlows = users.slice(1).map(user => {
+        return (async () => {
+            const uPlay = new PlayPage(user.page);
+            await uPlay.goto();
+            await uPlay.enterLobby(lobbySettings.name, "Lobby");
+            const uTourn = new TournamentPage(user.page);
+            await uTourn.join(user.username);
+            await uTourn.toggleReady();
+        })();
+    });
+
+    await Promise.all(userFlows);
 
     hTourn.start();
 
+
     const reconnectingUser = users[1];
     await expect(reconnectingUser.page).toHaveTitle("Tournament", { timeout: 20000 });
+    const infoLocator = reconnectingUser.page.locator("#info-on-display");
+    await expect(infoLocator).toHaveText("Initial Standings", { timeout: 100000});
+    console.log("Reached the first tournament page");
+
     const rPlay = new PlayPage(reconnectingUser.page);
     await rPlay.goto();
     await rPlay.enterLobby(lobbySettings.name, "Tournament");
+    await expect(infoLocator).toHaveText("Initial Standings", { timeout: 100000});
+    console.log("Reconnect during initial standings successful");
 
-    const infoLocator = reconnectingUser.page.locator("#info-on-display");
     await expect(infoLocator).toHaveText("Round 1 pairings", { timeout: 20000});
+    console.log("Reached round 1 pairings");
+    await rPlay.goto();
+    await rPlay.enterLobby(lobbySettings.name, "Tournament");
+    await expect(infoLocator).toHaveText("Round 1 pairings", { timeout: 20000});
+    console.log("Reconnect during Round 1 pairings successful");
 
     await expect(reconnectingUser.page).toHaveTitle("Match", { timeout: 20000 });
-
-    await reconnectingUser.page.waitForTimeout(4 * 1000);
-    await reconnectingUser.page.keyboard.down("ArrowDown");
-    await reconnectingUser.page.waitForTimeout(0.3 * 1000);
-    await reconnectingUser.page.keyboard.up("ArrowDown");
-    await reconnectingUser.page.screenshot({ path: 'screenshots/beforeReconnectMove.png'})
 
     await rPlay.goto();
     await rPlay.enterLobby(lobbySettings.name, "Match");
 
-    await reconnectingUser.page.waitForTimeout(1 * 1000);
-    await reconnectingUser.page.keyboard.down("ArrowUp");
-    await reconnectingUser.page.waitForTimeout(0.3 * 1000);
-    await reconnectingUser.page.keyboard.up("ArrowUp");
-    await reconnectingUser.page.waitForTimeout(1 * 1000);
-    await reconnectingUser.page.screenshot({ path: 'screenshots/afterReconnectMove.png' });
     await expect(reconnectingUser.page).toHaveTitle("Tournament", { timeout: 90000 });
 
-    const infoLocator2 = reconnectingUser.page.locator("#info-on-display");
-    await expect(infoLocator2).toHaveText("Round 2 pairings", { timeout: 20000});
+    await expect(infoLocator).toHaveText("Round 2 pairings", { timeout: 100000});
 })

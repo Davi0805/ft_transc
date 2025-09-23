@@ -40,9 +40,11 @@ class LobbyWsGateway {
         lobbyService.addUser(lobbyID, userID, session.username, sprite_id, rating);
         socketService.addSocketToRepository(lobbyID, userID, socket);
 
+        const lobbyInfo = lobbyService.getLobbyInfoForClient(lobbyID, userID);
+        console.log(lobbyInfo);
         const dto: OutboundDTO = {
             requestType: "lobbyInit",
-            data: lobbyService.getLobbyInfoForClient(lobbyID, userID)
+            data: lobbyInfo
         };
         socket.send(JSON.stringify(dto));
         
