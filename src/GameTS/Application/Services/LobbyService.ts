@@ -34,12 +34,15 @@ class LobbyService {
     isUserInActiveLobbyEvent(lobbyID: number, userID: number): boolean {
         const matchInfos = matchService.getMatchInfosByLobbyID(lobbyID);        
         if (matchInfos && matchInfos.length !== 0) {
-            return matchInfos.find(matchInfo => matchInfo.userIDs.includes(userID)) ? true : false;
+            if (matchInfos.find(matchInfo => matchInfo.userIDs.includes(userID))) {
+                return true;
+            }
         }
-
         const tournamentInfo = tournamentService.getCurrentInfoByLobbyID(lobbyID);
         if (tournamentInfo) {
-            return tournamentInfo.participants.find(player => player.id === userID && player.participating) ? true : false
+            if (tournamentInfo.participants.find(player => player.id === userID && player.participating)) {
+                return true;
+            }
         }
 
         return false;
