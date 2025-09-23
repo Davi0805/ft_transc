@@ -30,9 +30,9 @@ const setup = () => {
     })
     fastify.register(fastifySensible);
 
-    //TODO: register the custom stuff
     fastify.register(lobbyRoutes);
     fastify.register(LobbyWsGatewayRoutes);
+
 
     return fastify;
 }

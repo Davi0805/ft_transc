@@ -9,13 +9,22 @@ class TournamentRepository {
         this._tournaments = this._tournaments.filter(tournament => tournament.id !== tournamentID)
     }
 
+    removeAll() {
+        this._tournaments = [];
+    }
+
     getByID(tournamentID: number) {
         const tournament = this._tournaments.find(tournament => tournament.id === tournamentID);
         if (!tournament) { throw Error("The tournament with this ID was not found!") };
         return tournament;
     }
 
-    private _currentID: number = 0;
+    getByLobbyID(lobbyID: number) {
+        const tournament = this._tournaments.find(tournament => tournament.lobbyID === lobbyID);
+        if (!tournament) {return null}
+        return tournament
+    }
+
     private _tournaments: TournamentT[] = [];
 }
 

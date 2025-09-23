@@ -28,13 +28,19 @@ export type MatchMapT = "2-players-small" | "2-players-medium" | "2-players-big"
 export type MatchModeT = "classic" | "modern"
 export type MatchDurationT = "blitz" | "rapid" | "classical" | "long" | "marathon"
 
+export type MatchInfoT = {
+    clientConfigs: CAppConfigs,
+    serverConfigs: SGameConfigs,
+    userIDs: number[]
+}
 
 class MatchFactory {
-    generateMatchInfo(settings: MatchSettingsT, players: MatchPlayerT[]) {
+    create(lobbyID: number, settings: MatchSettingsT, players: MatchPlayerT[]) {
+        const matchID = this._currentID++;
         const userCustoms: TUserCustoms = this._buildUserCustoms(settings, players);
         const gameSettings: TGameConfigs = this._applyDevCustoms(userCustoms);
         const serverConfigs: SGameConfigs = this._buildSGameConfigs(gameSettings);
-        const clientConfigs: CAppConfigs = this._buildCAppConfigs(gameSettings);
+        const clientConfigs: CAppConfigs = this._buildCAppConfigs(matchID, gameSettings);
 
         const userIDs: number[] = []
         players.forEach(player => {
@@ -42,23 +48,16 @@ class MatchFactory {
                 userIDs.push(player.userID)
             }
         })
-
-        return {
+        const game = new ServerGame(serverConfigs);
+        const matchInfo = {
+            id: matchID,
+            lobbyID: lobbyID,
             clientConfigs: clientConfigs,
-            serverConfigs: serverConfigs,
-            userIDs: userIDs
-        };
-    }
-
-    create(matchConfigs: SGameConfigs, users: number[]) {
-        const game = new ServerGame(matchConfigs);
-        const matchToSave = {
-            id: this._currentID++,
             match: game,
-            userIDs: users,
+            userIDs: userIDs,
             broadcastLoop: new LoopController(60)
         }
-        return matchToSave
+        return matchInfo
     }
 
     private _currentID: number = 0;
@@ -221,8 +220,9 @@ class MatchFactory {
         return out;
     }
 
-    private _buildCAppConfigs(gameConfigs: TGameConfigs): CAppConfigs {        
+    private _buildCAppConfigs(matchID: number, gameConfigs: TGameConfigs): CAppConfigs {        
         const out: CAppConfigs = {
+            matchID: matchID,
             appConfigs: {
                 width: gameConfigs.field.size.x,
                 height: gameConfigs.field.size.y
@@ -233,6 +233,7 @@ class MatchFactory {
                 gameInitialState: {
                 teams: [],
                 paddles: [],
+                balls: [],
                 gameLength: gameConfigs.matchLength
                 }
             }

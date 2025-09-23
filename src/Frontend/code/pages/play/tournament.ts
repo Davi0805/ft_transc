@@ -18,12 +18,7 @@ export const TournamentPage = {
     async init() {
         const titleElement = document.getElementById("tournament-title") as HTMLHeadingElement;
         titleElement.textContent = lobbyService.lobby.name;
-        /* const currentRoundElement = document.getElementById("info-on-display") as HTMLHeadingElement;
-        const round = tournamentService.tournament.currentRound;
-        currentRoundElement.textContent = round === 0
-            ? "Initial Standings"
-            : `Standings after round ${round}`; */
-
+        
         const tournamentBody = document.getElementById("tournament-body") as HTMLDivElement;
         tournamentBody.textContent = "Waiting for tournament info..."
     },
@@ -73,7 +68,6 @@ export const TournamentPage = {
 
         let participantsTableBody = ""
         let board = 1
-        const participants = lobbyService.getTournPlayers();
         const categories = ["nick", "rating", "score"] as const
         const paddingLength = 6
         tournamentService.tournament.currentPairings.forEach(match => {

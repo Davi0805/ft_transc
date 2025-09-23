@@ -15,15 +15,17 @@ class FriendlyService {
         const matchPlayers = this._getMatchPlayers(lobby.users);
         //Contrary to a ranked match, no checking if the slots are full is necessary,
         // because they will be filled by bots
-        const matchID = matchService.createAndStartMatch(lobby.matchSettings, matchPlayers);
+        const matchID = matchService.createAndStartMatch(lobby.id, lobby.matchSettings, matchPlayers);
 
         //The service pools the match result to check if it is finished
         const loop = () => {
             const matchResult = matchService.getMatchResultByID(matchID);
             if (matchResult) {
                 this._onMatchFinished(lobby.id, matchID, matchResult, matchPlayers)
-            } else {
+            } else if (matchResult === null) {
                 setTimeout(loop,  CHECK_RESULT_FRQUENCY)
+            } else {
+                console.log("The match being polled for result no longer extsts. Stopping poll");
             }
         }
         loop()

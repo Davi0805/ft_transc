@@ -18,6 +18,7 @@ class LobbyService {
     destroy() {
         this._lobby = null;
         this._myID = null;
+        matchService.eraseUnusedControls();
     }
 
     async return(lobby: TLobby) {

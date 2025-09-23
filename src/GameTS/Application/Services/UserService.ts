@@ -1,14 +1,14 @@
 import userRepository from "../../Adapters/Outbound/UserRepository.js";
 
 class UserService {
-    getUserByID(userID: number) {
+/*     getUserByID(userID: number) {
         return userRepository.getUserByID(userID);
-    }
+    } */
 
-    getUsernameByID(userID: number) {
+/*     getUsernameByID(userID: number) {
         const user = userRepository.getUserByID(userID);
         return user.username;
-    }
+    } */
 
     getUserRatingByID(userID: number) {
         const user = userRepository.getUserByID(userID);

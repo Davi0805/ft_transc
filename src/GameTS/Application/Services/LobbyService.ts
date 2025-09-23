@@ -7,6 +7,8 @@ import socketService from "./SocketService.js";
 import friendlyService from "./FriendlyService.js";
 import rankedService from "./RankedService.js";
 import tournamentService from "./TournamentService.js";
+import matchService from "./MatchService.js";
+import matchRepository from "../../Adapters/Outbound/MatchRepository.js";
 
 //When a client wants to see the list of lobbies available, receives an array of these
 export type LobbyForDisplayT = {
@@ -19,6 +21,33 @@ export type LobbyForDisplayT = {
 
 
 class LobbyService {
+    isUserInAnotherMatch(lobbyID: number, userID: number) {
+        const matchInfo = matchService.getMatchInfoByUserID(userID);
+        return matchInfo && matchInfo.lobbyID != lobbyID;
+    }
+
+    isLobbyWithActiveEvent(lobbyID: number) {
+        const matchInfos = matchService.getMatchInfosByLobbyID(lobbyID);
+        return (matchInfos && matchInfos.length !== 0) ? true : false;
+    }
+
+    isUserInActiveLobbyEvent(lobbyID: number, userID: number): boolean {
+        const matchInfos = matchService.getMatchInfosByLobbyID(lobbyID);        
+        if (matchInfos && matchInfos.length !== 0) {
+            if (matchInfos.find(matchInfo => matchInfo.userIDs.includes(userID))) {
+                return true;
+            }
+        }
+        const tournamentInfo = tournamentService.getCurrentInfoByLobbyID(lobbyID);
+        if (tournamentInfo) {
+            if (tournamentInfo.participants.find(player => player.id === userID && player.participating)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     getLobbiesForDisplay(): LobbyForDisplayT[] {
         const lobbies = lobbyRepository.getAll();
 
@@ -43,6 +72,23 @@ class LobbyService {
         return lobbyRepository.getByID(lobbyID);
     }
 
+    getLobbyInfoForClient(lobbyID: number, userID: number) {
+        const lobby = lobbyService.getLobbyByID(lobbyID);
+        if (!lobby) {throw Error (`Lobby ${lobbyID} not found when it should have been`)}
+        const matchConfigs = matchService.getMatchClientConfigsByUserID(userID);
+        if (matchConfigs) {
+            const match = matchService.getMatchByUserID(userID);
+            if (!match) {throw Error("Match configs exist but no match??")}
+            matchConfigs.gameSceneConfigs.gameInitialState.balls = match.getBallsFullState()
+        }
+        const tournamentConfigs = tournamentService.getCurrentInfoByLobbyID(lobbyID);
+        return {
+            lobby: lobby,
+            matchConfigs: matchConfigs,
+            tournamentConfigs: tournamentConfigs
+        }
+    }
+
     createLobby(lobbyCreationConfigs: LobbyCreationConfigsT, hostID: number) {
         const newLobby = lobbyFactory.createLobby(lobbyCreationConfigs, hostID);
         lobbyRepository.add(newLobby);
@@ -51,6 +97,7 @@ class LobbyService {
 
     addUser(lobbyID: number, userID: number, username: string, spriteID: number, rating: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
+        if (!lobby) {throw Error (`Lobby ${lobbyID} not found when it should have been`)}
         const user = {
             id: userID,
             username: username,
@@ -67,16 +114,18 @@ class LobbyService {
 
     removeUser(lobbyID: number, userID: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
+        if (!lobby) {throw Error (`Lobby ${lobbyID} not found when it should have been`)}
         lobby.users = lobby.users.filter(user => user.id !== userID);
         socketService.broadcastToLobby(lobbyID, "removeLobbyUser", { userID: userID })
-        //Automatically close lobby if nobody is in there
-        if (lobby.users.length === 0) {
+        //Automatically close lobby if nobody is in there and no match is active
+        if (lobby.users.length === 0 && matchRepository.getInfosByLobbyID(lobbyID)?.length === 0) {
             lobbyRepository.remove(lobbyID);
         }
     }
 
     updateSettings(lobbyID: number, senderID: number, newSettings: MatchSettingsT) {
         const lobby = lobbyRepository.getByID(lobbyID);
+        if (!lobby) {throw Error (`Lobby ${lobbyID} not found when it should have been`)}
         if (lobby.hostID !== senderID) {
             console.log("Somehow a non host managed to send a settings change request! It will be ignored.");
             return;
@@ -178,6 +227,7 @@ class LobbyService {
 
     addTournamentPlayer(lobbyID: number, userID: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
+        if (!lobby) {throw Error (`Lobby ${lobbyID} not found when it should have been`)}
         const participantsAmount = lobby.users.filter(user => user.player != null).length;
 
         if (participantsAmount < tournamentService.MAX_PARTICIPANTS) {
@@ -209,6 +259,7 @@ class LobbyService {
 
     start(lobbyID: number, senderID: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
+        if (!lobby) {throw Error (`Lobby ${lobbyID} not found when it should have been`)}
         if (lobby.hostID != senderID) {
             console.log(`Somehow userID ${senderID} is not host and tried to start the game! The host id is ${lobby.hostID}`)
             return ;
@@ -237,17 +288,26 @@ class LobbyService {
 
     returnToLobby(lobbyID: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
-        lobby.users.forEach(user => {
-            user.player = null;
-            user.ready = false;
-        })
-        socketService.broadcastToLobby(lobbyID, "returnToLobby", { lobby: lobby })
+        if (!lobby) {
+            console.log("The server tried to return to the lobby but everybody left... :( Ignoring");
+            return;
+        }
+        if (lobby.users.length === 0) {
+            lobbyRepository.remove(lobbyID);
+        } else {
+            lobby.users.forEach(user => {
+                user.player = null;
+                user.ready = false;
+            })
+            socketService.broadcastToLobby(lobbyID, "returnToLobby", { lobby: lobby })
+        }
     }
 
     private _currentID: number = 0; //Necessary to tag the friendly players
 
     private _getLobbyUserByID(lobbyID: number, userID: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
+        if (!lobby) {throw Error (`Lobby ${lobbyID} not found when it should have been`)}
         const user = lobby.users.find(user => user.id === userID);
         if (!user) {throw Error("User could not be found in lobby!")};
         return user;

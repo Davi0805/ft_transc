@@ -8,16 +8,16 @@ import socketService from "./SocketService.js";
 import ServerGame from "../game/ServerGame.js";
 import userService from "./UserService.js";
 import { SIDES } from "../game/shared/sharedTypes.js";
+import { CAppConfigs } from "../game/shared/SetupDependencies.js";
 
 class MatchService {
-    createAndStartMatch(matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
-        const matchInfo = matchFactory.generateMatchInfo(matchSettings, matchPlayers)
-        const match = matchFactory.create(matchInfo.serverConfigs, matchInfo.userIDs);
-        matchRepository.add(match);
+    createAndStartMatch(lobbyID: number, matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
+        const matchInfo = matchFactory.create(lobbyID, matchSettings, matchPlayers);
+        matchRepository.add(matchInfo);
 
         socketService.broadcastToUsers(matchInfo.userIDs, "startMatch", { configs: matchInfo.clientConfigs });
 
-        const matchID = match.id;
+        const matchID = matchInfo.id;
         this._startMatchGameLoop(matchID);
         this._startMatchBroadcastLoop(matchID);
 
@@ -30,10 +30,22 @@ class MatchService {
         return matchInfo.match;
     }
 
+    getMatchInfoByUserID(userID: number) {
+        const matchInfo = matchRepository.getInfoByUserID(userID)
+        if (!matchInfo) { return null }
+        return matchInfo;
+    }
+
     getMatchByUserID(userID: number): ServerGame | null {
         const matchInfo = matchRepository.getInfoByUserID(userID)
         if (!matchInfo) { return null }
         return matchInfo.match;
+    }
+
+    getMatchClientConfigsByUserID(userID: number) {
+        const matchInfo = matchRepository.getInfoByUserID(userID)
+        if (!matchInfo) { return null }
+        return matchInfo.clientConfigs;
     }
 
     getMatchUsersByID(matchID: number) {
@@ -68,8 +80,13 @@ class MatchService {
 
     getMatchResultByID(matchID: number) {
         const match = this.getMatchByID(matchID);
-        if (!match) { throw Error("This match result does not exist in repo!")}
+        if (!match) { return undefined }
         return (match.matchResult);
+    }
+
+    getMatchInfosByLobbyID(lobbyID: number) {
+        const matchInfos = matchRepository.getInfosByLobbyID(lobbyID);
+        return matchInfos
     }
 
     updatePlayersRating(players: MatchPlayerT[], result: TMatchResult) {

@@ -3,6 +3,8 @@ import { lobbySocketService } from "../../services/lobbySocketService";
 import { getAllLobbies } from "../../api/lobbyMatchAPI/getAllLobbiesAPI";
 import { getSelfData } from "../../api/userData/getSelfDataAPI";
 import { lobbyService } from "../../services/LobbyService";
+import { matchService } from "../../services/matchService";
+import { tournamentService } from "../../services/tournamentService";
 
 export const PlayPage = {
     template() {
@@ -110,9 +112,26 @@ export const PlayPage = {
     //Logic to get into a lobby
     async goToLobby(lobbyId: number) {
         const selfData = await getSelfData();
-        const lobby = await lobbySocketService.connect(lobbyId);
-        if (!lobby) {throw Error("Socket was already connected somehow!")}
-        lobbyService.init(selfData.id, lobby)
-        router.navigateTo('/lobby')
+        const lobbyInfo = await lobbySocketService.connect(lobbyId);
+        if (!lobbyInfo) {return;}
+        
+        lobbyService.init(selfData.id, lobbyInfo.lobby);
+        if (lobbyInfo.tournamentConfigs) {
+            tournamentService.init(lobbyInfo.tournamentConfigs)
+        }
+        if (lobbyInfo.matchConfigs) {
+            await matchService.startMatchOUT(lobbyInfo.matchConfigs);
+        } else if (lobbyInfo.tournamentConfigs) {
+            await router.navigateTo("/tournament");
+            const pairings = lobbyInfo.tournamentConfigs.currentPairings;
+            if (pairings.length !== 0){
+                tournamentService.displayPairingsOUT(pairings);
+            } else {
+                tournamentService.displayStandingsOUT(lobbyInfo.tournamentConfigs.participants);
+            }
+        } else {
+            router.navigateTo('/lobby');
+        }
+        
     }
 }

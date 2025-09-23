@@ -1,3 +1,4 @@
+import { TournamentMatchT } from "../Services/TournamentService.js";
 import { MatchSettingsT } from "./MatchFactory.js";
 
 export type TournamentParticipantT = {
@@ -14,7 +15,7 @@ export type TournamentParticipantT = {
 export type TournamentT = {
     id: number,
     lobbyID: number,
-    matchSettings: MatchSettingsT,
+    matchSettings: MatchSettingsT, 
     participants: TournamentParticipantT[]
     rounds: {
         roundNo: number,
@@ -26,6 +27,12 @@ export type TournamentT = {
     }[],
     roundAmount: number,
     currentRound: number
+}
+
+export type ClientTournamentT = {
+    currentRound: number,
+    currentPairings: [number, number][] //In case there are no pairings yet for the next round
+    participants: TournamentParticipantT[]
 }
 
 class TournamentFactory {

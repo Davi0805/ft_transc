@@ -42,13 +42,17 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 new CPaddle(paddleConf, this._root),
             )
         })
+        gameSceneConfigs.gameInitialState.balls.forEach(ballConf => {
+            this.balls.set(
+                ballConf.id,
+                new CBall(ballConf, this._root)
+            );
+        })
 
         if (gameSceneConfigs.controls === null) { throw Error("controls were not initialized!") }
         gameSceneConfigs.controls.forEach( human => {
             this._controls.set(human.humanID, new CPaddleControls(human.humanID, human.controls))
         })
-
-        audioPlayer.playTrack("start", 1);
     }
 
     override async destroy(): Promise<void> {

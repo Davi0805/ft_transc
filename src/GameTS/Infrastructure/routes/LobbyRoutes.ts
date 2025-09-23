@@ -12,5 +12,6 @@ export async function lobbyRoutes(fastify: FastifyInstance, _options: FastifyPlu
     fastify.post('/lobby', {
         preHandler: authMiddleware,
         handler: lobbyController.createLobby
-    })
+    });
 }
+

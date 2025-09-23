@@ -34,26 +34,27 @@ export default class ServerGame {
     //and then apply to it applyDevCustoms() and buildSGameConfigs() to the result of that.
     //See server.ts for example
     constructor(gameOpts: SGameConfigs) {
-        const audioBus = new EventEmitter()
+        this._audioBus = new EventEmitter()
 
         this._windowSize = gameOpts.window.size;
         this._matchLength = gameOpts.matchLength;
-        this._timeLeft = 3; // the initial countdown before the match starts
-        this._ballsManager = new SBallsManager(this._windowSize, gameOpts.powerupsActive, audioBus);
-        this._teamsManager = new STeamsManager(gameOpts.teams, audioBus)
+        this._timeLeft = 3; // the initial countdown before the match starts TODO change back
+        this._ballsManager = new SBallsManager(this._windowSize, gameOpts.powerupsActive, this._audioBus);
+        this._teamsManager = new STeamsManager(gameOpts.teams, this._audioBus)
         this._paddlesManager = new SPaddlesManager(gameOpts.paddles, this.windowSize);
         this._humansManager = new SHumansManager(gameOpts.humans, this._paddlesManager.paddles);
         this._botsManager = new BotsManager(gameOpts.bots, this._paddlesManager.paddles, this.windowSize);
         this._gameLoop = new LoopController(90);
         this._audioEvent = null;
         
-        audioBus.on("audioEvent", (audioEvent: AudioEvent) => {
+        this._audioBus.on("audioEvent", (audioEvent: AudioEvent) => {
             this._audioEvent = audioEvent;
         })
     }
 
     //Starts the internal logic loop. Should be started once all players are connected and ready to play
     startGameLoop() {
+        this._audioBus.emit("audioEvent", "start")
         this._gameLoop.start(() => {
             if (this._gameLoop.isRunning) {
                 if (!this._matchHasStarted) {
@@ -79,6 +80,10 @@ export default class ServerGame {
         }
         this._audioEvent = null;
         return out
+    }
+
+    getBallsFullState() {
+        return this._ballsManager.getBallsFullState()
     }
 
     //This should be called whenever a message is received by one of the clients. 
@@ -109,6 +114,7 @@ export default class ServerGame {
     private _paddlesManager: SPaddlesManager;
 
     private _gameLoop: LoopController;
+    private _audioBus: EventEmitter;
     private _audioEvent: AudioEvent | null;
 
     private _countdownLoop() {
@@ -144,6 +150,12 @@ export default class ServerGame {
             this._timeLeft -= 1;
         }
         // Game state handling
+
+        /* //TODO the following func is to speed up the game result. Change back to the official one!
+        if (this._matchLength - this._timeLeft > 3) {
+            this._gameLoop.pause();
+            this._matchResult = this._teamsManager.getTeamsState();
+        } */
         if (this._teamsManager.allTeamsFinished()
             || this._timeLeft <= 0) {
             this._gameLoop.pause();

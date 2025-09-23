@@ -132,6 +132,19 @@ export default class SBallsManager {
         return out;
     }
 
+    getBallsFullState() {
+        const out = this._balls.map(ball => ({
+            id: ball.id,
+            type: ball.type,
+            size: ball.size.toObj(),
+            speed: ball.speed,
+            pos: ball.pos.toObj(),
+            direction: ball.direction.toObj(),
+            damage: ball.damage
+        }));
+        return out;
+    }
+
     private _windowSize: point;
 
     private _balls: SBall[] = []

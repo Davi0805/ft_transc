@@ -94,6 +94,6 @@ export const routes: Array<Route> = [
         title: 'Match',
         template: MatchPage.template,
         script: MatchPage
-    }
+    },
     //? additional pages would be put here
 ];

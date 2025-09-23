@@ -1,4 +1,4 @@
-import { SIDES, ROLES, point, TPaddle } from "./sharedTypes"
+import { SIDES, ROLES, point, TPaddle, TBall } from "./sharedTypes"
 
 export type TControls = {
     left: string,
@@ -70,6 +70,7 @@ export type CGameState = {
         }
     }[]
     paddles: Pick<TPaddle, "id" | "side" | "size" | "speed" | "pos" | "spriteID">[],
+    balls: TBall[],
     gameLength: number
 }
 
@@ -84,6 +85,7 @@ export type CGameSceneConfigs = {
 
 
 export type CAppConfigs = {
+    matchID: number,
     appConfigs: { width: number, height: number },
     gameSceneConfigs: CGameSceneConfigs
 }

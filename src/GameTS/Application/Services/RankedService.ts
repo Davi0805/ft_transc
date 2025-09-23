@@ -9,6 +9,7 @@ import matchService from "./MatchService.js";
 import socketService from "./SocketService.js";
 import dbConnection from "../../Adapters/Outbound/DbConnection.js";
 
+const CHECK_RESULT_FRQUENCY = 500 // in milliseconds
 
 class RankedService {
     start(lobby: LobbyT, senderID: number) {
@@ -17,14 +18,16 @@ class RankedService {
             socketService.broadcastToUsers([senderID], "actionBlock", { reason: "notAllSlotsFilled" })
             return;
         }
-        const matchID = matchService.createAndStartMatch(lobby.matchSettings, matchPlayers);
+        const matchID = matchService.createAndStartMatch(lobby.id, lobby.matchSettings, matchPlayers);
 
         const loop = () => {
             const matchResult = matchService.getMatchResultByID(matchID);
             if (matchResult) {
                 this._onMatchFinished(lobby.id, matchID, matchResult, matchPlayers)
+            } else if (matchResult === null) {
+                setTimeout(loop,  CHECK_RESULT_FRQUENCY)
             } else {
-                setTimeout(loop, 1 * 1000)
+                console.log("The match being polled for result no longer extsts. Stopping poll");
             }
         }
         loop()

@@ -1,6 +1,7 @@
 import { SIDES, ROLES } from "../../match/matchSharedDependencies/sharedTypes"
 import { CGameDTO, SGameDTO } from "../../match/matchSharedDependencies/dtos"
 import { CAppConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
+import { TTournament, TTournamentDTO } from "../../services/tournamentService"
 
 //TYPES REPRESENTATIVE OF THE ENTITIES
 
@@ -154,9 +155,14 @@ export type InboundDTOMap = {
 }
 
 type TActionBlockReason = "setReadyWithoutJoining" | "notEveryoneReady" | "notAllSlotsFilled" | "fewPlayersForTournament"
+
 //server should broadcast these after...
 export type OutboundDTOMap = {
-    lobby: TLobby,
+    lobbyInit: {
+        lobby: TLobby,
+        matchConfigs: CAppConfigs | null,
+        tournamentConfigs: TTournamentDTO | null
+    },
     //host updates the settings. If map changes, users should be filled with the current users so slots can be updated accordingly
     updateSettings: {
         settings: TDynamicLobbySettings
