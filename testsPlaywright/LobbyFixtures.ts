@@ -2,10 +2,6 @@ import { test as base } from "@playwright/test";
 import UserSession from "./dependencies/User";
 import LoginPage from "./dependencies/pages/LoginPage";
 
-const ADMIN_INFO = {
-    username: "admin",
-    password: "Qwer123$"
-}
 const USERS_INFO = [
     {
         username: "ndo-vala",

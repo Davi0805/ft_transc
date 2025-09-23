@@ -17,26 +17,12 @@ type MyControlsT = {
 };
 
 class MatchService {
-    async startMatchOUT(configs: CAppConfigs) {
-        const noControlsMsg = "No controls are saved! Game is starting, but you wont be able to control it";
-        
+    async startMatchOUT(configs: CAppConfigs) {        
         const myControls = this._getControls();
         myControls.used = true;
         this._saveControls(myControls);
         configs.gameSceneConfigs.controls = myControls.controls;
 
-        console.log(`startMatchOUT was called. The parsed controls are ${myControls}`)
-        /* if (myControls.matchID === configs.matchID) {
-            configs.gameSceneConfigs.controls = parsedControls.controls;
-        } else if (this._controls.length !== 0) {
-            localStorage.setItem("controls", JSON.stringify({
-                matchID: configs.matchID,
-                controls: this._controls
-            }));
-            configs.gameSceneConfigs.controls = this._controls;
-        } else {
-            console.log(noControlsMsg);
-        } */
         this._configs = configs;
         await router.navigateTo("/match");
         await this.start(MatchPage.getRoot());

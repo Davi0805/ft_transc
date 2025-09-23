@@ -118,7 +118,7 @@ class LobbyService {
         lobby.users = lobby.users.filter(user => user.id !== userID);
         socketService.broadcastToLobby(lobbyID, "removeLobbyUser", { userID: userID })
         //Automatically close lobby if nobody is in there and no match is active
-        if (lobby.users.length === 0 && matchRepository.getInfosByLobbyID(lobbyID)?.length !== 0) {
+        if (lobby.users.length === 0 && matchRepository.getInfosByLobbyID(lobbyID)?.length === 0) {
             lobbyRepository.remove(lobbyID);
         }
     }

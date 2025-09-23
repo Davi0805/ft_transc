@@ -27,8 +27,6 @@ class TournamentService {
         const tournament = tournamentRepository.getByLobbyID(lobbyID);
         if (!tournament) {return null;}
         
-        console.log(`get current tournament info was called. The current round is ${tournament.currentRound}`)
-        
         let pairings: [number, number][] = [];
         const currentRound = tournament.rounds.find(round => round.roundNo === tournament.currentRound);
         //Only send the pairings if there are matches still to finish, otherwise it is not necessary

@@ -41,7 +41,6 @@ class LobbyWsGateway {
         socketService.addSocketToRepository(lobbyID, userID, socket);
 
         const lobbyInfo = lobbyService.getLobbyInfoForClient(lobbyID, userID);
-        console.log(lobbyInfo);
         const dto: OutboundDTO = {
             requestType: "lobbyInit",
             data: lobbyInfo

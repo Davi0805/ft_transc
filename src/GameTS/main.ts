@@ -5,8 +5,6 @@ import fastifySensible from "@fastify/sensible";
 import cors from '@fastify/cors';
 import { lobbyRoutes } from "./Infrastructure/routes/LobbyRoutes.js";
 import { LobbyWsGatewayRoutes } from "./Infrastructure/routes/LobbyWsRoutes.js";
-import { adminRoutes } from "./Infrastructure/routes/AdminRoutes.js";
-import { socketRepository } from "./Adapters/Outbound/SocketRepository.js";
 
 const setup = () => {
     const fastify = Fastify({ 
@@ -34,9 +32,6 @@ const setup = () => {
 
     fastify.register(lobbyRoutes);
     fastify.register(LobbyWsGatewayRoutes);
-
-    //ADMIN ROUTES: TODO: REMOVE FOR PRODUCTION
-    fastify.register(adminRoutes);
 
 
     return fastify;
