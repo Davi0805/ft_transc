@@ -10,6 +10,7 @@ export enum MOVEMENT {
     NONE,
     LEFT,
     RIGHT,
+    SELF_DESTRUCT
 }
 
 // Represents the paddle from the server's perspective
@@ -19,15 +20,30 @@ export default class SPaddle extends SObject {
         this._side = side;
         this._nextMovement = MOVEMENT.NONE;
         this._active = true;
+        this._selfDestructTime = 0;
     }
 
-    move(delta: number) {
+    move(delta: number) { //returns if the paddle became inactive after the move
         if (!this._active) { return; }
+        console.log(`paddle of team ${this._side} has nextMovement = ${this._nextMovement}. The enum value of self destruct is ${MOVEMENT.SELF_DESTRUCT}. Therefore, nextMovement === MOVEMENT.SELF_DESTRUCT is ${this._nextMovement === MOVEMENT.SELF_DESTRUCT}.`)
+        if (this._nextMovement === MOVEMENT.SELF_DESTRUCT) {
+            console.log("Movement is self destruct")
+            this._selfDestructTime += delta;
+            console.log(`The self destruct timer of team ${this._side} is ${this._selfDestructTime}`);
+            if (this._selfDestructTime > 3) {
+                this.active = false;
+                return true;
+            }
+        } else {
+            this._selfDestructTime = 0;
+        }
+
         if (this._nextMovement === MOVEMENT.LEFT || this._nextMovement == MOVEMENT.RIGHT) {
             let movVector = this.orientation.multiplyScalar(this.speed * delta)
                             .rotate((this._nextMovement === MOVEMENT.LEFT) ? -90 : 90);
             this.pos = this.pos.add(movVector);
         }
+        return false;
     }
 
     collideWith(other: SObject): void {
@@ -44,4 +60,6 @@ export default class SPaddle extends SObject {
     
     private _active: boolean;
     set active(active: boolean) { this._active = active; }
+
+    private _selfDestructTime: number;
 }

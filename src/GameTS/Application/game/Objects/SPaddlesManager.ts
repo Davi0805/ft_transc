@@ -21,9 +21,12 @@ export default class SPaddlesManager {
         })
     }
 
-    update(loop: LoopController) {
+    update(loop: LoopController, teamsManager: STeamsManager) {
         this._paddles.forEach(paddle => {
-            paddle.move(loop.delta);
+            const hasSelfDestructed = paddle.move(loop.delta);
+            if (hasSelfDestructed) {
+                this._handleSelfDestruct(paddle, teamsManager);
+            }
         })
     }
 
@@ -70,5 +73,16 @@ export default class SPaddlesManager {
                 paddle.pos.y = this._windowSize.y - paddle.cbox.height / 2;
             }
         })
+    }
+
+    private _handleSelfDestruct(destructedPaddle: SPaddle, teamsManager: STeamsManager) {
+        const teamOfPaddle = destructedPaddle.side;
+        const isTherePaddleActiveInTeam = this._paddles.some(paddle => (
+            paddle.side === teamOfPaddle && paddle.active === true
+        ));
+
+        if (!isTherePaddleActiveInTeam && teamsManager.isTeamActive(teamOfPaddle)) {
+            teamsManager.damageTeam(teamOfPaddle, 100000);
+        }
     }
 }

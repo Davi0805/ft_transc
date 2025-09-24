@@ -134,7 +134,7 @@ export default class ServerGame {
         this._botsManager.update(this._gameLoop, this._ballsManager.balls)
         
         // Object movement
-        this._paddlesManager.update(this._gameLoop);
+        this._paddlesManager.update(this._gameLoop, this._teamsManager);
         this._ballsManager.update(this._gameLoop);
 
         // Collision handling

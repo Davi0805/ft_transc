@@ -54,6 +54,12 @@ export default class STeamsManager {
         }))
     }
 
+    isTeamActive(side: SIDES): boolean {
+        const teamObj = this._teams.find(team => team.side === side);
+        if (!teamObj) { return false; }
+        return teamObj.place === 0 ? true : false;
+    }
+
     private _teams: STeam[] = []
     get teams(): STeam[] { return this._teams; }
 

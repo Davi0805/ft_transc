@@ -1,6 +1,7 @@
 import { TControlsState } from "../shared/sharedTypes.js";
 import SHuman from "./SHuman.js";
 import SPaddle from "../Objects/SPaddle.js";
+import STeamsManager from "../STeamsManager.js";
 
 export default class SHumansManager {
     constructor(humansConfigs: { id: number; paddleID: number;}[],

@@ -8,12 +8,15 @@ export default abstract class SPlayer {
                 right: { pressed: false },
             };
             this._paddle = paddle;
+            this._selfDestruct = false;
         }
     
         SetPaddleMovement() {
-            if (this.controls.left.pressed && !this.controls.right.pressed) {
+            if (this.controls.left.pressed && this.controls.right.pressed) {
+                this.paddle.nextMovement = MOVEMENT.SELF_DESTRUCT;
+            } else if (this.controls.left.pressed) {
                 this.paddle.nextMovement = MOVEMENT.LEFT;
-            } else if (this.controls.right.pressed && !this.controls.left.pressed) {
+            } else if (this.controls.right.pressed) {
                 this.paddle.nextMovement = MOVEMENT.RIGHT;
             } else {
                 this.paddle.nextMovement = MOVEMENT.NONE
@@ -29,4 +32,7 @@ export default abstract class SPlayer {
         private _paddle: SPaddle;
         set paddle(paddle: SPaddle) { this._paddle = paddle; }
         get paddle(): SPaddle { return this._paddle; }
+
+        private _selfDestruct: boolean;
+        get selfDestruct(): boolean { return this._selfDestruct; }
 }
