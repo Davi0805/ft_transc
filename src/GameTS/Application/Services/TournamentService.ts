@@ -162,7 +162,7 @@ class TournamentService {
         const playerLeft = tournament.participants.find(participant => participant.id === match.playerIDs[0]);
         const playerRight = tournament.participants.find(participant => participant.id === match.playerIDs[1]);
         if (!playerLeft || !playerRight) {throw Error("Players in match do not exist in participants!")}
-        const winnerPlayer = result[SIDES.LEFT] === 1 ? playerLeft : playerRight;
+        const winnerPlayer = result[0] === SIDES.LEFT ? playerLeft : playerRight;
 
         match.winnerID = winnerPlayer.id
         winnerPlayer.score++;
