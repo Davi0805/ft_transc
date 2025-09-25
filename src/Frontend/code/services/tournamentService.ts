@@ -3,6 +3,7 @@ import { TTournamentParticipant } from "../pages/play/lobbyTyping"
 import { TournamentPage } from "../pages/play/tournament";
 import { router } from "../routes/router";
 import { lobbyService } from "./LobbyService";
+import { lobbySocketService } from "./lobbySocketService";
 import { matchService } from "./matchService";
 
 
@@ -41,6 +42,10 @@ class TournamentService {
                 participants: []
             }
         }
+    }
+
+    quitTournamentIN() {
+        lobbySocketService.send("quitTournament", null);
     }
 
     startTournamentOUT() {

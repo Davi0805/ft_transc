@@ -25,7 +25,6 @@ export type TournamentT = {
             winnerID: number | null
         }[]
     }[],
-    roundAmount: number,
     currentRound: number
 }
 
@@ -43,7 +42,6 @@ class TournamentFactory {
             matchSettings: matchSettings,
             participants: participants,
             rounds: [],
-            roundAmount: Math.ceil(Math.log2(participants.length)),
             currentRound: 0
         }
     }

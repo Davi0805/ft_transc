@@ -1,5 +1,6 @@
 import { lobbyService } from "../../services/LobbyService";
 import { tournamentService } from "../../services/tournamentService";
+import { quitTournamentClicked } from "./buttonCallbacks";
 import { getTable } from "./utils/stylingComponents";
 
 
@@ -11,6 +12,7 @@ export const TournamentPage = {
                 <h3 id="tournament-subtitle" class="text-xl p-1">Tournament</h3>
                 <h3 id="info-on-display"></h3>
                 <div id="tournament-body" class="flex flex-row w-full min-h-0 gap-3 "></div>
+                <button id="quit-btn">Quit</button>
             </div>
         `
     },
@@ -21,6 +23,9 @@ export const TournamentPage = {
         
         const tournamentBody = document.getElementById("tournament-body") as HTMLDivElement;
         tournamentBody.textContent = "Waiting for tournament info..."
+
+        const quitButton = document.getElementById("quit-btn") as HTMLButtonElement;
+        quitButton.addEventListener('click', quitTournamentClicked);
     },
 
     renderStandings() {

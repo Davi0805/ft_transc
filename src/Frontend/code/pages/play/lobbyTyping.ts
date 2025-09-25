@@ -151,7 +151,9 @@ export type InboundDTOMap = {
     start: null,
     
     //Game dto:
-    updateGame: CGameDTO //Dealt with in game
+    updateGame: CGameDTO, //Dealt with in game
+
+    quitTournament: null
 }
 
 type TActionBlockReason = "setReadyWithoutJoining" | "notEveryoneReady" | "notAllSlotsFilled" | "fewPlayersForTournament"

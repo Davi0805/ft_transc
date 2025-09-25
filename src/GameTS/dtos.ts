@@ -49,6 +49,8 @@ export type InboundDTOMap = {
     //GAME DTOS
     //clicks in any key that controls their paddle
     updateGame: CGameDTO
+
+    quitTournament: null
 }
 
 

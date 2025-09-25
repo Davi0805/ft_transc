@@ -2,6 +2,7 @@ import { ROLES, SIDES } from "../../match/matchSharedDependencies/sharedTypes";
 import { router } from "../../routes/router";
 import { lobbyService } from "../../services/LobbyService";
 import { matchService } from "../../services/matchService";
+import { tournamentService } from "../../services/tournamentService";
 import { TDuration, TMap, TMode } from "./lobbyTyping";
 
 export function applySettingsClicked(e: SubmitEvent) {
@@ -83,4 +84,11 @@ export function joinWithdrawTournamentClicked(state: boolean) {
     } else {
         lobbyService.removeTournamentPlayerIN()
     }
+}
+
+export function quitTournamentClicked() {
+    console.log("quit tournament called");
+    tournamentService.quitTournamentIN();
+    lobbyService.leave();
+    router.navigateTo("/play");
 }

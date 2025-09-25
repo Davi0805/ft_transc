@@ -41,6 +41,19 @@ class TournamentService {
         }
     }
 
+    quitPlayerFromTournamentOfLobby(lobbyID: number, playerID: number) {
+        console.log(`Player with ID ${playerID} quit`)
+        const tournament = tournamentRepository.getByLobbyID(lobbyID);
+        if (!tournament) {
+            console.log("There is no tournament going on at this lobby! ignoring");
+            return;
+        }
+        const quitter = tournament.participants.find(player => player.id === playerID);
+        if (quitter) {
+            quitter.participating = false;
+        }
+    }
+
     start(lobby: LobbyT, senderID: number) {
         const tournamentParticipants = this._getTournamentParticipants(lobby.users);
         if (tournamentParticipants.length < this.MIN_PARTICIPANTS) {
@@ -66,7 +79,8 @@ class TournamentService {
         socketService.broadcastToLobby(tournament.lobbyID, "displayStandings", { standings: standings })
         
         setTimeout(() => {
-            const tournamentDone = tournament.currentRound >= tournament.roundAmount
+            const activePlayers = tournament.participants.filter(participant => participant.participating === true);
+            const tournamentDone = tournament.currentRound >= this._calculateRoundAmount(activePlayers.length)
             if (tournamentDone) {
                 this._onTournamentFinished(tournamentID, standings);
             } else {
@@ -259,6 +273,10 @@ class TournamentService {
             player2.teamDist--;
             return [player1, player2];
         })
+    }
+
+    private _calculateRoundAmount(playersAmount: number) {
+        return Math.ceil(Math.log2(playersAmount))
     }
 }
 

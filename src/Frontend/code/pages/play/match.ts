@@ -1,5 +1,3 @@
-import { matchService } from "../../services/matchService"
-
 export const MatchPage = {
     template() {
         return `

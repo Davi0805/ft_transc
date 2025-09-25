@@ -25,11 +25,8 @@ export default class SPaddle extends SObject {
 
     move(delta: number) { //returns if the paddle became inactive after the move
         if (!this._active) { return; }
-        console.log(`paddle of team ${this._side} has nextMovement = ${this._nextMovement}. The enum value of self destruct is ${MOVEMENT.SELF_DESTRUCT}. Therefore, nextMovement === MOVEMENT.SELF_DESTRUCT is ${this._nextMovement === MOVEMENT.SELF_DESTRUCT}.`)
         if (this._nextMovement === MOVEMENT.SELF_DESTRUCT) {
-            console.log("Movement is self destruct")
             this._selfDestructTime += delta;
-            console.log(`The self destruct timer of team ${this._side} is ${this._selfDestructTime}`);
             if (this._selfDestructTime > 3) {
                 this.active = false;
                 return true;

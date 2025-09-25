@@ -3,6 +3,7 @@ import { socketRepository } from "../../Adapters/Outbound/SocketRepository.js";
 import lobbyService from "./LobbyService.js";
 import { InboundDTO, OutboundDTO, OutboundDTOMap } from "../../dtos.js";
 import matchService from "./MatchService.js";
+import tournamentService from "./TournamentService.js";
 
 
 
@@ -82,6 +83,9 @@ class SocketService {
                 break;
             case "updateGame":
                 matchService.updateControlsState(lobbyID, senderID, dto.data)
+                break;
+            case "quitTournament":
+                tournamentService.quitPlayerFromTournamentOfLobby(lobbyID, senderID);
                 break;
             default:
                 console.log(`Socket does not recognize the request type`)
