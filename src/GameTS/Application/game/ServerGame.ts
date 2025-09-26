@@ -151,12 +151,11 @@ export default class ServerGame {
                 this._timeLeft -= 1;
             }
         }
-        // Game state handling
 
         if (!this._ballsManager.isSuddenDeathActive() && this._timeLeft <= 0 && this._teamsManager.areThereTies()) {
             this._ballsManager.activateSuddenDeath();
         }
-        if (this._teamsManager.allTeamsFinished()) {
+        if (this._teamsManager.allTeamsFinished() || (this._timeLeft <= 0 && !this._teamsManager.areThereTies())) {
             this._gameLoop.pause();
             this._matchResult = this._teamsManager.getTeamsState();
         }
