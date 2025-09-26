@@ -98,6 +98,7 @@ class LobbyService {
     addUser(lobbyID: number, userID: number, username: string, spriteID: number, rating: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
         if (!lobby) {throw Error (`Lobby ${lobbyID} not found when it should have been`)}
+        
         const user = {
             id: userID,
             username: username,
@@ -114,7 +115,11 @@ class LobbyService {
 
     removeUser(lobbyID: number, userID: number) {
         const lobby = lobbyRepository.getByID(lobbyID);
-        if (!lobby) {throw Error (`Lobby ${lobbyID} not found when it should have been`)}
+        if (!lobby) {
+            console.log("Lobby does not exist to be left. Ignoring");
+            return;
+            //throw Error (`Lobby ${lobbyID} not found when it should have been`)
+        }
         lobby.users = lobby.users.filter(user => user.id !== userID);
         socketService.broadcastToLobby(lobbyID, "removeLobbyUser", { userID: userID })
         //Automatically close lobby if nobody is in there and no match is active
