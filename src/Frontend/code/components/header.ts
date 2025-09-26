@@ -105,9 +105,9 @@ class Header {
   }
 
   init() {
-    
+
     this.createHeaderElement();
-    
+
     this.navBarElement = document.getElementById("header-nav");
     this.logOutEventListener();
     this.languageSelectorDisplayEventListener();
@@ -173,9 +173,9 @@ class Header {
       `a.nav-link[href='${path}']`
     ) as HTMLElement;
 
-    if (curActive !== newActive) {
-      curActive?.classList.remove("active");
-      newActive?.classList.add("active");
+    if (curActive && newActive && curActive !== newActive) {
+      curActive.classList.remove("active");
+      newActive.classList.add("active");
     }
   }
 
@@ -238,7 +238,7 @@ class Header {
      * @param nickname The user's nickname to display.
      * @param avatarURL The user's avatar image URL.
      */
-    const showLoggedInVersion = (username: string, nickname: string, avatarURL: string) => {
+    const showLoggedInVersion = (nickname: string, avatarURL: string) => {
       if (loggedOut) {
         loggedOut.remove();
       }
@@ -247,12 +247,12 @@ class Header {
       loggedIn = this.createElement("div", "user-in", "user-in flex gap-4");
 
       loggedIn.innerHTML = `
-        <div class="profile-container flex flex-center gap-8">
-          <a id="profile-link" href="/profile/${username}" class="profile nav-link" data-link>${nickname}</a>
-          <img class="profile-avatar" src="${avatarURL}" alt="user profile picture" draggable="false">
-        </div>
-        <a id="settings-link" href="/settings" data-link class="settings flex flex-center nav-link">
-          <img src="./Assets/icons/settings.svg" alt="settings icon" draggable="false">
+        <a id="profile-link" href="/profile" class="flex justify-center items-center gap-4 nav-link  transition-all duration-200 ease-in-out" data-link>
+          <span>${nickname}</span>
+          <img class="profile-avatar w-8 h-8 rounded-full border-2 border-white shadow-md shadow-[#333]" src="${avatarURL}" alt="user profile picture" draggable="false">
+        </a>
+        <a id="settings-link" href="/settings" data-link class="settings flex justify-center items-center nav-link">
+          <img class="w-6 h-6 hover:scale-125 transition-all duration-200 ease-in-out" src="./Assets/icons/settings.svg" alt="settings icon" draggable="false">
         </a>
         <button id="logout" class="logout flex justify-center items-center">
           <img class="w-6 h-6 hover:scale-125 transition-all duration-200 ease-in-out" src="./Assets/icons/logout.svg" alt="logout icon" draggable="false">
@@ -263,7 +263,7 @@ class Header {
     };
 
     if (authService.isUserAuthenticated())
-      showLoggedInVersion(authService.userUsername!, authService.userNick!, authService.userAvatar!);
+      showLoggedInVersion(authService.userNick!, authService.userAvatar!);
     else showLoggedOutVersion();
   }
 
