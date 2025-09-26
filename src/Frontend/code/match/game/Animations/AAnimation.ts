@@ -24,7 +24,6 @@ export default abstract class AAnimation {
                 this._isDone = true;
             }
         }
-        //console.log(this._timer)
     };
 
     protected _object: ObjectAnimationView;

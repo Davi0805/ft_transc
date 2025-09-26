@@ -38,9 +38,7 @@ export class ScenesManager {
     }
 
     async removeCurrentScene() {
-        console.log("RemoveCurrentScene called");
         if (this.currentScene) {
-            console.log("got here")
             await this.currentScene.remove();
             this.container.removeChildren();
         }

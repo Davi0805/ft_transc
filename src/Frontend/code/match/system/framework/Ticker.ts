@@ -1,4 +1,4 @@
-type LogicCallback = (delta: number, counter: number) => void;
+export type LogicCallback = (delta: number, counter: number) => void;
 
 export default class Ticker {
     constructor() {
@@ -23,7 +23,6 @@ export default class Ticker {
         loop();
     }
     stop() {
-        console.log("stop was set")
         this._stop = true;
     }
 

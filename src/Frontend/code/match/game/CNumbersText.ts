@@ -45,7 +45,6 @@ export default class CNumbersText {
             const animationObj = new animation(this, loop)
             this._animations.push(animationObj);
         })
-        console.log("Animation added")
     }
 
     updateAnimations() { 
@@ -57,7 +56,6 @@ export default class CNumbersText {
             }
         }
         this._updatePos();
-        //console.log(this._animations.length)
     }
 
     
