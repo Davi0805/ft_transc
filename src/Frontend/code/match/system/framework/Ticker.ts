@@ -8,6 +8,7 @@ export default class Ticker {
     }
 
     start() {
+        this._stop = false;
         let prevTime = performance.now();
         const loop = () => {
             const now = performance.now();
@@ -15,9 +16,15 @@ export default class Ticker {
             prevTime = now;
             if (this._isRunning) {this._callCallbacks();}
             this._tickerTimer += 1;
-            requestAnimationFrame(loop); //Updates with the refresh rate of the browser (60Hz)
+            if (!this._stop) {
+                requestAnimationFrame(loop); //Updates with the refresh rate of the browser (60Hz)
+            }
         }
         loop();
+    }
+    stop() {
+        console.log("stop was set")
+        this._stop = true;
     }
 
     pause() { this._isRunning = false; }
@@ -50,6 +57,8 @@ export default class Ticker {
 
     private _isRunning: boolean;
     get isRunning(): boolean { return this._isRunning; }
+
+    private _stop: boolean = false;
     private _tickerTimer: number;
     private _delta: number;
     get delta(): number { return this._delta }

@@ -7,7 +7,7 @@ export default abstract class AScene<T> {
     constructor() {
         this._root = new Container(); // All objects of the scene will be appended to this
         // This allows tickerUpdate to be called every pixi tick, in case some updates are needed to be performed automatically
-        App.app.ticker.add((delta, counter) => this.tickerUpdate(delta, counter));
+        App.app.ticker.add((delta, counter) => this.tickerUpdate(delta, counter)); //TODO THIS DOES NOT SEND TICKERUPDATE, IT SENDS AN ANONYMOUS THAT CALLS IT. REMOVING DOES NOTHING
     }
     async remove() {
         App.app.ticker.remove((delta, counter) => this.tickerUpdate(delta, counter));

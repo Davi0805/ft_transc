@@ -39,8 +39,10 @@ class FtApplication {
     }
 
     async destroy() {
+        console.log("destroy was called")
         this.scenesManager.removeCurrentScene();
         this.unsetSendToServerFunc();
+        this._app?.destroy();
         this._app = null
         //Maybe something else is necessary?
     }

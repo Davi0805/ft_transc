@@ -25,6 +25,10 @@ export default class Application {
         this._ticker.start();
     }
 
+    destroy() {
+        this._ticker.stop()
+    }
+
     private _ticker: RendererTicker;
     get ticker(): Ticker { return this._ticker; }
 
