@@ -96,12 +96,19 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             } 
         })
         this.timer?.update(gameDto.timeLeft, false);
+        if (gameDto.timeLeft === 0 && !this._suddenDeath) {
+            this._suddenDeath = true;
+            this.teams.forEach(team => {
+                team.state = "scared";
+            })
+        }
         if (gameDto.audioEvent) {
             audioPlayer.playTrack(gameDto.audioEvent, 1);
         }
     }
 
     override tickerUpdate(delta: number, counter: number): void {
+        console.log("Ticker is running")
         this.teams.forEach(team => {
             team.hp.updateAnimations();
         })
@@ -126,4 +133,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     private _paddles: Map<number, CPaddle> = new Map<number, CPaddle>;
     get paddles() { return this._paddles }
     set paddles(value: Map<number, CPaddle>) { this._paddles = value }
+
+    private _suddenDeath = false;
 }
