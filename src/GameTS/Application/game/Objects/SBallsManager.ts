@@ -15,6 +15,7 @@ export default class SBallsManager {
         this._ballSpawnRate = 4;
         this._currentID = 0;
         this._powerupsActive = powerupsActive;
+        this._suddenDeathDamageMultiplier = 1;
 
         this._audioBus = audioBus;
     }
@@ -89,7 +90,7 @@ export default class SBallsManager {
             }
             if (team != null) {
                 this._audioBus.emit("audioEvent", "wallHit")
-                const died = teamsManager.damageTeam(team, ball.damage);
+                const died = teamsManager.damageTeam(team, ball.damage * this._suddenDeathDamageMultiplier);
                 if (died) {
                     paddlesManager.deactivatePaddles(team);
                 }
@@ -111,6 +112,13 @@ export default class SBallsManager {
                 }
             }
         }
+    }
+
+    activateSuddenDeath() {
+        this._suddenDeathDamageMultiplier = 100000;
+    }
+    isSuddenDeathActive() {
+        return this._suddenDeathDamageMultiplier === 1 ? false : true
     }
 
     getBallsDTO() {
@@ -156,6 +164,8 @@ export default class SBallsManager {
     get ballSpawnRate() { return this._ballSpawnRate; }
 
     private _powerupsActive: boolean;
+
+    private _suddenDeathDamageMultiplier: number;
 
     private _currentID: number;
 

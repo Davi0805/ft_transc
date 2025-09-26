@@ -60,6 +60,17 @@ export default class STeamsManager {
         return teamObj.place === 0 ? true : false;
     }
 
+    areThereTies(): boolean {
+        const scores = new Set();
+        for (const team of this.teams) {
+            if (scores.has(team.score)) {
+                return true;
+            }
+            scores.add(team.score);
+        }
+        return false;
+    }
+
     private _teams: STeam[] = []
     get teams(): STeam[] { return this._teams; }
 

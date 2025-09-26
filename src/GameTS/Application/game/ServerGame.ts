@@ -105,7 +105,7 @@ export default class ServerGame {
     get matchResult() { return this._matchResult; }
 
     private _matchLength: number;
-    private _timeLeft: number; 
+    private _timeLeft: number;
 
     private _ballsManager: SBallsManager;
     private _teamsManager: STeamsManager;
@@ -147,17 +147,16 @@ export default class ServerGame {
         this._paddlesManager.handleCollisions(this._ballsManager, this._teamsManager);
         
         if (this._gameLoop.isEventTime(1)) {
-            this._timeLeft -= 1;
+            if (this._timeLeft > 0) {
+                this._timeLeft -= 1;
+            }
         }
         // Game state handling
 
-        /* //TODO the following func is to speed up the game result. Change back to the official one!
-        if (this._matchLength - this._timeLeft > 3) {
-            this._gameLoop.pause();
-            this._matchResult = this._teamsManager.getTeamsState();
-        } */
-        if (this._teamsManager.allTeamsFinished()
-            || this._timeLeft <= 0) {
+        if (!this._ballsManager.isSuddenDeathActive() && this._timeLeft <= 0 && this._teamsManager.areThereTies()) {
+            this._ballsManager.activateSuddenDeath();
+        }
+        if (this._teamsManager.allTeamsFinished()) {
             this._gameLoop.pause();
             this._matchResult = this._teamsManager.getTeamsState();
         }
