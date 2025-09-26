@@ -17,6 +17,7 @@ class LobbyWsGateway {
         }
 
 
+
         const lobbyID: number = Number(req.params.lobbyID);
         const userID: number = Number(session.user_id);
         const sprite_id: number = Number(session.sprite_id);
@@ -35,6 +36,11 @@ class LobbyWsGateway {
         ) {
             socket.close(4001, "You cannot enter in this lobby because it has an event active and you are not part of it!");
             return;
+        }
+
+        if (!socketService.isUserConnected(userID)) {
+            socket.close(4001, "The user already have another connection with game service");
+            return ;
         }
 
         lobbyService.addUser(lobbyID, userID, session.username, sprite_id, rating);
