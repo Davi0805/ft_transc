@@ -1,15 +1,8 @@
-export interface UserData {
-  user_id: number | string;
-  name: string;
-  username: string;
-  email: string;
-  spriteID: number,
-  rating: number
-}
+import { UserData } from "./types/UserDataType";
 
 /**
  * @brief
- * Fetches the user data with the given userID from the backend.
+ * Fetches the user data with the given username from the backend.
  *
  * Throws an error if the request fails.
  *
@@ -18,9 +11,10 @@ export interface UserData {
  * @returns A promise that resolves to the user's data object.
  * @throws {Error} If the authentication token is missing or the API request fails.
  */
-export async function getUserDataById(userID: number): Promise<UserData> {
+export async function getUserDataByUsername(username: string): Promise<UserData> {
   try {
-    const response = await fetch(`http://localhost:8080/users/${userID}`, {
+    // localhost:8080/users/username/maria42
+    const response = await fetch(`http://localhost:8080/users/username/${username}`, {
       method: "GET",
     });
 

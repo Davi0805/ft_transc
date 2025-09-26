@@ -27,8 +27,8 @@ class ChatMessageRepository {
     {
         return await db.raw('INSERT INTO messages '+
                             '(conversation_id, from_user_id, message_content, metadata) '+
-                            'VALUES (?, ?, ?)',
-                            [conversation_id, from_user_id, 'match_invite', lobbyId]);
+                            'VALUES (?, ?, ?, ?)',
+                            [Number(conversation_id), Number(from_user_id), 'match_invite', Number(lobbyId)]);
     }
 
     // with metadata

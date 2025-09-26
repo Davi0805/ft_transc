@@ -1,8 +1,8 @@
 import { authService } from "../services/authService";
 import { webSocketService, MessageDTO } from "../services/webSocketService";
 import { chatWindowControler } from "./chatWindow";
-
-import { getUserDataById, UserData } from "../api/userData/getUserDataAPI";
+import { UserData } from "../api/userData/types/UserDataType";
+import { getUserDataById} from "../api/userData/getUserDataByIDAPI";
 import { getUserAvatarById } from "../api/userData/getUserAvatarAPI";
 import {
   getSelfConversations,
@@ -24,6 +24,7 @@ import { ErrorPopup } from "../utils/popUpError";
 export interface Friend {
   convID: number;
   friendID: number;
+  friendUsername: string;
   friendName: string;
   friendAvatar: string;
   unreadMsg: number;
@@ -280,7 +281,8 @@ export class Chat {
         this.friends.push({
           convID: conv.id,
           friendID: friendID,
-          friendName: friendData.name,
+          friendName: friendData.nickname,
+          friendUsername: friendData.username,
           friendAvatar: friendAvatarURL,
           unreadMsg: conv.unread_count,
           friendOn: false,
@@ -509,7 +511,7 @@ export class Chat {
         this.friends.push({
           convID: data.conversation_id,
           friendID: friendID,
-          friendName: friendData.name,
+          friendName: friendData.nickname,
           friendAvatar: friendAvatarURL,
           unreadMsg: 0,
           friendOn: false,

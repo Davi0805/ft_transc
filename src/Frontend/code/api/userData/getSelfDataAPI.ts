@@ -1,11 +1,5 @@
 import { authService } from "../../services/authService";
-
-export interface SelfData {
-  id: number; // userID
-  nickname: string | null;
-  username: string | null;
-  email: string | null;
-}
+import { UserData } from "./types/UserDataType";
 
 /**
  * @brief
@@ -20,7 +14,7 @@ export interface SelfData {
  * @returns A promise that resolves to the user's data object.
  * @throws {Error} If the authentication token is missing or the API request fails.
  */
-export async function getSelfData(): Promise<SelfData> {
+export async function getSelfData(): Promise<UserData> {
   try {
     if (!authService.isUserAuthenticated()) {
       const errorMessage: string = `DEBUG: No authToken at getSelfData`;
@@ -46,7 +40,7 @@ export async function getSelfData(): Promise<SelfData> {
       throw error;
     }
 
-    return (await response.json()) as SelfData;
+    return (await response.json()) as UserData;
   } catch (error) {
     throw error;
   }

@@ -40,7 +40,7 @@ export async function getUserAvatarById(userId: number): Promise<string> {
     let imgURL: string;
     if (response.status === 204) {
       // default profile picture
-      imgURL = "./Assets/default/bobzao.jpg";
+      imgURL = "/Assets/default/bobzao.jpg";
     } else {
       const blob = await response.blob();
       imgURL = URL.createObjectURL(blob);

@@ -50,7 +50,7 @@ class EventBroadcast {
             console.log('GAVE SHIT');            
         }
         const conversation = await conversationService.getConversationByUserIds(parsedMsg.from_user, parsedMsg.to_user);
-        const socket = await connectedUsersService.getUser(parsedMsg.to_user);
+        const socket = await connectedUsersService.getUser(String(parsedMsg.to_user));
         await messageService.saveInviteMessage(conversation[0].id, parsedMsg.from_user, parsedMsg.lobbyId);
         console.log(message);
         if (!socket) return;

@@ -45,7 +45,7 @@ class UserController {
     {
         const user = await userService.findById(req.params.id);
         return reply.send({ user_id: user[0].user_id,
-                            name: user[0].name,
+                            nickname: user[0].name,
                             username: user[0].username,
                             email: user[0].email,
                             spriteID: user[0].sprite_id, //TODO: Check if this addition is correct.
