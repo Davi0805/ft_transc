@@ -9,8 +9,7 @@ export default class CPaddleControls {
         this._humanID = humanID;
         this._controlsState = {
             left: { pressed: false },
-            right: { pressed: false },
-            pause: { pressed: false }
+            right: { pressed: false }
         }
         this._onKeyDown = this._getOnKeyDown(controls); //TODO: Probably should put some of this in the AScene?
         this._onKeyUp = this._getOnKeyUp(controls);
@@ -55,10 +54,6 @@ export default class CPaddleControls {
                     this._controlsState.right.pressed = true;
                     stateChanged = true;
                     break;
-                } case controls.pause: {
-                    this._controlsState.pause.pressed = true;
-                    stateChanged = true;
-                    break;
                 }
             }
             if (stateChanged) {
@@ -81,10 +76,6 @@ export default class CPaddleControls {
                     break;
                 } case controls.right: {
                     this._controlsState.right.pressed = false;
-                    stateChanged = true;
-                    break;
-                } case controls.pause: {
-                    this._controlsState.pause.pressed = false;
                     stateChanged = true;
                     break;
                 }

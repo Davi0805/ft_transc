@@ -37,6 +37,11 @@ async function userRoutes(fastify, options) {
     fastify.get('/users/username/:username', {
       handler: userController.getByUsername
     });
+
+    fastify.get('/profile/:username', {
+      preHandler: authMiddleware,
+      handler: userController.getProfileData
+    });
     
     fastify.post('/twofa/auth', {
       schema: {
@@ -64,6 +69,12 @@ async function userRoutes(fastify, options) {
       preHandler: authMiddleware,
       handler: userController.updateName
     });
+
+    fastify.put('/users/email', {
+        preHandler: authMiddleware,
+        handler: userController.updateEmail
+      }
+    )
     
     fastify.put('/user/password', {
       schema: {

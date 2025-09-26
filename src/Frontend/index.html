@@ -10,112 +10,17 @@
   </head>
 
   <body class="flex flex-col flex-1 overflow-x-auto min-w-[850px]">
+    <!-- BACKGROUND -->
     <video autoplay muted loop class="video-bg">
       <source src="./Assets/bg.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
 
+    <!-- Main content area -->
+    <div id="page-layout" class="flex flex-1">
+      <main id="main" class="flex flex-1 justify-center items-center py-[120px] px-5 mr-0"></main>
 
-
-    <!-- Header (will contain navigation links) -->
-    <header id="header">
-      <div class="left flex flex-center flex-shrink-0 min-w-0">
-        <a href="/" class="flex center gap-2 site-home" data-link>
-          <img
-            class="logo"
-            src="./Assets/42PortoLogo.png"
-            alt="42 Porto logo"
-            draggable="false"
-          />
-          <span class="site-title">ft_transcendence</span>
-        </a>
-      </div>
-
-      <div class="right flex flex-center gap-4 min-w-0">
-        <nav id="header-nav" class="flex flex-center gap-6">
-          <a
-            id="home-link"
-            href="/"
-            data-link
-            data-i18n="header-home"
-            class="active nav-link"
-            >Home</a
-          >
-          <a 
-            id="play-link"
-            href="/play"
-            data-link
-            data-i18n="header-play"
-            class="nav-link"
-            >Play</a
-          >
-          <a
-            id="about-link"
-            href="/about"
-            data-link
-            data-i18n="header-about"
-            class="nav-link"
-            >About</a
-          >
-
-          <!-- <div id="log-reg" class="log-reg flex gap-24"></div>
-
-        <div id="user-in" class="user-in flex gap-16"></div> -->
-        </nav>
-
-        <div class="language-selector flex flex-center flex-dir-col">
-          <button class="current-language flex flex-center">
-            <img
-              src="https://flagcdn.com/w20/gb.png"
-              data-lang="uk"
-              alt="United Kingdom"
-              flag
-              draggable="false"
-            />
-            <img
-              class="flex flex-dir flex-center"
-              src="./Assets/icons/drop-down.svg"
-              alt="drop-down icon"
-              flag
-              draggable="false"
-            />
-          </button>
-
-          <div class="lang-options" style="display: none">
-            <ul class="flex flex-dir-col flex-center">
-              <li>
-                <button class="lang-option">
-                  <img
-                    src="https://flagcdn.com/w20/pt.png"
-                    data-lang="pt"
-                    alt="Portuguese flag"
-                    draggable="false"
-                  />
-                </button>
-              </li>
-
-              <li>
-                <button class="lang-option">
-                  <img
-                    src="https://flagcdn.com/w20/es.png"
-                    data-lang="es"
-                    alt="Spain flag"
-                    flag
-                    draggable="false"
-                  />
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main content area (will be dynamically updated) -->
-    <div id="page-layout">
-      <main id="main"></main>
-
-      <aside class="flex justify-end max-w-[200px]"></aside>
+      <aside class="flex justify-end w-[200px] fixed top-[60px] right-0 h-[calc(100vh-60px)]"></aside>
 
       <div id="chat-window-wrapper"></div>
     </div>

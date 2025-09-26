@@ -9,6 +9,7 @@ import CPaddle from "./CPaddle";
 import CTeam from "./CTeam";
 import CNumbersText from "./CNumbersText";
 import CPaddleControls from "./CPaddleControls";
+import { audioPlayer } from "../system/framework/Audio/AudioPlayer";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
@@ -35,14 +36,22 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 )
             ))
         })
-        gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => { 
+        gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => {
             this.paddles.set(
                 paddleConf.id,  
                 new CPaddle(paddleConf, this._root),
             )
         })
-        gameSceneConfigs.controls.forEach( (controls, humanID) => {
-            this._controls.set(humanID, new CPaddleControls(humanID, controls))
+        gameSceneConfigs.gameInitialState.balls.forEach(ballConf => {
+            this.balls.set(
+                ballConf.id,
+                new CBall(ballConf, this._root)
+            );
+        })
+
+        if (gameSceneConfigs.controls === null) { throw Error("controls were not initialized!") }
+        gameSceneConfigs.controls.forEach( human => {
+            this._controls.set(human.humanID, new CPaddleControls(human.humanID, human.controls))
         })
     }
 
@@ -86,11 +95,19 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                 team.update(teamState.score);
             } 
         })
-        this.timer?.update(gameDto.timeLeft, false); 
+        this.timer?.update(gameDto.timeLeft, false);
+        if (gameDto.timeLeft === 0 && !this._suddenDeath) {
+            this._suddenDeath = true;
+            this.teams.forEach(team => {
+                team.state = "scared";
+            })
+        }
+        if (gameDto.audioEvent) {
+            audioPlayer.playTrack(gameDto.audioEvent, 1);
+        }
     }
 
     override tickerUpdate(delta: number, counter: number): void {
-        //if (counter % 20 === 0) {console.log(delta)}
         this.teams.forEach(team => {
             team.hp.updateAnimations();
         })
@@ -115,4 +132,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     private _paddles: Map<number, CPaddle> = new Map<number, CPaddle>;
     get paddles() { return this._paddles }
     set paddles(value: Map<number, CPaddle>) { this._paddles = value }
+
+    private _suddenDeath = false;
 }

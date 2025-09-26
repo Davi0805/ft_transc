@@ -32,12 +32,19 @@ export default class CNumbersText {
     }
 
     update(value: number, activateAnimation: boolean) {
-        if (activateAnimation) {
+        /* if (activateAnimation) {
             this._animations.push((value < this.value) ? new AnimationBad(this) : new AnimationGood(this))
             this._animations.push(new AnimationShake(this))
             this._animations.push(new AnimationScaleUp(this))
-        }
+        } */
         this.value = value;
+    }
+
+    addAnimations(animations: (new (obj: CNumbersText, loop: boolean) => AAnimation)[], loop: boolean = false) {
+        animations.forEach(animation => {
+            const animationObj = new animation(this, loop)
+            this._animations.push(animationObj);
+        })
     }
 
     updateAnimations() { 
@@ -50,6 +57,8 @@ export default class CNumbersText {
         }
         this._updatePos();
     }
+
+    
 
     private _value: number;
     set value(value: number) { 

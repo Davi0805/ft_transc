@@ -2,6 +2,7 @@ const friendRequest = require('../../../Application/Services/FriendRequestServic
 const userService = require('../../../Application/Services/UserService');
 const exception = require('../../../Infrastructure/config/CustomException');
 const redisService = require('../../../Application/Services/RedisService');
+const blockService = require('../../../Application/Services/BlockService');
 
 class FriendRequestController {
 
@@ -25,6 +26,7 @@ class FriendRequestController {
     */
     async create(req, reply)
     {
+        await blockService.isUserBlocked(req.session.user_id, req.body.receiver_id);
         await friendRequest.newRequest(req.session.user_id, req.body.receiver_id);
         return reply.send();        
     }
@@ -32,7 +34,7 @@ class FriendRequestController {
     async createByUsername(req, reply)
     {
         const { user_id } = await userService.findByUsername(req.params.username);
-        console.log(user_id);
+        //await blockService.isUserBlocked(req.session.user_id, req.body.receiver_id);
         await friendRequest.newRequest(req.session.user_id, user_id);
         return reply.send();
     }
@@ -76,6 +78,13 @@ class FriendRequestController {
         return reply.send();   
     }
 
+    async getAllMyBlockedFriends(req, reply)
+    {
+        //const result = await friendRequest.getAllMyBlockedFriends(req.session.user_id);
+        const result = await blockService.getMyBlockList(req.session.user_id);
+        return reply.send(result);
+    }
+
 
     /* 
     *    Endpoint to block friendship
@@ -84,7 +93,17 @@ class FriendRequestController {
     */
     async blockFriend(req, reply)
     {
-        await friendRequest.blockFriend(req.params.id, req.session.user_id);
+        //await friendRequest.blockFriend(req.params.id, req.session.user_id);
+        await blockService.blockUser(req.session.user_id, req.params.id);
+        return reply.send();
+    }
+
+
+    async blockByUsername(req, reply)
+    {
+        //await friendRequest.blockFriend(req.params.id, req.session.user_id);
+        const user = await userService.findByUsername(req.params.username);
+        await blockService.blockUser(req.session.user_id, user.user_id);
         return reply.send();
     }
 
@@ -96,7 +115,8 @@ class FriendRequestController {
     */
     async unblockFriend(req, reply)
     {
-        await friendRequest.unblockFriend(req.params.id, req.session.user_id);
+        //await friendRequest.unblockFriend(req.params.id, req.session.user_id);
+        await blockService.unblockUser(req.session.user_id, req.params.id);
         return reply.send();
     }
 
@@ -121,13 +141,6 @@ class FriendRequestController {
     {
         const count = await friendRequest.countPendingRequests(req.session.user_id);
         return reply.send(count);
-    }
-
-
-    async getAllMyBlockedFriends(req, reply)
-    {
-        const result = await friendRequest.getAllMyBlockedFriends(req.session.user_id);
-        return reply.send(result);
     }
 }
 

@@ -54,6 +54,18 @@ class UserService {
         
     }
 
+    async getProfileData(username, originUserId)
+    {
+        try {
+            const profileData = await userRepository.getProfileDataByUsername(username, originUserId);
+            if (!profileData || profileData.length === 0) throw exception('User not found!', 204);
+            profileData[0].is_friend = (profileData[0].is_friend) ? true : false;
+            return profileData[0];    
+        } catch (error) {
+            console.log(error.message);
+            throw exception('Failed to find user!', 400);
+        }
+    }
 
     /* 
     *    @brief Method to get all users (more for debug)
@@ -83,7 +95,7 @@ class UserService {
             /* await this.fastify.bcrypt.compare(User.password, result[0].password_hash); */
             if ( !result || User.password != result[0].password_hash)
                 throw exception('Login failed!', 401);
-            return {user_id: result[0].user_id, twofa_secret: result[0].twofa_secret};
+            return result[0];
         } catch (error) {
             throw exception('Login failed!', 401);
         }
@@ -131,6 +143,15 @@ class UserService {
     {
         try {
             await userRepository.updateName(user);
+        } catch (error) {
+            throw exception('Failed to update name', 400);
+        }
+    }
+
+    async updateEmail(user)
+    {
+        try {
+            await userRepository.updateEmail(user);
         } catch (error) {
             throw exception('Failed to update name', 400);
         }

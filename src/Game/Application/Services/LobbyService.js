@@ -18,10 +18,11 @@ class LobbyService {
     {
         const id = Math.floor(Math.random() * 99999);
         await this.validateLobbyConfig(data);
+        console.log(id)
         const map = await this.validateMap(data.map);
         const lobby = mapper.buildLobbyData(id, data, map, user_id);
         await lobbyRepo.save(id, lobby, user_id);
-        return mapper.lobbyDataToTLobby(lobby);
+        return ({id: id});
     }
 
 
@@ -40,18 +41,17 @@ class LobbyService {
         broadcast.userJoined(lobbyId, user_id);
         //connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, {type: "user_joined_event",
         //                                                    user_id: user_id}, user_id);
-        socket.send(JSON.stringify(mapper.lobbyDataToTLobby(lobby)));
+        broadcast.newPlayerInitData(mapper.lobbyDataToTLobby(lobby), socket);
     }
 
     async removeUserFromLobby(lobbyId, userId)
     {
         connPlyrsRepo.deleteUser(lobbyId, userId);
         broadcast.userLeft(lobbyId, userId);
-        //connPlyrsRepo.broadcastToLobby(lobbyId, {type: "user_left_event",
-        //                                        user_id: userId});
         let lobbyUsers = await lobbyRepo.getLobbyUsers(lobbyId);
         lobbyUsers = lobbyUsers.filter(u => u.id != userId);
-        await lobbyRepo.updateUsers(lobbyId, lobbyUsers);
+        if (lobbyUsers.length == 0) { await lobbyRepo.deleteLobby(lobbyId); }
+        else { await lobbyRepo.updateUsers(lobbyId, lobbyUsers); }
     }
 
     async setUserState(lobbyId, user_id, readyState)

@@ -1,125 +1,101 @@
 import { getLobbyOptionsHTML } from "./utils/concreteComponents";
 import { router } from "../../routes/router";
 import { getSelfData } from "../../api/userData/getSelfDataAPI";
-import {
-  TLobbyCreationConfigs,
-  createLobby,
-} from "../../api/lobbyMatchAPI/createLobbyAPI";
+import { createLobby } from "../../api/lobbyMatchAPI/createLobbyAPI";
+//import { createLobby } from "../../testServices/testLobbyAPI";
 import { lobbySocketService } from "../../services/lobbySocketService";
-import {
-  TLobbyType,
-  TMapType,
-  TMatchMode,
-  TMatchDuration,
-  TLobby,
-} from "./lobbyTyping";
-import { lobby } from "../../services/LobbyService";
-import { getMaxPlayersFromMap } from "./utils/helpers";
+//import { lobbySocketService } from "../../testServices/testLobySocketService";
+import { TLobbyType, TMap, TMode, TDuration, LobbyCreationConfigsDTO } from "./lobbyTyping";
+import { lobbyService } from "../../services/LobbyService";
+
 
 export const CreateLobbyPage = {
   template() {
     return `
-            <div class="flex flex-col items-center justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12">
-                <form id="lobby-creation-form" class="flex flex-col items-center justify-center gap-6">
-                    <h1 id="create-lobby-title" class="text-3xl p-3"></h1>
-                    <div id="lobby-options" class="flex flex-col items-center gap-4">
-                        <div class="flex flex-row w-full justify-between gap-4">
-                            <label for="lobby-name" class="text-xl">Name:</label>
-                            <input id="lobby-name" name="lobby-name" class="bg-gray-900/50 rounded-2xl px-4 text-center" required></input>
-                        </div>
-                        <div class="flex flex-row w-full justify-between gap-4">
-                            <label for="lobby-type" class="text-xl">Type:</label>
-                            <select id="lobby-type" name="lobby-type" class="bg-gray-900/50 rounded-2xl px-4 text-center" required>
-                                <option id="friendly">Friendly Match</option>
-                                <option id="ranked">Ranked Match</option>
-                                <option id="tournament">Tournament</option>
-                            </select>
-                        </div>
-                        <div id="mutable-settings" class="flex flex-col w-full gap-4"></div>
-                    </div>
-                    <div id="create-lobby-form-buttons" class="flex flex-row gap-6">
-                        <button id="btn-return" type="button" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Return</button>
-                        <button type="submit" class="bg-gray-900/50 bg-opacity-60 p-5 rounded-4xl hover:bg-gray-900/90 active:bg-gray-900/25">Create Lobby</button>
-                    </div>
-                </form>
+    <div class="h-[550px] w-[510px] bg-gradient-to-b from-blue-500 via-blue-800 to-neutral-900 shadow-2xl shadow-black border-y border-black text-myWhite rounded-xl p-8">
+      <!-- Title and description -->
+      <div class="text-center mb-8">
+          <h1 class="text-3xl font-bold text-white mb-2">New Lobby</h1>
+          <p class="text-white/70">Create a new game lobby</p>
+      </div>
+    
+      <!-- Lobby creation form -->
+      <form id="lobby-creation-form" class="space-y-6">
+        <!-- Lobby Name -->
+        <div class="flex flex-row items-center justify-between gap-4">
+          <label for="lobby-name" class="text-base font-medium text-myWhite/90 min-w-fit">Name</label>
+          <input 
+              id="lobby-name" 
+              name="lobby-name" 
+              type="text" 
+              class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in"
+              placeholder="Enter lobby name"
+              required
+          >
+        </div>
+
+
+        <div class="flex flex-row items-center justify-between gap-4">
+            <label for="lobby-type" class="text-base font-medium text-myWhite/90 min-w-fit">Type</label>
+            <select 
+                id="lobby-type" 
+                name="lobby-type" 
+                class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-[20px] font-medium  text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in"
+                required
+            >
+                <option value="friendly">Friendly Match</option>
+                <option value="ranked">Ranked Match</option>
+                <option value="tournament">Tournament</option>
+            </select>
+        </div>
+
+
+        <div id="mutable-settings" class="flex flex-col w-full gap-4"></div>
+
+        <div class="flex flex-row items-center justify-center gap-4 mt-8">
+                <button 
+                    type="button" 
+                    id="btn-return" 
+                    class="rounded-lg bg-slate-600/80 px-6 py-2 font-semibold text-myWhite transform active:scale-85 transition-all duration-100 hover:bg-blue-700"
+                >
+                    Return
+                </button>
+                <button 
+                    type="submit" 
+                    class="rounded-lg bg-blue-600  px-6 py-2 font-semibold text-myWhite transform active:scale-85 transition-all duration-100 hover:bg-blue-700"
+                >
+                    Create Lobby
+                </button>
             </div>
+      </form>
+    </div>            
         `;
   },
 
   init() {
-    const title = document.getElementById("create-lobby-title") as HTMLElement;
-    title.textContent = "New Lobby";
-
     const lobbyTypeInput = document.getElementById(
       "lobby-type"
     ) as HTMLSelectElement;
+
+    //Updates the match options available depending on the type of lobby
     lobbyTypeInput.addEventListener("change", () =>
       this._updateLobbyOptions(
-        lobbyTypeInput.options[lobbyTypeInput.selectedIndex].id as TLobbyType
+        lobbyTypeInput.options[lobbyTypeInput.selectedIndex].value as TLobbyType
       )
     );
 
+    //This just renders the match options depending on the default lobby type
     this._updateLobbyOptions(
-      lobbyTypeInput.options[lobbyTypeInput.selectedIndex].id as TLobbyType
+      lobbyTypeInput.options[lobbyTypeInput.selectedIndex].value as TLobbyType
     );
 
     const buttonReturn = document.getElementById("btn-return") as HTMLElement;
     buttonReturn.addEventListener("click", () => router.navigateTo("/play"));
 
-    const form = document.getElementById(
-      "lobby-creation-form"
-    ) as HTMLFormElement;
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const selfData = await getSelfData();
-      const hostName = selfData.nickname;
-      if (!hostName) {
-        throw Error();
-      }
-      const nameInput = document.getElementById(
-        "lobby-name"
-      ) as HTMLInputElement;
-      const typeInput = document.getElementById(
-        "lobby-type"
-      ) as HTMLSelectElement;
-      const matchMapInput = document.getElementById(
-        "match-map"
-      ) as HTMLSelectElement;
-      const matchModeInput = document.getElementById(
-        "match-mode"
-      ) as HTMLSelectElement;
-      const matchDurationInput = document.getElementById(
-        "match-duration"
-      ) as HTMLSelectElement;
-      const lobbySettings: TLobbyCreationConfigs = {
-        name: nameInput.value,
-        host: hostName,
-        type: typeInput.options[typeInput.selectedIndex].id as TLobbyType,
-        map: matchMapInput.value as TMapType,
-        mode: matchModeInput.value as TMatchMode,
-        duration: matchDurationInput.value as TMatchDuration,
-      };
-
-      const lobbyID = await createLobby(lobbySettings);
-      console.log("Waiting for websocket to connect...");
-      await lobbySocketService.connect(lobbyID);
-      /* lobby.init(selfData, {
-                id: lobbyID,
-                hostID: selfData.id,
-                name: lobbySettings.name,
-                host: lobbySettings.host,
-                type: lobbySettings.type,
-                capacity: { taken: 0, max: 0 }, //TODO: Make calculating function
-                map: lobbySettings.map,
-                mode: lobbySettings.mode,
-                duration: lobbySettings.duration,
-                round: 1
-            })
-            await lobby.addLobbyUserOUT(selfData.id); */
-      await lobby.waitForInit();
-      router.navigateTo("/lobby");
-    });
-    console.log("Create Friendly page loaded!");
+    const form = document.getElementById('lobby-creation-form') as HTMLFormElement;
+    form.addEventListener('submit', async (e) => {
+      await this._onCreateLobbyClicked(e);
+    })
   },
 
   _updateLobbyOptions(currentType: TLobbyType) {
@@ -133,4 +109,43 @@ export const CreateLobbyPage = {
       duration: "classical",
     });
   },
+
+
+  //Logic
+  async _onCreateLobbyClicked(e: SubmitEvent) {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    if (!form.reportValidity()) return;
+    const formData = new FormData(form);
+
+    const selfData = await getSelfData();
+    const nameInput = formData.get("lobby-name")?.toString();
+    const typeInput = formData.get("lobby-type")?.toString();
+    const matchMapInput = formData.get("match-map")?.toString();
+    const matchModeInput = formData.get("match-mode")?.toString();
+    const matchDurationInput = formData.get("match-duration")?.toString();
+    if (!nameInput || !typeInput || !matchMapInput || !matchModeInput || !matchDurationInput) {
+      throw Error("Could not fetch form data!")
+    }
+
+    const lobbySettings: LobbyCreationConfigsDTO = {
+      name: nameInput,
+      type: typeInput as TLobbyType,
+      matchSettings: {
+        map: matchMapInput as TMap,
+        mode: matchModeInput as TMode,
+        duration: matchDurationInput as TDuration
+      }
+    }
+
+    const lobbyID = await createLobby(lobbySettings)
+    if (lobbyID === -1) {
+      console.log("ERROR: You are already in a lobby!");
+      return;
+    }
+    const lobbyInfo = await lobbySocketService.connect(lobbyID);
+    if (!lobbyInfo) {throw Error("Socket was already connected somehow!")}
+    lobbyService.init(selfData.id, lobbyInfo.lobby)
+    router.navigateTo('/lobby')
+  }
 };

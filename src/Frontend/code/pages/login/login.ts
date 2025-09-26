@@ -13,6 +13,7 @@ export const LoginPage = {
             <h1 class="title" data-i18n="login-title">Login</h1>
             <div class="input-box">
               <input id="username" type="text" name="username" 
+              autocomplete="username"
               data-i18n-placeholder="login-place-username" 
               required
               pattern="^[a-zA-Z0-9_\\-]{3,15}$" 
@@ -21,18 +22,18 @@ export const LoginPage = {
               <img src="../Assets/icons/user.svg" draggable="false"/>
             </div>
             <div class="input-box">
-              <input id="password" type="password" name="password" data-i18n-placeholder="login-place-password" required />
+              <input id="password" type="password" name="password" autocomplete="current-password" data-i18n-placeholder="login-place-password" required />
               <img class="visibility" src="../Assets/icons/visibility-on.svg" draggable="false" />
             </div>
 
-            <div id="login-error" hidden></div>
+            <div id="login-error" class="-mt-4 align-center h-6 text-red-500 font-semibold text-center mb-3.5 invisible"></div>
 
-            <button type="submit" class="button" data-i18n="login-btn"></button>
+            <button type="submit" class="button active:bg-[#bdbdbd]" data-i18n="login-btn"></button>
 
-            <div class="register-link">
+            <div class="register-link text-center text-sm mt-5 mb-3.5 mx-0 ">
               <p>
                 <span data-i18n="login-register">Don't have an account?</span>
-                <a href="/register" data-link data-i18n="login-register-link">Register</a>
+                <a href="/register" class="text-white font-semibold no-underline active:no-underline visited:no-underline" data-link data-i18n="login-register-link">Register</a>
               </p>
           </form>
         </div>
@@ -74,7 +75,8 @@ export const LoginPage = {
           "login-error"
         ) as HTMLElement;
         loginError.textContent = "Username or password incorrect!";
-        loginError.hidden = false;
+        loginError.classList.remove("invisible");
+        loginError.classList.add("visible");
         console.error("DEBUG Pass ou user wrong");
       } else {
         console.error("DEBUG: Something went wrong:", (error as any)?.message);

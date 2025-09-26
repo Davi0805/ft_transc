@@ -2,12 +2,9 @@ export const languages = {
     uk: {
         // HEADER
         "header-home": "Home",
-        "header-about": "About Us",
         "header-login": "Login",
         "header-register": "Register",
         // HOME
-        
-        // ABOUT US
         
         // LOGIN
         "login-title": "Login",
@@ -48,12 +45,10 @@ export const languages = {
     pt: {
         // HEADER
         "header-home": "Inicio",
-        "header-about": "Quem somos",
         "header-login": "Entrar",
         "header-register": "Registar",
         // HOME
 
-        // ABOUT US
 
         // LOGIN
         "login-title": "Entrar",
@@ -93,13 +88,11 @@ export const languages = {
 
     es: {
         "header-home": "Inicio",
-        "header-about": "Quiénes somos",
         "header-login": "Iniciar sesión",
         "header-register": "Registrarse",
         
         // HOME
         
-        // ABOUT US
         
         // LOGIN
         "login-title": "Iniciar sesión",

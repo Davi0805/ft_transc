@@ -1,9 +1,8 @@
-import { SIDES, ROLES, point, TPaddle } from "./sharedTypes"
+import { SIDES, ROLES, point, TPaddle, TBall } from "./sharedTypes"
 
 export type TControls = {
     left: string,
     right: string,
-    pause: string
 }
 
 export type TUserCustoms = {
@@ -24,7 +23,6 @@ export type TUserCustoms = {
         humans: {
             id: number,
             paddleID: number,
-            controls: TControls
         }[],
     }[]
     // For now, there are no user customs for team. If added, an array for team should be added here
@@ -54,7 +52,6 @@ export type TGameConfigs = {
         humans: {
             id: number,
             paddleID: number,
-            controls: TControls
         }[],
     }[]
     bots: {
@@ -73,17 +70,22 @@ export type CGameState = {
         }
     }[]
     paddles: Pick<TPaddle, "id" | "side" | "size" | "speed" | "pos" | "spriteID">[],
+    balls: TBall[],
     gameLength: number
 }
 
 export type CGameSceneConfigs = {
     fieldSize: point
-    controls: Map<number, TControls>
+    controls: {
+        humanID: number,
+        controls: TControls
+    }[] | null
     gameInitialState: CGameState
 }
 
 
 export type CAppConfigs = {
+    matchID: number,
     appConfigs: { width: number, height: number },
     gameSceneConfigs: CGameSceneConfigs
 }

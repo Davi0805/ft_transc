@@ -1,5 +1,32 @@
 type TButton = "button" | "submit" | "reset"
 
+export function setupKeyCaptureButton(button: HTMLButtonElement, inputElement: HTMLInputElement) {
+  let isListeningForKey = false;
+
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (!isListeningForKey) return;
+
+    const pressedKey = event.key;
+    button.textContent = pressedKey;
+    inputElement.value = pressedKey;
+    isListeningForKey = false;
+
+    // Remove the key listener after capturing
+    window.removeEventListener("keydown", handleKeyPress);
+  };
+
+  button.addEventListener("click", () => {
+    if (isListeningForKey) return; // prevent double click
+
+    button.textContent = "Press a key";
+    isListeningForKey = true;
+
+    // Start listening for key press
+    window.addEventListener("keydown", handleKeyPress);
+  });
+}
+
+//This helper simply creates a button with the specified options
 export function getButton(id: string, type: TButton, text: string, big = true) {
     const out = document.createElement("button");
     out.id = id;
@@ -35,7 +62,9 @@ export function getTable(id: string, headHtml: string, bodyHtml: string) {
 }
 
 export function toggleButton(button: HTMLButtonElement, onText: string, offText: string): boolean {
+    //First toggle the button by changing its "active" state
     const isActive = button.classList.toggle('active');
+    //Then change the visual aspects of the button
     button.textContent = isActive ? onText : offText;
     button.classList.toggle('bg-gray-900/50', !isActive);
     button.classList.toggle('bg-gray-900/25', isActive);

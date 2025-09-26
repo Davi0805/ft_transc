@@ -19,6 +19,37 @@ class UserRepository {
         return db.raw('SELECT * FROM users WHERE username = ?', [username]);
     }
 
+    async getProfileDataByUsername(username, originUserId) {
+        return db.raw(
+            `
+            SELECT 
+                u.user_id,
+                u.name AS nickname,
+                u.username,
+                u.rating,
+                COUNT(DISTINCT f.request_id) AS friendsCount,
+                MAX(
+                    CASE 
+                        WHEN (f.from_user_id = ? AND f.to_user_id = u.user_id)
+                        OR (f.from_user_id = u.user_id AND f.to_user_id = ?)
+                        THEN 1 ELSE 0
+                    END
+                ) AS is_friend
+            FROM users u
+            LEFT JOIN friend_requests f
+                ON (
+                    (f.from_user_id = u.user_id AND f.status = 'ACCEPTED')
+                    OR
+                    (f.to_user_id = u.user_id AND f.status = 'ACCEPTED')
+                )
+            WHERE u.username = ?
+            GROUP BY u.user_id, u.name, u.username, u.rating
+            `,
+            [originUserId, originUserId, username]
+        );
+    }
+
+
     async save(user) {
         return db('users').insert(user);
     }
@@ -35,6 +66,11 @@ class UserRepository {
         return db.raw('UPDATE users SET name = ? WHERE user_id = ?',
             [user.name, user.id]
         );
+    }
+
+    async updateEmail(user)
+    {
+        return db.raw('UPDATE users SET email = ? WHERE user_id = ?', [user.email, user.id]);
     }
 
     async addTwoFactorAuth(user_id, twofa_secret)

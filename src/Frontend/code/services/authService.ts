@@ -41,6 +41,8 @@ export class AuthService {
 
     if (this.isAuthenticated) {
       this.sidebar = new Chat();
+      document.body.querySelector("main")?.classList.remove("mr-0");
+      document.body.querySelector("main")?.classList.add("mr-[200px]");
       await this.sidebar.init();
     }
 
@@ -71,6 +73,8 @@ export class AuthService {
     await this.getMyData();
     header.updateHeaderVisibility();
     if (!this.sidebar) {
+      document.body.querySelector("main")?.classList.remove("mr-0");
+      document.body.querySelector("main")?.classList.add("mr-[200px]");
       this.sidebar = new Chat();
       await this.sidebar.init();
     }
@@ -93,6 +97,8 @@ export class AuthService {
     chatWindowControler.close();
     webSocketService.disconnect();
     if (this.sidebar) {
+      document.body.querySelector("main")?.classList.remove("mr-[200px]");
+      document.body.querySelector("main")?.classList.add("mr-0");
       this.sidebar.deleteSideBar();
       this.sidebar = null;
     }

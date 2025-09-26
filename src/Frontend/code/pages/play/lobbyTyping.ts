@@ -1,89 +1,252 @@
-import { CGameDTO, SGameDTO } from "../../match/matchSharedDependencies/dtos"
 import { SIDES, ROLES } from "../../match/matchSharedDependencies/sharedTypes"
+import { CGameDTO, SGameDTO } from "../../match/matchSharedDependencies/dtos"
+import { CAppConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
+import { TTournament, TTournamentDTO } from "../../services/tournamentService"
 
+//TYPES REPRESENTATIVE OF THE ENTITIES
+
+export type TLobbyType = "friendly" | "ranked" | "tournament"
+export type TMap = "2-players-small" | "2-players-medium" | "2-players-big" | "4-players-small" | "4-players-medium" | "4-players-big"
+    | "2-teams-small" | "2-teams-medium" | "2-teams-big" | "4-teams-small" | "4-teams-medium" | "4-teams-big"
+export type TMode = "classic" | "modern"
+export type TDuration = "blitz" | "rapid" | "classical" | "long" | "marathon"
+
+export type TMatchResult = SIDES[]
+
+
+//SET TO NULL IF IT BECOMES EMPTY
+export type TFriendlyPlayer = {
+    //The ID of the player. It is different from the userID that controls it, becuase one user can have more than one player
+    id: number,
+    //The nickname chosen for the player
+    nickname: string,
+    //The paddle sprite chosen for the player
+    spriteID: number
+    //The position of the player
+    team: SIDES,
+    role: ROLES
+}
+
+//No more members are needed because, for ranked players, the info used belongs to the user
+export type TRankedPlayer = {
+    //The position of the player
+    team: SIDES,
+    role: ROLES
+}
+
+//SHOULD NEVER BE SET TO NULL AFTER BEING SET!!! (change the "participating" flag instead)
+//Except for participating flag, All these will be calculated by tournament service
+export type TTournamentPlayer = {
+    /* //How many points the player currently has in the tournament
+    score: number, //Def: 0
+    //The userIDs of the players with whom this user played
+    prevOpponents: number[], //Def: []
+    //The Team Preference index. Indicates whether this user deserves to play on the left or right
+    teamPref: number, //Def: 0 */
+}
+
+export type TLobbyUser = {
+    //THE FOLLOWING ARE TAKEN FROM USER SETTINGS
+    //The userID of the user
+    id: number,
+    //The username that will be shown to other players
+    username: string,
+    //The id of the Paddle Sprite
+    spriteID: number,
+    //The rating of the user. To be recalculated after every game
+    rating: number
+
+    //THE FOLLOWING ARE RELATED TO THE PARTICULAR LOBBY THEY ARE IN
+    //Whether the user set themselves as ready or not
+    ready: boolean, //Def: false
+    //The player the user controls. Starts as null and is set when they choose to join a slot or apply for the tournament
+    player: TFriendlyPlayer[] | TRankedPlayer | TTournamentPlayer | null //Def: null
+}
+
+export type TLobby = {
+    id: number,
+    //The userID of the host. I think that is better than having a field for every user sying if it is host or not
+    hostID: number,
+    //The name of the lobby
+    name: string,
+    //The type of the lobby (see above for options)
+    type: TLobbyType,
+    matchSettings: TDynamicLobbySettings
+    //The users present in the lobby. 
+    users: TLobbyUser[] //Def: [host]
+}
+
+
+
+//TYPES TO BE SENT
+
+//GetLobbiesList()
+export type LobbyInfoForDisplay = {
+    //The lobby id. Allows a user to click on the lobby and go to it
+    id: number 
+    //Name of the lobby.
+    name: string,
+    //Username of the host. Can be gotten from TLobby.hostID
+    host: string
+    //Lobby Type
+    type: TLobbyType,
+    //The current capacity of the lobby. Takes into account participating users, not users in lobby.
+    //taken can be deduceb by the amount of users with their players !== null and max can be deduced from map.
+    capacity: { taken: number, max: number },
+
+    map: TMap,
+    mode: TMode,
+    duration: TDuration
+}
+export type LobbiesListDTO = LobbyInfoForDisplay[]
+
+//CreateLobby()
+//Although this is a POST, IT SHOULD RETURN A TLOBBY WITH THE CONFIGS AND THE CREATOR AS ITS ONLY USER INSTEAD OF ONLY THE LOBBY_ID!
+//This allows the creation page to fully init the LobbyService before changing page
+export type LobbyCreationConfigsDTO = {
+    name: string,
+    type: TLobbyType,
+    matchSettings: TDynamicLobbySettings
+}
+
+export type TDynamicLobbySettings = {
+    map: TMap,
+    mode: TMode,
+    duration: TDuration
+}
+
+//server will receive these when...
 export type InboundDTOMap = {
+    //host updates the settings
     updateSettings: {
         settings: TDynamicLobbySettings
     }
+    //user invites a new user to this lobby
     inviteUserToLobby: {
         userID: number
     }
+    //user updates its ready state
     updateReadiness: {
         ready: boolean 
     },
-    //Do not forget to update the participating flag in the backend
-    //I am still not convinced that the small optimization of only sending the absolute minimum
-    // is worth duplicating logic code and the risk of going out of sync, but whatever
+    //user chooses a slot in a friendly lobby
     addFriendlyPlayer: {
         player: TFriendlyPlayer
     },
+    //user removes a player from a slot
     removeFriendlyPlayer: {
-        id: number
+        playerID: number //Note: This is the id of the player, NOT the user!
     }
+    //user chooses a slot in a ranked lobby
     addRankedPlayer: {
         player: TRankedPlayer
     },
-    removeRankedPlayer: {
-        id: number 
-    }
-    addTournamentPlayer: null //None of the members are chosen by the user
+    //user removes itself from the picked slot
+    removeRankedPlayer: null
+    //user applies to the tournament of the lobby
+    addTournamentPlayer: null //None of the member variables are chosen by the user
+    //user withdraws from the tournament
     removeTournamentPlayer: null
-    leaveLobby: null,
-    startGame: null,
+    //host starts the lobby
+    start: null,
     
     //Game dto:
-    updateGame: CGameDTO
+    updateGame: CGameDTO, //Dealt with in game
+
+    quitTournament: null
 }
 
+type TActionBlockReason = "setReadyWithoutJoining" | "notEveryoneReady" | "notAllSlotsFilled" | "fewPlayersForTournament"
+
+//server should broadcast these after...
 export type OutboundDTOMap = {
-    joinLobby: {
+    lobbyInit: {
         lobby: TLobby,
-        users: {
-            id: number,
-            ready: boolean,
-            host: boolean
-        }[]
-    }
-    updateSettings: {
-        settings: TLobby
-        updateSlots: boolean
+        matchConfigs: CAppConfigs | null,
+        tournamentConfigs: TTournamentDTO | null
     },
+    //host updates the settings. If map changes, users should be filled with the current users so slots can be updated accordingly
+    updateSettings: {
+        settings: TDynamicLobbySettings
+        users: TLobbyUser[] | null
+    },
+    //user updates its ready state
     updateReadiness: {
         userID: number,
         ready: boolean
     }
+    //user is added to the lobby
     addLobbyUser: {
-        id: number,
-        ready: boolean,
-        host: boolean
+        user: TLobbyUser
     },
+    //user leaves a lobby
     removeLobbyUser: {
-        id: number
+        userID: number
     }
+    //user chooses a slot in a friendly lobby
     addFriendlyPlayer: {
         userID: number
         player: TFriendlyPlayer
     },
+    //user removes one of its players from slot in a friendly lobby
     removeFriendlyPlayer: {
-        id: number
+        playerID: number
     }
+    //user chooses a slot in a ranked lobby
     addRankedPlayer: {
         userID: number
         player: TRankedPlayer
     },
+    //user removes itself from slot in a ranked lobby
     removeRankedPlayer: {
-        id: number 
+        userID: number 
     }
+    //user applies to a tournament
     addTournamentPlayer: {
+        userID: number,
+    }
+    //user withdraws from tournament
+    removeTournamentPlayer: {
         userID: number
     }
-    removeTournamentPlayer: {
-        id: number
+
+    startMatch: {
+        configs: CAppConfigs
     }
-    startMatch: null
+
+    startTournament: null
+    //host clicks start on tournament lobby
+    displayStandings: {
+        standings: TTournamentParticipant[]
+    }
+    displayPairings: {
+        pairings: [number, number][]
+    }
+    updateTournamentResult: {
+        matchIndex: number,
+        winnerID: number
+    }
+    displayResults: null
+    displayTournamentEnd: {
+        standings: TTournamentParticipant[]
+    }
+    
 
     //Game dto:
-    updateGame: SGameDTO
+    updateGame: SGameDTO //Dealt with in game
+
+    //finishGame:
+    endOfMatch: {
+        result: TMatchResult
+    }
+
+    returnToLobby: {
+        lobby: TLobby
+    }
+
+    actionBlock: {
+        reason: TActionBlockReason
+    }
 }
 
 export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {
@@ -99,42 +262,11 @@ export type OutboundDTO = {
 }[keyof OutboundDTOMap]
 
 
-export type TLobbyType = "friendly" | "ranked" | "tournament"
-export type TMapType = "2-players-small" | "2-players-medium" | "2-players-big" | "4-players-small" | "4-players-medium" | "4-players-big"
-    | "2-teams-small" | "2-teams-medium" | "2-teams-big" | "4-teams-small" | "4-teams-medium" | "4-teams-big"
-export type TMatchCapacity = { taken: number, max: number }
-export type TMatchMode = "classic" | "modern"
-export type TMatchDuration = "blitz" | "rapid" | "classical" | "long" | "marathon"
 
-export type TLobby = {
-    id: number,
-    hostID: number,
-    name: string,
-    host: string,
-    type: TLobbyType,
-    capacity: TMatchCapacity,
-    map: TMapType,
-    mode: TMatchMode,
-    duration: TMatchDuration,
-    round: number
-}
 
-export type TStaticLobbySettings = Pick<TLobby, "id" | "hostID" | "name" | "host" | "type">;
-export type TDynamicLobbySettings = Pick<TLobby, "map" | "mode" | "duration">
+//THE FOLLOWING ARE INTERMIDIARY TYPES
 
-export  type TMatchPlayer = {
-    userID: number | null //Same as userID
-    id: number | null, //To be generated.
-    nickname: string | null //If null, take the nick from userid
-    spriteID: number | null, //If null, take spriteID from settings of userid
-    team: SIDES,
-    role: ROLES,
-    //leftControl: string,
-    //rightControl: string,
-    //ready: boolean
-}
-
-export type TTournPlayer = {
+export type TTournamentParticipant = {
     id: number | null // Same as userID
     nick: string | null // To be taken from userid
     score: number //default: 0
@@ -143,41 +275,13 @@ export type TTournPlayer = {
     teamDist: number //default: 0
     participating: boolean //default: true
     //TODO: IN TOURNAMENT SERVICE, ONLY PAIR PLAYERS THAT HAVE THIS FLAG SET TO TRUE!!!!
-    ready: boolean
 }
 
-
-export type TUser = {
-    //Stuff from database
-    id: number,
-    nickname: string,
-    spriteID: number
-    rating: number
-
-    //Stuff about lobby
-    ready: boolean, //Default is false
-    participating: boolean //Default is false
-    player: TFriendlyPlayer[] | TRankedPlayer | TTournamentPlayer //Depends on the type of lobby
-}
-
-export type TFriendlyPlayer = {
-    id: number | null, //GENERATED BY BACKEND!!
-    nickname: string,
-    spriteID: number
+export type TMatchPlayer = {
+    userID: number | null //Same as userID
+    id: number | null, //To be generated.
+    nickname: string | null //If null, take the nick from userid
+    spriteID: number | null, //If null, take spriteID from settings of userid
     team: SIDES,
-    role: ROLES
+    role: ROLES,
 }
-
-export type TRankedPlayer = {
-    team: SIDES,
-    role: ROLES
-}
-
-//As soon as this one is created, it should never be set to null. Only participating to false
-export type TTournamentPlayer = {
-    applied: boolean,
-    score: number,
-    prevOpponents: number[],
-    teamDist: number,
-}
-

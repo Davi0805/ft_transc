@@ -32,6 +32,18 @@ CREATE TABLE friend_requests (
     CHECK (from_user_id != to_user_id)
 );
 
+CREATE TABLE block_relationships (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    from_user_id INTEGER NOT NULL,
+    blocked_user_id INTEGER NOT NULL,
+
+    FOREIGN KEY (from_user_id) REFERENCES users(user_id),
+    FOREIGN KEY (blocked_user_id) REFERENCES users(user_id),
+
+    UNIQUE(from_user_id, blocked_user_id),
+    CHECK (from_user_id != blocked_user_id)
+);
+
 
 -- just a simple index to optimize queries filtering by username
 -- i dont really know if this really work in sqlite, but u know
@@ -39,6 +51,13 @@ CREATE INDEX idx_username ON users (username);
 CREATE INDEX idx_friend_requests_from_user ON friend_requests(from_user_id);
 CREATE INDEX idx_friend_requests_to_user ON friend_requests(to_user_id);
 CREATE INDEX idx_friend_requests_status ON friend_requests(status);
+
+-- ADD TEST USERS
+('ndo vala', 'ndo-vala', 'ndo-vala@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
+('ndo vale', 'ndo-vale', 'ndo-vale@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
+('ndo vali', 'ndo-vali', 'ndo-vali@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
+('ndo valo', 'ndo-valo', 'ndo-valo@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
+('ndo valu', 'ndo-valu', 'ndo-valu@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0);
 
 
 -- TODO MOCK DATA USERS

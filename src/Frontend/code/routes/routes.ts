@@ -4,11 +4,11 @@ import { LoginPage } from '../pages/login/login'
 import { NotFoundPage } from '../pages/404'
 import { ProfilePage  } from '../pages/profile'
 import { RegisterPage } from '../pages/register'
-import { AboutUsPage } from '../pages/about'
 import { SettingsPage } from '../pages/settings/settings'
 import { LobbyPage } from '../pages/play/lobby'
 import { CreateLobbyPage } from '../pages/play/createLobby'
 import { MatchPage } from '../pages/play/match'
+import { TournamentPage } from '../pages/play/tournament'
 
 export interface Route {
     path: string;
@@ -27,13 +27,6 @@ export const routes: Array<Route> = [
         title: 'Home',
         template: HomePage.template,
         script: HomePage
-    },
-    // About Us
-    {
-        path: '/about',
-        title: 'About Us',
-        template: AboutUsPage.template,
-        script: AboutUsPage
     },
     // Match center
     {
@@ -91,10 +84,16 @@ export const routes: Array<Route> = [
         script: LobbyPage
     },
     {
+        path: '/tournament',
+        title: 'Tournament',
+        template: TournamentPage.template,
+        script: TournamentPage
+    },
+    {
         path: '/match',
         title: 'Match',
         template: MatchPage.template,
         script: MatchPage
-    }
+    },
     //? additional pages would be put here
 ];

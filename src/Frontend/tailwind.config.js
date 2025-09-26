@@ -3,7 +3,7 @@ module.exports = {
   content: [
     "./index.html",
     "./code/**/*.{ts,js}",     
-    "./css/**/*.{css}",        
+    "./css/**/*.css",        
   ],
   theme: {
     extend: {
@@ -13,6 +13,7 @@ module.exports = {
       },
       colors: {
         'myWhite': '#fff',
+        'abyssblue': '#172332',
         'myBlack': '#333',
         'popup-success-bg': '#d4edda',
         'popup-success-border': '#28a745',
@@ -25,19 +26,26 @@ module.exports = {
       scale: {
         '85': '0.85',
       },
+      borderWidth: {
+        '1': '1px',
+      },
       keyframes: {
         progressBar: {
           'from': { width: '100%' },
           'to': { width: '0%' },
-        }
+        },
+        slideInUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         progressBar: 'progressBar 5s linear forwards',
+        slideInUp: "slideInUp 0.3s ease-out",
+        
       }
     },
   },
-  plugins: [
-    require('tailwind-scrollbar-hide')
-  ],
+  plugins: [],
 };
 

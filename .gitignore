@@ -44,10 +44,3 @@ coverage/
 # Mac system files
 *.swp
 
-test
-
-*.jpg
-*jpeg
-*.gif
-*.web*
-*.png

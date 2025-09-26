@@ -4,8 +4,8 @@ import CNumbersText from "../CNumbersText";
 import CObject from "../CObject";
 
 export default class AnimationShake extends AAnimation {
-    constructor(object: CObject | CNumbersText) {
-        super(object, 30);
+    constructor(object: CObject | CNumbersText, loop: boolean = false) {
+        super(object, 30, loop);
     }
 
     override update(): void {

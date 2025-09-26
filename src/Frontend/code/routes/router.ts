@@ -23,6 +23,7 @@ class Router {
       if (link) {
         e.preventDefault(); // Previne o comportamento padrão do navegador
         const href = link.getAttribute("href"); // Obtém o valor do href
+        //TODO ver se o socket do jogo esta open, se tiver close
         this.navigateTo(href!); // Navega para a rota usando o router
       }
     });
@@ -30,7 +31,7 @@ class Router {
     this.loadRoute();
   }
 
-  navigateTo(url: string): void {
+  async navigateTo(url: string): Promise<void> {
     const finalUrl: string = authService.handleProtectedRoute(url);
     //  Dont update anything if we are on the correct page
     if (window.location.pathname === finalUrl) {
@@ -41,7 +42,7 @@ class Router {
     //                state, title, url
     history.pushState(null, "", finalUrl);
     // Load the new route
-    this.loadRoute();
+    await this.loadRoute();
   }
 
   async loadRoute(): Promise<void> {

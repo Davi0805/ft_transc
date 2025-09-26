@@ -1,0 +1,94 @@
+title Tournament cycle
+
+
+actor Alice
+actor Bob
+participant Backend
+actor Charlie
+actor Deborah
+
+activecolor Alice #red
+activecolor Bob #red
+activecolor Charlie #blue
+activecolor Deborah #blue
+
+note over Alice: Host
+
+Alice->Backend: start Tournament
+
+rbox over Alice,Deborah: <size:30>LOOP STARTS HERE</size>
+
+loop for each client
+parallel 
+Backend->Alice: send standings for rendering
+Backend->Deborah: send standings for rendering
+parallel off
+end
+
+box over Backend: wait a few seconds
+
+note over Alice, Deborah: <color:#red>Continue only if there are more rounds to go, otherwise put everyone back in lobby somehow 
+
+loop for each client
+parallel
+Backend->Alice: send pairings for rendering
+Backend->Deborah: send pairings for rendering
+parallel off
+end
+
+box over Backend: wait a few seconds
+
+note over Alice,Deborah: Example pairings: Alice vs Bob, Charlie vs Deborah
+
+Backend->Alice: Start game1
+activate Alice
+activate Bob
+
+Backend->Deborah: Start game2
+activate Charlie
+activate Deborah
+
+loop for each game, for each client in game
+parallel 
+Alice->Backend: Client sends input
+Deborah->Backend: Client sends input
+parallel off
+Alice<->Deborah: Server sends game state
+end
+
+note over Alice,Bob: Game is over
+deactivate Alice
+deactivate Bob
+
+loop for each client
+parallel 
+Backend->Alice: Send game result
+Backend->Deborah:Send game result
+parallel off
+
+parallel
+box over Alice,Bob: Since result of game is theirs,\nrenders results page
+box over Charlie,Deborah: Since game is going on,\nupdate result in service only
+parallel off
+end
+
+note over Charlie,Deborah: Game is over
+deactivate Charlie
+deactivate Deborah
+
+loop for each client
+parallel
+Backend->Alice: Send game result
+Backend->Deborah:Send game result
+parallel off
+
+parallel
+box over Alice,Bob: Refresh results page
+box over Charlie,Deborah: renders results page
+parallel off
+end
+
+note over Backend: All games are finished
+box over Backend: Waits a few seconds
+
+rbox over Alice,Deborah: <size:30>GO BACK TO BEGINNING</size>

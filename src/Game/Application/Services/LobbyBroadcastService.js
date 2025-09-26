@@ -59,24 +59,35 @@ class LobbyBroadcastService {
     async userJoined(lobbyId, userId)
     {
         const msg = {
-            requestType: 'userJoined',
+            requestType: 'addLobbyUser',
             data: {
                 id: userId
             }
         };
-        connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, msg);
+        connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, msg, userId);
     }
 
     async userLeft(lobbyId, userId)
     {
         const msg = {
-            requestType: 'userLeft',
+            requestType: 'removeLobbyUser',
             data: {
                 id: userId
             }
         };
-        connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, msg);
+        connPlyrsRepo.broadcastToOtherLobbyUsers(lobbyId, msg, userId);
     }
+
+    async newPlayerInitData(data, socket)
+    {
+        const msg = {
+            requestType: 'lobby',
+            data: data
+        };
+        socket.send(JSON.stringify(msg));
+    } 
+
+
 };
 
 module.exports = new LobbyBroadcastService();
