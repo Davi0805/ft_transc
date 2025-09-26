@@ -1,7 +1,7 @@
 import { TMap } from "../lobbyTyping";
 import { SIDES, ROLES } from "../../../match/matchSharedDependencies/sharedTypes";
 
-type TPlayerInSlot = {
+export type TPlayerInSlot = {
     id: number,
     userID: number,
     nickname: string,
@@ -62,4 +62,14 @@ export function getMaxPlayersFromMap(map: TMap): number {
     const amount = Number(amountStr);
 
     return (amount * (type === "teams" ? 2 : 1))
+}
+
+export function getDirectionsFromTeam(team: SIDES): {left: string, right: string} {
+    const teamToDirections: Record<SIDES, {left: string, right: string}> = {
+        [SIDES.LEFT]: {left: "Up", right: "Down"},
+        [SIDES.TOP]: {left: "Right", right: "Left"},
+        [SIDES.RIGHT]: {left: "Down", right: "Up"},
+        [SIDES.BOTTOM]: {left: "Left", right: "Right"}
+    }
+    return (teamToDirections[team])
 }

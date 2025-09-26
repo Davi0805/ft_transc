@@ -87,6 +87,7 @@ class LobbyMapper {
    {
         const TUsers = [];
         for (const u of users) {
+            if (!u || !u.id) continue;
             TUsers.push({
                 id: u.id,
                 //nickname: await eventBus.getNicknamesByUserId(u.id),

@@ -1,17 +1,21 @@
 PRAGMA foreign_keys = ON;
 
+
 CREATE TABLE match (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    score_team_1 INTEGER NOT NULL,
-    score_team_2 INTEGER NOT NULL,
-    score_team_3 INTEGER,
-    score_team_4 INTEGER,
+    first_team_id INTEGER NOT NULL,
+    second_team_id INTEGER NOT NULL,
+    third_team_id INTEGER,
+    fourth_team_id INTEGER,
     tournament_id INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
+    FOREIGN KEY (first_team_id) REFERENCES teams(id),
+    FOREIGN KEY (second_team_id) REFERENCES teams(id),
+    FOREIGN KEY (third_team_id) REFERENCES teams(id),
+    FOREIGN KEY (fourth_team_id) REFERENCES teams(id),
     FOREIGN KEY (tournament_id) REFERENCES tournament(id)
 );
-
 
 CREATE TABLE player_matches (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,11 +24,14 @@ CREATE TABLE player_matches (
     match_id INTEGER NOT NULL,
 
     FOREIGN KEY (match_id) REFERENCES match(id)
+    FOREIGN KEY (team_id) REFERENCES teams(id)
 );
 
 CREATE TABLE tournament (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    winner_id INTEGER,
+    first_id INTEGER,
+    second_id INTEGER,
+    third_id INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -35,11 +42,24 @@ CREATE TABLE user_customs (
     paddle_sprite INTEGER
 );
 
+CREATE TABLE teams (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    enum_value INTEGER NOT NULL,
+    team_name VARCHAR(10)
+);
+
 CREATE TABLE maps (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(20) NOT NULL,
     max_slots INTEGER NOT NULL
 );
+
+-- Prepare the teams lookup table
+INSERT INTO teams (enum_value, team_name) VALUES
+(0, "LEFT"),
+(1, "TOP"),
+(2, "RIGHT"),
+(3, "BOTTOM");
 
 -- Insert mock matches
 INSERT INTO match (score_team_1, score_team_2, score_team_3, score_team_4, tournament_id) VALUES

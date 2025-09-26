@@ -10,7 +10,6 @@ export async function createLobby(lobbySettings: LobbyCreationConfigsDTO): Promi
       throw error;
     }
 
-    console.log(lobbySettings);
     const response = await fetch(`http://localhost:8084/lobby`, {
       method: "POST",
       headers: {

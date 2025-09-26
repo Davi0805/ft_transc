@@ -34,8 +34,7 @@ class FriendRequestController {
     async createByUsername(req, reply)
     {
         const { user_id } = await userService.findByUsername(req.params.username);
-        console.log(user_id);
-        await blockService.isUserBlocked(req.session.user_id, req.body.receiver_id);
+        //await blockService.isUserBlocked(req.session.user_id, req.body.receiver_id);
         await friendRequest.newRequest(req.session.user_id, user_id);
         return reply.send();
     }

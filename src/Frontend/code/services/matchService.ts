@@ -1,47 +1,90 @@
+import { SGameDTO } from "../match/matchSharedDependencies/dtos";
 import { CAppConfigs, TControls } from "../match/matchSharedDependencies/SetupDependencies";
 import { SIDES } from "../match/matchSharedDependencies/sharedTypes";
 import { App } from "../match/system/App";
+import { TMatchResult } from "../pages/play/lobbyTyping";
+import { MatchPage } from "../pages/play/match";
+import { getDirectionsFromTeam } from "../pages/play/utils/helpers";
+import { router } from "../routes/router";
 import { lobbySocketService } from "./lobbySocketService";
-//import { lobbySocketService } from "../testServices/testLobySocketService";
 
+type MyControlsT = {
+    used: boolean,
+    controls: {
+        humanID: number,
+        controls: TControls
+    }[]
+};
 
 class MatchService {
+    async startMatchOUT(configs: CAppConfigs) {        
+        const myControls = this._getControls();
+        myControls.used = true;
+        this._saveControls(myControls);
+        configs.gameSceneConfigs.controls = myControls.controls;
 
-    init(configs: CAppConfigs) {
-        console.log(this._controls)
-        configs.gameSceneConfigs.controls = this._controls;
         this._configs = configs;
+        await router.navigateTo("/match");
+        await this.start(MatchPage.getRoot());
     }
 
+    updateGame(updateDto: SGameDTO) {
+        App.severUpdate(updateDto);
+    }
+
+    async onEndOfMatch(result: TMatchResult) {
+        //TODO render the end page. Still in App?
+        App.unsetSendToServerFunc();
+    }
+
+    
+
     addControls(id: number, controls: TControls) {
-        this._controls.push({
+        const myControls = this._getControls();
+        //Makes sure any lingering controls are erased before adding new ones
+        if (myControls.used === true) {
+            myControls.controls = [];
+            myControls.used = false;
+        }
+        myControls.controls.push({
             humanID: id,
             controls: controls
         })
+        this._saveControls(myControls);
     }
-    updateLatestControlsID(id: number) { //This design is complete and utter shit
-        if (this._controls.length !== 0) {
-            this._controls[this._controls.length - 1].humanID = id;
-        }
-    }
-
     addDefaultControls(id: number, team: SIDES) {
-        const directions = this.getDirectionsFromTeam(team)
+        const directions = getDirectionsFromTeam(team)
         this.addControls(id, {left: "Arrow" + directions.left, right: "Arrow" + directions.right})
     }
+    saveTempControls(controls: TControls) {
+        this._tempControls = controls;
+    }
+    updateLatestControlsID(id: number) {
+        if (!this._tempControls) {
+            return;
+        }
+        this.addControls(id, this._tempControls);
+        this._tempControls = null;
+    }
+    setControlsPermanent() {
+        const myControls = this._getControls();
+        myControls.used = true;
+        this._saveControls(myControls);
+    }
     removeControls(id: number) {
-        this._controls = this._controls.filter(player => player.humanID !== id)
+        let myControls = this._getControls();
+        myControls.controls = myControls.controls.filter(player => player.humanID !== id);
+        this._saveControls(myControls);
+    }
+    eraseUnusedControls() {
+        let myControls = this._getControls();
+        if (myControls.used === false) {
+            myControls.controls = [];
+            this._saveControls(myControls);
+        }
     }
 
-    getDirectionsFromTeam(team: SIDES): {left: string, right: string} {
-        const teamToDirections: Record<SIDES, {left: string, right: string}> = {
-            [SIDES.LEFT]: {left: "Up", right: "Down"},
-            [SIDES.TOP]: {left: "Right", right: "Left"},
-            [SIDES.RIGHT]: {left: "Down", right: "Up"},
-            [SIDES.BOTTOM]: {left: "Left", right: "Right"}
-        }
-        return (teamToDirections[team])
-    }
+    
 
     getTeamFromPairings(playerID: number, tournPairings: [number, number][]): SIDES {
         for (let i =0; i < tournPairings.length; i++) {
@@ -55,10 +98,20 @@ class MatchService {
     }
 
     async start(root: HTMLElement) {
-        console.log("Match about to start!")
-        console.log(this.configs)
-        await App.init(this.configs, root, lobbySocketService.ws);
-    } 
+        const sendToServerFunc = (event: Event) => {
+            const dto = (event as CustomEvent).detail;
+            lobbySocketService.send("updateGame", dto);
+        }
+        await App.init(this.configs, sendToServerFunc, root);
+    }
+
+    async destroy() {
+        await App.destroy()
+    }
+
+    isMatchActive() {
+        return App.isAppActive()
+    }
 
     private _configs: CAppConfigs | null = null;
     get configs(): CAppConfigs {
@@ -66,10 +119,27 @@ class MatchService {
         return this._configs;
     }
 
-    private _controls: {
+    /* private _controls: {
         humanID: number,
         controls: TControls
-    }[] = []
+    }[] = [] */
+
+    private _tempControls: TControls | null = null;
+
+    private _getControls(): MyControlsT {
+        const storedControls = localStorage.getItem("controls");
+        const parsedControls = storedControls
+            ? JSON.parse(storedControls) as MyControlsT
+            : {
+                used: false,
+                controls: []
+            };
+        return parsedControls;
+    }
+
+    private _saveControls(controls: MyControlsT) {
+        localStorage.setItem("controls", JSON.stringify(controls));
+    } 
 }
 
 export const matchService = new MatchService()

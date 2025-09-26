@@ -1,0 +1,28 @@
+{
+  "name": "gamets",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "tsc && node db-init.mjs && node dist/main.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.1",
+    "@types/ws": "^8.18.1",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.0",
+    "@fastify/sensible": "^6.0.3",
+    "@fastify/websocket": "11.0.2",
+    "edmonds-blossom": "^1.0.0",
+    "fastify": "^5.6.0",
+    "fastify-metrics": "^12.1.0",
+    "knex": "^3.1.0",
+    "redis": "^5.8.2",
+    "sqlite3": "^5.1.7"
+  }
+}

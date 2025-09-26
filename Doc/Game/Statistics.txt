@@ -1,0 +1,30 @@
+Match:
+- Matches played
+- Places: With two tabs, one for 2-player matches and other for 4-player
+-- Displayed as bar filled with colors representing percentage of total games in that place?
+
+- Biggest winning streak
+- Current winning streak
+(optional: losing streak, although it would have to be taken into account 4-player games)
+
+Tournament:
+- Tournaments played
+- Podium places
+-- Again displayed as a coloured percentage bar? (1sr, 2nd, 3rd, outside)
+
+Rating:
+- Current rating
+- Highest ever rating
+- Lowest ever rating
+- Maybe a plot chart with historic rating development?
+- Highest opponent rating ever won against
+- Lowest opponent rating ever lost against
+
+
+Misc useless optional statistics (would need a tracking system in game, which does not exist yet):
+- Total amount of meters run by paddle
+- Total number of paddle hits
+- Total amount of damage taken
+- Total amount of self-inflicted damage (getting the skull powerup)
+
+Maybe it is possible to also place all of these in context of the existing users? For example, saying somewhere that this user has the 5th highest podium places percentage from the users in the database

@@ -140,7 +140,7 @@ export class Chat {
       <dialog class="friend-requests-wrapper" id="friendRequestsDialog" >
         <button class="close-dialog-btn">&times;</button> <!-- onclick="closeDialog()" -->
 
-        <h1 class="title friend-request-header">Friend Requests</h1>
+        <h1 class="friend-request-header">Friend Requests</h1>
 
         <div class="requests-container"></div>
       </dialog>
@@ -413,11 +413,25 @@ export class Chat {
 
     // Close on backdrop click
     dialog.addEventListener("click", (e: MouseEvent) => {
-      if (e.target === dialog) {
-        // if i click on something that is a child its not the dialog(backdrop is tho!)
+      const rect = dialog.getBoundingClientRect();
+      const clickInside =
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom;
+
+      if (!clickInside) {
         closeHandler();
       }
     });
+
+    // esc key closes dialog
+    dialog.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeHandler();
+      }
+    });
+
 
     const requestsContainer = document.querySelector(".requests-container");
     if (requestsContainer instanceof HTMLDivElement) {
@@ -577,5 +591,19 @@ export class Chat {
         img.style.boxShadow = "0px 0px 4px #676768";
       }
     });
+  }
+
+  // returns null if not found
+  // returns conversation ID
+  getConvIDByFriendID(friendID: number): number | null {
+    const friend = this.friends.find((f) => f.friendID === friendID);
+    return friend ? friend.convID : null;
+  }
+
+  // returns null if not found
+  // returns conversation ID
+  getConvIDByFriendUsername(friendUsername: string): number | null {
+    const friend = this.friends.find((f) => f.friendName === friendUsername);
+    return friend ? friend.convID : null;
   }
 }

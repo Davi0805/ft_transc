@@ -8,31 +8,31 @@ import { WarningPopup } from "../utils/popUpWarn";
 export const RegisterPage = {
   template(): string {
     return `
-    <div id="register-wrapper" class="content">
+    <div id="register-wrapper" class="content w-[420px]">
       <form id="register-form">
         <h1 class="title" data-i18n="register-title">Register</h1>
 
-        <div class="input-box">
-        <input id="username" type="text" placeholder="Username" name="username" data-i18n-placeholder="register-place-username" required 
+        <div class="input-box my-5 mx-0">
+        <input id="username" type="text" placeholder="Username" name="username" autocomplete="off" data-i18n-placeholder="register-place-username" required
         pattern="^[a-zA-Z0-9_\\-]{3,15}$" 
         title="Username must be 3-15 characters long and can include letters, numbers, '_' or '-'" data-i18n-title="register-title-username" />
         
         <img src="../Assets/icons/user.svg" draggable="false" />
         </div>
 
-        <div class="input-box">
+        <div class="input-box my-5 mx-0">
           <input id="name" type="text" placeholder="Nickname" name="name" data-i18n-placeholder="register-place-nickname" required 
           pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
           title="Name must be 2–40 characters long and can include letters and spaces" data-i18n-title="register-title-name" />
           <img src="../Assets/icons/id-card.svg" draggable="false" />
         </div>
 
-        <div class="input-box">
-          <input id="email" type="email" placeholder="Email" name="email" data-i18n-placeholder="register-place-email" required />
+        <div class="input-box my-5 mx-0">
+          <input id="email" type="email" placeholder="Email" name="email" autocomplete="email" data-i18n-placeholder="register-place-email" required />
           <img src="../Assets/icons/atsign.svg" draggable="false" />
         </div>
 
-        <div class="input-box">
+        <div class="input-box my-5 mx-0">
           <!-- (?.*\\d) is asking for a digit  -->
           <!-- (?.*[a-z] and [A-Z]) is asking for a lower letter and a upper letter  -->
           <!-- (?.*[!@#$%^&*.\\-_+=?]) is asking for one of these special chars  -->
@@ -45,16 +45,16 @@ export const RegisterPage = {
           <img class="visibility" src="../Assets/icons/visibility-on.svg" draggable="false" />
         </div>
 
-        <div class="input-box">
+        <div class="input-box my-5 mx-0">
           <input id="confirm-password"type="password" placeholder="Password" name="confirm-password" autocomplete="new-password" data-i18n-placeholder="register-place-password" required 
           title="Must match the password above" data-i18n-title="register-title-confirmpass" />
           <img class="visibility" src="../Assets/icons/visibility-on.svg" draggable="false" />
         </div>
 
-        <div class="error" aria-live="polite" data-i18n="register-pass-error" hidden></div>
-        <div class="error" aria-live="polite" data-i18n="register-taken-error" hidden></div>
+        <div class="error text-red-500 font-semibold text-center mb-3.5" aria-live="polite" data-i18n="register-pass-error" hidden></div>
+        <div class="error text-red-500 font-semibold text-center mb-3.5" aria-live="polite" data-i18n="register-taken-error" hidden></div>
 
-        <button type="submit" class="button" data-i18n="register-btn">Register</button>
+        <button type="submit" class="button " data-i18n="register-btn">Register</button>
         </div>
       </form>
      </div>
@@ -72,12 +72,12 @@ export const RegisterPage = {
       return;
     } 
     wrapper.innerHTML = `
-      <div class="registration-success">
+      <div class="registration-success h-[210px] flex flex-col justify-evenly">
         <h1 class="title" data-i18n="register-success-title">Success!</h1>
-        <p class="description" data-i18n="register-success-description">Congratulations, your account has been successfully created.</p>
-        <div class="options">
-          <button id="btn-home" class="button" data-i18n="register-success-btn-home">Home Page</button>
-          <button id="btn-login" class="button" data-i18n="register-success-btn-login">Log In</button>
+        <p class="description mt-5 text-center" data-i18n="register-success-description">Congratulations, your account has been successfully created.</p>
+        <div class="options mt-5 flex gap-4">
+          <button id="btn-home" class="button active:bg-[#bdbdbd]" data-i18n="register-success-btn-home">Home Page</button>
+          <button id="btn-login" class="button active:bg-[#bdbdbd]" data-i18n="register-success-btn-login">Log In</button>
         </div>
       </div>
     `;

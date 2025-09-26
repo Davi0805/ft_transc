@@ -52,6 +52,13 @@ CREATE INDEX idx_friend_requests_from_user ON friend_requests(from_user_id);
 CREATE INDEX idx_friend_requests_to_user ON friend_requests(to_user_id);
 CREATE INDEX idx_friend_requests_status ON friend_requests(status);
 
+-- ADD TEST USERS
+('ndo vala', 'ndo-vala', 'ndo-vala@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
+('ndo vale', 'ndo-vale', 'ndo-vale@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
+('ndo vali', 'ndo-vali', 'ndo-vali@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
+('ndo valo', 'ndo-valo', 'ndo-valo@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
+('ndo valu', 'ndo-valu', 'ndo-valu@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0);
+
 
 -- TODO MOCK DATA USERS
 INSERT INTO users (name, username, email, password_hash, user_image, sprite_id, rating, twofa_secret, twofa_enabled) VALUES

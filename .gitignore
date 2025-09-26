@@ -44,12 +44,3 @@ coverage/
 # Mac system files
 *.swp
 
-test
-
-tests/node_modules/
-tests/package-lock.json
-*.jpg
-*jpeg
-*.gif
-*.web*
-*.png

@@ -22,11 +22,7 @@ export async function getAllLobbies(): Promise<LobbiesListDTO> {
             (error as any).status = response.status;
             throw error;
         }
-        //console.log("Response:")
-        //console.log(await response.json())
         const lobbiesList: LobbiesListDTO = (await response.json()) as LobbiesListDTO;
-        console.log("List of lobbies directly from endpoint: ")
-        console.log(lobbiesList)
         return lobbiesList
     } catch (error) {
         throw error;

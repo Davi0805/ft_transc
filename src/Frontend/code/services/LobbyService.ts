@@ -2,13 +2,10 @@ import { LobbyPage } from "../pages/play/lobby";
 import { TSlots } from "../pages/play/utils/helpers";
 import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
-//import { lobbySocketService } from "../testServices/testLobySocketService"; //TEST
 import { router } from "../routes/router";
-import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies";
 import { matchService} from "./matchService";
-import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournPlayer, TMatchPlayer } from "../pages/play/lobbyTyping";
+import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournamentParticipant, TMatchPlayer } from "../pages/play/lobbyTyping";
 import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
-import { tournamentService } from "./tournamentService";
 
 
 
@@ -16,20 +13,25 @@ class LobbyService {
     init(myID: number, lobby: TLobby) {
         this._lobby = lobby;
         this._myID = myID;
-        this._isInit = true;
     }
 
-    nullify() {
+    destroy() {
         this._lobby = null;
         this._myID = null;
+        matchService.eraseUnusedControls();
+    }
+
+    async return(lobby: TLobby) {
+        matchService.destroy();
+
+        this._lobby = lobby;
+        await router.navigateTo("/lobby")
     }
 
 
 
-    getSlots(): TSlots {
-        if (!this._lobby) { throw Error("getSlots should not be called before lobby is initialized!")}
-        
-        const mapSlots = getSlotsFromMap(this.lobby.map);
+    getSlots(): TSlots {        
+        const mapSlots = getSlotsFromMap(this.lobby.matchSettings.map);
         const matchPlayers = this.getMatchPlayers()
 
         matchPlayers.forEach(player => {
@@ -60,8 +62,8 @@ class LobbyService {
         lobbySocketService.send("updateSettings", { settings: settings })
     }
 
-    updateReadinessIN(ready: boolean) {
-        lobbySocketService.send("updateReadiness", { ready: ready });
+    updateReadinessIN() {
+        lobbySocketService.send("updateReadiness", { ready: !this.amIReady() }); //We want to be the opposite of whatever we are atm
     }
 
     addFriendlyPlayerIN(player: TFriendlyPlayer) {
@@ -95,28 +97,36 @@ class LobbyService {
 
     leave() {
         lobbySocketService.disconnect();
-        this.nullify();
+        this.destroy();
     }
 
     startMatchIN() {
-        lobbySocketService.send("startGame", null);
+        lobbySocketService.send("start", null);
     }
 
 
     //outbound
     updateSettingsOUT(settings: TDynamicLobbySettings, updatedUsers: TLobbyUser[] | null) {
-        this.lobby.map = settings.map
-        this.lobby.mode = settings.mode
-        this.lobby.duration = settings.duration
-        LobbyPage.renderSettings();
+        this.lobby.matchSettings.map = settings.map
+        this.lobby.matchSettings.mode = settings.mode
+        this.lobby.matchSettings.duration = settings.duration
+        LobbyPage.renderer?.renderSettings(
+            this.lobby.type,
+            this.lobby.matchSettings,
+            this.amIHost()
+        )
         if (updatedUsers && this.lobby.type !== "tournament") {
             this.lobby.users = updatedUsers
-            LobbyPage.renderSlots()
+            LobbyPage.renderer?.renderPlayers()
+            LobbyPage.renderer?.updateReadyButton(false)
         }
     }
     updateReadinessOUT(id: number, ready: boolean) {
         const user = this._findUserByID(id);
         user.ready = ready;
+        if (this.myID === id) {
+            LobbyPage.renderer?.updateReadyButton(ready);
+        }
     }
     async addLobbyUserOUT(user: TLobbyUser) {
         this.lobby.users.push(user);
@@ -124,12 +134,13 @@ class LobbyService {
     removeLobbyUserOUT(id: number) {
         const user = this._findUserByID(id);
         const index = this.lobby.users.indexOf(user);
-        this.lobby.users.splice(index, 1); //TODO: For tournament, this does not work!
+        this.lobby.users.splice(index, 1);
     }
     addFriendlyPlayerOUT(userID: number, player: TFriendlyPlayer) {
         if (!this._isLobbyOfType("friendly")) { return; }
         const user = this._findUserByID(userID);
         if (user.id === this.myID) {
+            console.log(`Player with id ${player.id} was added`)
             matchService.updateLatestControlsID(player.id)
         }
         if (user.player === null) {
@@ -137,7 +148,7 @@ class LobbyService {
         } else {
             (user.player as TFriendlyPlayer[]).push(player)
         }
-        LobbyPage.renderSlots();
+        LobbyPage.renderer?.updatePlayers();
     }
     removeFriendlyPlayerOUT(playerID: number) {
         if (!this._isLobbyOfType("friendly")) { return; }
@@ -156,7 +167,7 @@ class LobbyService {
                 if (user.id === this.myID) {
                     matchService.removeControls(playerID);
                 }
-                LobbyPage.renderSlots();
+                LobbyPage.renderer?.updatePlayers();
                 return ;
             }
         }
@@ -167,37 +178,52 @@ class LobbyService {
 
         const user = this._findUserByID(userID);
         user.player = player;
-        LobbyPage.renderSlots();
+        LobbyPage.renderer?.updatePlayers();
     }
     removeRankedPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("ranked")) { return; }
         const user = this._findUserByID(userID);
         user.player = null
-        LobbyPage.renderSlots();
+        LobbyPage.renderer?.updatePlayers();
     }
-    addTournamentPlayerOUT(userID: number, player: TTournamentPlayer) {
+    addTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
-        user.player = player;
-        LobbyPage.renderTournamentTable();
+        user.player = {};
+        LobbyPage.renderer?.updatePlayers();
     }
     removeTournamentPlayerOUT(userID: number) {
         if (!this._isLobbyOfType("tournament")) { return; }
         const user = this._findUserByID(userID);
-        (user.player as TTournamentPlayer).participating = false;
-        LobbyPage.renderTournamentTable();
+        user.player = null
+        LobbyPage.renderer?.updatePlayers();
     }
-    displayPairingsOUT(tournPairings: [number, number][]) {
-        const side: SIDES = matchService.getTeamFromPairings(this.myID, tournPairings);
-        matchService.addDefaultControls(this.myID, side);
-        tournamentService.loadPairings(tournPairings);
-        //console.log(tournamentService.pairings)
-        router.navigateTo("/tournament-pairings")
-        //LobbyPage.renderTournamentPairings(tournPairings);
-    }
-    startMatchOUT(configs: CAppConfigs) {
-        matchService.init(configs);
-        router.navigateTo("/match")
+
+    //errors
+    handleActionBlock(blockType: string) { //probably this should be strongly typed, but I am way too tired
+        switch (blockType) {
+            case "notEveryoneReady":
+                if (this.amIHost()) {
+                    LobbyPage.renderer?.handleNotEveryoneReady();
+                }
+                break;
+            case "fewPlayersForTournament":
+                if (this.amIHost()) {
+                    LobbyPage.renderer?.handleFewPlayersForTournament();
+                }
+                break;
+            case "notAllSlotsFilled":
+                if (this.amIHost()) {
+                    LobbyPage.renderer?.handleNotAllSlotsFilled();
+                }
+                break;
+            case "setReadyWithoutJoining": {
+                LobbyPage.renderer?.handleSetReadyWithoutJoining();
+                break;
+            }
+            default:
+                throw Error(`${blockType} is not recognized! `)
+        }
     }
 
     getMatchPlayers(): TMatchPlayer[] {
@@ -238,22 +264,21 @@ class LobbyService {
         } else { throw Error("Function called in wrong lobby type")}
         return out;
     }
-    getTournPlayers(): TTournPlayer[] { //Probably this will only be used for pairings, and the tournament Service does not need all this info, so doublecheck constitution of TTournPlayers (also name lol)
+    getTournPlayers(): TTournamentParticipant[] { //Probably this will only be used for pairings, and the tournament Service does not need all this info, so doublecheck constitution of TTournPlayers (also name lol)
         if (!this._isLobbyOfType("tournament")) {throw Error("Function called in wrong lobby type")}
 
-        const out: TTournPlayer[] = [];
+        const out: TTournamentParticipant[] = [];
         this.lobby.users.forEach(user => {
             if (user.player) {
                 const player = user.player as TTournamentPlayer;
                 out.push({
                     id: user.id,
                     nick: user.username,
-                    score: player.score,
+                    score: 0, //player.score,
                     rating: user.rating,
-                    prevOpponents: player.prevOpponents,
-                    teamDist: player.teamPref,
-                    participating: player.participating,
-                    ready: user.ready
+                    prevOpponents: [], //player.prevOpponents,
+                    teamDist: 0, //player.teamPref,
+                    participating: true
                 })
             }
         })
@@ -263,22 +288,22 @@ class LobbyService {
     amIHost(): boolean {
         return this.myID == this.lobby.hostID
     }
-    isEveryoneReady(): boolean {
-        return this.lobby.users.find(user => (this.isUserParticipating(user.id) && !user.ready)) ? false : true
+    amIReady(): boolean {
+        const me = this.lobby.users.find(user => user.id == this.myID);
+        if (!me) {throw Error("How can't I be in the lobby???"); }
+        return me.ready
     }
+ 
     isUserParticipating(userID: number): boolean {
         const me = this.lobby.users.find(user => user.id == userID);
         if (!me) {throw Error("How can't I be in the lobby???"); }
         if (!me.player) {
             return false
-        } else if (this._isLobbyOfType("tournament")) {
-            return (me.player as TTournamentPlayer).participating
         } else {
             return true
         }
     }
 
-    private _isInit: boolean = false;
     private _lobby: TLobby | null = null;
     get lobby(): TLobby {
         if (!this._lobby) { throw Error("Settings are trying to be accessed when lobby hasn't been initialized yet!"); }
@@ -292,7 +317,7 @@ class LobbyService {
 
     _findUserByID(userID: number): TLobbyUser {
         const user = this.lobby.users.find(user => user.id === userID);
-        if (!user) { throw Error("User requested was not found in lobby!"); }
+        if (!user) { throw Error(`User with ID ${userID} was not found in lobby!`); }
         return user
     }
     _isLobbyOfType(desiredType: TLobbyType) {

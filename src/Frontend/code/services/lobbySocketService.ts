@@ -1,17 +1,24 @@
-import { InboundDTOMap, InboundDTO, OutboundDTO, OutboundDTOMap, TLobby } from "../pages/play/lobbyTyping";
+import { CAppConfigs } from "../match/matchSharedDependencies/SetupDependencies";
+import { InboundDTOMap, InboundDTO, OutboundDTO, TLobby } from "../pages/play/lobbyTyping";
 import { authService } from "./authService";
 import { lobbyService } from "./LobbyService";
-import { App } from "../match/system/App";
 import { matchService } from "./matchService";
+import { tournamentService, TTournamentDTO } from "./tournamentService";
+
+type TLobbyInfo = {
+    lobby: TLobby,
+    matchConfigs: CAppConfigs | null,
+    tournamentConfigs: TTournamentDTO | null
+}
 
 class LobbySocketService {
     constructor() {
         this._ws = null;
-        this._lobbyID = 0; //TODO change to null
+        this._lobbyID = 0;
     }
 
-    connect(lobbyID: number): Promise<TLobby | null> {
-        return new Promise((resolve, reject) => {
+    connect(lobbyID: number): Promise<TLobbyInfo | null> {
+        return new Promise((resolve, _reject) => {
             if (this._ws && this._ws.readyState === WebSocket.OPEN) {
                 console.log("DEBUG: lobbySocket already connected");
                 resolve(null);
@@ -26,7 +33,6 @@ class LobbySocketService {
             }
             
             this._ws.onmessage = (ev: MessageEvent) => {
-                console.log("Message received: " + ev.data)
                 let data: OutboundDTO | null = null;
                 try {
                     data = JSON.parse(ev.data) as OutboundDTO;
@@ -34,8 +40,8 @@ class LobbySocketService {
                     console.error("Error parsing websocket message");
                 }
                 if (!data) {return}
-                if (data.requestType === "lobby") {
-                    resolve(data.data);
+                if (data.requestType === "lobbyInit") {
+                        resolve(data.data);
                 } else {
                     this._handleMessage(data)
                 }
@@ -43,8 +49,7 @@ class LobbySocketService {
 
             this._ws.onclose = (ev: CloseEvent) => {
                 console.log("DEBUG: websocket closed:", ev.code, ev.reason);
-                this._ws = null;
-                this._lobbyID = null;
+                lobbyService.destroy();
             };
 
             this._ws.onerror = (error: Event) => {
@@ -90,6 +95,7 @@ class LobbySocketService {
 
     private _handleMessage(dto: OutboundDTO) {
         switch (dto.requestType) {
+            //Lobby messages
             case "updateSettings":
                 lobbyService.updateSettingsOUT(dto.data.settings, dto.data.users);
                 break;
@@ -100,7 +106,7 @@ class LobbySocketService {
                 lobbyService.addLobbyUserOUT(dto.data.user)
                 break;
             case "removeLobbyUser":
-                lobbyService.removeLobbyUserOUT(dto.data.id)
+                lobbyService.removeLobbyUserOUT(dto.data.userID)
                 break;
             case "addFriendlyPlayer":
                 lobbyService.addFriendlyPlayerOUT(dto.data.userID, dto.data.player)
@@ -112,25 +118,51 @@ class LobbySocketService {
                 lobbyService.addRankedPlayerOUT(dto.data.userID, dto.data.player)
                 break;
             case "removeRankedPlayer":
-                lobbyService.removeRankedPlayerOUT(dto.data.id);
+                lobbyService.removeRankedPlayerOUT(dto.data.userID);
                 break;
             case "addTournamentPlayer":
-                lobbyService.addTournamentPlayerOUT(dto.data.userID, dto.data.player);
+                lobbyService.addTournamentPlayerOUT(dto.data.userID);
                 break;
             case "removeTournamentPlayer":
-                lobbyService.removeTournamentPlayerOUT(dto.data.id);
+                lobbyService.removeTournamentPlayerOUT(dto.data.userID);
                 break;
-            case "displayPairings":
-                lobbyService.displayPairingsOUT(dto.data.pairings);
+            case "returnToLobby":
+                lobbyService.return(dto.data.lobby)
                 break;
+            case "actionBlock":
+                lobbyService.handleActionBlock(dto.data.reason)
+                break;
+            //match messages
             case "startMatch":
-                lobbyService.startMatchOUT(dto.data.configs);
+                matchService.startMatchOUT(dto.data.configs);
                 break;
             case "updateGame":
-                App.severUpdate(dto.data)
+                matchService.updateGame(dto.data);
+                break;
+            case "endOfMatch":
+                matchService.onEndOfMatch(dto.data.result);
+                break;
+            // tournament messages
+            case "startTournament":
+                tournamentService.startTournamentOUT();
+                break;
+            case "displayStandings": 
+                tournamentService.displayStandingsOUT(dto.data.standings);
+                break;
+            case "displayPairings":
+                tournamentService.displayPairingsOUT(dto.data.pairings)
+                break;
+            case "updateTournamentResult":
+                tournamentService.updateMatchResultOUT(dto.data.matchIndex, dto.data.winnerID);
+                break;
+            case "displayResults":
+                tournamentService.displayResultsOUT();
+                break;
+            case "displayTournamentEnd":
+                tournamentService.displayStandingsOUT(dto.data.standings);
                 break;
             default:
-                throw Error(`A message came in with a non registered type!! (${dto.requestType})`)
+                throw Error(dto.requestType)
         }
     }
 }

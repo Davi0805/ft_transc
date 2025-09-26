@@ -1,6 +1,7 @@
 import { SIDES, ROLES } from "../../match/matchSharedDependencies/sharedTypes"
 import { CGameDTO, SGameDTO } from "../../match/matchSharedDependencies/dtos"
 import { CAppConfigs } from "../../match/matchSharedDependencies/SetupDependencies"
+import { TTournament, TTournamentDTO } from "../../services/tournamentService"
 
 //TYPES REPRESENTATIVE OF THE ENTITIES
 
@@ -9,6 +10,8 @@ export type TMap = "2-players-small" | "2-players-medium" | "2-players-big" | "4
     | "2-teams-small" | "2-teams-medium" | "2-teams-big" | "4-teams-small" | "4-teams-medium" | "4-teams-big"
 export type TMode = "classic" | "modern"
 export type TDuration = "blitz" | "rapid" | "classical" | "long" | "marathon"
+
+export type TMatchResult = SIDES[]
 
 
 //SET TO NULL IF IT BECOMES EMPTY
@@ -34,14 +37,12 @@ export type TRankedPlayer = {
 //SHOULD NEVER BE SET TO NULL AFTER BEING SET!!! (change the "participating" flag instead)
 //Except for participating flag, All these will be calculated by tournament service
 export type TTournamentPlayer = {
-    //Tells if the player is currently participating in the tournament.
-    participating: boolean
-    //How many points the player currently has in the tournament
+    /* //How many points the player currently has in the tournament
     score: number, //Def: 0
     //The userIDs of the players with whom this user played
     prevOpponents: number[], //Def: []
     //The Team Preference index. Indicates whether this user deserves to play on the left or right
-    teamPref: number, //Def: 0
+    teamPref: number, //Def: 0 */
 }
 
 export type TLobbyUser = {
@@ -70,14 +71,7 @@ export type TLobby = {
     name: string,
     //The type of the lobby (see above for options)
     type: TLobbyType,
-    //Map of the lobby. Dictates how many and which slots exist (the capacity can be taken from crossing this info with the users' position)
-    map: TMap,
-    //Mode of lobby (see above for options). Tells if powerups will be present
-    mode: TMode,
-    //Duration of the matches (See above for options). Better saved as string and only convert to number when the match starts
-    duration: TDuration,
-    //Current round. Important for pairings in tournaments, and allows the same people to start a new game from the same lobby, keeping track of how many games they played
-    round: number, //Def: 1
+    matchSettings: TDynamicLobbySettings
     //The users present in the lobby. 
     users: TLobbyUser[] //Def: [host]
 }
@@ -112,13 +106,14 @@ export type LobbiesListDTO = LobbyInfoForDisplay[]
 export type LobbyCreationConfigsDTO = {
     name: string,
     type: TLobbyType,
+    matchSettings: TDynamicLobbySettings
+}
+
+export type TDynamicLobbySettings = {
     map: TMap,
     mode: TMode,
     duration: TDuration
 }
-
-
-export type TDynamicLobbySettings = Pick<TLobby, "map" | "mode" | "duration">
 
 //server will receive these when...
 export type InboundDTOMap = {
@@ -152,16 +147,24 @@ export type InboundDTOMap = {
     addTournamentPlayer: null //None of the member variables are chosen by the user
     //user withdraws from the tournament
     removeTournamentPlayer: null
-    //host starts the game
-    startGame: null,
+    //host starts the lobby
+    start: null,
     
     //Game dto:
-    updateGame: CGameDTO //Dealt with in game
+    updateGame: CGameDTO, //Dealt with in game
+
+    quitTournament: null
 }
+
+type TActionBlockReason = "setReadyWithoutJoining" | "notEveryoneReady" | "notAllSlotsFilled" | "fewPlayersForTournament"
 
 //server should broadcast these after...
 export type OutboundDTOMap = {
-    lobby: TLobby,
+    lobbyInit: {
+        lobby: TLobby,
+        matchConfigs: CAppConfigs | null,
+        tournamentConfigs: TTournamentDTO | null
+    },
     //host updates the settings. If map changes, users should be filled with the current users so slots can be updated accordingly
     updateSettings: {
         settings: TDynamicLobbySettings
@@ -178,7 +181,7 @@ export type OutboundDTOMap = {
     },
     //user leaves a lobby
     removeLobbyUser: {
-        id: number
+        userID: number
     }
     //user chooses a slot in a friendly lobby
     addFriendlyPlayer: {
@@ -196,31 +199,54 @@ export type OutboundDTOMap = {
     },
     //user removes itself from slot in a ranked lobby
     removeRankedPlayer: {
-        id: number 
+        userID: number 
     }
     //user applies to a tournament
     addTournamentPlayer: {
         userID: number,
-        player: TTournamentPlayer
     }
     //user withdraws from tournament
     removeTournamentPlayer: {
-        id: number
+        userID: number
     }
+
+    startMatch: {
+        configs: CAppConfigs
+    }
+
+    startTournament: null
     //host clicks start on tournament lobby
+    displayStandings: {
+        standings: TTournamentParticipant[]
+    }
     displayPairings: {
         pairings: [number, number][]
     }
-    //host starts the match
-    startMatch: {
-        configs: CAppConfigs
-        //tournPairings: [number, number][] | null 
+    updateTournamentResult: {
+        matchIndex: number,
+        winnerID: number
     }
+    displayResults: null
+    displayTournamentEnd: {
+        standings: TTournamentParticipant[]
+    }
+    
 
     //Game dto:
     updateGame: SGameDTO //Dealt with in game
 
-    //finishGame: 
+    //finishGame:
+    endOfMatch: {
+        result: TMatchResult
+    }
+
+    returnToLobby: {
+        lobby: TLobby
+    }
+
+    actionBlock: {
+        reason: TActionBlockReason
+    }
 }
 
 export type InboundDTO<T extends keyof InboundDTOMap = keyof InboundDTOMap> = {
@@ -240,7 +266,7 @@ export type OutboundDTO = {
 
 //THE FOLLOWING ARE INTERMIDIARY TYPES
 
-export type TTournPlayer = {
+export type TTournamentParticipant = {
     id: number | null // Same as userID
     nick: string | null // To be taken from userid
     score: number //default: 0
@@ -249,7 +275,6 @@ export type TTournPlayer = {
     teamDist: number //default: 0
     participating: boolean //default: true
     //TODO: IN TOURNAMENT SERVICE, ONLY PAIR PLAYERS THAT HAVE THIS FLAG SET TO TRUE!!!!
-    ready: boolean
 }
 
 export type TMatchPlayer = {
