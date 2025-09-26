@@ -42,7 +42,7 @@ const setup = () => {
     app.register(multer.contentParser);
     app.register(multerConfig);
     app.register(cors, {
-        origin: true
+        origin: '*'
       });
       app.register(fastifyStatic, {
         root: path.join(__dirname, 'uploads'),

@@ -28,7 +28,7 @@ const setup = () => {
      
     app.register(prometheus, {endpoint: '/metrics'});
     app.register(cors, {
-        origin: true
+        origin: '*'
       });
     
     app.register(matchRoutes);
