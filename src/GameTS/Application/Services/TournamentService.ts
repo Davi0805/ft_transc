@@ -93,6 +93,7 @@ class TournamentService {
         const tournament = tournamentRepository.getByID(tournamentID);
         tournament.currentRound++
         
+        this._updateActivePlayers(tournament.participants);
         const activePlayers = tournament.participants.filter(participant => participant.participating === true);
         const pairingsIDs = SwissService.getNextRoundPairings(activePlayers);
         socketService.broadcastToLobby(tournament.lobbyID, "displayPairings", { pairings: pairingsIDs });
@@ -277,6 +278,13 @@ class TournamentService {
 
     private _calculateRoundAmount(playersAmount: number) {
         return Math.ceil(Math.log2(playersAmount))
+    }
+
+    private _updateActivePlayers(players: TournamentParticipantT[]) {
+        players.forEach(player => {
+            player.participating = player.participating && socketService.isUserConnected(player.id);
+        })
+        
     }
 }
 

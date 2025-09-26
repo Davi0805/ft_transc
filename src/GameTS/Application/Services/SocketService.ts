@@ -92,6 +92,11 @@ class SocketService {
         }
     }
 
+    isUserConnected(userID: number) {
+        const userSocket = socketRepository.getSocketByUserID(userID);
+        return userSocket ? true : false
+    }
+
 }
 
 const socketService = new SocketService();

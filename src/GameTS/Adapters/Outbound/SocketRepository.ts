@@ -21,7 +21,7 @@ class SocketRepository {
 
     getSocketByUserID(userID: number) {
         const userSocket = this._sockets.find(socket => socket.userID === userID);
-        if (!userSocket) {throw Error("This userID does not have a socket open!")}
+        if (!userSocket) {return null}
         return userSocket.socket
     }
 
