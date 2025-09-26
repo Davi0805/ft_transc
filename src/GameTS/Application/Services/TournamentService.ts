@@ -78,7 +78,11 @@ class TournamentService {
         const standings = SwissService.getCurrentStandings(tournament.participants);
         socketService.broadcastToLobby(tournament.lobbyID, "displayStandings", { standings: standings })
         
+        //TODO: Add chat warning that pairings will be done. If users are not present in 10 seconds, they are kicked out of tournament
+        const playersToBeNotified = tournament.participants.filter(participant => participant.participating === true);
+
         setTimeout(() => {
+            this._updateActivePlayers(tournament.participants);
             const activePlayers = tournament.participants.filter(participant => participant.participating === true);
             const tournamentDone = tournament.currentRound >= this._calculateRoundAmount(activePlayers.length)
             if (tournamentDone) {
@@ -93,11 +97,9 @@ class TournamentService {
         const tournament = tournamentRepository.getByID(tournamentID);
         tournament.currentRound++
         
-        this._updateActivePlayers(tournament.participants);
         const activePlayers = tournament.participants.filter(participant => participant.participating === true);
         const pairingsIDs = SwissService.getNextRoundPairings(activePlayers);
         socketService.broadcastToLobby(tournament.lobbyID, "displayPairings", { pairings: pairingsIDs });
-        //TODO: Add chat warning that the matches will start
 
         setTimeout(() => {
             this._startRound(tournamentID, pairingsIDs);
