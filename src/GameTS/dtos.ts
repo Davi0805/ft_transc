@@ -150,7 +150,7 @@ export type OutboundDTOMap = {
     updateGame: SGameDTO,
     //Game finished (either all teams but one lost, or time is over)
     endOfMatch: {
-        result: TMatchResult //TODO: IF THIS IS MAP, IT MUST BE SERIALIZED
+        result: TMatchResult
     }
 }
 

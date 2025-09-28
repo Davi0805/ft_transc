@@ -2,7 +2,7 @@ import Application from './framework/Application';
 import Assets from './framework/Assets';
 import { ScenesManager } from './ScenesManager';
 import { EventBus } from './EventBus';
-import { AudioEvent, SGameDTO } from '../matchSharedDependencies/dtos';
+import { /* AudioEvent, */ SGameDTO } from '../matchSharedDependencies/dtos';
 import { CAppConfigs } from '../matchSharedDependencies/SetupDependencies';
 import { assetsManifest, audioTrackManifest, scenesManifest, soundsManifest } from '../game/Manifests';
 import { audioPlayer } from './framework/Audio/AudioPlayer';
@@ -35,13 +35,13 @@ class FtApplication {
         // This makes so anything the scene manager adds to container shows up on screen
         this.app.stage.addChild(this._scenesManager.container);
         // Starts the first scene
-        await this._scenesManager.goToScene("gameScene", gameConfigs.gameSceneConfigs); //TODO change to the correct first scene
+        await this._scenesManager.goToScene("gameScene", gameConfigs.gameSceneConfigs);
     }
 
     async destroy() {
         this.scenesManager.removeCurrentScene();
         this.unsetSendToServerFunc();
-        this._app?.destroy();
+        this.app.destroy();
         this._app = null
         //Maybe something else is necessary?
     }
@@ -50,14 +50,14 @@ class FtApplication {
         if (this._scenesManager && this.scenesManager.currentScene){
             this.scenesManager.currentScene.serverUpdate(dto);
         }
-        if (dto.audioEvent) {
+        /* if (dto.audioEvent) {
             audioPlayer.playTrack(dto.audioEvent, 1)
-        } 
+        }  */
     }
 
-    playAudio(audioEvent: AudioEvent) {
+    /* playAudio(audioEvent: AudioEvent) {
         audioPlayer.playTrack(audioEvent, 1)
-    }
+    } */
 
     setSendToServerFunc(sendToServerFnc: (event: Event) => void) {
         this._sendToServerFunc = sendToServerFnc;

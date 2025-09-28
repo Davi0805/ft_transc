@@ -1,3 +1,4 @@
+import { TMatchResult } from "../../pages/play/lobbyTyping"
 import { point, BALL_TYPES, SIDES, TControlsState } from "./sharedTypes"
 
 // DTO type
@@ -11,7 +12,10 @@ export type DTOAssignID = {
     humansID: number[]
 }
 
-export type SGameDTO = {
+export type SGameDTO = { type: "GameUpdateDTO", data: GameUpdateDTO }
+                        | { type: "GameResult", data: TMatchResult }
+
+export type GameUpdateDTO = {
     balls: {
         ballsState: {
             id: number,
@@ -39,6 +43,7 @@ export type SGameDTO = {
     timeLeft: number
     audioEvent: AudioEvent | null
 }
+
 export type AudioEvent = "paddleHit" | "wallHit" | "damageHit" | "faster" | "slower" | "longer" | "shorter" | "heal" | "bomb" | "skull" | "noHealth"
 
 
