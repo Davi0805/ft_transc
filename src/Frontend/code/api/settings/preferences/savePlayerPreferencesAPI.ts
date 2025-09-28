@@ -10,7 +10,7 @@ export async function savePlayerPreferences(preferences: PlayerPreferences): Pro
       throw error;
     }
 
-    const response = await fetch("http://localhost:8080/users/preferences", {
+    const response = await fetch("/api/user/users/preferences", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

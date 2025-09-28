@@ -37,9 +37,8 @@ class LobbyWsGateway {
             socket.close(4001, "You cannot enter in this lobby because it has an event active and you are not part of it!");
             return;
         }
-
-        if (!socketService.isUserConnected(userID)) {
-            socket.close(4001, "The user already have another connection with game service");
+        if (socketService.isUserConnected(userID)) {
+            socket.close(4001, "The user already has another connection with game service");
             return ;
         }
 

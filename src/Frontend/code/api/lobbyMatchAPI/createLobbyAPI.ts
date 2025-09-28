@@ -10,7 +10,7 @@ export async function createLobby(lobbySettings: LobbyCreationConfigsDTO): Promi
       throw error;
     }
 
-    const response = await fetch(`http://localhost:8084/lobby`, {
+    const response = await fetch(`/api/game/lobby`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${authService.getToken()}`,

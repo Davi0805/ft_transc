@@ -20,7 +20,7 @@ export interface UserData {
  */
 export async function getUserDataById(userID: number): Promise<UserData> {
   try {
-    const response = await fetch(`http://localhost:8080/users/${userID}`, {
+    const response = await fetch(`/api/user/users/${userID}`, {
       method: "GET",
     });
 

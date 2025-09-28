@@ -26,7 +26,7 @@ export async function unblockByUserID(
     }
 
     const response = await fetch(
-      `http://localhost:8080/friend_requests/${userID}/unblock`,
+      `/api/user/friend_requests/${userID}/unblock`,
       {
         method: "POST",
         headers: {

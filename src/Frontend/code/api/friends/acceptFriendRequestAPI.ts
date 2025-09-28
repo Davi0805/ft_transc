@@ -23,7 +23,7 @@ export async function acceptFriendRequest(reqID: number): Promise<void> {
     }
 
     const response = await fetch(
-      `http://localhost:8080/friend_requests/${reqID}/accept`,
+      `/api/user/friend_requests/${reqID}/accept`,
       {
         method: "POST",
         headers: {

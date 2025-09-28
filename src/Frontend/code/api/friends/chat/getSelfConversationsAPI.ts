@@ -27,7 +27,7 @@ export async function getSelfConversations(): Promise<Conversation[]> {
       const error: Error = new Error(errorMessage);
       throw error;
     }
-    const response = await fetch("http://localhost:8081/conversations", {
+    const response = await fetch("/api/chat/conversations", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${authService.getToken()}`,

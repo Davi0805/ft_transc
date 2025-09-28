@@ -25,7 +25,9 @@ class LobbySocketService {
                 return;
             }
 
-            this._ws = new WebSocket(`ws://localhost:8084/ws/${lobbyID}`, [`Bearer.${authService.getToken()}`]);
+            const wsUrl = `${window.location.origin.replace(/^http/, 'ws')}/api/game/ws/${lobbyID}`;
+
+            this._ws = new WebSocket(wsUrl, [`Bearer.${authService.getToken()}`]);
             this._lobbyID = lobbyID;
 
             this._ws.onopen = (ev: Event) => {

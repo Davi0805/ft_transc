@@ -1,6 +1,6 @@
 export async function verifyTwoFactorCode(token: string, code: string): Promise<void> {
   try {
-    const response = await fetch("http://localhost:8080/twofa/auth", {
+    const response = await fetch("/api/user/twofa/auth", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

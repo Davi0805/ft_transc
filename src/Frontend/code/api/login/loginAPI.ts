@@ -23,7 +23,7 @@ export interface LoginCredentials {
  */
 export async function login(userData: LoginCredentials): Promise<LoginState> {
   try {
-    const response = await fetch("http://localhost:8080/login", {
+    const response = await fetch("/api/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

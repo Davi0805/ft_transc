@@ -20,7 +20,7 @@ export async function getPlayerPreferences(): Promise<PlayerPreferences> {
       throw error;
     }
 
-    const response = await fetch("http://localhost:8080/user/preferences", {
+    const response = await fetch("/api/user/user/preferences", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${authService.getToken()}`,

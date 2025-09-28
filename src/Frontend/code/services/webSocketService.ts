@@ -78,7 +78,9 @@ class WebSocketService {
       return;
     }
 
-    this.ws = new WebSocket("ws://localhost:8081/ws", [
+    const wsUrl = `${window.location.origin.replace(/^http/, 'ws')}/api/chat/ws`;
+
+    this.ws = new WebSocket(wsUrl, [
       `Bearer.${authService.getToken()}`,
     ]);
 

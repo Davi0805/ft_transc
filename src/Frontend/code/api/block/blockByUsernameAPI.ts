@@ -26,7 +26,7 @@ export async function blockByUserName(
     }
 
     const response = await fetch(
-      `http://localhost:8080/friend_requests/${username}/blockbyusername`,
+      `/api/user/friend_requests/${username}/blockbyusername`,
       {
         method: "POST",
         headers: {

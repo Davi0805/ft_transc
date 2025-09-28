@@ -28,7 +28,7 @@ export async function getSelfData(): Promise<SelfData> {
       throw error;
     }
 
-    const response = await fetch("http://localhost:8080/users/me", {
+    const response = await fetch("/api/user/users/me", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${authService.getToken()}`,

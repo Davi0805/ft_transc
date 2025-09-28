@@ -21,7 +21,7 @@ export async function getUserAvatarById(userId: number): Promise<string> {
       throw error;
     }
     const response = await fetch(
-      `http://localhost:8080/users/avatar/${userId}`,
+      `/api/user/users/avatar/${userId}`,
       {
         method: "GET",
         headers: {

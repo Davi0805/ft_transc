@@ -3,7 +3,7 @@ import { authService } from "../../../services/authService";
 export async function confirmTwoFactorCode(code: string): Promise<void> {
   try {
     const response = await fetch(
-      "http://localhost:8080/twofa/activate/confirm",
+      "/api/user/twofa/activate/confirm",
       {
         method: "POST",
         headers: {

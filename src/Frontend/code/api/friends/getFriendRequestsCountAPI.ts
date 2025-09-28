@@ -23,7 +23,7 @@ export async function getFriendRequestsCount(): Promise<number> {
     }
 
     const response = await fetch(
-      `http://localhost:8080/friend_requests/pending/count`,
+      `/api/user/friend_requests/pending/count`,
       {
         method: "GET",
         headers: {

@@ -6,7 +6,7 @@ import { PlayerStats } from "./types/PlayerStatsInterface";
  */
 export async function getTopTen(): Promise<PlayerStats[]> {
   try {
-    const response = await fetch("http://localhost:8080/", { // todo Change endpoint
+    const response = await fetch("/api/user/", { // todo Change endpoint
       method: "GET",
     });
 

@@ -9,7 +9,7 @@ class EventBusUserRepository {
     async getNicknamesByUserId(user_id)
     {
         try {
-            const response = await fetch(`http://localhost:8080/users/${user_id}`);
+            const response = await fetch(`/api/user/users/${user_id}`);
 
             if (!response.ok) {
             const errorMessage = `DEBUG: get nickname failed ${response.status}`;

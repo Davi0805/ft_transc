@@ -8,7 +8,7 @@ export async function updatePassword(oldPass: string, newPass: string): Promise<
       throw error;
     }
 
-    const response = await fetch("http://localhost:8080/user/password", {
+    const response = await fetch("/api/user/user/password", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

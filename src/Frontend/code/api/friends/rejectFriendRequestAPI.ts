@@ -11,7 +11,7 @@ export async function rejectFriendRequest(
     }
 
     const response = await fetch(
-      `http://localhost:8080/friend_requests/${friendRequestID}/reject`,
+      `/api/user/friend_requests/${friendRequestID}/reject`,
       {
         method: "POST",
         headers: {

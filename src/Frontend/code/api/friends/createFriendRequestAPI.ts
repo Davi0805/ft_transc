@@ -26,7 +26,7 @@ export async function createFriendRequestByUsername(
     }
 
     const response = await fetch(
-      `http://localhost:8080/friend_requests/add/${username}`,
+      `/api/user/friend_requests/add/${username}`,
       {
         method: "POST",
         headers: {

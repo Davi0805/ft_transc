@@ -9,7 +9,7 @@ export async function getAllLobbies(): Promise<LobbiesListDTO> {
             const error: Error = new Error(errorMessage);
             throw error;
         }
-        const response = await fetch(`http://localhost:8084/lobby`, {
+        const response = await fetch(`/api/game/lobby`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${authService.getToken()}`

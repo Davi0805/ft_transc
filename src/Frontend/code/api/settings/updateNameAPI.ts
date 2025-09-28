@@ -8,7 +8,7 @@ export async function updateName(newName: string): Promise<void> {
       throw error;
     }
 
-    const response = await fetch("http://localhost:8080/users/name", {
+    const response = await fetch("/api/user/users/name", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

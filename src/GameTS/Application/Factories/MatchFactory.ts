@@ -275,7 +275,7 @@ class MatchFactory {
 
     private _getSecondsFromDuration(duration: MatchDurationT) {
         const durationToSeconds: Record<MatchDurationT, number> = {
-            "blitz": 5, //TODO
+            "blitz": 60,
             "rapid": 90,
             "classical": 120,
             "long": 150,

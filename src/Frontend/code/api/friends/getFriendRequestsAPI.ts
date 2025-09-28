@@ -29,7 +29,7 @@ export async function getFriendRequests(): Promise<FriendRequest[]> {
     }
 
     const response = await fetch(
-      `http://localhost:8080/friend_requests/pending`,
+      `/api/user/friend_requests/pending`,
       {
         method: "GET",
         headers: {

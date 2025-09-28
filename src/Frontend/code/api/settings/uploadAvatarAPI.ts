@@ -16,7 +16,7 @@ export async function uploadAvatar(file: File | undefined): Promise<void> {
     const formData = new FormData();
     formData.append("avatar", file);
 
-    const response = await fetch("http://localhost:8080/users/upload-avatar", {
+    const response = await fetch("/api/user/users/upload-avatar", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${authService.getToken()}`,

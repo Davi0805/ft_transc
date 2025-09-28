@@ -2,7 +2,7 @@ import { authService } from "../../../services/authService";
 
 export async function enableTwoFactor(): Promise<string> {
   try {
-    const response = await fetch("http://localhost:8080/twofa/activate", {
+    const response = await fetch("/api/user/twofa/activate", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${authService.getToken()}`,
