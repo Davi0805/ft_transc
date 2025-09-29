@@ -149,9 +149,9 @@ export type OutboundDTOMap = {
     //Game must be updated
     updateGame: SGameDTO,
     //Game finished (either all teams but one lost, or time is over)
-    endOfMatch: {
+    /* endOfMatch: {
         result: TMatchResult
-    }
+    } */
 }
 
 

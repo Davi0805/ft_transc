@@ -148,7 +148,10 @@ class TournamentService {
     private _onMatchFinished(tournamentID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
         const matchUsers = matchService.getMatchUsersByID(matchID);
         if (!matchUsers) {throw Error("This match does not exist!")}
-        socketService.broadcastToUsers(matchUsers, "endOfMatch", { result: result });
+        socketService.broadcastToUsers(matchUsers, "updateGame", {
+            type: "GameResult",
+            data: result
+        });
         matchService.updatePlayersRating(players, result);
         matchService.destroyMatchByID(matchID);
 

@@ -130,7 +130,10 @@ class MatchService {
         matchInfo.broadcastLoop.start(() => {
             if (!matchInfo.broadcastLoop.isRunning) return;
             const dto = matchInfo.match.getGameDTO();
-            socketService.broadcastToUsers(matchInfo.userIDs, "updateGame", dto);
+            socketService.broadcastToUsers(matchInfo.userIDs, "updateGame", {
+                type: "GameUpdateDTO",
+                data: dto
+            });
         })
     }
     private _stopMatchBroadcastLoop(matchID: number) {

@@ -38,7 +38,10 @@ class RankedService {
         players.forEach(player => dbConnection.savePlayerMatch(player.id, player.team, dbMatchID));
         matchService.updatePlayersRating(players, result);
         matchService.destroyMatchByID(matchID);
-        socketService.broadcastToLobby(lobbyID, "endOfMatch", { result: result })
+        socketService.broadcastToLobby(lobbyID, "updateGame", {
+            type: "GameResult",
+            data: result
+        })
         setTimeout(() => {
             lobbyService.returnToLobby(lobbyID);
         }, 10 * 1000)

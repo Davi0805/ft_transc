@@ -146,6 +146,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
 
     private _renderEndScene(result: TMatchResult) {
+        
         console.log("Render end scene not implemented yet")
     }
 }
