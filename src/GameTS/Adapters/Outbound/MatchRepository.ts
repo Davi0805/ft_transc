@@ -25,6 +25,7 @@ class MatchRepository {
             return;
         }
         const match = this._matches[matchIndex];
+        console.log("The destruction and the stopping happens here")
         match.broadcastLoop.stop();
         match.match.stopGameLoop();
         this._matches.splice(matchIndex, 1);

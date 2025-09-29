@@ -33,6 +33,7 @@ class FriendlyService {
 
     private _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
         matchService.destroyMatchByID(matchID);
+        console.log("And the game result broadcast happens here")
         socketService.broadcastToLobby(lobbyID, "updateGame", {
             type: "GameResult",
             data: result

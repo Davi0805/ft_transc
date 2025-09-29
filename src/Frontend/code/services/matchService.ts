@@ -34,7 +34,7 @@ class MatchService {
 
     async onEndOfMatch(result: TMatchResult) {
         //TODO render the end page. Still in App?
-        
+        console.log("is this even running")
         App.unsetSendToServerFunc();
     }
 

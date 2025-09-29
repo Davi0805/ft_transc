@@ -16,6 +16,8 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         await Assets.loadBundle("gameScene");
 
+        this._windowSize = gameSceneConfigs.fieldSize;
+
         this._root.pivot.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
         this._root.position.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
 
@@ -28,13 +30,22 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             this._root
         );
         gameSceneConfigs.gameInitialState.teams.forEach(team => {
+            const paddles = gameSceneConfigs.gameInitialState.paddles;
+            console.log(paddles);
+            const paddlesOfTeam = paddles.filter(paddle => paddle.side === team.side);
+            console.log(paddlesOfTeam);
+            const paddlesIDsOfTeam = paddlesOfTeam.map(paddle => paddle.id)
+            console.log(paddlesIDsOfTeam)
             this.teams.set(team.side, new CTeam(
                 team.side,
                 new CNumbersText(
                     team.score.score,
                     { size: 32, position: team.score.pos },
                     this._root
-                )
+                ),
+                gameSceneConfigs.gameInitialState.paddles
+                    .filter(paddle => paddle.side === team.side)
+                    .map(paddle => paddle.id)
             ))
         })
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => {
@@ -82,6 +93,8 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         })
     }
 
+    private _windowSize = {x:0, y: 0};
+
     private _timer: CNumbersText | null = null;
     get timer() { return this._timer; }
 
@@ -102,6 +115,7 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     private _suddenDeath = false;
 
     private _updateGameState(gameDto: GameUpdateDTO) {
+        console.log("updateGameState")
         gameDto.balls.newBalls.forEach(newBallConfigs => {
             this.balls.set(newBallConfigs.id, new CBall(
                 newBallConfigs,
@@ -146,7 +160,14 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
 
     private _renderEndScene(result: TMatchResult) {
-        
-        console.log("Render end scene not implemented yet")
+        const winningTeam = this.teams.get(result[0]);
+        if (!winningTeam) {throw Error(`The winner is ${result[0]}`)}
+        winningTeam.update(1)
+        const winnerPaddleID = winningTeam.memberPaddlesIDs[0];
+        const winnerPaddle = this.paddles.get(winnerPaddleID);
+        if (!winnerPaddle) {throw Error(`winnerPaddle: ${winnerPaddle}`)}
+        winnerPaddle.pos = Point.fromObj({
+            x: 200, y:200
+        })
     }
 }
