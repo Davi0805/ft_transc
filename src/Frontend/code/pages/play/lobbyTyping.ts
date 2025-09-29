@@ -236,9 +236,9 @@ export type OutboundDTOMap = {
     updateGame: SGameDTO //Dealt with in game
 
     //finishGame:
-    endOfMatch: {
+    /* endOfMatch: {
         result: TMatchResult
-    }
+    } */
 
     returnToLobby: {
         lobby: TLobby
