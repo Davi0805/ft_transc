@@ -30,12 +30,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             this._root
         );
         gameSceneConfigs.gameInitialState.teams.forEach(team => {
-            const paddles = gameSceneConfigs.gameInitialState.paddles;
-            console.log(paddles);
-            const paddlesOfTeam = paddles.filter(paddle => paddle.side === team.side);
-            console.log(paddlesOfTeam);
-            const paddlesIDsOfTeam = paddlesOfTeam.map(paddle => paddle.id)
-            console.log(paddlesIDsOfTeam)
             this.teams.set(team.side, new CTeam(
                 team.side,
                 new CNumbersText(
@@ -160,12 +154,15 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     }
 
     private _renderEndScene(result: TMatchResult) {
+        
         const winningTeam = this.teams.get(result[0]);
         if (!winningTeam) {throw Error(`The winner is ${result[0]}`)}
         winningTeam.update(1)
+        winningTeam
         const winnerPaddleID = winningTeam.memberPaddlesIDs[0];
         const winnerPaddle = this.paddles.get(winnerPaddleID);
         if (!winnerPaddle) {throw Error(`winnerPaddle: ${winnerPaddle}`)}
+        this._root.removeChild(winnerPaddle.sprite);
         winnerPaddle.pos = Point.fromObj({
             x: 200, y:200
         })
