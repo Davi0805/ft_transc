@@ -88,7 +88,7 @@ export type CGameSceneConfigs = {
 
 export type CEndSceneConfigs = {
     fieldSize: point
-    paddles: Pick<TPaddle, "side" | "size" | "pos" | "spriteID">[],
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[],
     result: TMatchResult
 }
 

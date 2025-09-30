@@ -35,6 +35,7 @@ export default abstract class CObject extends AObject {
         const newSpritePos = pos.add(this._spriteOffset);
         this._sprite.position.setPoint(newSpritePos.x, newSpritePos.y);
     }
+    override get pos() { return this._pos; }
 
     protected _sprite: Sprite;
     set sprite(sprite: Sprite) { this._sprite = sprite; }

@@ -65,6 +65,7 @@ class MatchFactory {
             fieldSize: clientConfigs.gameSceneConfigs.fieldSize,
             paddles: clientConfigs.gameSceneConfigs.gameInitialState.paddles.map(paddle => {
                 return {
+                    id: paddle.id,
                     side: paddle.side,
                     size: paddle.size,
                     pos: paddle.pos,
