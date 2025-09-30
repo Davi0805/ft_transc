@@ -37,10 +37,12 @@ class RankedService {
         const dbMatchID = await dbConnection.saveMatch(result);
         players.forEach(player => dbConnection.savePlayerMatch(player.id, player.team, dbMatchID));
         matchService.updatePlayersRating(players, result);
+
+        const endSceneConfigs = matchService.buildEndSceneConfigsFromMatchID(matchID, result);
         matchService.destroyMatchByID(matchID);
         socketService.broadcastToLobby(lobbyID, "updateGame", {
             type: "GameResult",
-            data: result
+            data: endSceneConfigs
         })
         setTimeout(() => {
             lobbyService.returnToLobby(lobbyID);

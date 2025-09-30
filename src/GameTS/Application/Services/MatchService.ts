@@ -8,7 +8,7 @@ import socketService from "./SocketService.js";
 import ServerGame from "../game/ServerGame.js";
 import userService from "./UserService.js";
 import { SIDES } from "../game/shared/sharedTypes.js";
-import { CAppConfigs } from "../game/shared/SetupDependencies.js";
+import { CEndSceneConfigs } from "../game/shared/SetupDependencies.js";
 
 class MatchService {
     createAndStartMatch(lobbyID: number, matchSettings: MatchSettingsT, matchPlayers: MatchPlayerT[]) {
@@ -22,6 +22,13 @@ class MatchService {
         this._startMatchBroadcastLoop(matchID);
 
         return matchID;
+    }
+
+    buildEndSceneConfigsFromMatchID(matchID: number, result: TMatchResult): CEndSceneConfigs {
+        const matchInfo = matchRepository.getInfoByID(matchID);
+        if (!matchInfo) { throw Error("Match was not found (and it should have been")}
+        const out = matchFactory.buildEndSceneConfigs(matchInfo.clientConfigs, result);
+        return out
     }
 
     getMatchByID(matchID: number) {

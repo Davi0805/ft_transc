@@ -22,7 +22,7 @@ export class ScenesManager {
 
 
 
-    async goToScene(scene: keyof ScenesManifest, configs: SceneConfigMap[keyof ScenesManifest]) {
+    async goToScene<K extends keyof SceneConfigMap>(scene: K, configs: SceneConfigMap[K]) {
         if (this.currentScene) {
             await this.currentScene.remove();
             this.container.removeChildren();

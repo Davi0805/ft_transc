@@ -1,3 +1,4 @@
+import { TMatchResult } from "../../pages/play/lobbyTyping"
 import { SIDES, ROLES, point, TPaddle, TBall } from "./sharedTypes"
 
 export type TControls = {
@@ -83,6 +84,11 @@ export type CGameSceneConfigs = {
     gameInitialState: CGameState
 }
 
+export type CEndSceneConfigs = {
+    fieldSize: point
+    paddles: Pick<TPaddle, "id" | "side" | "size" | "pos" | "spriteID">[],
+    result: TMatchResult
+}
 
 export type CAppConfigs = {
     matchID: number,

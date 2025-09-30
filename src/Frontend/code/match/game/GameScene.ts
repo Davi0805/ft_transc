@@ -11,12 +11,11 @@ import CNumbersText from "./CNumbersText";
 import CPaddleControls from "./CPaddleControls";
 import { audioPlayer } from "../system/framework/Audio/AudioPlayer";
 import { TMatchResult } from "../../pages/play/lobbyTyping";
+import { App } from "../system/App";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
         await Assets.loadBundle("gameScene");
-
-        this._windowSize = gameSceneConfigs.fieldSize;
 
         this._root.pivot.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
         this._root.position.setPoint(gameSceneConfigs.fieldSize.x / 2, gameSceneConfigs.fieldSize.y / 2);
@@ -74,7 +73,8 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         if (gameDto.type === "GameUpdateDTO") {
             this._updateGameState(gameDto.data);
         } else {
-            this._renderEndScene(gameDto.data);
+            console.log(gameDto.data)
+            App.scenesManager.goToScene("endScene", gameDto.data)
         }
     }
 
@@ -86,8 +86,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
             paddle.updateAnimations();
         })
     }
-
-    private _windowSize = {x:0, y: 0};
 
     private _timer: CNumbersText | null = null;
     get timer() { return this._timer; }
@@ -151,20 +149,5 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         if (gameDto.audioEvent) {
             audioPlayer.playTrack(gameDto.audioEvent, 1);
         }
-    }
-
-    private _renderEndScene(result: TMatchResult) {
-        
-        const winningTeam = this.teams.get(result[0]);
-        if (!winningTeam) {throw Error(`The winner is ${result[0]}`)}
-        winningTeam.update(1)
-        winningTeam
-        const winnerPaddleID = winningTeam.memberPaddlesIDs[0];
-        const winnerPaddle = this.paddles.get(winnerPaddleID);
-        if (!winnerPaddle) {throw Error(`winnerPaddle: ${winnerPaddle}`)}
-        this._root.removeChild(winnerPaddle.sprite);
-        winnerPaddle.pos = Point.fromObj({
-            x: 200, y:200
-        })
     }
 }

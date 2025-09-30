@@ -1,3 +1,4 @@
+import { TMatchResult } from "../ServerGame.js"
 import { SIDES, ROLES, point, TPaddle, TBall } from "./sharedTypes.js"
 
 export type TControls = {
@@ -83,6 +84,12 @@ export type CGameSceneConfigs = {
         controls: TControls
     }[] | null //Server sets them to null, and client sets it later
     gameInitialState: CGameState
+}
+
+export type CEndSceneConfigs = {
+    fieldSize: point
+    paddles: Pick<TPaddle, "side" | "size" | "pos" | "spriteID">[],
+    result: TMatchResult
 }
 
 

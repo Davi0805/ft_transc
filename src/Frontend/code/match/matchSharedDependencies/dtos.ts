@@ -1,4 +1,5 @@
 import { TMatchResult } from "../../pages/play/lobbyTyping"
+import { CEndSceneConfigs, CGameSceneConfigs } from "./SetupDependencies"
 import { point, BALL_TYPES, SIDES, TControlsState } from "./sharedTypes"
 
 // DTO type
@@ -13,7 +14,7 @@ export type DTOAssignID = {
 }
 
 export type SGameDTO = { type: "GameUpdateDTO", data: GameUpdateDTO }
-                        | { type: "GameResult", data: TMatchResult }
+                        | { type: "GameResult", data: CEndSceneConfigs }
 
 export type GameUpdateDTO = {
     balls: {

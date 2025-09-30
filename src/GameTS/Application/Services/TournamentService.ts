@@ -148,12 +148,14 @@ class TournamentService {
     private _onMatchFinished(tournamentID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
         const matchUsers = matchService.getMatchUsersByID(matchID);
         if (!matchUsers) {throw Error("This match does not exist!")}
-        socketService.broadcastToUsers(matchUsers, "updateGame", {
-            type: "GameResult",
-            data: result
-        });
+
+        const endSceneConfigs = matchService.buildEndSceneConfigsFromMatchID(matchID, result);
         matchService.updatePlayersRating(players, result);
         matchService.destroyMatchByID(matchID);
+        socketService.broadcastToUsers(matchUsers, "updateGame", {
+            type: "GameResult",
+            data: endSceneConfigs
+        });
 
         //Get reference to match saved in tournament
         const tournament = tournamentRepository.getByID(tournamentID);

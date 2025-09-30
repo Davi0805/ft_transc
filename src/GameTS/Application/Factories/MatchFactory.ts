@@ -1,6 +1,6 @@
-import type { CAppConfigs, TGameConfigs, TUserCustoms } from "../game/shared/SetupDependencies.js";
+import type { CAppConfigs, CEndSceneConfigs, TGameConfigs, TUserCustoms } from "../game/shared/SetupDependencies.js";
 import type { point } from "../game/shared/sharedTypes.js";
-import type { SGameConfigs } from "../game/ServerGame.js";
+import type { SGameConfigs, TMatchResult } from "../game/ServerGame.js";
 
 import { ROLES, SIDES } from "../game/shared/sharedTypes.js";
 import LoopController from "../game/LoopController.js";
@@ -58,6 +58,22 @@ class MatchFactory {
             broadcastLoop: new LoopController(60)
         }
         return matchInfo
+    }
+
+    buildEndSceneConfigs(clientConfigs: CAppConfigs, result: TMatchResult): CEndSceneConfigs {
+        const out: CEndSceneConfigs = {
+            fieldSize: clientConfigs.gameSceneConfigs.fieldSize,
+            paddles: clientConfigs.gameSceneConfigs.gameInitialState.paddles.map(paddle => {
+                return {
+                    side: paddle.side,
+                    size: paddle.size,
+                    pos: paddle.pos,
+                    spriteID: paddle.spriteID
+                }
+            }),
+            result: result
+        }
+        return out;
     }
 
     private _currentID: number = 0;
