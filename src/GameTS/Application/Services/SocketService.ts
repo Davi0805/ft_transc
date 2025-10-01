@@ -35,9 +35,6 @@ class SocketService {
     }
 
     private _broadcastToSockets<T extends keyof OutboundDTOMap>(sockets: WebSocket[], reqType: T, data: OutboundDTOMap[T]) {
-        if (reqType === "updateGame") {
-            console.log(data);
-        }
         const dto: OutboundDTO = {
             requestType: reqType,
             data: data

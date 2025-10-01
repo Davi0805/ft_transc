@@ -17,7 +17,6 @@ export default class Ticker {
             if (this._isRunning) {this._callCallbacks();}
             this._tickerTimer += 1;
             if (!this._stop) {
-                /* console.log("updates frame"); */
                 requestAnimationFrame(loop); //Updates with the refresh rate of the browser (60Hz)
             }
         }

@@ -73,7 +73,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         if (gameDto.type === "GameUpdateDTO") {
             this._updateGameState(gameDto.data);
         } else {
-            console.log(gameDto.data)
             App.scenesManager.goToScene("endScene", gameDto.data)
         }
     }
@@ -107,7 +106,6 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     private _suddenDeath = false;
 
     private _updateGameState(gameDto: GameUpdateDTO) {
-        console.log("updateGameState")
         gameDto.balls.newBalls.forEach(newBallConfigs => {
             this.balls.set(newBallConfigs.id, new CBall(
                 newBallConfigs,

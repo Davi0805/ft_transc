@@ -57,10 +57,9 @@ export default class Point {
         return (this._x === other._x && this._y == other._y)
     }
 
-    isAproxEqual(other: Point) {
-        const EPSYLON = 0.01;
-        const isXEqual = Math.abs(this._x - other._x) < EPSYLON;
-        const isYEqual = Math.abs(this._y - other._y) < EPSYLON;
+    isAproxEqual(other: Point, epsylon: number = 0.01) {
+        const isXEqual = Math.abs(this._x - other._x) < epsylon;
+        const isYEqual = Math.abs(this._y - other._y) < epsylon;
         return isXEqual && isYEqual;
     }
 

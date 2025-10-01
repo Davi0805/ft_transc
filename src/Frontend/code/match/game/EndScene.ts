@@ -30,12 +30,14 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
             const place = i+1;
             const side = endSceneConfigs.result[i];
             const paddlesInPlace = endSceneConfigs.paddles.filter(paddle => paddle.side === side);
-            paddlesInPlace.forEach(paddle => {
+            for (let j = 0; j < paddlesInPlace.length; j++) {
+                const paddle = paddlesInPlace[j];
+                const offset = - 10 - (36 * j);
                 const paddleConfigs = {
                     ...paddle,
                     speed: 0 // the mov vector is directly calculated, so speed isn't needed
                 }
-                const paddleTargetPos = Point.fromObj(targetCoords[i]).add(new Point(0, -20));
+                const paddleTargetPos = Point.fromObj(targetCoords[i]).add(new Point(0, offset));
                 const movVector = paddleTargetPos.subtract(Point.fromObj(paddle.pos)).multiplyScalar(1 / ANIMATION_lENGTH)
                 const paddleInstance = new CPaddle(paddleConfigs, this._root);
                 this._paddles.push({
@@ -44,33 +46,29 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
                     targetPos: paddleTargetPos,
                     rotateAm: rotationAM[paddle.side]
                 })
-            })
+            }
 
-
-            this._places.push(new CNumbersText(
+            const placeInstance = new CNumbersText(
                 place,
                 {
-                    position: Point.fromObj(targetCoords[i]).add(new Point(0, 20)),
-                    size: 50
+                    position: Point.fromObj(targetCoords[i]).add(new Point(0, 30)),
+                    size: 80 - i * 12
                 },
                 this._root
-            ))
+            );
+            this._places.push(placeInstance);
         }
     }
 
     override tickerUpdate(delta: number, counter: number): void {
         this._paddles.forEach(paddleInfo => {
             const paddle = paddleInfo.paddle;
-            if (!paddle.pos.isAproxEqual(paddleInfo.targetPos)) {
+            if (!paddle.pos.isAproxEqual(paddleInfo.targetPos, 1)) {
                 paddle.pos = paddle.pos.add(paddleInfo.movVector.multiplyScalar(delta));
             }
             if (!paddle.orientation.isAproxEqual(new Point(0, -1))) {
                 paddle.rotate(paddleInfo.rotateAm * delta);
             }
-        })
-
-        this._places.forEach(place => {
-            
         })
     }
 
