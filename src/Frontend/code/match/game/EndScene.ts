@@ -27,11 +27,14 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
                     ...paddle,
                     speed: 0 // the mov vector is directly calculated, so speed isn't needed
                 }
-                const movVector = Point.fromObj(targetCoords[i]).subtract(Point.fromObj(paddle.pos)).multiplyScalar(1/2) //The divisor is the number of seconds it takes to get from pos to target
+                const paddleTargetPos = Point.fromObj(targetCoords[i]).add(new Point(0, -20));
+                const movVector = paddleTargetPos.subtract(Point.fromObj(paddle.pos)).multiplyScalar(1/2) //The divisor is the number of seconds it takes to get from pos to target
+                const paddleInstance = new CPaddle(paddleConfigs, this._root);
+                paddleInstance.orientation = new Point(0, -1);
                 this._paddles.push({
-                    paddle: new CPaddle(paddleConfigs, this._root),
+                    paddle: paddleInstance,
                     movVector: movVector,
-                    targetPos: targetCoords[i],
+                    targetPos: paddleTargetPos,
                     rotateVector: new Point(1, 0) //TODO
                 })
             })
@@ -40,7 +43,7 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
             this._places.push(new CNumbersText(
                 place,
                 {
-                    position: targetCoords[i],
+                    position: Point.fromObj(targetCoords[i]).add(new Point(0, 20)),
                     size: 50
                 },
                 this._root
@@ -51,7 +54,7 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
     override tickerUpdate(delta: number, counter: number): void {
         this._paddles.forEach(paddle => {
             console.log(paddle.paddle)
-            if (!paddle.paddle.pos.isAproxEqual(Point.fromObj(paddle.targetPos))) {
+            if (!paddle.paddle.pos.isAproxEqual(paddle.targetPos)) {
                 paddle.paddle.pos = paddle.paddle.pos.add(paddle.movVector.multiplyScalar(delta));
             }
         })
@@ -65,7 +68,7 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
         paddle: CPaddle,
         movVector: Point,
         rotateVector: Point
-        targetPos: point
+        targetPos: Point
     }[] = [];
 
     private _places: CNumbersText[] = [];
