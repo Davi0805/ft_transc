@@ -30,6 +30,10 @@ export default class Point {
         return new Point(this.x + other.x, this.y + other.y);
     }
 
+    subtract(other: Point): Point {
+        return new Point(this.x - other.x, this.y - other.y);
+    }
+
     normalize(): Point {
         const length = Math.sqrt(this.x * this.x + this.y * this.y);
         if (length === 0) return new Point(0, 0); // Avoid division by zero
@@ -51,6 +55,13 @@ export default class Point {
 
     isEqual(other: Point) {
         return (this._x === other._x && this._y == other._y)
+    }
+
+    isAproxEqual(other: Point) {
+        const EPSYLON = 0.001;
+        const isXEqual = Math.abs(this._x - other._x) < EPSYLON;
+        const isYEqual = Math.abs(this._y - other._y) < EPSYLON;
+        return isXEqual && isYEqual;
     }
 
 
