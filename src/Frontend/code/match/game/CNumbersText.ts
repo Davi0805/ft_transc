@@ -2,11 +2,7 @@ import { point } from "../matchSharedDependencies/sharedTypes";
 import Point from "../matchSharedDependencies/Point";
 import Container from "../system/framework/Container";
 import BitmapText from "../system/framework/BitmapText";
-import AnimationBad from "./Animations/AnimationBad";
-import AnimationGood from "./Animations/AnimationGood";
-import AnimationShake from "./Animations/AnimationShake";
 import AAnimation from "./Animations/AAnimation";
-import AnimationScaleUp from "./Animations/AnimationScaleUp";
 
 type TextOptions = {
     size: number,
