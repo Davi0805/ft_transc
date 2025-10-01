@@ -30,6 +30,14 @@ export default abstract class CObject extends AObject {
         }
     }
 
+    rotate(radiants: number) {
+        const newAngle = this._sprite.rotation + radiants;
+        this.orientation = new Point(
+            Math.cos(newAngle),
+            Math.sin(newAngle)
+        )
+    }
+
     override set pos(pos: Point) {
         super.pos = pos;
         const newSpritePos = pos.add(this._spriteOffset);

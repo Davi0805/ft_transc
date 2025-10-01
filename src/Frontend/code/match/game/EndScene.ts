@@ -1,6 +1,6 @@
 import Point from "../matchSharedDependencies/Point";
 import { CEndSceneConfigs } from "../matchSharedDependencies/SetupDependencies";
-import { point } from "../matchSharedDependencies/sharedTypes";
+import { point, SIDES } from "../matchSharedDependencies/sharedTypes";
 import AScene from "../system/AScene";
 import CNumbersText from "./CNumbersText";
 import CPaddle, { CPaddleConfigs } from "./CPaddle";
@@ -9,6 +9,7 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
     override async init(endSceneConfigs: CEndSceneConfigs) {
         //no need to load a new bundle, as all assets are already from game scene. Not the greatest of designs
 
+        const ANIMATION_lENGTH = 2 // in seconds
         const fieldSize = endSceneConfigs.fieldSize;
         const targetCoords = [
             { x: fieldSize.x / 2, y: fieldSize.y / 4 },
@@ -16,6 +17,13 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
             { x: fieldSize.x / 4 * 3, y: fieldSize.y / 2 },
             { x: fieldSize.x / 2, y: fieldSize.y / 4 * 3 }
         ]
+        const rotationAM: Record<SIDES, number> = {
+            [SIDES.LEFT]: -((Math.PI / 2) / ANIMATION_lENGTH),
+            [SIDES.TOP]: Math.PI / ANIMATION_lENGTH,
+            [SIDES.RIGHT]: (Math.PI / 2 ) / ANIMATION_lENGTH,
+            [SIDES.BOTTOM]: 0
+        };
+        
 
 
         for (let i = 0; i < endSceneConfigs.result.length; i++) {
@@ -28,14 +36,13 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
                     speed: 0 // the mov vector is directly calculated, so speed isn't needed
                 }
                 const paddleTargetPos = Point.fromObj(targetCoords[i]).add(new Point(0, -20));
-                const movVector = paddleTargetPos.subtract(Point.fromObj(paddle.pos)).multiplyScalar(1/2) //The divisor is the number of seconds it takes to get from pos to target
+                const movVector = paddleTargetPos.subtract(Point.fromObj(paddle.pos)).multiplyScalar(1 / ANIMATION_lENGTH)
                 const paddleInstance = new CPaddle(paddleConfigs, this._root);
-                paddleInstance.orientation = new Point(0, -1);
                 this._paddles.push({
                     paddle: paddleInstance,
                     movVector: movVector,
                     targetPos: paddleTargetPos,
-                    rotateVector: new Point(1, 0) //TODO
+                    rotateAm: rotationAM[paddle.side]
                 })
             })
 
@@ -52,10 +59,13 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
     }
 
     override tickerUpdate(delta: number, counter: number): void {
-        this._paddles.forEach(paddle => {
-            console.log(paddle.paddle)
-            if (!paddle.paddle.pos.isAproxEqual(paddle.targetPos)) {
-                paddle.paddle.pos = paddle.paddle.pos.add(paddle.movVector.multiplyScalar(delta));
+        this._paddles.forEach(paddleInfo => {
+            const paddle = paddleInfo.paddle;
+            if (!paddle.pos.isAproxEqual(paddleInfo.targetPos)) {
+                paddle.pos = paddle.pos.add(paddleInfo.movVector.multiplyScalar(delta));
+            }
+            if (!paddle.orientation.isAproxEqual(new Point(0, -1))) {
+                paddle.rotate(paddleInfo.rotateAm * delta);
             }
         })
 
@@ -67,7 +77,7 @@ export default class EndScene extends AScene<CEndSceneConfigs> {
     private _paddles: {
         paddle: CPaddle,
         movVector: Point,
-        rotateVector: Point
+        rotateAm: number
         targetPos: Point
     }[] = [];
 
