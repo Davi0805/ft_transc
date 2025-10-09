@@ -1,7 +1,6 @@
 import { TControlsState } from "../shared/sharedTypes.js";
 import SHuman from "./SHuman.js";
 import SPaddle from "../Objects/SPaddle.js";
-import STeamsManager from "../STeamsManager.js";
 
 export default class SHumansManager {
     constructor(humansConfigs: { id: number; paddleID: number;}[],
@@ -33,6 +32,10 @@ export default class SHumansManager {
             throw new Error (`Server cannot find a human with id ${humanID}, which was requesteb by a client!`)
         }
         human.controls = controlsState;
+    }
+
+    areThereHumansActive(): boolean {
+        return this.humans.find(human => human.paddle.active === true) ? true : false;
     }
 
     private _humans: SHuman[] = [];

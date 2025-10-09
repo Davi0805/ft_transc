@@ -57,6 +57,7 @@ export default class SPaddle extends SObject {
     
     private _active: boolean;
     set active(active: boolean) { this._active = active; }
+    get active() { return this._active; }
 
     private _selfDestructTime: number;
 }

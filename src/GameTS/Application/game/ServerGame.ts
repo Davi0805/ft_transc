@@ -155,7 +155,11 @@ export default class ServerGame {
         if (!this._ballsManager.isSuddenDeathActive() && this._timeLeft <= 0 && this._teamsManager.areThereTies()) {
             this._ballsManager.activateSuddenDeath();
         }
-        if (this._teamsManager.allTeamsFinished() || (this._timeLeft <= 0 && !this._teamsManager.areThereTies())) {
+
+        if (this._teamsManager.allTeamsFinished()
+            || (this._timeLeft <= 0 && !this._teamsManager.areThereTies())
+            || !this._humansManager.areThereHumansActive()
+        ) {
             this._gameLoop.pause();
             this._matchResult = this._teamsManager.getTeamsState();
         }
