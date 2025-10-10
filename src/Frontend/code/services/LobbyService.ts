@@ -98,6 +98,7 @@ class LobbyService {
     leave() {
         lobbySocketService.disconnect();
         this.destroy();
+        router.navigateTo('play');
     }
 
     startMatchIN() {

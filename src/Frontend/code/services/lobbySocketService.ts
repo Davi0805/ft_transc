@@ -129,6 +129,9 @@ class LobbySocketService {
             case "returnToLobby":
                 lobbyService.return(dto.data.lobby)
                 break;
+            case "leaveLobby":
+                lobbyService.leave();
+                break;
             case "actionBlock":
                 lobbyService.handleActionBlock(dto.data.reason)
                 break;

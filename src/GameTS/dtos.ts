@@ -13,6 +13,7 @@ type ActionBlockReasonT = "setReadyWithoutJoining"
     | "fewPlayersForTournament"
     | "tooManyPlayersInTournament"
     | "joinOccupiedSlot"
+    | "lobbyButtonClickedDuringEvent"
 
 // Client sends these after...
 export type InboundDTOMap = {
@@ -117,6 +118,8 @@ export type OutboundDTOMap = {
     returnToLobby: {
         lobby: LobbyT
     }
+
+    leaveLobby: null
 
     //TOURNAMENT DTOS
     //A tournament is about to start

@@ -54,11 +54,11 @@ class TournamentService {
         }
     }
 
-    start(lobby: LobbyT, senderID: number) {
+    start(lobby: LobbyT, senderID: number): boolean {
         const tournamentParticipants = this._getTournamentParticipants(lobby.users);
         if (tournamentParticipants.length < this.MIN_PARTICIPANTS) {
             socketService.broadcastToUsers([senderID], "actionBlock", { reason: "fewPlayersForTournament" })
-            return;
+            return false;
         }
         
         const tournament = tournamentFactory.create(lobby.id, lobby.matchSettings, tournamentParticipants);
@@ -67,6 +67,7 @@ class TournamentService {
         socketService.broadcastToLobby(lobby.id, "startTournament", null)
         console.log("Tournament starts!");
         this._displayStandings(tournament.id);
+        return true;
     }
 
     readonly MIN_PARTICIPANTS: number = 4;

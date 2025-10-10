@@ -162,6 +162,7 @@ export type TActionBlockReason = "setReadyWithoutJoining"
     | "fewPlayersForTournament" 
     | "tooManyPlayersInTournament"
     | "joinOccupiedSlot"
+    | "lobbyButtonClickedDuringEvent"
 
 //server should broadcast these after...
 export type OutboundDTOMap = {
@@ -248,6 +249,8 @@ export type OutboundDTOMap = {
     returnToLobby: {
         lobby: TLobby
     }
+
+    leaveLobby: null
 
     actionBlock: {
         reason: TActionBlockReason

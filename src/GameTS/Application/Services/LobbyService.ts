@@ -8,7 +8,7 @@ import friendlyService from "./FriendlyService.js";
 import rankedService from "./RankedService.js";
 import tournamentService from "./TournamentService.js";
 import matchService from "./MatchService.js";
-import matchRepository from "../../Adapters/Outbound/MatchRepository.js";
+import matchRepository from "../../Adapters/Outbound/MatchRepository.js"; // TODO goddamnit
 import { ROLES, SIDES } from "../game/shared/sharedTypes.js";
 
 //When a client wants to see the list of lobbies available, receives an array of these
@@ -319,18 +319,24 @@ class LobbyService {
         }
 
         //Lobby's job is done. Delegate work to the corresponding service
+        let successfullyStarted: boolean = false;
         switch (lobby.type) {
             case "friendly":
-                friendlyService.start(lobby, senderID);
+                successfullyStarted = friendlyService.start(lobby, senderID);
                 break;
             case "ranked":
-                rankedService.start(lobby, senderID);
+                successfullyStarted = rankedService.start(lobby, senderID);
                 break;
             case "tournament":
-                tournamentService.start(lobby, senderID);
+                successfullyStarted = tournamentService.start(lobby, senderID);
                 break;
             default:
                 throw Error("lobby type not recognized!");
+        }
+
+        if (successfullyStarted) {
+            const inactiveUsers = lobby.users.filter(user => user.player === null).map(user => user.id);
+            socketService.broadcastToUsers(inactiveUsers, "leaveLobby", null);
         }
     }
 

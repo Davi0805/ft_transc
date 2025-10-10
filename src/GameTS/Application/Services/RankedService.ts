@@ -12,11 +12,11 @@ import dbConnection from "../../Adapters/Outbound/DbConnection.js";
 const CHECK_RESULT_FRQUENCY = 500 // in milliseconds
 
 class RankedService {
-    start(lobby: LobbyT, senderID: number) {
+    start(lobby: LobbyT, senderID: number): boolean {
         const matchPlayers = this._getMatchPlayers(lobby.users);
         if (!this._areAllSlotsFull(lobby.matchSettings.map, matchPlayers)) {
             socketService.broadcastToUsers([senderID], "actionBlock", { reason: "notAllSlotsFilled" })
-            return;
+            return false;
         }
         const matchID = matchService.createAndStartMatch(lobby.id, lobby.matchSettings, matchPlayers);
 
@@ -31,6 +31,7 @@ class RankedService {
             }
         }
         loop()
+        return true;
     }
 
     async _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {

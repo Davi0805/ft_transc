@@ -39,6 +39,9 @@ class FtApplication {
     }
 
     async destroy() {
+        if (!this._app) {
+            return;
+        }
         this.scenesManager.removeCurrentScene();
         this.unsetSendToServerFunc();
         this.app.destroy();
