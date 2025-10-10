@@ -4,7 +4,7 @@ import { getSlotsFromMap } from "../pages/play/utils/helpers";
 import { lobbySocketService } from "./lobbySocketService";
 import { router } from "../routes/router";
 import { matchService} from "./matchService";
-import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournamentParticipant, TMatchPlayer } from "../pages/play/lobbyTyping";
+import { TLobby, TDynamicLobbySettings, TLobbyUser, TFriendlyPlayer, TRankedPlayer, TTournamentPlayer, TLobbyType, TTournamentParticipant, TMatchPlayer, TActionBlockReason } from "../pages/play/lobbyTyping";
 import { SIDES, ROLES } from "../match/matchSharedDependencies/sharedTypes";
 
 
@@ -200,7 +200,7 @@ class LobbyService {
     }
 
     //errors
-    handleActionBlock(blockType: string) { //probably this should be strongly typed, but I am way too tired
+    handleActionBlock(blockType: TActionBlockReason) { //probably this should be strongly typed, but I am way too tired
         switch (blockType) {
             case "notEveryoneReady":
                 if (this.amIHost()) {
@@ -222,7 +222,8 @@ class LobbyService {
                 break;
             }
             default:
-                throw Error(`${blockType} is not recognized! `)
+                console.log("Block reason is not currently being handled. Reason:");
+                console.log(blockType);
         }
     }
 

@@ -156,7 +156,12 @@ export type InboundDTOMap = {
     quitTournament: null
 }
 
-type TActionBlockReason = "setReadyWithoutJoining" | "notEveryoneReady" | "notAllSlotsFilled" | "fewPlayersForTournament"
+export type TActionBlockReason = "setReadyWithoutJoining"
+    | "notEveryoneReady" 
+    | "notAllSlotsFilled" 
+    | "fewPlayersForTournament" 
+    | "tooManyPlayersInTournament"
+    | "joinOccupiedSlot"
 
 //server should broadcast these after...
 export type OutboundDTOMap = {

@@ -12,6 +12,7 @@ type ActionBlockReasonT = "setReadyWithoutJoining"
     | "notAllSlotsFilled"
     | "fewPlayersForTournament"
     | "tooManyPlayersInTournament"
+    | "joinOccupiedSlot"
 
 // Client sends these after...
 export type InboundDTOMap = {
