@@ -179,7 +179,15 @@ class LobbyService {
             console.log("This user is trying to get in a lobby that does not exist. Ignoring...");
             return;
         }
-        if (this._isSlotTaken(lobby.users, player.team, player.role)) {
+        const players: FriendlyPlayerT[] = [];
+        lobby.users.forEach(user => {
+            if (user.player) {
+                (user.player as FriendlyPlayerT[]).forEach(player => {
+                    players.push(player);
+                })
+            }
+        })
+        if (this._isSlotTaken(players, player.team, player.role)) {
             socketService.broadcastToUsers([userID], "actionBlock", { reason: "joinOccupiedSlot" })
             return;
         }
@@ -227,7 +235,13 @@ class LobbyService {
             console.log("This user is trying to get in a lobby that does not exist. Ignoring...");
             return;
         }
-        if (this._isSlotTaken(lobby.users, player.team, player.role)) {
+        const players: RankedPlayerT[] = [];
+        lobby.users.forEach(user => {
+            if (user.player) {
+                players.push(user.player as RankedPlayerT);
+            }
+        })
+        if (this._isSlotTaken(players, player.team, player.role)) {
             socketService.broadcastToUsers([userID], "actionBlock", { reason: "joinOccupiedSlot" })
             return;
         }
@@ -363,10 +377,8 @@ class LobbyService {
         return (amount * (type === "teams" ? 2 : 1))
     }
 
-    private _isSlotTaken(users: LobbyUserT[], team: SIDES, role: ROLES): boolean {
-        
-        
-        return false;
+    private _isSlotTaken(users: FriendlyPlayerT[] | RankedPlayerT[], team: SIDES, role: ROLES): boolean {
+        return (users.find(user => (user.team === team && user.role === role))) ? true : false;
     }
 }
 
