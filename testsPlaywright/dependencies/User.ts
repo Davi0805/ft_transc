@@ -32,6 +32,7 @@ export default class UserSession {
                 }
             }
         });
+        await page.context().storageState({ path: './.auth/auth2.json' });
         return new UserSession(ctx, page, username);
     }
 
