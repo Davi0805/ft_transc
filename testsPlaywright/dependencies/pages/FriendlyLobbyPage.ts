@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import ALobbyPage from "./LobbyPage";
 
 export type PlayerSettings = {
@@ -8,18 +8,23 @@ export type PlayerSettings = {
     paddleSpriteIndex: number
 }
 
+export type SlotSettings = {
+    team: string,
+    role: string,
+    playerSettings: PlayerSettings
+}
+
 export default class FriendlyLobbyPage extends ALobbyPage {
     constructor(page: Page) {
         super(page);
     }
 
-    async chooseSlot(team: string, role: string, playerSettings: PlayerSettings): Promise<void> {
-
-        console.log("chooseSlot was called")
-        
+    async openDialogOfSlot(team: string, role: string) {
         await this._page.click(`#join-${team}-${role}`);
-        await this._page.waitForSelector('dialog[open]');
-        
+        await expect(this._page.locator('dialog[open]')).toBeVisible();
+    }
+
+    async fillAndSubmitSlotDialog(playerSettings: PlayerSettings) {
         await this._page.getByLabel('Alias').fill(playerSettings.alias);
         
         for (let i = 0; i < playerSettings.paddleSpriteIndex; i++) {
@@ -32,5 +37,10 @@ export default class FriendlyLobbyPage extends ALobbyPage {
         await this._page.keyboard.press(playerSettings.downButton);
 
         await this._page.click('#btn-close-dialog');
+    }
+
+    async chooseSlot(slotSettings: SlotSettings): Promise<void> {
+        this.openDialogOfSlot(slotSettings.team, slotSettings.role);
+        this.fillAndSubmitSlotDialog(slotSettings.playerSettings);
     }
 }

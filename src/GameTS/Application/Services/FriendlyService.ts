@@ -12,6 +12,7 @@ const CHECK_RESULT_FRQUENCY = 500 // in milliseconds
 //The service responsible to run a friendly match
 class FriendlyService {
     start(lobby: LobbyT, _senderID: number): boolean {
+        console.log("Match starts")
         const matchPlayers = this._getMatchPlayers(lobby.users);
         //Contrary to a ranked match, no checking if the slots are full is necessary,
         // because they will be filled by bots
@@ -33,6 +34,7 @@ class FriendlyService {
     }
 
     private _onMatchFinished(lobbyID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
+        console.log("Match finishes")
         const endSceneConfigs = matchService.buildEndSceneConfigsFromMatchID(matchID, result);
         
         socketService.broadcastToLobby(lobbyID, "updateGame", {
@@ -40,6 +42,7 @@ class FriendlyService {
             data: endSceneConfigs
         })
         setTimeout(() => {
+            console.log("Return to lobby gonna be broadcasted")
             matchService.destroyMatchByID(matchID);
             lobbyService.returnToLobby(lobbyID);
         }, 10 * 1000)

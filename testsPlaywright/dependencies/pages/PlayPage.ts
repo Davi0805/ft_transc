@@ -19,9 +19,10 @@ export default class PlayPage extends APage {
 
     async enterLobby(lobbyName: string) {
         await this.refreshLobbies();
-        const row = this._page.locator(`//table/tbody/tr[td[1][contains(text(), ${lobbyName})]]`);
+        const row = this._page.locator(`//table/tbody/tr[td[1][contains(text(), "${lobbyName}")]]`);
         if (row) {
             await row.click();
+            await expect(this._page).toHaveTitle("Lobby");
         } else {
             console.log("There is no lobby with this name");
             await expect(this._page).toHaveTitle("Play");
@@ -31,6 +32,6 @@ export default class PlayPage extends APage {
     async checkIfLobbyExists(lobbyName: string, shouldExist: boolean = true) {
         await this.refreshLobbies();
         const lobby = this._page.locator(`//table/tbody/tr[td[1][contains(text(), "${lobbyName}")]]`);
-        expect(lobby).toHaveCount(shouldExist ? 1 : 0);
+        await expect(lobby).toHaveCount(shouldExist ? 1 : 0);
     }
 }

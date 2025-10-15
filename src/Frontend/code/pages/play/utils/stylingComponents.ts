@@ -75,6 +75,9 @@ export function flashButton(button: HTMLButtonElement, tempText: string) {
     const originalText = button.textContent;
     button.textContent = tempText
     setTimeout(() => {
-        button.textContent = originalText
+      if (button.textContent === tempText) { //Just change back if the temp text is still there
+        button.textContent = originalText;
+      }
+        
     }, 1000)
 }

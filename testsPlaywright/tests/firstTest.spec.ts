@@ -1,12 +1,13 @@
 import test from "@playwright/test";
 import UserSession from "../dependencies/UserSession";
+import { SlotSettings } from "../dependencies/pages/FriendlyLobbyPage";
 
 test("leave button", async ({ browser }) => {
     test.setTimeout(1000000);
 
 
     const lobbySettings = {
-        name: "Test Friendly lobby name",
+        name: "Leave btn test lobby",
         type: "friendly",
         matchSettings: {
             map: "4-players-medium",
@@ -17,9 +18,52 @@ test("leave button", async ({ browser }) => {
 
     const vala = await UserSession.create(browser, '.auth/ndo-vala-auth.json');
     await vala.hostLobby(lobbySettings);
-    await vala.leaveLobby(false);
+    await vala.leaveLobby(false); //Lobby should be deleted if last person leaves
     await vala.hostLobby(lobbySettings);
 
+    const vale = await UserSession.create(browser, '.auth/ndo-vale-auth.json');
+    await vale.enterLobby(lobbySettings.name);
+    await vale.leaveLobby(true); //Lobby should not be deleted, as it still has players in it
+    await vale.enterLobby(lobbySettings.name);
+
+    await vala.leaveLobby(true); //Host leaves lobby, still should not be deleted as there's a player there
+    await vala.enterLobby(lobbySettings.name);
+
+    await vala.leaveLobby(true); //First player leaves, lobby SHOULD exist
+    await vale.leaveLobby(false); //Second player leaves, lobby should NOT exist
+});
+
+test("ready button", async ({ browser }) => {
+    test.setTimeout(1000000);
+
+    const lobbySettings = {
+        name: "Leave btn test lobby",
+        type: "friendly",
+        matchSettings: {
+            map: "4-players-medium",
+            mode: "modern",
+            duration: "blitz"
+        }
+    };
+
+    const slotSettings: SlotSettings = {
+        team: "LEFT",
+        role: "BACK",
+        playerSettings: {
+            alias: "meee",
+            upButton: "q",
+            downButton: "a",
+            paddleSpriteIndex: 5
+        }
+    }
+
+    const vala = await UserSession.create(browser, '.auth/ndo-vala-auth.json');
+    await vala.hostLobby(lobbySettings);
+    await vala.setReady(false);
+    await vala.joinFriendlySlot(slotSettings);
+
+    await vala.page.waitForTimeout(2000)
+    await vala.close();
 })
 
 /* test("Friendly buttons", async ({ browser }) => {

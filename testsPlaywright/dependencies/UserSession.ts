@@ -1,8 +1,8 @@
 import { Browser, BrowserContext, expect, Page } from "@playwright/test";
 import CreateLobbyPage, { LobbySettings } from "./pages/CreateLobbyPage";
-import HomePage from "./pages/HomePage";
 import PlayPage from "./pages/PlayPage";
 import LobbyPage from "./pages/LobbyPage";
+import FriendlyLobbyPage, { PlayerSettings, SlotSettings } from "./pages/FriendlyLobbyPage"
 
 export default class UserSession {
     get page() { return this._page; }
@@ -11,17 +11,33 @@ export default class UserSession {
         const ctx = await browser.newContext({ storageState: sessionStorageFile});
         const page = await ctx.newPage();
 
-        return new UserSession(page);
+        page.on('console', async msg => {
+            const args = msg.args();
+            for (const arg of args) {
+                try {
+                const val = await arg.jsonValue();
+                console.log(`[${msg.type()}]`, val);
+                } catch {
+                console.log(`[${msg.type()}]`, arg.toString());
+                }
+            }
+        });
+
+        return new UserSession(ctx, page);
     }
 
     async hostLobby(lobbySettings: LobbySettings) {
-      const homePage = new HomePage(this._page);
-      await homePage.goto();
-      await homePage.goToPlayPage();
       const playPage = new PlayPage(this._page);
+      await playPage.goto();
       await playPage.goToCreateLobbyPage();
       const createPage = new CreateLobbyPage(this._page);
       await createPage.createLobby(lobbySettings);
+    }
+
+    async enterLobby(lobbyName: string) {
+        const playPage = new PlayPage(this._page);
+        await playPage.goto();
+        await playPage.enterLobby(lobbyName);
     }
 
     async leaveLobby(shouldLobbyExistAfterLeaving: boolean) {
@@ -34,9 +50,55 @@ export default class UserSession {
         await playPage.checkIfLobbyExists(lobbyName, shouldLobbyExistAfterLeaving);
     }
 
+    async setReady(shouldSucceed: boolean) {
+        await expect(this._page).toHaveTitle("Lobby");
+        const lobbyPage = new LobbyPage(this._page);
+        lobbyPage.toggleReady(shouldSucceed ? "ready succeded" : "ready failed");
+    }
+
+    async unsetReady() {
+        await expect(this._page).toHaveTitle("Lobby");
+        const lobbyPage = new LobbyPage(this._page);
+        lobbyPage.toggleReady("un-ready succeded");
+    }
+
+    async joinFriendlySlot(slotSettings: SlotSettings) {
+        await expect(this._page).toHaveTitle("Lobby");
+        await expect(this._page.locator("#lobby-subtitle")).toHaveText("Friendly Match Lobby");
+        const page = new FriendlyLobbyPage(this._page);
+        page.chooseSlot(slotSettings);
+        await expect(this._page.locator(`#slot-${slotSettings.team}-${slotSettings.role} p`))
+            .toHaveText(slotSettings.playerSettings.alias);
+    }
+
+    async openJoinFriendlySlot(team: string, role: string) {
+        await expect(this._page).toHaveTitle("Lobby");
+        await expect(this._page.locator("#lobby-subtitle")).toHaveText("Friendly Match Lobby");
+        const page = new FriendlyLobbyPage(this._page);
+        page.openDialogOfSlot(team, role);
+    }
+
+    async fillAndSubmitFriendlySlot(slotSettings: SlotSettings, successful: boolean) {
+        await expect(this._page).toHaveTitle("Lobby");
+        await expect(this._page.locator("#lobby-subtitle")).toHaveText("Friendly Match Lobby");
+        await expect(this._page.locator('dialog[open]')).toBeVisible();
+        const page = new FriendlyLobbyPage(this._page);
+        await page.fillAndSubmitSlotDialog(slotSettings.playerSettings);
+        if (successful) {
+            await expect(this._page.locator(`#slot-${slotSettings.team}-${slotSettings.role} p`))
+                .toHaveText(slotSettings.playerSettings.alias);
+        }
+    } 
+
+    async close() {
+        await this._ctx.close();
+    }
+
+    private _ctx: BrowserContext;
     private _page: Page;
 
-    private constructor(page: Page) {
+    private constructor(ctx: BrowserContext, page: Page) {
+        this._ctx = ctx;
         this._page = page;
     }
 }
