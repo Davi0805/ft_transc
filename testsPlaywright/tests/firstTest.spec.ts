@@ -1,8 +1,6 @@
 import test from "@playwright/test";
-import PlayPage from "../dependencies/pages/PlayPage";
-import CreateLobbyPage from "../dependencies/pages/CreateLobbyPage";
-import MatchPage from "../dependencies/pages/MatchPage";
 import { hostLobby } from "../dependencies/helpers";
+import FriendlyLobbyPage from "../dependencies/pages/FriendlyLobbyPage";
 
 
 
@@ -20,7 +18,19 @@ test("One user plays friendly", async ({ browser }) => {
         }
     });
     
-    const lobby = new MatchPage(userPage);
-    await userPage.waitForTimeout(3000);
+    const lobby = new FriendlyLobbyPage(userPage);
+    await lobby.chooseSlot("LEFT", "BACK", {
+        alias: "Meeeee",
+        upButton: "q",
+        downButton: "a",
+        paddleSpriteIndex: 3
+    });
+
+    await lobby.toggleReady();
+    await lobby.start();
+
+
+
+    await userPage.waitForTimeout(10000);
     await userContext.close();
 })
