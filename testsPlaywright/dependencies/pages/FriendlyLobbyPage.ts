@@ -1,5 +1,5 @@
 import { Page } from "@playwright/test";
-import ALobbyPage from "./ALobbyPage";
+import ALobbyPage from "./LobbyPage";
 
 export type PlayerSettings = {
     alias: string,

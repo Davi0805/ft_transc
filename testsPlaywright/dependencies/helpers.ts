@@ -5,7 +5,7 @@ import CreateLobbyPage, { LobbySettings } from "./pages/CreateLobbyPage";
 
 
 
-export async function hostLobby(page: Page, lobbySettings: LobbySettings) {
+/* export async function hostLobby(page: Page, lobbySettings: LobbySettings) {
   const homePage = new HomePage(page);
   await homePage.goto();
   await homePage.goToPlayPage();
@@ -13,4 +13,4 @@ export async function hostLobby(page: Page, lobbySettings: LobbySettings) {
   await playPage.goToCreateLobbyPage();
   const createPage = new CreateLobbyPage(page);
   await createPage.createLobby(lobbySettings);
-}
+} */

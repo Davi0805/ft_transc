@@ -1,6 +1,47 @@
 import { Browser, BrowserContext, expect, Page } from "@playwright/test";
+import CreateLobbyPage, { LobbySettings } from "./pages/CreateLobbyPage";
+import HomePage from "./pages/HomePage";
+import PlayPage from "./pages/PlayPage";
+import LobbyPage from "./pages/LobbyPage";
 
-export interface ILoginPage{
+export default class UserSession {
+    get page() { return this._page; }
+
+    static async create(browser: Browser, sessionStorageFile: string) {
+        const ctx = await browser.newContext({ storageState: sessionStorageFile});
+        const page = await ctx.newPage();
+
+        return new UserSession(page);
+    }
+
+    async hostLobby(lobbySettings: LobbySettings) {
+      const homePage = new HomePage(this._page);
+      await homePage.goto();
+      await homePage.goToPlayPage();
+      const playPage = new PlayPage(this._page);
+      await playPage.goToCreateLobbyPage();
+      const createPage = new CreateLobbyPage(this._page);
+      await createPage.createLobby(lobbySettings);
+    }
+
+    async leaveLobby(shouldLobbyExistAfterLeaving: boolean) {
+        await expect(this._page).toHaveTitle("Lobby");
+        const lobbyPage = new LobbyPage(this._page);
+        const lobbyName = await lobbyPage.getLobbyName();
+        if (!lobbyName) { throw Error("a name must exist!!")}
+        await lobbyPage.leave();
+        const playPage = new PlayPage(this._page);
+        await playPage.checkIfLobbyExists(lobbyName, shouldLobbyExistAfterLeaving);
+    }
+
+    private _page: Page;
+
+    private constructor(page: Page) {
+        this._page = page;
+    }
+}
+
+/* export interface ILoginPage{
   goto(): Promise<void>; //Goes to the login page
   login(username: string, password: string): Promise<void>;
 }
@@ -56,4 +97,4 @@ export default class UserSession {
         this._page = page;
         this._username = username;
     }
-}
+} */

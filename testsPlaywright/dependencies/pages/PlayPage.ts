@@ -27,4 +27,10 @@ export default class PlayPage extends APage {
             await expect(this._page).toHaveTitle("Play");
         }
     }
+
+    async checkIfLobbyExists(lobbyName: string, shouldExist: boolean = true) {
+        await this.refreshLobbies();
+        const lobby = this._page.locator(`//table/tbody/tr[td[1][contains(text(), "${lobbyName}")]]`);
+        expect(lobby).toHaveCount(shouldExist ? 1 : 0);
+    }
 }
