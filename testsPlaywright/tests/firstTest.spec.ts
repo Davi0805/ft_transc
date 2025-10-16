@@ -10,37 +10,65 @@ test("leave button", async ({ browser }) => {
         name: "Leave btn test lobby",
         type: "ranked",
         matchSettings: {
-            map: "4-players-medium",
+            map: "2-players-medium",
             mode: "modern",
             duration: "blitz"
         }
     };
 
     const vala = await UserSession.create(browser, '.auth/ndo-vala-auth.json');
-    await vala.hostLobby(lobbySettings);
-    await vala.leaveLobby(false); //Lobby should be deleted if last person leaves
-    await vala.hostLobby(lobbySettings);
-
     const vale = await UserSession.create(browser, '.auth/ndo-vale-auth.json');
+
+    await vala.hostLobby(lobbySettings);
     await vale.enterLobby(lobbySettings.name);
     await vale.leaveLobby(true); //Lobby should not be deleted, as it still has players in it
     await vale.enterLobby(lobbySettings.name);
-
     await vala.leaveLobby(true); //Host leaves lobby, still should not be deleted as there's a player there
     await vala.enterLobby(lobbySettings.name);
-
+    await vala.joinRankedSlot("LEFT", "BACK", "ndo-vala");
+    await vale.joinRankedSlot("RIGHT", "BACK", "ndo-vale");    
     await vala.leaveLobby(true); //First player leaves, lobby SHOULD exist
+    await expect(vala.page.locator(`#slot-RIGHT-BACK p`)).toHaveCount(0); //The slot should open up after user leaves
     await vale.leaveLobby(false); //Second player leaves, lobby should NOT exist
 
+    lobbySettings.type = "friendly";
     await vala.hostLobby(lobbySettings);
-    await vala.joinRankedSlot("LEFT", "BACK", "ndo-vala");
+    await vala.joinFriendlySlot({
+        team: "LEFT",
+        role: "BACK",
+        playerSettings: {
+            alias: "ndo-vala alias",
+            upButton: "q",
+            downButton: "a",
+            paddleSpriteIndex: 2
+        }
+    });
     await vale.enterLobby(lobbySettings.name);
-    await vale.joinRankedSlot("RIGHT", "BACK", "ndo-vale");    
+    await vale.joinFriendlySlot({
+        team: "RIGHT",
+        role: "BACK",
+        playerSettings: {
+            alias: "ndo-vale alias",
+            upButton: "o",
+            downButton: "l",
+            paddleSpriteIndex: 5
+        }
+    });    
     await vale.leaveLobby(true);
-    await expect(vala.page.locator(`#slot-RIGHT-BACK p`)).toHaveCount(0); //The slot should open up after user leaves
+    await expect(vala.page.locator(`#slot-RIGHT-BACK button`)).toHaveText("Join"); //The slot should open up after user leaves
     await vala.leaveLobby(false);
 
-
+    lobbySettings.type = "tournament";
+    await vala.hostLobby(lobbySettings);
+    await vale.enterLobby((lobbySettings.name));
+    await vale.joinTournament("ndo-vale");
+    await expect(vala.page.locator(`#participants-table tr td:nth-child(2):text("ndo-vale")`))
+        .toHaveCount(1);
+    await vale.leaveLobby(true);
+    await expect(vala.page.locator(`#participants-table tr td:nth-child(2):text("ndo-vale")`))
+        .toHaveCount(0); //Player should also not be in the tournament after leaving lobby
+    await vala.close();
+    await vale.close();
 });
 
 test("ready button", async ({ browser }) => {

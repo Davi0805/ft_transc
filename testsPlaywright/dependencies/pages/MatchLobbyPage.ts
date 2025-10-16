@@ -1,5 +1,5 @@
 import { expect, Page } from "@playwright/test";
-import ALobbyPage from "./LobbyPage";
+import LobbyPage from "./LobbyPage";
 
 export type PlayerSettings = {
     alias: string,
@@ -14,7 +14,7 @@ export type SlotSettings = {
     playerSettings: PlayerSettings
 }
 
-export default class MatchLobbyPage extends ALobbyPage {
+export default class MatchLobbyPage extends LobbyPage {
     constructor(page: Page) {
         super(page);
     }

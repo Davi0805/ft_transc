@@ -3,6 +3,7 @@ import CreateLobbyPage, { LobbySettings } from "./pages/CreateLobbyPage";
 import PlayPage from "./pages/PlayPage";
 import LobbyPage from "./pages/LobbyPage";
 import MatchLobbyPage, { PlayerSettings, SlotSettings } from "./pages/MatchLobbyPage"
+import TournamentLobbyPage from "./pages/TournamentLobbyPage";
 
 export default class UserSession {
     get page() { return this._page; }
@@ -98,6 +99,24 @@ export default class UserSession {
         page.chooseRankedSlot(team, role);
         await expect(this._page.locator(`#slot-${team}-${role} p`))
             .toHaveText(username);
+    }
+
+    async joinTournament(username: string) {
+        await expect(this._page).toHaveTitle("Lobby");
+        await expect(this._page.locator("#lobby-subtitle")).toHaveText("Tournament Lobby");
+        const page = new TournamentLobbyPage(this._page);
+        page.join();
+        const playerInList = this._page.locator(`#participants-table tr td:nth-child(2):text("${username}")`);
+        await expect(playerInList).toBeVisible();
+    }
+
+    async withdrawFromTournament(username: string) {
+        await expect(this._page).toHaveTitle("Lobby");
+        await expect(this._page.locator("#lobby-subtitle")).toHaveText("Tournament Lobby");
+        const page = new TournamentLobbyPage(this._page);
+        page.withdraw();
+        const playerInList = this._page.locator(`#participants-table tr td:nth-child(2):text("${username}")`);
+        await expect(playerInList).toHaveCount(0);
     }
 
     async close() {
