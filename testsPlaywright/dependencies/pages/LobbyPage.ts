@@ -2,6 +2,12 @@ import { expect, Page } from "@playwright/test";
 import { BASE_URL } from "../typesAndConsts";
 import APage from "./APage";
 
+export type StartBehavior = "start succeded"
+        | "Not everyone is ready!"
+        | "Not all slots are filled!"
+        | "Host is not present";
+
+
 export default class LobbyPage extends APage {
     constructor(page: Page) {
         super(page, BASE_URL + "/lobby");
@@ -36,11 +42,7 @@ export default class LobbyPage extends APage {
         } 
     }
 
-    async start(behavior: "start succeded"
-        | "Not everyone is ready!"
-        | "Not all slots are filled!"
-        | "Host is not present"
-    ) {
+    async start(behavior: StartBehavior) {
         const button = this._page.locator('#btn-start');
         await button.click();
 

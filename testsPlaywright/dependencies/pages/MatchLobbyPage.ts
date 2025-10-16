@@ -47,4 +47,10 @@ export default class MatchLobbyPage extends LobbyPage {
     async chooseRankedSlot(team: string, role: string) {
         this.selectSlot(team, role);
     }
+
+    async withdrawFromSlot(team: string, role: string) {
+        const button = this._page.locator(`#slot-${team}-${role} button`);
+        await button.click();
+        
+    }
 }

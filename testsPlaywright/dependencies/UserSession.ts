@@ -1,7 +1,7 @@
 import { Browser, BrowserContext, expect, Page } from "@playwright/test";
 import CreateLobbyPage, { LobbySettings } from "./pages/CreateLobbyPage";
 import PlayPage from "./pages/PlayPage";
-import LobbyPage from "./pages/LobbyPage";
+import LobbyPage, { StartBehavior } from "./pages/LobbyPage";
 import MatchLobbyPage, { PlayerSettings, SlotSettings } from "./pages/MatchLobbyPage"
 import TournamentLobbyPage from "./pages/TournamentLobbyPage";
 
@@ -54,13 +54,13 @@ export default class UserSession {
     async setReady(shouldSucceed: boolean) {
         await expect(this._page).toHaveTitle("Lobby");
         const lobbyPage = new LobbyPage(this._page);
-        lobbyPage.toggleReady(shouldSucceed ? "ready succeded" : "ready failed");
+        await lobbyPage.toggleReady(shouldSucceed ? "ready succeded" : "ready failed");
     }
 
     async unsetReady() {
         await expect(this._page).toHaveTitle("Lobby");
         const lobbyPage = new LobbyPage(this._page);
-        lobbyPage.toggleReady("un-ready succeded");
+        await lobbyPage.toggleReady("un-ready succeded");
     }
 
     async joinFriendlySlot(slotSettings: SlotSettings) {
@@ -101,11 +101,20 @@ export default class UserSession {
             .toHaveText(username);
     }
 
+    async withdrawFromSlot(team: string, role: string) {
+        await expect(this._page).toHaveTitle("Lobby");
+        const page = new MatchLobbyPage(this._page);
+        await page.withdrawFromSlot(team, role);
+        await expect(this._page.locator(`#slot-${team}-${role} button`))
+            .toHaveText("Join");
+        await expect(this._page.locator("#btn-ready")).toHaveText("Ready"); //Make sure that the readiness is updated if it was set before
+    }
+
     async joinTournament(username: string) {
         await expect(this._page).toHaveTitle("Lobby");
         await expect(this._page.locator("#lobby-subtitle")).toHaveText("Tournament Lobby");
         const page = new TournamentLobbyPage(this._page);
-        page.join();
+        await page.join();
         const playerInList = this._page.locator(`#participants-table tr td:nth-child(2):text("${username}")`);
         await expect(playerInList).toBeVisible();
     }
@@ -117,6 +126,12 @@ export default class UserSession {
         page.withdraw();
         const playerInList = this._page.locator(`#participants-table tr td:nth-child(2):text("${username}")`);
         await expect(playerInList).toHaveCount(0);
+    }
+
+    async startLobbyEvent(behavior: StartBehavior) {
+        await expect(this._page).toHaveTitle("Lobby");
+        const page = new LobbyPage(this._page);
+        await page.start(behavior);
     }
 
     async close() {
@@ -131,61 +146,3 @@ export default class UserSession {
         this._page = page;
     }
 }
-
-/* export interface ILoginPage{
-  goto(): Promise<void>; //Goes to the login page
-  login(username: string, password: string): Promise<void>;
-}
-
-export default class UserSession {
-    get ctx() { return this._ctx; }
-    get page() { return this._page; }
-    get username() { return this._username; }
-
-    static async create(
-        browser: Browser,
-        username: string,
-        password: string,
-        LoginPage: new (page: Page) => ILoginPage
-    ) {
-        const ctx = await browser.newContext();
-        const page = await ctx.newPage();
-        const loginPage = new LoginPage(page);
-        await loginPage.goto();
-        await loginPage.login(username, password);
-        page.on('console', async msg => {
-            const args = msg.args();
-            for (const arg of args) {
-                try {
-                const val = await arg.jsonValue();
-                console.log(`[${msg.type()}]`, val);
-                } catch {
-                console.log(`[${msg.type()}]`, arg.toString());
-                }
-            }
-        });
-        await page.context().storageState({ path: './.auth/auth2.json' });
-        return new UserSession(ctx, page, username);
-    }
-
-    async destroy() {
-        await this.logout();
-        await this.ctx.close();
-    }
-
-    async logout() {
-        await this.page.getByAltText("logout icon").click();
-        expect(this.page.getByText("Login"));
-    }
-
-
-    private _ctx: BrowserContext;
-    private _page: Page;
-    private _username: string;
-    
-    private constructor(ctx: BrowserContext, page: Page, username: string) {
-        this._ctx = ctx;
-        this._page = page;
-        this._username = username;
-    }
-} */
