@@ -34,6 +34,8 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
 
                 const slotElement = document.createElement("tr");
                 slotElement.className = "border-b border-gray-900/50"
+                slotElement.id = `slot-${teamName}-${roleName}`;
+                console.log(slotElement.id);
                 this._renderRoleName(slotElement, roleName)
 
                 //Everything above was the rendering of the team/role names.

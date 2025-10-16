@@ -34,10 +34,17 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    {
-      name: 'firefox',
+    /* {
+      name: 'setup-users',
+      testMatch: /auth\.setup\.ts/, //this searches inside /tests/ folder!
       use: { ...devices['Desktop Firefox'] },
-    },
+    }, */
+
+    {
+      name: 'transcendence-test',
+      use: { ...devices['Desktop Firefox'] },
+      //dependencies: ['setup-users']
+    }
 
     /* Test against mobile viewports. */
     // {
