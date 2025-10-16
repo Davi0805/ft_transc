@@ -1,6 +1,6 @@
-import test from "@playwright/test";
+import test, { expect } from "@playwright/test";
 import UserSession from "../dependencies/UserSession";
-import { SlotSettings } from "../dependencies/pages/FriendlyLobbyPage";
+import { SlotSettings } from "../dependencies/pages/MatchLobbyPage";
 
 test("leave button", async ({ browser }) => {
     test.setTimeout(1000000);
@@ -8,7 +8,7 @@ test("leave button", async ({ browser }) => {
 
     const lobbySettings = {
         name: "Leave btn test lobby",
-        type: "friendly",
+        type: "ranked",
         matchSettings: {
             map: "4-players-medium",
             mode: "modern",
@@ -31,14 +31,24 @@ test("leave button", async ({ browser }) => {
 
     await vala.leaveLobby(true); //First player leaves, lobby SHOULD exist
     await vale.leaveLobby(false); //Second player leaves, lobby should NOT exist
+
+    await vala.hostLobby(lobbySettings);
+    await vala.joinRankedSlot("LEFT", "BACK", "ndo-vala");
+    await vale.enterLobby(lobbySettings.name);
+    await vale.joinRankedSlot("RIGHT", "BACK", "ndo-vale");    
+    await vale.leaveLobby(true);
+    await expect(vala.page.locator(`#slot-RIGHT-BACK p`)).toHaveCount(0); //The slot should open up after user leaves
+    await vala.leaveLobby(false);
+
+
 });
 
 test("ready button", async ({ browser }) => {
     test.setTimeout(1000000);
 
     const lobbySettings = {
-        name: "Leave btn test lobby",
-        type: "friendly",
+        name: "Ready btn test lobby",
+        type: "ranked",
         matchSettings: {
             map: "4-players-medium",
             mode: "modern",
@@ -62,7 +72,6 @@ test("ready button", async ({ browser }) => {
     await vala.setReady(false);
     await vala.joinFriendlySlot(slotSettings);
 
-    await vala.page.waitForTimeout(2000)
     await vala.close();
 })
 

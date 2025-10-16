@@ -14,17 +14,17 @@ export type SlotSettings = {
     playerSettings: PlayerSettings
 }
 
-export default class FriendlyLobbyPage extends ALobbyPage {
+export default class MatchLobbyPage extends ALobbyPage {
     constructor(page: Page) {
         super(page);
     }
 
-    async openDialogOfSlot(team: string, role: string) {
-        await this._page.click(`#join-${team}-${role}`);
-        await expect(this._page.locator('dialog[open]')).toBeVisible();
+    async selectSlot(team: string, role: string) {
+        await this._page.click(`#join-${team}-${role}`);        
     }
 
     async fillAndSubmitSlotDialog(playerSettings: PlayerSettings) {
+        await expect(this._page.locator('dialog[open]')).toBeVisible();
         await this._page.getByLabel('Alias').fill(playerSettings.alias);
         
         for (let i = 0; i < playerSettings.paddleSpriteIndex; i++) {
@@ -39,8 +39,12 @@ export default class FriendlyLobbyPage extends ALobbyPage {
         await this._page.click('#btn-close-dialog');
     }
 
-    async chooseSlot(slotSettings: SlotSettings): Promise<void> {
-        this.openDialogOfSlot(slotSettings.team, slotSettings.role);
+    async chooseFriendlySlot(slotSettings: SlotSettings): Promise<void> {
+        this.selectSlot(slotSettings.team, slotSettings.role);
         this.fillAndSubmitSlotDialog(slotSettings.playerSettings);
+    }
+
+    async chooseRankedSlot(team: string, role: string) {
+        this.selectSlot(team, role);
     }
 }

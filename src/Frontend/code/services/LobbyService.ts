@@ -136,6 +136,7 @@ class LobbyService {
         const user = this._findUserByID(id);
         const index = this.lobby.users.indexOf(user);
         this.lobby.users.splice(index, 1);
+        LobbyPage.renderer?.updatePlayers();
     }
     addFriendlyPlayerOUT(userID: number, player: TFriendlyPlayer) {
         if (!this._isLobbyOfType("friendly")) { return; }

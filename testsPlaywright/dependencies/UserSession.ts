@@ -2,7 +2,7 @@ import { Browser, BrowserContext, expect, Page } from "@playwright/test";
 import CreateLobbyPage, { LobbySettings } from "./pages/CreateLobbyPage";
 import PlayPage from "./pages/PlayPage";
 import LobbyPage from "./pages/LobbyPage";
-import FriendlyLobbyPage, { PlayerSettings, SlotSettings } from "./pages/FriendlyLobbyPage"
+import MatchLobbyPage, { PlayerSettings, SlotSettings } from "./pages/MatchLobbyPage"
 
 export default class UserSession {
     get page() { return this._page; }
@@ -65,8 +65,8 @@ export default class UserSession {
     async joinFriendlySlot(slotSettings: SlotSettings) {
         await expect(this._page).toHaveTitle("Lobby");
         await expect(this._page.locator("#lobby-subtitle")).toHaveText("Friendly Match Lobby");
-        const page = new FriendlyLobbyPage(this._page);
-        page.chooseSlot(slotSettings);
+        const page = new MatchLobbyPage(this._page);
+        page.chooseFriendlySlot(slotSettings);
         await expect(this._page.locator(`#slot-${slotSettings.team}-${slotSettings.role} p`))
             .toHaveText(slotSettings.playerSettings.alias);
     }
@@ -74,21 +74,31 @@ export default class UserSession {
     async openJoinFriendlySlot(team: string, role: string) {
         await expect(this._page).toHaveTitle("Lobby");
         await expect(this._page.locator("#lobby-subtitle")).toHaveText("Friendly Match Lobby");
-        const page = new FriendlyLobbyPage(this._page);
-        page.openDialogOfSlot(team, role);
+        const page = new MatchLobbyPage(this._page);
+        page.selectSlot(team, role);
+        await expect(this._page.locator('dialog[open]')).toBeVisible();
     }
 
     async fillAndSubmitFriendlySlot(slotSettings: SlotSettings, successful: boolean) {
         await expect(this._page).toHaveTitle("Lobby");
         await expect(this._page.locator("#lobby-subtitle")).toHaveText("Friendly Match Lobby");
         await expect(this._page.locator('dialog[open]')).toBeVisible();
-        const page = new FriendlyLobbyPage(this._page);
+        const page = new MatchLobbyPage(this._page);
         await page.fillAndSubmitSlotDialog(slotSettings.playerSettings);
         if (successful) {
             await expect(this._page.locator(`#slot-${slotSettings.team}-${slotSettings.role} p`))
                 .toHaveText(slotSettings.playerSettings.alias);
         }
-    } 
+    }
+    
+    async joinRankedSlot(team: string, role: string, username: string) {
+        await expect(this._page).toHaveTitle("Lobby");
+        await expect(this._page.locator("#lobby-subtitle")).toHaveText("Ranked Match Lobby");
+        const page = new MatchLobbyPage(this._page);
+        page.chooseRankedSlot(team, role);
+        await expect(this._page.locator(`#slot-${team}-${role} p`))
+            .toHaveText(username);
+    }
 
     async close() {
         await this._ctx.close();
