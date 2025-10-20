@@ -1,7 +1,7 @@
 import test from "@playwright/test";
 import UserSession from "../dependencies/UserSession";
 
-test("setup friendly 2 players", async ({ browser }) => {
+test("setup friendly 4 players", async ({ browser }) => {
     test.setTimeout(10000000);
     
     const lobbySettings = {
