@@ -127,7 +127,7 @@ test("ready/start buttons ranked", async ({ browser }) => {
     await vale.close();
 });
 
-test("ready/start buttons frienly", async ({ browser }) => {
+test("ready/start buttons friendly", async ({ browser }) => {
     test.setTimeout(1000000);
 
     const lobbySettings = {
@@ -183,32 +183,39 @@ test("ready/start buttons frienly", async ({ browser }) => {
     await vala.unsetReady();
     await vale.enterLobby(lobbySettings.name);
     await vale.joinFriendlySlot(slotsSettings[2]);
-    await vala.withdrawFromSlot(slotsSettings[0].team, slotsSettings[0].role);
-
-    /* console.log("FIRST START");
-    await vala.startLobbyEvent("Not everyone is ready!");
-    await vala.setReady(true);
-    console.log("SECOND START");
-    await vala.startLobbyEvent("Not everyone is ready!");
-    await vala.unsetReady();
     await vale.setReady(true);
-    console.log("THIRD START");
-    await vala.startLobbyEvent("Not everyone is ready!");
+    await vala.joinFriendlySlot(slotsSettings[1]);
+    await vala.withdrawFromSlot(slotsSettings[0].team, slotsSettings[0].role);
+    await vala.startLobbyEvent("Not everyone is ready!"); //Currently, if a player withdraws from a slot, its readiness is reset
     await vala.setReady(true);
-    console.log("CORRECT START")
-    await vala.startLobbyEvent("start succeded");
+    await vale.unsetReady();
+    await vala.startLobbyEvent("Not everyone is ready!");
+    await vale.withdrawFromSlot(slotsSettings[2].team, slotsSettings[2].role);
+    await vale.setReady(false);
+    await vale.joinFriendlySlot(slotsSettings[2]);
+    await vale.setReady(true);
+    await vala.joinFriendlySlot(slotsSettings[0]); //After joining a second slot, the readiness is NOT reset
+    await vala.startLobbyEvent("start succeded")
+
     await vala.page.waitForTimeout(4000); //initial countdown
-    await vala.page.keyboard.down("ArrowDown");
-    await vala.page.keyboard.down("ArrowUp");
+    await vala.page.keyboard.down(slotsSettings[0].playerSettings.upButton);
+    await vala.page.keyboard.down(slotsSettings[0].playerSettings.downButton);
+    await vala.page.keyboard.down(slotsSettings[1].playerSettings.upButton);
+    await vala.page.keyboard.down(slotsSettings[1].playerSettings.downButton);
+    await vale.page.keyboard.down(slotsSettings[2].playerSettings.upButton);
+    await vale.page.keyboard.down(slotsSettings[2].playerSettings.downButton);
     await vala.page.waitForTimeout(4000); //Self destruct timer
-    await vala.page.keyboard.up("ArrowDown");
-    await vala.page.keyboard.up("ArrowUp");
+    await vala.page.keyboard.up(slotsSettings[0].playerSettings.upButton);
+    await vala.page.keyboard.up(slotsSettings[0].playerSettings.downButton);
+    await vala.page.keyboard.up(slotsSettings[1].playerSettings.upButton);
+    await vala.page.keyboard.up(slotsSettings[1].playerSettings.downButton);
+    await vale.page.keyboard.up(slotsSettings[2].playerSettings.upButton);
+    await vale.page.keyboard.up(slotsSettings[2].playerSettings.downButton);
     console.log("probably game over by this point")
-    await expect(vala.page).toHaveTitle("Lobby");
 
 
     await vala.close();
-    await vale.close(); */
+    await vale.close();
 })
 
 /* test("Friendly buttons", async ({ browser }) => {
