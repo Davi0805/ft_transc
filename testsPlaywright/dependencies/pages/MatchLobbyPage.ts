@@ -1,5 +1,5 @@
 import { expect, Page } from "@playwright/test";
-import ALobbyPage from "./LobbyPage";
+import LobbyPage from "./LobbyPage";
 
 export type PlayerSettings = {
     alias: string,
@@ -14,7 +14,7 @@ export type SlotSettings = {
     playerSettings: PlayerSettings
 }
 
-export default class MatchLobbyPage extends ALobbyPage {
+export default class MatchLobbyPage extends LobbyPage {
     constructor(page: Page) {
         super(page);
     }
@@ -46,5 +46,11 @@ export default class MatchLobbyPage extends ALobbyPage {
 
     async chooseRankedSlot(team: string, role: string) {
         this.selectSlot(team, role);
+    }
+
+    async withdrawFromSlot(team: string, role: string) {
+        const button = this._page.locator(`#slot-${team}-${role} button`);
+        await button.click();
+        
     }
 }
