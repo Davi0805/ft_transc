@@ -76,22 +76,22 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
                         <h2 class="text-base font-semibold text-white mb-2">Controls</h2>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex flex-col gap-2 ">
-                                <label for="left-listener" class="block text-base font-semibold text-white text-center">Up Button</label>
+                                <label for="left-listener" class="block text-base font-semibold text-white text-center">${directions.left}</label>
                                 <button 
                                     type="button" 
                                     id="left-listener" 
                                     class="px-4 py-3 bg-slate-600/80 border border-slate-500/50 rounded-xl text-white text-base cursor-pointer transition-all duration-200 text-center font-semibold hover:bg-slate-600/90 hover:border-blue-500 active:bg-blue-500/20"
-                                >ArrowUp</button>
-                                <input type="hidden" id="left-key" name="left-key" value="ArrowUp">
+                                >${leftKey}</button>
+                                <input type="hidden" id="left-key" name="left-key" value="${leftKey}">
                             </div>
                             <div class="flex flex-col gap-2">
-                                <label for="right-listener" class="block text-base font-semibold text-white text-center">Down Button</label>
+                                <label for="right-listener" class="block text-base font-semibold text-white text-center">${directions.right}</label>
                                 <button 
                                     type="button" 
                                     id="right-listener" 
                                     class="px-4 py-3 bg-slate-600/80 border border-slate-500/50 rounded-xl text-white text-base cursor-pointer transition-all duration-200 text-center font-semibold hover:bg-slate-600/90 hover:border-blue-500 active:bg-blue-500/20"
-                                >ArrowDown</button>
-                                <input type="hidden" id="right-key" name="right-key" value="ArrowDown">
+                                >${rightKey}</button>
+                                <input type="hidden" id="right-key" name="right-key" value="${rightKey}">
                             </div>
                         </div>
                     </div>

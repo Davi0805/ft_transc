@@ -1,6 +1,5 @@
 import test, { expect } from "@playwright/test";
 import UserSession from "../dependencies/UserSession";
-import { SlotSettings } from "../dependencies/pages/MatchLobbyPage";
 
 test("leave button", async ({ browser }) => {
     test.setTimeout(1000000);
