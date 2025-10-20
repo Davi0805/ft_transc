@@ -1,4 +1,4 @@
-import { point, rectangle, SIDES } from "../shared/sharedTypes.js";
+import { BALL_TYPES, point, rectangle, SIDES } from "../shared/sharedTypes.js";
 import Point from "../shared/Point.js";
 import SPaddle from "../Objects/SPaddle.js";
 import SPlayer from "./SPlayer.js";
@@ -34,7 +34,7 @@ export default class SBot extends SPlayer {
         let smallestT = Infinity;
 
         balls.forEach(ball => { //TODO: For accurate prediction, should include ball size in all these calculations
-            let t = this._getHitMinT(ball.pos, ball.direction);
+            let t = this._getHitMinT(ball.pos, ball.direction) / ball.speed; //higher the speed, smaller the time that takes for the ball to hit the side
             let hitpos = this._getHitPos(ball.pos, ball.direction);
             let hitside = this._getSideFromPos(hitpos)
             let dir = ball.direction;
@@ -43,13 +43,15 @@ export default class SBot extends SPlayer {
                 dir = (hitside === SIDES.LEFT || hitside === SIDES.RIGHT)
                     ? Point.fromObj({ x: -dir.x, y: dir.y })
                     : Point.fromObj({ x: dir.x, y: -dir.y })
-                t += this._getHitMinT(hitpos, dir);
+                t += this._getHitMinT(hitpos, dir) / ball.speed;
                 hitpos = this._getHitPos(hitpos, dir);
                 hitside = this._getSideFromPos(hitpos);
             }
             if (t < smallestT) {
                 smallestT = t;
-                this._targetPos = hitpos[this._movementAxis];
+                if (ball.type !== BALL_TYPES.MASSIVE_DAMAGE) {
+                    this._targetPos = hitpos[this._movementAxis];
+                }
             }
         })
         
