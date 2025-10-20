@@ -34,16 +34,16 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    /* {
+    {
       name: 'setup-users',
       testMatch: /auth\.setup\.ts/, //this searches inside /tests/ folder!
       use: { ...devices['Desktop Firefox'] },
-    }, */
+    },
 
     {
       name: 'transcendence-test',
       use: { ...devices['Desktop Firefox'] },
-      //dependencies: ['setup-users']
+      dependencies: ['setup-users']
     }
 
 

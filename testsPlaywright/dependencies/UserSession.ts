@@ -10,7 +10,7 @@ export default class UserSession {
 
     static async create(browser: Browser, sessionStorageFile: string) {
         const ctx = await browser.newContext({
-            viewport: { width: 1280, height: 800 },
+            viewport: { width: 1920, height: 1080 },
             storageState: sessionStorageFile
         });
         const page = await ctx.newPage();

@@ -9,8 +9,8 @@ test("setup friendly 4 players", async ({ browser }) => {
             type: "friendly",
             matchSettings: {
                 map: "4-players-medium",
-                mode: "modern",
-                duration: "blitz"
+                mode: "classic",
+                duration: "marathon"
             }
         };
     

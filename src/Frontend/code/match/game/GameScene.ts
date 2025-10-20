@@ -134,8 +134,17 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
         gameDto.teams.forEach(teamState => {
             const team = this.teams.get(teamState.side);
             if (team) {
-                team.update(teamState.score);
-            } 
+                if (team.hp.value !== teamState.score) {
+                    team.update(teamState.score);
+                    if (teamState.score <= 0) {
+                        team.memberPaddlesIDs.forEach( id => {
+                            const paddle = this.paddles.get(id);
+                            if (!paddle) { return; }
+                            paddle.sprite.tint = 0x333333;
+                        })
+                    }
+                }
+            }
         })
         this.timer?.update(gameDto.timeLeft, false);
         if (gameDto.timeLeft === 0 && !this._suddenDeath) {
