@@ -26,7 +26,7 @@ class UserRepository {
                 u.user_id,
                 u.name AS nickname,
                 u.username,
-                u.rating,
+                u.rating as ranking,
                 COUNT(DISTINCT f.request_id) AS friendsCount,
                 MAX(
                     CASE 
