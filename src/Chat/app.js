@@ -32,7 +32,7 @@ const setup = () => {
     app.register(conversationRoutes);
     app.register(chatMessageRoutes);
     app.register(cors, {
-        origin: true
+        origin: '*'
     });
     return app;
 }
