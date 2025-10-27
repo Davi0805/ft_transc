@@ -63,7 +63,7 @@ export default class STeamsManager {
     areThereTies(): boolean {
         const scores = new Set();
         for (const team of this.teams) {
-            if (scores.has(team.score)) {
+            if (team.place === 0 && scores.has(team.score)) {
                 return true;
             }
             scores.add(team.score);

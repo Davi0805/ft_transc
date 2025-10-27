@@ -3,7 +3,6 @@ import { App } from "./App"
 import { LogicCallback } from "./framework/Ticker";
 
 
-//TODO: ADD TICKER BACK
 export default abstract class AScene<T> {
     constructor() {
         this._root = new Container(); // All objects of the scene will be appended to this

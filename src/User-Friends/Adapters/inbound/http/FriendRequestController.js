@@ -31,6 +31,7 @@ class FriendRequestController {
         return reply.send();        
     }
 
+
     async createByUsername(req, reply)
     {
         const { user_id } = await userService.findByUsername(req.params.username);
@@ -85,6 +86,12 @@ class FriendRequestController {
         return reply.send(result);
     }
 
+    async isUserBlocked(req, reply)
+    {
+        const { user_id } = await userService.findByUsername(req.params.username);
+        const result = await blockService.isUserBlocked(req.session.user_id, user_id);
+        return reply.send(result);
+    }
 
     /* 
     *    Endpoint to block friendship

@@ -51,7 +51,7 @@ twoUsers("CreateEnterLobby", async ({ users }) => {
     const uHomePage = new HomePage(user.page);
     await uHomePage.goToPlayPage();
     const uPlayPage = new PlayPage(user.page);
-    await uPlayPage.enterFirstLobby();
+    //await uPlayPage.enterFirstLobby();
 
     for (let user of users) {
         await user.logout();

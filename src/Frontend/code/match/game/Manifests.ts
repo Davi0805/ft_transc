@@ -1,13 +1,15 @@
 import type { AudioTrackManifestT, SoundsManifestT } from "../system/framework/Audio/AudioPlayer";
 
 import { AssetsManifest } from "../system/framework/Assets"
-import { CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies"
+import { CEndSceneConfigs, CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies"
 import AScene from "../system/AScene"
 import GameScene from "./GameScene"
 import { decreasing, falling, increasing, kick, rising, sine, tone1, triangle, hollow, explosion } from "../system/framework/Audio/sounds";
+import EndScene from "./EndScene";
 
 export type SceneConfigMap = {
-    gameScene: CGameSceneConfigs
+    gameScene: CGameSceneConfigs,
+    endScene: CEndSceneConfigs
 }
 
 // This is how the ScenesManager saves the scenes
@@ -16,7 +18,8 @@ export type ScenesManifest = {
 }
 
 export const scenesManifest: ScenesManifest = {
-    gameScene: GameScene
+    gameScene: GameScene,
+    endScene: EndScene
 }
 
 export const assetsManifest: AssetsManifest = {

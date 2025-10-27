@@ -1,3 +1,5 @@
+import { TMatchResult } from "../ServerGame.js"
+import { CEndSceneConfigs } from "./SetupDependencies.js"
 import { point, BALL_TYPES, SIDES, TControlsState } from "./sharedTypes.js"
 
 // DTO type
@@ -11,7 +13,10 @@ export type DTOAssignID = {
     humansID: number[]
 }
 
-export type SGameDTO = {
+export type SGameDTO = { type: "GameUpdateDTO", data: GameUpdateDTO }
+                        | { type: "GameResult", data: CEndSceneConfigs }
+
+export type GameUpdateDTO = {
     balls: {
         ballsState: {
             id: number,

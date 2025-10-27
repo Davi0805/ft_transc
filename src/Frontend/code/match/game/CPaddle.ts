@@ -4,7 +4,7 @@ import { point, SIDES } from "../matchSharedDependencies/sharedTypes";
 import { computeOrientation } from "../matchSharedDependencies/sharedUtils";
 import CObject from "./CObject";
 
-type CPaddleConfigs = {
+export type CPaddleConfigs = {
     id: number,
     side: SIDES,
     pos: point,

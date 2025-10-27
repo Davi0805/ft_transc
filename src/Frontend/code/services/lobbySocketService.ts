@@ -129,6 +129,9 @@ class LobbySocketService {
             case "returnToLobby":
                 lobbyService.return(dto.data.lobby)
                 break;
+            case "leaveLobby":
+                lobbyService.leave();
+                break;
             case "actionBlock":
                 lobbyService.handleActionBlock(dto.data.reason)
                 break;
@@ -139,9 +142,9 @@ class LobbySocketService {
             case "updateGame":
                 matchService.updateGame(dto.data);
                 break;
-            case "endOfMatch":
+            /* case "endOfMatch":
                 matchService.onEndOfMatch(dto.data.result);
-                break;
+                break; */
             // tournament messages
             case "startTournament":
                 tournamentService.startTournamentOUT();

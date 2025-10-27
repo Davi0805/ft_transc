@@ -156,7 +156,13 @@ export type InboundDTOMap = {
     quitTournament: null
 }
 
-type TActionBlockReason = "setReadyWithoutJoining" | "notEveryoneReady" | "notAllSlotsFilled" | "fewPlayersForTournament"
+export type TActionBlockReason = "setReadyWithoutJoining"
+    | "notEveryoneReady" 
+    | "notAllSlotsFilled" 
+    | "fewPlayersForTournament" 
+    | "tooManyPlayersInTournament"
+    | "joinOccupiedSlot"
+    | "lobbyButtonClickedDuringEvent"
 
 //server should broadcast these after...
 export type OutboundDTOMap = {
@@ -236,13 +242,15 @@ export type OutboundDTOMap = {
     updateGame: SGameDTO //Dealt with in game
 
     //finishGame:
-    endOfMatch: {
+    /* endOfMatch: {
         result: TMatchResult
-    }
+    } */
 
     returnToLobby: {
         lobby: TLobby
     }
+
+    leaveLobby: null
 
     actionBlock: {
         reason: TActionBlockReason

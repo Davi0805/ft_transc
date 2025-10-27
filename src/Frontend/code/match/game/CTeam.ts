@@ -6,10 +6,11 @@ import AnimationShake from "./Animations/AnimationShake";
 import CNumbersText from "./CNumbersText";
 
 export default class CTeam {
-    constructor(side: SIDES, score: CNumbersText) {
+    constructor(side: SIDES, score: CNumbersText, memberPaddlesIDs: number[]) {
         this._side = side;
         this._hp = score;
         this._state = "calm";
+        this._memberPaddlesIDs = memberPaddlesIDs;
     }
 
     update(newHP: number) {
@@ -22,6 +23,8 @@ export default class CTeam {
             this.hp.value = newHP;
         }
     }
+
+    
 
     private _side: SIDES
     get side(): SIDES { return this._side; }
@@ -41,4 +44,7 @@ export default class CTeam {
         }
     }
     get state() { return this._state; }
+
+    private _memberPaddlesIDs: number[];
+    get memberPaddlesIDs() { return this._memberPaddlesIDs; }
 }

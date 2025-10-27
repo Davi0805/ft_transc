@@ -24,7 +24,6 @@ export function inviteUserClicked(inviteeID: number) {
 
 export function leaveClicked() {
     lobbyService.leave()
-    router.navigateTo('/play')
 }
 
 export function readyClicked() {

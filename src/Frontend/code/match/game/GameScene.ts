@@ -3,13 +3,15 @@ import Point from "../matchSharedDependencies/Point";
 import Assets from "../system/framework/Assets";
 import { SIDES } from "../matchSharedDependencies/sharedTypes";
 import { CGameSceneConfigs } from "../matchSharedDependencies/SetupDependencies";
-import { SGameDTO } from "../matchSharedDependencies/dtos";
+import { GameUpdateDTO, SGameDTO } from "../matchSharedDependencies/dtos";
 import CBall from "./CBall";
 import CPaddle from "./CPaddle";
 import CTeam from "./CTeam";
 import CNumbersText from "./CNumbersText";
 import CPaddleControls from "./CPaddleControls";
 import { audioPlayer } from "../system/framework/Audio/AudioPlayer";
+import { TMatchResult } from "../../pages/play/lobbyTyping";
+import { App } from "../system/App";
 
 export default class GameScene extends AScene<CGameSceneConfigs> {
     override async init(gameSceneConfigs: CGameSceneConfigs) {
@@ -33,7 +35,10 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
                     team.score.score,
                     { size: 32, position: team.score.pos },
                     this._root
-                )
+                ),
+                gameSceneConfigs.gameInitialState.paddles
+                    .filter(paddle => paddle.side === team.side)
+                    .map(paddle => paddle.id)
             ))
         })
         gameSceneConfigs.gameInitialState.paddles.forEach(paddleConf => {
@@ -64,46 +69,11 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
 
     override serverUpdate(dto: unknown): void {
         const gameDto = dto as SGameDTO;
-        gameDto.balls.newBalls.forEach(newBallConfigs => {
-            this.balls.set(newBallConfigs.id, new CBall(
-                newBallConfigs,
-                this._root 
-            ))
-        })
-        this.balls.forEach(ball => {
-            const ballState = gameDto.balls.ballsState.find(ballState => ball.id === ballState.id);
-            if (ballState === undefined) {
-                this._root.removeChild(ball.sprite);
-                this.balls.delete(ball.id)
-            } else {
-                ball.pos = Point.fromObj(ballState.pos);
-                ball.speed = ballState.speed
-            }
-        })
-        gameDto.paddles.forEach(paddleState => {
-            const paddle = this.paddles.get(paddleState.id);
-            if (paddle === undefined) {
-                throw new Error("Client cannot find a paddle with the ID the server says exists!")
-            }
-            paddle.pos = Point.fromObj(paddleState.pos);
-            paddle.size = Point.fromObj(paddleState.size);
-            paddle.speed = paddleState.speed;
-        });
-        gameDto.teams.forEach(teamState => {
-            const team = this.teams.get(teamState.side);
-            if (team) {
-                team.update(teamState.score);
-            } 
-        })
-        this.timer?.update(gameDto.timeLeft, false);
-        if (gameDto.timeLeft === 0 && !this._suddenDeath) {
-            this._suddenDeath = true;
-            this.teams.forEach(team => {
-                team.state = "scared";
-            })
-        }
-        if (gameDto.audioEvent) {
-            audioPlayer.playTrack(gameDto.audioEvent, 1);
+
+        if (gameDto.type === "GameUpdateDTO") {
+            this._updateGameState(gameDto.data);
+        } else {
+            App.scenesManager.goToScene("endScene", gameDto.data)
         }
     }
 
@@ -134,4 +104,57 @@ export default class GameScene extends AScene<CGameSceneConfigs> {
     set paddles(value: Map<number, CPaddle>) { this._paddles = value }
 
     private _suddenDeath = false;
+
+    private _updateGameState(gameDto: GameUpdateDTO) {
+        gameDto.balls.newBalls.forEach(newBallConfigs => {
+            this.balls.set(newBallConfigs.id, new CBall(
+                newBallConfigs,
+                this._root 
+            ))
+        })
+        this.balls.forEach(ball => {
+            const ballState = gameDto.balls.ballsState.find(ballState => ball.id === ballState.id);
+            if (ballState === undefined) {
+                this._root.removeChild(ball.sprite);
+                this.balls.delete(ball.id)
+            } else {
+                ball.pos = Point.fromObj(ballState.pos);
+                ball.speed = ballState.speed
+            }
+        })
+        gameDto.paddles.forEach(paddleState => {
+            const paddle = this.paddles.get(paddleState.id);
+            if (paddle === undefined) {
+                throw new Error("Client cannot find a paddle with the ID the server says exists!")
+            }
+            paddle.pos = Point.fromObj(paddleState.pos);
+            paddle.size = Point.fromObj(paddleState.size);
+            paddle.speed = paddleState.speed;
+        });
+        gameDto.teams.forEach(teamState => {
+            const team = this.teams.get(teamState.side);
+            if (team) {
+                if (team.hp.value !== teamState.score) {
+                    team.update(teamState.score);
+                    if (teamState.score <= 0) {
+                        team.memberPaddlesIDs.forEach( id => {
+                            const paddle = this.paddles.get(id);
+                            if (!paddle) { return; }
+                            paddle.sprite.tint = 0x333333;
+                        })
+                    }
+                }
+            }
+        })
+        this.timer?.update(gameDto.timeLeft, false);
+        if (gameDto.timeLeft === 0 && !this._suddenDeath) {
+            this._suddenDeath = true;
+            this.teams.forEach(team => {
+                team.state = "scared";
+            })
+        }
+        if (gameDto.audioEvent) {
+            audioPlayer.playTrack(gameDto.audioEvent, 1);
+        }
+    }
 }
