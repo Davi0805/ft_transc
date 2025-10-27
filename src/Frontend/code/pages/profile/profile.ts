@@ -191,9 +191,9 @@ export const ProfilePage = {
         errorPopup.create("Failed to load player statistics", "Looks like there was an issue getting this user statistics. Please refresh and try again.");
     } */
     let statistics = {
-        wins: 25,
-        losses: 15,
-        tournamentsWon: 3
+        wins: 0,
+        losses: 0,
+        tournamentsWon: 0
     }
     // profile-wins
     const winsElement = document.getElementById("profile-wins") as HTMLDivElement;
@@ -205,12 +205,16 @@ export const ProfilePage = {
 
     // profile-wr
     const winrateElement = document.getElementById("profile-wr") as HTMLDivElement;
-    const winrate = statistics ? (statistics.wins / (statistics.wins + statistics.losses) * 100).toFixed(2) : "NA";
-    winrateElement.textContent = winrate !== "NA" ? `${winrate}%` : "NA"; //fixed number to 2 decimal places
-    if (typeof winrate === "number" && winrate < 50) {
-     winrateElement.classList.add("text-red-400");
-    } else 
-     winrateElement.classList.add("text-emerald-400");
+    if (!statistics) 
+        winrateElement.textContent = "NA";
+    if (statistics.wins + statistics.losses === 0) {
+        winrateElement.textContent = "0%";
+    } else {
+        const winrate = (statistics.wins / (statistics.wins + statistics.losses) * 100).toFixed(2);
+        winrateElement.textContent = `${winrate}%`;
+        winrateElement.classList.add((typeof winrate === "number" && winrate < 50) ? "text-red-400" : "text-emerald-400");
+    }
+
 
     // profile-tournwins  
     const tournwinsElement = document.getElementById("profile-tournwins") as HTMLDivElement;
@@ -284,7 +288,6 @@ export const ProfilePage = {
             dateElement.textContent = matchHistory[index].date || "";
         })
     }
-    
 },
 
 
