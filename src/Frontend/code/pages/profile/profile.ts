@@ -3,6 +3,8 @@ import { UserData } from "../../api/userData/types/UserDataType";
 import { ErrorPopup } from "../../utils/popUpError";
 import { ProfileDataType } from "../../api/userData/types/ProfileDataType";
 import { authService } from "../../services/authService";
+import { PlayerStatistics } from "../../api/userData/types/PlayerStatisticsType";
+import { getStatisticsByUsername } from "../../api/userData/getUserStatisticsAPI";
 
 export const ProfilePage = {
   template() {
@@ -170,35 +172,44 @@ export const ProfilePage = {
     const friendsElement = document.getElementById("profile-friends") as HTMLSpanElement;
     friendsElement.textContent = userData.friendsCount.toString() || "NA";
     
-
     // profile-ranking
     const rankingElement = document.getElementById("profile-ranking") as HTMLDivElement;
-    rankingElement.textContent = userData.rating.toString() || "NA";
+    rankingElement.textContent = userData.ranking.toString() || "NA";
 
+
+    // Statistics Section
+    let statistics: PlayerStatistics | undefined;
+    try {
+        statistics = await getStatisticsByUsername(userData.username);
+    } catch (error) {
+        console.error("DEBUG: Failed to load player statistics:", error);
+        const errorPopup = new ErrorPopup();
+        errorPopup.create("Failed to load player statistics", "Looks like there was an issue getting this user statistics. Please refresh and try again.");
+    }
     // profile-wins
     const winsElement = document.getElementById("profile-wins") as HTMLDivElement;
-    //todo
+    winsElement.textContent = statistics?.wins.toString() || "NA";
 
     // profile-losses
     const lossesElement = document.getElementById("profile-losses") as HTMLDivElement;
-    //todo
+    lossesElement.textContent = statistics?.losses.toString() || "NA";
 
     // profile-wr
     const winrateElement = document.getElementById("profile-wr") as HTMLDivElement;
-    // todo
-    //  const winrate = userData.wins / (userData.wins + userData.losses) * 100;
-    //  winrateElement.textContent = `${winrate.toFixed(2)}%`; //fixed number to 2 decimal places
-    // if (winrate < 50) {
-    //  winrateElement.classList.add("text-red-400");
-    // } else 
-    //  winrateElement.classList.add("text-emerald-400");
+    const winrate = statistics ? (statistics.wins / (statistics.wins + statistics.losses) * 100).toFixed(2) : "NA";
+    winrateElement.textContent = winrate !== "NA" ? `${winrate}%` : "NA"; //fixed number to 2 decimal places
+    if (typeof winrate === "number" && winrate < 50) {
+     winrateElement.classList.add("text-red-400");
+    } else 
+     winrateElement.classList.add("text-emerald-400");
 
     // profile-tournwins  
     const tournwinsElement = document.getElementById("profile-tournwins") as HTMLDivElement;
-    //todo
-    // tournwinsElement.textContent = userData.tournament_wins.toString() || "NA"; 
+    tournwinsElement.textContent = statistics?.tournamentsWon.toString() || "NA";
 
     // load match history
+    
+    
 },
 
 
