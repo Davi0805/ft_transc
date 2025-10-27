@@ -5,6 +5,10 @@ import { ProfileDataType } from "../../api/userData/types/ProfileDataType";
 import { authService } from "../../services/authService";
 import { PlayerStatistics } from "../../api/userData/types/PlayerStatisticsType";
 import { getStatisticsByUsername } from "../../api/userData/getUserStatisticsAPI";
+import { getMatchHistoryByUsername } from "../../api/userData/getMatchHistoryByUsernameAPI";
+import { MatchHistoryEntry } from "../../api/userData/types/MatchHistoryType";
+
+// todo descomentar a api call e tirar a mock data
 
 export const ProfilePage = {
   template() {
@@ -75,8 +79,8 @@ export const ProfilePage = {
             <div class="mt-2">
                 <h2 class="mb-5 pb-2 text-2xl font-bold border-b border-white/20">Match History</h2>
                 
-                <div class="w-full rounded-xl border border-blue-500/20">
-                    <table class="w-full border-collapse bg-slate-600/50 min-w-full">
+                <div class="w-full rounded-xl border border-blue-500/20 overflow-hidden">
+                    <table class="w-full border-separate bg-slate-600/50 min-w-full ">
                         <thead class="bg-black/20">
                             <tr>
                                 <th class="px-3 py-3 text-left font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[15%]">
@@ -98,39 +102,39 @@ export const ProfilePage = {
                         </thead>
                         <tbody>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2 LARGE</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">Ranked</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate">Victory!</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">12-01-2025</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate">2v2</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate">Map Name</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate">Mode Name</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate">Win</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate">Date</td>
                             </tr>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2 LARGE</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">Ranked</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate">Victory!</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">12-01-2025</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                             </tr>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2 LARGE</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">Ranked</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate">Victory!</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">12-01-2025</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                             </tr>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2 LARGE</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">Ranked</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate">Victory!</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">12-01-2025</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                             </tr>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 truncate">2v2 LARGE</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">Ranked</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center text-red-400 font-semibold truncate">Defeat</td>
-                                <td class="px-3 py-3 border-b border-blue-500/10 text-center truncate">12-01-2025</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate"></td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -178,13 +182,18 @@ export const ProfilePage = {
 
 
     // Statistics Section
-    let statistics: PlayerStatistics | undefined;
+/*     let statistics: PlayerStatistics | undefined;
     try {
         statistics = await getStatisticsByUsername(userData.username);
     } catch (error) {
         console.error("DEBUG: Failed to load player statistics:", error);
         const errorPopup = new ErrorPopup();
         errorPopup.create("Failed to load player statistics", "Looks like there was an issue getting this user statistics. Please refresh and try again.");
+    } */
+    let statistics = {
+        wins: 25,
+        losses: 15,
+        tournamentsWon: 3
     }
     // profile-wins
     const winsElement = document.getElementById("profile-wins") as HTMLDivElement;
@@ -208,7 +217,73 @@ export const ProfilePage = {
     tournwinsElement.textContent = statistics?.tournamentsWon.toString() || "NA";
 
     // load match history
-    
+/*     let matchHistory: MatchHistoryEntry[] = [];
+    try {
+        matchHistory = await getMatchHistoryByUsername(userData.username);
+    } catch (error) {
+        console.error("DEBUG: Failed to load match history:", error);
+        const errorPopup = new ErrorPopup();
+        errorPopup.create("Failed to load match history", "Looks like there was an issue getting this user match history. Please refresh and try again.");
+    }
+
+    export interface MatchHistoryEntry {
+  id: number;
+  gameType: string;
+  map: string;
+  mode: string;
+  result: "won" | "lost";
+  date: string;
+}
+ */
+    let matchHistory = [
+        {id: 1,
+            gameType: "Ranked",
+            map: "Map A",
+            mode: "Duo",
+            result: "won",
+            date: "2023-01-01"
+        },
+        {id: 2,
+            gameType: "Casual",
+            map: "Map B",
+            mode: "Solo",
+            result: "lost",
+            date: "2023-01-02"
+        }
+    ]
+    const tableBody = document.querySelector("table tbody") as HTMLTableSectionElement;
+    if (tableBody) {
+        const rows = tableBody.querySelectorAll("tr");
+
+        matchHistory.forEach((entry, index) => {
+            const cells = rows[index].querySelectorAll("td");
+            
+            // game
+            const gameElement = cells[0] as HTMLTableCellElement;
+            gameElement.textContent = matchHistory[index].gameType || "";
+            // map
+            const mapElement = cells[1] as HTMLTableCellElement;
+            mapElement.textContent = matchHistory[index].map || "";
+            // mode
+            const modeElement = cells[2] as HTMLTableCellElement;
+            modeElement.textContent = matchHistory[index].mode || "";
+            // result
+            const resultElement = cells[3] as HTMLTableCellElement;
+            const result = matchHistory[index].result || "";
+            resultElement.textContent = result.charAt(0).toUpperCase() + result.slice(1); // Capitalize first letter
+            if (result === "won") {
+                resultElement.classList.add("text-emerald-400");
+                resultElement.classList.remove("text-red-400");
+            } else if (result === "lost") {
+                resultElement.classList.add("text-red-400");
+                resultElement.classList.remove("text-emerald-400");
+            }
+
+            // date
+            const dateElement = cells[4] as HTMLTableCellElement;
+            dateElement.textContent = matchHistory[index].date || "";
+        })
+    }
     
 },
 
