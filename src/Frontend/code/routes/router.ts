@@ -6,6 +6,7 @@ import { getUserDataByUsername } from "../api/userData/getUserDataByUsernameAPI"
 import { UserData } from "../api/userData/types/UserDataType";
 import { getProfileUserData } from "../api/userData/getProfileUserDataAPI";
 import { ProfileDataType } from "../api/userData/types/ProfileDataType";
+import { isUserBlockedByUsername } from "../api/block/isUserBlockedByUsername";
 
 class Router {
   private routes: Array<Route>;
@@ -98,6 +99,7 @@ class Router {
           throw new Error("Invalid username format");
         } 
         const userData: ProfileDataType | null = await getProfileUserData(username);
+        userData.is_blocked = await isUserBlockedByUsername(userData.username);
         let route: Route | null =
           this.routes.find((r: Route) => r.path.startsWith("/profile")) ||
           this.routes.find((r: Route) => r.path === "/404") ||

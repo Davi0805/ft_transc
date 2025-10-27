@@ -2,8 +2,8 @@ export interface ProfileDataType {
     user_id: number;
     nickname: string;
     username: string;
-    rating: number;
+    ranking: number;
     friendsCount: number;
     is_friend: boolean;
-    //todo is_blocked: boolean;
+    is_blocked?: boolean;
 }
