@@ -155,14 +155,12 @@ export const ProfilePage = {
     // profile-avatar 
     const avatarElement = document.getElementById("profile-avatar") as HTMLImageElement;
     try {
-        avatarElement.src =  authService.userAvatar?.startsWith(".")
-                            ? authService.userAvatar?.replace("./", "/")
-                            : authService.userAvatar || "/Assets/default-avatar.png";
+        avatarElement.src = await getUserAvatarById(userData.user_id);
     } catch (error) {
         console.error("DEBUG: Failed to load user avatar:", error);
-        const errrorPopup = new ErrorPopup();
-        errrorPopup.create("Failed to load user avatar", "Looks like there was an issue getting this user avatar. Please refresh and try again.");
-        avatarElement.src = "./Assets/default-avatar.png"; // Fallback image        
+        const errorPopup = new ErrorPopup();
+        errorPopup.create("Failed to load user avatar", "Looks like there was an issue getting this user avatar. Please refresh and try again.");
+        avatarElement.src = "./Assets/default.png"; // Fallback image
     }
 
     // profile-nickname 
