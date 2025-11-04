@@ -8,6 +8,10 @@ export const LobbyPage = {
     template() {
         return `
             <div class="flex flex-col items-center h-full max-h-[650px] justify-center backdrop-blur-3xl border-2 border-black/40 shadow-sm text-white rounded-lg px-16 py-12 gap-3 overflow-hidden">
+                <button id="test-inv">invite teset1</button>
+                <button id="test-inv2">invite test2</button>
+
+
                 <h1 id="lobby-title" class="text-3xl p-2"></h1>
                 <h3 id="lobby-subtitle" class="text-xl p-1"></h3>
                 <div id="lobby-body" class="flex flex-row w-full min-h-0 gap-3 ">
