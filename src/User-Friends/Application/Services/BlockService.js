@@ -36,7 +36,8 @@ class BlockService{
     async isUserBlocked(userId, targetId)
     {
             const block = await blockRepo.isUserBlocked(userId, targetId);
-            if (block.length != 0) throw exception('User blocked you', 400);
+            if (block.length != 0) { return ({is_blocked: true}); };
+            return ({is_blocked: false})
     }
 };
 

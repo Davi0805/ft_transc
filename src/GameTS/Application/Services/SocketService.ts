@@ -1,11 +1,11 @@
 import { WebSocket } from "ws";
 import { socketRepository } from "../../Adapters/Outbound/SocketRepository.js";
 import lobbyService from "./LobbyService.js";
-import { InboundDTO, OutboundDTO, OutboundDTOMap } from "../../dtos.js";
+import { InboundDTO, InboundDTOMap, OutboundDTO, OutboundDTOMap } from "../../dtos.js";
 import matchService from "./MatchService.js";
 import tournamentService from "./TournamentService.js";
 
-
+/* type LobbyActions =  */
 
 class SocketService {
 
@@ -50,6 +50,26 @@ class SocketService {
         // But because I am a complete ignorant, I do not know the best way to type the function
         // (either anonymous which calls the funcs or converting the actual signatures to accept the data directly
         // and type the value as a reference to those funcs directly), I will keep it like this lol
+        const lobbyActionTypes: (keyof InboundDTOMap)[] = [
+            "addFriendlyPlayer",
+            "removeFriendlyPlayer",
+            "addRankedPlayer",
+            "removeRankedPlayer",
+            "addTournamentPlayer",
+            "removeTournamentPlayer",
+            "updateSettings",
+            "inviteUserToLobby",
+            "updateReadiness",
+            "start"
+        ]
+
+        if (lobbyActionTypes.includes(dto.requestType) && lobbyService.isLobbyWithActiveEvent(lobbyID)) {
+            this.broadcastToUsers([senderID], "actionBlock", {
+                reason: "lobbyButtonClickedDuringEvent"
+            })
+            return;
+        }
+
         switch (dto.requestType) {
             case "updateSettings":
                 lobbyService.updateSettings(lobbyID, senderID, dto.data.settings);

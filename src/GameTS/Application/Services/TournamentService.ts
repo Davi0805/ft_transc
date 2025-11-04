@@ -54,11 +54,11 @@ class TournamentService {
         }
     }
 
-    start(lobby: LobbyT, senderID: number) {
+    start(lobby: LobbyT, senderID: number): boolean {
         const tournamentParticipants = this._getTournamentParticipants(lobby.users);
         if (tournamentParticipants.length < this.MIN_PARTICIPANTS) {
             socketService.broadcastToUsers([senderID], "actionBlock", { reason: "fewPlayersForTournament" })
-            return;
+            return false;
         }
         
         const tournament = tournamentFactory.create(lobby.id, lobby.matchSettings, tournamentParticipants);
@@ -67,6 +67,7 @@ class TournamentService {
         socketService.broadcastToLobby(lobby.id, "startTournament", null)
         console.log("Tournament starts!");
         this._displayStandings(tournament.id);
+        return true;
     }
 
     readonly MIN_PARTICIPANTS: number = 4;
@@ -78,7 +79,11 @@ class TournamentService {
         const standings = SwissService.getCurrentStandings(tournament.participants);
         socketService.broadcastToLobby(tournament.lobbyID, "displayStandings", { standings: standings })
         
+        //TODO: Add chat warning that pairings will be done. If users are not present in 10 seconds, they are kicked out of tournament
+        const playersToBeNotified = tournament.participants.filter(participant => participant.participating === true);
+
         setTimeout(() => {
+            this._updateActivePlayers(tournament.participants);
             const activePlayers = tournament.participants.filter(participant => participant.participating === true);
             const tournamentDone = tournament.currentRound >= this._calculateRoundAmount(activePlayers.length)
             if (tournamentDone) {
@@ -93,11 +98,9 @@ class TournamentService {
         const tournament = tournamentRepository.getByID(tournamentID);
         tournament.currentRound++
         
-        this._updateActivePlayers(tournament.participants);
         const activePlayers = tournament.participants.filter(participant => participant.participating === true);
         const pairingsIDs = SwissService.getNextRoundPairings(activePlayers);
         socketService.broadcastToLobby(tournament.lobbyID, "displayPairings", { pairings: pairingsIDs });
-        //TODO: Add chat warning that the matches will start
 
         setTimeout(() => {
             this._startRound(tournamentID, pairingsIDs);
@@ -146,9 +149,14 @@ class TournamentService {
     private _onMatchFinished(tournamentID: number, matchID: number, result: TMatchResult, players: MatchPlayerT[]) {
         const matchUsers = matchService.getMatchUsersByID(matchID);
         if (!matchUsers) {throw Error("This match does not exist!")}
-        socketService.broadcastToUsers(matchUsers, "endOfMatch", { result: result });
+
+        const endSceneConfigs = matchService.buildEndSceneConfigsFromMatchID(matchID, result);
         matchService.updatePlayersRating(players, result);
         matchService.destroyMatchByID(matchID);
+        socketService.broadcastToUsers(matchUsers, "updateGame", {
+            type: "GameResult",
+            data: endSceneConfigs
+        });
 
         //Get reference to match saved in tournament
         const tournament = tournamentRepository.getByID(tournamentID);

@@ -11,9 +11,9 @@ export default class LoopController {
 
     start(fn: () => void) {
         const loop = () => {
-            this._updateVars();
-            fn();
             if (!this._stop) {
+                this._updateVars();
+                fn();
                 setTimeout(loop, 1000 / this._tickerRate);
             }
         }

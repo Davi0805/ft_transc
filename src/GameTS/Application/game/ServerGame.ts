@@ -1,5 +1,5 @@
 import { point, SIDES, TPaddle, TWindow, } from "./shared/sharedTypes.js"
-import { SGameDTO, CGameDTO, AudioEvent } from "./shared/dtos.js";
+import { SGameDTO, CGameDTO, AudioEvent, GameUpdateDTO } from "./shared/dtos.js";
 import LoopController from "./LoopController.js";
 import SHumansManager from "./Players/SHumansManager.js";
 import STeamsManager from "./STeamsManager.js";
@@ -70,8 +70,8 @@ export default class ServerGame {
         this._gameLoop.stop();
     }
 
-    getGameDTO(): SGameDTO {
-        const out: SGameDTO = {
+    getGameDTO(): GameUpdateDTO {
+        const out: GameUpdateDTO = {
             balls: this._ballsManager.getBallsDTO(),
             teams: this._teamsManager.getTeamsDTO(),
             paddles: this._paddlesManager.getPaddlesDTO(),
@@ -155,7 +155,11 @@ export default class ServerGame {
         if (!this._ballsManager.isSuddenDeathActive() && this._timeLeft <= 0 && this._teamsManager.areThereTies()) {
             this._ballsManager.activateSuddenDeath();
         }
-        if (this._teamsManager.allTeamsFinished() || (this._timeLeft <= 0 && !this._teamsManager.areThereTies())) {
+
+        if (this._teamsManager.allTeamsFinished()
+            || (this._timeLeft <= 0 && !this._teamsManager.areThereTies())
+            || !this._humansManager.areThereHumansActive()
+        ) {
             this._gameLoop.pause();
             this._matchResult = this._teamsManager.getTeamsState();
         }

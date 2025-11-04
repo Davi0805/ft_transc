@@ -12,6 +12,8 @@ type ActionBlockReasonT = "setReadyWithoutJoining"
     | "notAllSlotsFilled"
     | "fewPlayersForTournament"
     | "tooManyPlayersInTournament"
+    | "joinOccupiedSlot"
+    | "lobbyButtonClickedDuringEvent"
 
 // Client sends these after...
 export type InboundDTOMap = {
@@ -117,6 +119,8 @@ export type OutboundDTOMap = {
         lobby: LobbyT
     }
 
+    leaveLobby: null
+
     //TOURNAMENT DTOS
     //A tournament is about to start
     startTournament: null // No need (for now) to send anything
@@ -149,9 +153,9 @@ export type OutboundDTOMap = {
     //Game must be updated
     updateGame: SGameDTO,
     //Game finished (either all teams but one lost, or time is over)
-    endOfMatch: {
-        result: TMatchResult //TODO: IF THIS IS MAP, IT MUST BE SERIALIZED
-    }
+    /* endOfMatch: {
+        result: TMatchResult
+    } */
 }
 
 
