@@ -45,7 +45,7 @@ export class InitialLoader {
                 if (this.loaderElement) {
                     this.loaderElement.classList.replace("opacity-100", "opacity-0");
                 }
-            }, 1069);       
+            }, 0);  //todo add 1069 to delay later     
         }
     }  
 }

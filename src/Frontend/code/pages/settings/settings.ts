@@ -1,4 +1,5 @@
-import { getUserDataById, UserData } from "../../api/userData/getUserDataAPI";
+import { getUserDataById } from "../../api/userData/getUserDataByIDAPI";
+import { UserData } from "../../api/userData/types/UserDataType";
 import { authService } from "../../services/authService";
 import { updateName } from "../../api/settings/updateNameAPI";
 import { updatePassword } from "../../api/settings/updatePasswordAPI";
@@ -15,7 +16,7 @@ import { blockByUserName } from "../../api/block/blockByUsernameAPI";
 import { PaddleCarrossel } from "../../components/carrossel/paddleCarrossel";
 import { setupKeyCaptureButton } from "../play/utils/stylingComponents";
 import { savePlayerPreferences } from "../../api/settings/preferences/savePlayerPreferencesAPI";
-import { getPlayerPreferences} from "../../api/settings/preferences/getPlayerPreferencesAPI";
+import { getPlayerPreferences } from "../../api/settings/preferences/getPlayerPreferencesAPI";
 import { PlayerPreferences } from "../../api/settings/preferences/PreferenceInterface";
 
 export const SettingsPage = {
@@ -179,11 +180,11 @@ export const SettingsPage = {
           const userData: UserData = await getUserDataById(block.blocked_user_id);
           const userAvatar: string = await getUserAvatarById(block.blocked_user_id);
 
-          blockListHTML += this.createBlockedFriendElement(userData, userAvatar).outerHTML; 
+          blockListHTML += this.createBlockedFriendElement(userData, userAvatar).outerHTML;
         }
       }
     } catch (error) {
-      
+
     }
 
 
@@ -273,7 +274,7 @@ export const SettingsPage = {
   createBlockedFriendElement(userData: UserData, avatar: string): HTMLElement {
     const newElement = document.createElement("div") as HTMLDivElement;
     newElement.classList = `blocked flex items-center justify-between bg-white/10 rounded-lg px-4 py-2`;
-    newElement.setAttribute("data-id", userData.user_id.toString());
+    newElement.setAttribute("data-id", userData.id.toString());
     newElement.innerHTML = `
         <div class="flex items-center gap-3">
           <img src="${avatar}"
@@ -282,7 +283,7 @@ export const SettingsPage = {
           <span class="font-medium">${userData.username}</span>
         </div>
         <button class="unblock-btn bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-white font-semibold transition duration-200"
-                data-id="${userData.user_id}">
+                data-id="${userData.id}">
           Unblock
         </button>
          `;
@@ -403,7 +404,7 @@ export const SettingsPage = {
         // Update backend and local auth state
         await updateName(newName);
         authService.userNick = newName;
-        
+
         { // UI feedback
           const succPopup = new SuccessPopup();
           succPopup.create("Name Successfully Changed", "Your display name has been successfully updated!");
@@ -633,7 +634,7 @@ export const SettingsPage = {
             }
           }
         }
-      } catch (error) {}
+      } catch (error) { }
     });
   },
 
@@ -643,7 +644,7 @@ export const SettingsPage = {
     const blockedList = document.getElementById("blocked-users-list");
     if (!blockedList) {
       console.error("DEBUG: No blocked list container found.");
-      
+
       const warnPopup = new WarningPopup();
       warnPopup.create(
         "Something is strange...",
@@ -711,7 +712,7 @@ export const SettingsPage = {
         return;
       }
       // todo sanitize check
-      
+
       if (username === authService.userUsername) {
         const warnPopup = new WarningPopup();
         warnPopup.create("Invalid Username", "You cannot block yourself.");
@@ -754,7 +755,7 @@ export const SettingsPage = {
           const errPopup = new ErrorPopup();
           errPopup.create("Unexpected Error", `The username ${username} could not be blocked.`);
           return;
-        } 
+        }
         console.error("DEBUG: Error blocking user:", error);
       }
     });
@@ -804,27 +805,27 @@ export const SettingsPage = {
 
         reader.onload = async (e: ProgressEvent<FileReader>) => {
           const result = e.target?.result;
-          
-            try {
-              if (typeof result !== "string") {
-                console.error("DEBUG: Unexpected result type from FileReader.");
-                throw new Error("Unexpected result type from FileReader.");
-              }
 
-              await uploadAvatar(file);
-
-              avatarImg.src = result;
-              if (headerAvatarImg) {
-                headerAvatarImg.src = result;
-              }
-
-              const succPopup = new SuccessPopup();
-              succPopup.create("Avatar Successfully Changed", "Your profile avatar was successfully changed!");
-              return;
-            } catch (error) {
-              const errPopup = new ErrorPopup();
-              errPopup.create("Avatar Not Changed", "Seems like there was an error uploading your avatar. Please refresh the page and try again");
+          try {
+            if (typeof result !== "string") {
+              console.error("DEBUG: Unexpected result type from FileReader.");
+              throw new Error("Unexpected result type from FileReader.");
             }
+
+            await uploadAvatar(file);
+
+            avatarImg.src = result;
+            if (headerAvatarImg) {
+              headerAvatarImg.src = result;
+            }
+
+            const succPopup = new SuccessPopup();
+            succPopup.create("Avatar Successfully Changed", "Your profile avatar was successfully changed!");
+            return;
+          } catch (error) {
+            const errPopup = new ErrorPopup();
+            errPopup.create("Avatar Not Changed", "Seems like there was an error uploading your avatar. Please refresh the page and try again");
+          }
         };
 
         reader.onerror = (e: ProgressEvent<FileReader>) => {
@@ -956,12 +957,12 @@ export const SettingsPage = {
           },
         };
 
-        console.log("DEBUG: Saving player Preferences:", playerPreferences);  
+        console.log("DEBUG: Saving player Preferences:", playerPreferences);
         // todo await savePlayerPreferences(playerPreferences);
 
         // UI feedback
         const succPopup = new SuccessPopup();
-        succPopup.create("Preferences Saved", "Your player preferences have been successfully saved!"); 
+        succPopup.create("Preferences Saved", "Your player preferences have been successfully saved!");
       } catch (error) {
         console.error("DEBUG: Error parsing preferences input:", error);
 
