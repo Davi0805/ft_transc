@@ -247,7 +247,7 @@ class Header {
       loggedIn = this.createElement("div", "user-in", "user-in flex gap-4");
 
       loggedIn.innerHTML = `
-        <a id="profile-link" href="/profile/${authService.userUsername}" class="flex justify-center items-center gap-4 nav-link  transition-all duration-200 ease-in-out" data-link>
+        <a id="profile-link" href="/profile/${authService.userID}" class="flex justify-center items-center gap-4 nav-link  transition-all duration-200 ease-in-out" data-link>
           <span>${nickname}</span>
           <img class="profile-avatar w-8 h-8 rounded-full border-2 border-white shadow-md shadow-[#333]" src="${avatarURL}" alt="user profile picture" draggable="false">
         </a>
