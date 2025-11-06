@@ -43,6 +43,7 @@ class EventBroadcast {
 
     async handleLobbyInvitations(message)
     {
+        console.log("PINGOU AQUI");
         let parsedMsg;
         try {
             parsedMsg = JSON.parse(message);
@@ -50,10 +51,11 @@ class EventBroadcast {
             console.log('GAVE SHIT');            
         }
         const conversation = await conversationService.getConversationByUserIds(parsedMsg.from_user, parsedMsg.to_user);
+        if (conversation.length == 0) return ;
         const socket = await connectedUsersService.getUser(String(parsedMsg.to_user));
         await messageService.saveInviteMessage(conversation[0].id, parsedMsg.from_user, parsedMsg.lobbyId);
         console.log(message);
-        if (!socket) return;
+        if (socket == null) return;
         socket.send(JSON.stringify({ conversation_id: conversation[0].id,
                          message: 'match_invite', metadata: parsedMsg.lobbyId }));
     }
