@@ -121,6 +121,18 @@ class UserService {
     }
 
 
+    async deactivateTwoFactorAuth(user_id)
+    {
+        try {
+            const user = await userRepository.findById(user_id);
+            if (user[0].twofa_enabled == false) throw exception('2FA is already disabled', 200);
+            await userRepository.removeTwoFactorAuth(user_id);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
     /* 
     *    @brief Method that updates the user avatar image_path with new file path
     *    @params user_id (integer)

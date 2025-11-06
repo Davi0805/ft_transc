@@ -197,6 +197,14 @@ class UserController {
     }
 
 
+    async deactivateTwoFactorAuth(req, reply)
+    {
+        
+        await userService.deactivateTwoFactorAuth(req.session.user_id);
+        return reply.send();
+    }
+
+
     /* 
     *    @brief Endpoint to verify the 2FA TOKEN, after login if the user is not verified
     *    will be necessary send the token from google authenticator or other to check-in

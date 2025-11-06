@@ -76,7 +76,13 @@ class UserRepository {
     async addTwoFactorAuth(user_id, twofa_secret)
     {
         return db.raw('UPDATE users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?',
-        [twofa_secret, true, user_id]);
+                    [twofa_secret, true, user_id]);
+    }
+
+    async removeTwoFactorAuth(user_id)
+    {
+        return db.raw('UPDATE users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?',
+                    [null, false, user_id]);
     }
 
     async updateUserImagePath(path, user_id)
