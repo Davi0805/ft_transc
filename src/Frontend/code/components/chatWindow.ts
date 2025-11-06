@@ -115,7 +115,7 @@ class ChatWindow {
     this.element.innerHTML = `
         <div class="chat-header">
             <img src="${this.friendAvatar}" width="30" height="30" alt="${this.friendName}">
-            <a href="/profile/${this.friendUsername}" data-link class="friend-name">${this.friendName}</a>
+            <a href="/profile/${this.friendID}" data-link class="friend-name">${this.friendName}</a>
             <button class="minimize-btn">−</button>
             <button class="close-btn">×</button>
         </div>

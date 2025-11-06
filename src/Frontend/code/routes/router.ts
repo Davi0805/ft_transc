@@ -72,6 +72,10 @@ class Router {
       this.routes.find((r: Route) => r.path === "/404") ||
       null;
 
+    if (!route || route?.path === "/404") {
+      history.replaceState(null, "", "/404");
+    }
+
     if (route) {
       header.updateActiveUnderline(path);
 
@@ -87,19 +91,18 @@ class Router {
   }
 
   // Profile page has a dynamic url
-  // /profile/${username}
+  // /profile/${id}
   async handleProfileRoute(path: string): Promise<void> {
     if (path.startsWith("/profile/")) {
       try {
-        // Extract username from the path
-        const username: string = path.split("/")[2];
-  
-        // regex validation for username
-        if (!username || !/^[a-zA-Z0-9_\\-]{3,15}$/.test(username)) {
-          throw new Error("Invalid username format");
-        } 
-        const userData: ProfileDataType | null = await getProfileUserData(username);
-        userData.is_blocked = await isUserBlockedByUsername(userData.username);
+        // Extract id from the path
+        const id: string = path.split("/")[2];
+
+        // regex validation for id
+        if (!id || !/^\d+$/.test(id)) {
+          throw new Error("Invalid id format");
+        }
+        const userData: ProfileDataType | null = await getProfileUserData(parseInt(id));
         let route: Route | null =
           this.routes.find((r: Route) => r.path.startsWith("/profile")) ||
           this.routes.find((r: Route) => r.path === "/404") ||
@@ -122,6 +125,7 @@ class Router {
         console.error("Failed to fetch user data:", error);
         path = "/404"; // User not found, redirect to 404
         history.replaceState(null, "", path);
+        await this.loadRoute();
       }
     }
   }

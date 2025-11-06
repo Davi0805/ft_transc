@@ -1,4 +1,5 @@
 import { authService } from "../../services/authService";
+import { getUserDataById } from "./getUserDataByIDAPI";
 import { ProfileDataType } from "./types/ProfileDataType";
 /**
  * Fetches the avatar image for a specific user.
@@ -13,13 +14,17 @@ import { ProfileDataType } from "./types/ProfileDataType";
  * @returns A Promise that resolves to the fetch Response object containing the avatar image url.
  * @throws {Error} If the authentication token is missing or the API request fails.
  */
-export async function getProfileUserData(username: string): Promise<ProfileDataType> {
+export async function getProfileUserData(id: number): Promise<ProfileDataType> {
   try {
     if (!authService.getToken()) {
       const errorMessage = `DEBUG: No authToken at getProfileUserData`;
       const error = new Error(errorMessage);
       throw error;
     }
+
+    // flex tape right here dont me mid lol
+    const { username } = await getUserDataById(id);
+    
     const response = await fetch(`http://localhost:8080/profile/${username}`, {
       method: "GET",
       headers: {
