@@ -40,6 +40,18 @@ class DbConnection {
         return dbID;
     }
 
+    async getMatchesLeaderboard()
+    {
+        const result = await db.raw(`SELECT pm.user_id,
+                                SUM(CASE WHEN m.first_team_id = pm.team_id THEN 1 ELSE 0 END) AS wins,
+                                SUM(CASE WHEN m.first_team_id != pm.team_id THEN 1 ELSE 0 END) AS losses
+                                FROM player_matches pm
+                                JOIN match m ON m.id = pm.match_id
+                                GROUP BY pm.user_id
+                                ORDER BY wins DESC, losses ASC
+                                LIMIT 10;`);
+        return result;
+    }
 }
 
 const dbConnection = new DbConnection();

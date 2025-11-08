@@ -5,6 +5,7 @@ import fastifySensible from "@fastify/sensible";
 import cors from '@fastify/cors';
 import { lobbyRoutes } from "./Infrastructure/routes/LobbyRoutes.js";
 import { LobbyWsGatewayRoutes } from "./Infrastructure/routes/LobbyWsRoutes.js";
+import { leaderboardRoutes } from "./Infrastructure/routes/LeaderboardRoutes.js";
 
 const setup = () => {
     const fastify = Fastify({ 
@@ -32,6 +33,7 @@ const setup = () => {
 
     fastify.register(lobbyRoutes);
     fastify.register(LobbyWsGatewayRoutes);
+    fastify.register(leaderboardRoutes);
 
 
     return fastify;
