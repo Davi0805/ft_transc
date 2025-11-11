@@ -11,6 +11,8 @@ async function userRoutes(fastify, options) {
       handler: userController.getById
     });
 
+    fastify.get('/user/findbyidin/:user_ids',
+       userController.findByIdIn);
 
     fastify.post('/users', {
       schema: {

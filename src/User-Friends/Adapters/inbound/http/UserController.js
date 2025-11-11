@@ -6,6 +6,7 @@ const fs = require('fs');
 const mime = require('mime-types');
 const path = require('path');
 const exception = require('../../../Infrastructure/config/CustomException');
+const { type } = require('os');
 
 class UserController {
 
@@ -63,6 +64,15 @@ class UserController {
     {
         const user = await userService.findByUsername(req.params.username);
         return reply.send(user);
+    }
+
+    async findByIdIn(req, reply)
+    {
+        let ids = req.query.user_ids;
+        if (!ids) throw exception("User ids not provided!", 400);
+        if (typeof ids === 'string') ids = ids.split(',').map(Number);
+        const users = await userService.findByIdIn(ids);
+        return reply.send(users);
     }
 
     async getProfileData(req, reply)

@@ -14,6 +14,20 @@ class UserRepository {
         return db.raw('SELECT * FROM users WHERE user_id = ?', [id]);
     }
 
+    async findbyIdIn(ids)
+    {
+        if (!Array.isArray(ids) || ids.length === 0) {
+        return [];
+        }
+        const placeholders = ids.map(() => '?').join(', ');
+        return db.raw(
+            `SELECT user_id, name, username, rating 
+             FROM users 
+             WHERE user_id IN (${placeholders})`,
+            ids
+        );
+    }
+
     async findByUsername(username)
     {
         return db.raw('SELECT * FROM users WHERE username = ?', [username]);

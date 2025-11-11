@@ -34,6 +34,13 @@ class UserService {
         return users;
     }
 
+    async findByIdIn(ids)
+    {
+        const users = await userRepository.findbyIdIn(ids);
+        if (!users || users.length == 0)  { throw exception('Data not found!', 404); }
+        return users;
+    }
+
 
     /* 
     *    @brief Method to get user by username
