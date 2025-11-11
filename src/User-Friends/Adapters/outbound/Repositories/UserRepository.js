@@ -23,7 +23,8 @@ class UserRepository {
         return db.raw(
             `SELECT user_id, name, username, rating 
              FROM users 
-             WHERE user_id IN (${placeholders})`,
+             WHERE user_id IN (${placeholders})
+             ORDER BY rating DESC`,
             ids
         );
     }
