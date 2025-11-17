@@ -12,51 +12,47 @@ const inputValid = require('./Infrastructure/config/InputValidator');
 
 const prometheus = require('fastify-metrics');
 
+const jwtService = require('./Application/Services/JwtService');
+
 const setup = () => {
-    const app = Fastify({ logger: true,
+    const app = Fastify({
+        logger: true,
         bodyLimit: 10 * 1024 * 1024,
         ajv: {
             customOptions: {
-            allErrors: true,
-            coerceTypes: false,
-            useDefaults: true,
-            removeAdditional: 'failing'
+                allErrors: true,
+                coerceTypes: false,
+                useDefaults: true,
+                removeAdditional: 'failing'
             }
         }
-     });
+    });
 
-     app.setErrorHandler((error, request, reply) => {
+    app.setErrorHandler((error, request, reply) => {
         const statusCode = error.statusCode ?? 500;
         console.log(error);
-
-        reply.status(statusCode).send(
-        {
+        reply.status(statusCode).send({
             message: error.message,
             statusCode
         });
     });
 
     inputValid.setup(app);
-
-    app.register(prometheus, {endpoint: '/metrics'});
+    app.register(prometheus, { endpoint: '/metrics' });
     app.register(multer.contentParser);
     app.register(multerConfig);
-    app.register(cors, {
-        origin: true
-      });
-      app.register(fastifyStatic, {
+    app.register(cors, { origin: true });
+    app.register(fastifyStatic, {
         root: path.join(__dirname, 'uploads'),
         prefix: '/static/'
     });
-
     app.register(userRoutes);
     app.register(friendRequestRoutes);
     app.register(sensible);
-
     return app;
 }
 
-const run = () => {
+async function run() {
     const app = setup();
     consumeFriendsCacheEvent();
     try {
