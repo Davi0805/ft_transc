@@ -55,10 +55,10 @@ CREATE INDEX idx_friend_requests_status ON friend_requests(status);
 
 -- TODO MOCK DATA USERS
 INSERT INTO users (name, username, email, password_hash, user_image, sprite_id, rating, twofa_secret, twofa_enabled) VALUES
-('Artur', 'artuda-s', 'artur@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
-('Maria', 'maria42', 'maria@example.com', 'pass123', NULL, 0, 1600, NULL, 0),
-('João', 'joaozin', 'joao@example.com', 'pass123', NULL, 0, 1700, NULL, 0),
-('Ana', 'aninha', 'ana@example.com', 'pass123', NULL, 0, 1800, NULL, 0);
+('Artur', 'artuda-s', 'artur@example.com', '$2b$10$pmN8E1aPNvFCdvgQ.s7yFu0xaliSmCgvS7iY8B5Mjo6rLYD1e6GfW', NULL, 0, 1500, NULL, 0),
+('Maria', 'maria42', 'maria@example.com', '$2b$10$pmN8E1aPNvFCdvgQ.s7yFu0xaliSmCgvS7iY8B5Mjo6rLYD1e6GfW', NULL, 0, 1600, NULL, 0),
+('João', 'joaozin', 'joao@example.com', '$2b$10$pmN8E1aPNvFCdvgQ.s7yFu0xaliSmCgvS7iY8B5Mjo6rLYD1e6GfW', NULL, 0, 1700, NULL, 0),
+('Ana', 'aninha', 'ana@example.com', '$2b$10$pmN8E1aPNvFCdvgQ.s7yFu0xaliSmCgvS7iY8B5Mjo6rLYD1e6GfW', NULL, 0, 1800, NULL, 0);
 
 -- ADD TEST USERS
 INSERT INTO users (name, username, email, password_hash, user_image, sprite_id, rating, twofa_secret, twofa_enabled) VALUES
