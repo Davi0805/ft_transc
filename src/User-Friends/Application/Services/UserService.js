@@ -1,8 +1,7 @@
 const userRepository = require('../../Adapters/outbound/Repositories/UserRepository');
 const exception = require('../../Infrastructure/config/CustomException');
+const bcrypt = require('bcryptjs'); // Import bcryptjs for password hashing
 
-//const bcrypt = require('bcryptjs'); // hashing lib to the passwords
-//import bcrypt from "bcryptjs";
 // dont forget the infinite await/s in the returns and controller 
 // to work sync (blocking)
 
@@ -85,8 +84,11 @@ class UserService {
     async createUser(User)
     {
         try {
+            const salt = await bcrypt.genSalt(10);
+            User.password_hash = await bcrypt.hash(User.password_hash, salt);
             await userRepository.save(User);
         } catch (error) {
+            console.error(error);
             throw exception('Failed to create user!', 400);
         }
     }
@@ -102,11 +104,15 @@ class UserService {
     {
         try {
             const result = await userRepository.findByUsername(User.username);
-            /* await this.fastify.bcrypt.compare(User.password, result[0].password_hash); */
-            if ( !result || User.password != result[0].password_hash)
-                throw exception('Login failed!', 401);
+
+            const isPasswordValid = await bcrypt.compare(User.password, result[0].password_hash);
+            if (!isPasswordValid) {
+                throw exception('Login failed! Invalid password.', 401);
+            }
+
             return result[0];
         } catch (error) {
+            console.error(error);
             throw exception('Login failed!', 401);
         }
     }

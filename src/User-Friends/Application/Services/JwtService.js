@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { getSecret } = require('./vault-client');
+const { getSecret } = require('./VaultClient');
 
 class JwtService {
     constructor(secretToken) {
