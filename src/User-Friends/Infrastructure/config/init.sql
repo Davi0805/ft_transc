@@ -1,9 +1,6 @@
-
--- why they changed the db of this project from postgres to sqlite
--- just why????
-
 PRAGMA foreign_keys = ON;
 
+-- USERS
 CREATE TABLE users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(50) NOT NULL,
@@ -17,62 +14,53 @@ CREATE TABLE users (
     twofa_enabled BOOLEAN DEFAULT FALSE
 );
 
+-- FRIEND REQUESTS
 CREATE TABLE friend_requests (
     request_id INTEGER PRIMARY KEY AUTOINCREMENT,
     from_user_id INTEGER NOT NULL,
     to_user_id INTEGER NOT NULL,
     status VARCHAR(10) NOT NULL CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED', 'BLOCKED')),
     blocked_by INTEGER,
-
     FOREIGN KEY (from_user_id) REFERENCES users(user_id),
     FOREIGN KEY (to_user_id) REFERENCES users(user_id),
-    FOREIGN KEY (blocked_by) REFERENCES users(user_id)
-
+    FOREIGN KEY (blocked_by) REFERENCES users(user_id),
     UNIQUE(from_user_id, to_user_id),
     CHECK (from_user_id != to_user_id)
 );
 
+-- BLOCK RELATIONSHIPS
 CREATE TABLE block_relationships (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     from_user_id INTEGER NOT NULL,
     blocked_user_id INTEGER NOT NULL,
-
     FOREIGN KEY (from_user_id) REFERENCES users(user_id),
     FOREIGN KEY (blocked_user_id) REFERENCES users(user_id),
-
     UNIQUE(from_user_id, blocked_user_id),
     CHECK (from_user_id != blocked_user_id)
 );
 
-
--- just a simple index to optimize queries filtering by username
--- i dont really know if this really work in sqlite, but u know
+-- INDEXES
 CREATE INDEX idx_username ON users (username);
 CREATE INDEX idx_friend_requests_from_user ON friend_requests(from_user_id);
 CREATE INDEX idx_friend_requests_to_user ON friend_requests(to_user_id);
 CREATE INDEX idx_friend_requests_status ON friend_requests(status);
 
-
--- TODO MOCK DATA USERS
+-- MOCK DATA USERS
 INSERT INTO users (name, username, email, password_hash, user_image, sprite_id, rating, twofa_secret, twofa_enabled) VALUES
-('Artur', 'artuda-s', 'artur@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
-('Maria', 'maria42', 'maria@example.com', 'pass123', NULL, 0, 1600, NULL, 0),
+('Artur', 'artur', 'artur@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
+('Maria', 'maria', 'maria@example.com', 'pass123', NULL, 0, 1600, NULL, 0),
 ('João', 'joaozin', 'joao@example.com', 'pass123', NULL, 0, 1700, NULL, 0),
-('Ana', 'aninha', 'ana@example.com', 'pass123', NULL, 0, 1800, NULL, 0);
+('Ana', 'aninha', 'ana@example.com', 'pass123', NULL, 0, 1800, NULL, 0),
+('sapo', 'sapo', 'sapo@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
+('cao', 'cao', 'cao@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
+('gato', 'gato', 'gato@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
+('cavalo', 'cavalo', 'cavalo@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
+('pipoca', 'pipoca', 'pipoca@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
+('Lina', 'lina99', 'lina@example.com', 'pass123', NULL, 0, 1550, NULL, 0);
 
--- ADD TEST USERS
-INSERT INTO users (name, username, email, password_hash, user_image, sprite_id, rating, twofa_secret, twofa_enabled) VALUES
-('ndo vala', 'ndo-vala', 'ndo-vala@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
-('ndo vale', 'ndo-vale', 'ndo-vale@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
-('ndo vali', 'ndo-vali', 'ndo-vali@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
-('ndo valo', 'ndo-valo', 'ndo-valo@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0),
-('ndo valu', 'ndo-valu', 'ndo-valu@example.com', 'Qwer123$', NULL, 0, 1500, NULL, 0);
-
--- MOCK DATA FRIEND REQUESTS
-
+-- MOCK FRIEND REQUESTS
 INSERT INTO friend_requests (from_user_id, to_user_id, status) VALUES
-(1, 2, 'ACCEPTED'), -- Artur e Maria são amigos
-(1, 3, 'ACCEPTED'), -- Artur e João são amigos
-(2, 4, 'PENDING'),  -- Maria enviou pedido para Ana
+(1, 2, 'ACCEPTED'),
+(1, 3, 'ACCEPTED'),
+(2, 4, 'PENDING'),
 (3, 4, 'REJECTED');
-

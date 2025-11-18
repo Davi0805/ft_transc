@@ -75,3 +75,77 @@ INSERT INTO maps (name, max_slots) VALUES
 ("4-teams-small", 8),
 ("4-teams-medium", 8),
 ("4-teams-big", 8);
+
+
+
+PRAGMA foreign_keys = ON;
+
+
+
+INSERT INTO user_customs (user_id, paddle_sprite) VALUES
+(1, 0),
+(2, 1),
+(3, 2),
+(4, 0),
+(5, 3),
+(6, 1),
+(7, 2),
+(8, 0);
+
+
+INSERT INTO tournament (first_id, second_id, third_id) VALUES
+(1, 2, 3),
+(4, 5, 6),
+(7, 8, NULL);
+
+
+INSERT INTO match (first_team_id, second_team_id, tournament_id)
+VALUES
+(1, 2, 1), 
+(2, 3, 1), 
+(1, 3, 1); 
+
+INSERT INTO match (first_team_id, second_team_id, third_team_id, fourth_team_id, tournament_id)
+VALUES
+(1, 2, 3, 4, 2),
+(4, 3, 2, 1, 2);
+
+INSERT INTO match (first_team_id, second_team_id, tournament_id)
+VALUES
+(1, 3, 3),
+(2, 4, 3);
+
+
+INSERT INTO player_matches (team_id, user_id, match_id) VALUES
+(1, 1, 1),
+(2, 2, 1);
+INSERT INTO player_matches (team_id, user_id, match_id) VALUES
+(2, 3, 2),
+(3, 4, 2);
+
+INSERT INTO player_matches (team_id, user_id, match_id) VALUES
+(1, 1, 3),
+(3, 2, 3);
+
+INSERT INTO player_matches (team_id, user_id, match_id) VALUES
+(1, 5, 4),
+(2, 6, 4),
+(3, 7, 4),
+(4, 8, 4);
+
+INSERT INTO player_matches (team_id, user_id, match_id) VALUES
+(4, 8, 5),
+(3, 7, 5),
+(2, 6, 5),
+(1, 5, 5);
+
+INSERT INTO player_matches (team_id, user_id, match_id) VALUES
+(1, 1, 6),
+(3, 3, 6);
+
+INSERT INTO player_matches (team_id, user_id, match_id) VALUES
+(2, 2, 7),
+(4, 4, 7);
+
+
+
