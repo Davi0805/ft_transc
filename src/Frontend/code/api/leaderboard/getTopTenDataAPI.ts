@@ -1,12 +1,12 @@
-  import { TopTenPlayers } from "./types/TopTenPlayers";
+import { UsersData } from "./types/usersDataInterface";
 /**
  * @brief
  *
  *
  */
-export async function getLeaderboard(): Promise<TopTenPlayers[]> {
+export async function getTopTenData(ids: number[]): Promise<UsersData[]> {
   try {
-    const response = await fetch("http://localhost:8084/leaderboard", {
+    const response = await fetch("http://localhost:8080/user/findbyidin/user_ids?user_ids=" + ids.join(","), {
       method: "GET",
     });
 
@@ -17,7 +17,7 @@ export async function getLeaderboard(): Promise<TopTenPlayers[]> {
       throw error;
     }
 
-    return (await response.json()) as TopTenPlayers[];
+    return (await response.json()) as UsersData[];
   } catch (error) {
     throw error;
   }
