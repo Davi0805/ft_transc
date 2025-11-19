@@ -216,14 +216,10 @@ export const HomePage = {
         },...]
       */
       const topTen: TopTenPlayers[] = await getLeaderboard();
-      console.table(topTen);
 
       const userIds: number[] = topTen.map(player => player.user_id);
-      console.table(userIds);
-      
 
       const usersData: UsersData[] = await getTopTenData(userIds)
-      console.table(usersData);
 
       usersData.forEach((user, index) => {
         PlayerStatsList.push({

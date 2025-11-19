@@ -8,8 +8,6 @@ import { getStatisticsById } from "../../api/userData/getUserStatisticsAPI";
 import { getMatchHistoryById } from "../../api/userData/getMatchHistoryByUsernameAPI";
 import { MatchHistoryEntry } from "../../api/userData/types/MatchHistoryType";
 
-//todo add friend / unblock buttons based on relationship status
-// todo descomentar a api call e tirar a mock data
 
 export const ProfilePage = {
   template() {
