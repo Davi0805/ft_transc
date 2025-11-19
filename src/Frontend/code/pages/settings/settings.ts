@@ -132,17 +132,21 @@ export const SettingsPage = {
           <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Security</h2>
 
           <form id="security-form" class="flex flex-col flex-1 space-y-6">
+
+            <!-- hidden username so password manager can work -->
+            <input type="text" class="hidden" autocomplete="username" />
+
             <!-- Old Password -->
             <div class="old-pass flex items-center space-x-3">
               <label for="old-pass" class="w-20 font-semibold text-center">Current password*</label>
-              <input id="old-pass" type="password" required class="input-settings"
+              <input id="old-pass" type="password" autocomplete="current-password" required class="input-settings"
                />
             </div>
 
             <!-- New Password -->
             <div class="flex items-center space-x-3">
               <label for="new-pass" class="w-20 font-semibold text-center">New password</label>
-              <input id="new-pass" type="password" class="input-settings" 
+              <input id="new-pass" autocomplete="new-password" type="password" class="input-settings"
               pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*._\\-+=?])[A-Za-z\\d!@#$%^&*._\\-+=?]{8,}$"
               title="Must contain at least one digit, one uppercase and lowercase letter and one special character (!@#$%^&*.\\-_+=?)" data-i18n-title="register-title-pass"
               />

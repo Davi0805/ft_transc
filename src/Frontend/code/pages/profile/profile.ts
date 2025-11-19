@@ -166,7 +166,6 @@ export const ProfilePage = {
     let statistics: PlayerStatistics | undefined;
     try {
         statistics = await getStatisticsById(userData.user_id);
-        console.log(`user id: ${userData.user_id}`)
     } catch (error) {
         console.error("DEBUG: Failed to load player statistics:", error);
         const errorPopup = new ErrorPopup();
@@ -207,36 +206,6 @@ export const ProfilePage = {
         const errorPopup = new ErrorPopup();
         errorPopup.create("Failed to load match history", "Looks like there was an issue getting this user match history. Please refresh and try again.");
     }
-
-/*
-    export interface MatchHistoryEntry {
-  id: number;
-  gameType: string;
-  map: string;
-  mode: string;
-  result: "won" | "lost";
-  date: string;
-}
- */
-/*     let matchHistory = [
-        {id: 1,
-            gameType: "Ranked",
-            map: "Map A",
-            mode: "Duo",
-            result: "won",
-            date: "2023-01-01"
-        },
-        {id: 2,
-            gameType: "Casual",
-            map: "Map B",
-            mode: "Solo",
-            result: "lost",
-            date: "2023-01-02"
-        }
-    ] */
-
-      console.table(matchHistory);
-
 
     const tableBody = document.querySelector("table tbody") as HTMLTableSectionElement;
     if (tableBody) {

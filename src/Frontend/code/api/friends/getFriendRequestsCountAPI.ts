@@ -40,7 +40,6 @@ export async function getFriendRequestsCount(): Promise<number> {
     }
 
     const data = await response.json();
-    console.log(`DEBUG: getFriendRequestsCount response:`, data);
     if (typeof data.pendingRequestsCounter !== "number") {
       const errorMessage: string = `DEBUG: Invalid response format from getFriendRequestsCount`;
       const error: Error = new Error(errorMessage);
