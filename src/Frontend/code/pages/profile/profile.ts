@@ -4,8 +4,8 @@ import { ErrorPopup } from "../../utils/popUpError";
 import { ProfileDataType } from "../../api/userData/types/ProfileDataType";
 import { authService } from "../../services/authService";
 import { PlayerStatistics } from "../../api/userData/types/PlayerStatisticsType";
-import { getStatisticsByUsername } from "../../api/userData/getUserStatisticsAPI";
-import { getMatchHistoryByUsername } from "../../api/userData/getMatchHistoryByUsernameAPI";
+import { getStatisticsById } from "../../api/userData/getUserStatisticsAPI";
+import { getMatchHistoryById } from "../../api/userData/getMatchHistoryByUsernameAPI";
 import { MatchHistoryEntry } from "../../api/userData/types/MatchHistoryType";
 
 //todo add friend / unblock buttons based on relationship status
@@ -84,55 +84,39 @@ export const ProfilePage = {
                     <table class="w-full border-separate bg-slate-600/50 min-w-full ">
                         <thead class="bg-black/20">
                             <tr>
-                                <th class="px-3 py-3 text-left font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[15%]">
-                                    Game
+                                <th class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[33%]">
+                                    Game Mode
                                 </th>
-                                <th class="px-3 py-3 text-left font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[25%]">
-                                    Map
-                                </th>
-                                <th class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[20%]">
-                                    Mode
-                                </th>
-                                <th class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[20%]">
+                                <th class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[33%]">
                                     Result
                                 </th>
-                                <th class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[20%]">
+                                <th class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[33%]">
                                     Date
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate">2v2</td>
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate">Map Name</td>
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate">Mode Name</td>
+                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate">2v2</td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate">Win</td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate">Date</td>
                             </tr>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                             </tr>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                             </tr>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                             </tr>
                             <tr class="hover:bg-blue-500/10 transition-colors duration-200">
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
-                                <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center text-emerald-400 font-semibold truncate"></td>
                                 <td class="px-3 py-3 h-[49px] border-b border-blue-500/10 text-center truncate"></td>
@@ -181,19 +165,16 @@ export const ProfilePage = {
 
 
     // Statistics Section
-/*     let statistics: PlayerStatistics | undefined;
+    let statistics: PlayerStatistics | undefined;
     try {
-        statistics = await getStatisticsByUsername(userData.username);
+        statistics = await getStatisticsById(userData.user_id);
+        console.log(`user id: ${userData.user_id}`)
     } catch (error) {
         console.error("DEBUG: Failed to load player statistics:", error);
         const errorPopup = new ErrorPopup();
         errorPopup.create("Failed to load player statistics", "Looks like there was an issue getting this user statistics. Please refresh and try again.");
-    } */
-    let statistics = {
-        wins: 0,
-        losses: 0,
-        tournamentsWon: 0
     }
+
     // profile-wins
     const winsElement = document.getElementById("profile-wins") as HTMLDivElement;
     winsElement.textContent = statistics?.wins.toString() || "NA";
@@ -206,8 +187,8 @@ export const ProfilePage = {
     const winrateElement = document.getElementById("profile-wr") as HTMLDivElement;
     if (!statistics) 
         winrateElement.textContent = "NA";
-    if (statistics.wins + statistics.losses === 0) {
-        winrateElement.textContent = "0%";
+    else if (statistics.wins + statistics.losses === 0) {
+        winrateElement.textContent = "100%";
     } else {
         const winrate = (statistics.wins / (statistics.wins + statistics.losses) * 100).toFixed(2);
         winrateElement.textContent = `${winrate}%`;
@@ -220,15 +201,16 @@ export const ProfilePage = {
     tournwinsElement.textContent = statistics?.tournamentsWon.toString() || "NA";
 
     // load match history
-/*     let matchHistory: MatchHistoryEntry[] = [];
+    let matchHistory: MatchHistoryEntry[] = [];
     try {
-        matchHistory = await getMatchHistoryByUsername(userData.username);
+        matchHistory = await getMatchHistoryById(userData.user_id);
     } catch (error) {
         console.error("DEBUG: Failed to load match history:", error);
         const errorPopup = new ErrorPopup();
         errorPopup.create("Failed to load match history", "Looks like there was an issue getting this user match history. Please refresh and try again.");
     }
 
+/*
     export interface MatchHistoryEntry {
   id: number;
   gameType: string;
@@ -238,7 +220,7 @@ export const ProfilePage = {
   date: string;
 }
  */
-    let matchHistory = [
+/*     let matchHistory = [
         {id: 1,
             gameType: "Ranked",
             map: "Map A",
@@ -253,7 +235,11 @@ export const ProfilePage = {
             result: "lost",
             date: "2023-01-02"
         }
-    ]
+    ] */
+
+      console.table(matchHistory);
+
+
     const tableBody = document.querySelector("table tbody") as HTMLTableSectionElement;
     if (tableBody) {
         const rows = tableBody.querySelectorAll("tr");
@@ -263,28 +249,23 @@ export const ProfilePage = {
             
             // game
             const gameElement = cells[0] as HTMLTableCellElement;
-            gameElement.textContent = matchHistory[index].gameType || "";
-            // map
-            const mapElement = cells[1] as HTMLTableCellElement;
-            mapElement.textContent = matchHistory[index].map || "";
-            // mode
-            const modeElement = cells[2] as HTMLTableCellElement;
-            modeElement.textContent = matchHistory[index].mode || "";
+            gameElement.textContent = matchHistory[index].mode || "";
+
             // result
-            const resultElement = cells[3] as HTMLTableCellElement;
+            const resultElement = cells[1] as HTMLTableCellElement;
             const result = matchHistory[index].result || "";
             resultElement.textContent = result.charAt(0).toUpperCase() + result.slice(1); // Capitalize first letter
-            if (result === "won") {
+            if (result === "Won") {
                 resultElement.classList.add("text-emerald-400");
                 resultElement.classList.remove("text-red-400");
-            } else if (result === "lost") {
+            } else if (result === "Lost") {
                 resultElement.classList.add("text-red-400");
                 resultElement.classList.remove("text-emerald-400");
             }
 
             // date
-            const dateElement = cells[4] as HTMLTableCellElement;
-            dateElement.textContent = matchHistory[index].date || "";
+            const dateElement = cells[2] as HTMLTableCellElement;
+            dateElement.textContent = matchHistory[index].date_time || "";
         })
     }
 },
