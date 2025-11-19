@@ -47,16 +47,11 @@ CREATE INDEX idx_friend_requests_status ON friend_requests(status);
 
 -- MOCK DATA USERS
 INSERT INTO users (name, username, email, password_hash, user_image, sprite_id, rating, twofa_secret, twofa_enabled) VALUES
-('Artur', 'artur', 'artur@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
-('Maria', 'maria', 'maria@example.com', 'pass123', NULL, 0, 1600, NULL, 0),
-('João', 'joaozin', 'joao@example.com', 'pass123', NULL, 0, 1700, NULL, 0),
-('Ana', 'aninha', 'ana@example.com', 'pass123', NULL, 0, 1800, NULL, 0),
-('sapo', 'sapo', 'sapo@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
-('cao', 'cao', 'cao@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
-('gato', 'gato', 'gato@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
-('cavalo', 'cavalo', 'cavalo@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
-('pipoca', 'pipoca', 'pipoca@example.com', 'pass123', NULL, 0, 1500, NULL, 0),
-('Lina', 'lina99', 'lina@example.com', 'pass123', NULL, 0, 1550, NULL, 0);
+('Artur', 'artuda-s', 'artur@example.com', '$2b$10$pmN8E1aPNvFCdvgQ.s7yFu0xaliSmCgvS7iY8B5Mjo6rLYD1e6GfW', NULL, 0, 1500, NULL, 0),
+('Maria', 'maria42', 'maria@example.com', '$2b$10$pmN8E1aPNvFCdvgQ.s7yFu0xaliSmCgvS7iY8B5Mjo6rLYD1e6GfW', NULL, 0, 1600, NULL, 0),
+('João', 'joaozin', 'joao@example.com', '$2b$10$pmN8E1aPNvFCdvgQ.s7yFu0xaliSmCgvS7iY8B5Mjo6rLYD1e6GfW', NULL, 0, 1700, NULL, 0),
+('Ana', 'aninha', 'ana@example.com', '$2b$10$pmN8E1aPNvFCdvgQ.s7yFu0xaliSmCgvS7iY8B5Mjo6rLYD1e6GfW', NULL, 0, 1800, NULL, 0);
+
 
 -- MOCK FRIEND REQUESTS
 INSERT INTO friend_requests (from_user_id, to_user_id, status) VALUES
