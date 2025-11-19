@@ -1,8 +1,10 @@
 import { ErrorPopup } from "../utils/popUpError";
 import { PlayerStats } from "../api/leaderboard/types/PlayerStatsInterface";
-import { searchPlayer } from "../api/leaderboard/searchPlayerAPI";
-import { getTopTen } from "../api/leaderboard/getTopTenAPI";
+import { getLeaderboard } from "../api/leaderboard/getTopTenAPI";
 import { debounce } from "../utils/debouncing";
+import { TopTenPlayers } from "../api/leaderboard/types/TopTenPlayers";
+import { UsersData } from "../api/leaderboard/types/usersDataInterface";
+import { getTopTenData } from "../api/leaderboard/getTopTenDataAPI";
 
 export const HomePage = {
   template() {
@@ -192,6 +194,55 @@ export const HomePage = {
         `;
   },
 
+  async getTopTen(): Promise<PlayerStats[]> {
+    let PlayerStatsList: PlayerStats[] = [];
+    try {
+      /* 
+      [{
+        "user_id": number,
+        "wins": number,
+        "losses": number
+      },...]
+      */
+
+      /*
+        [{
+          id: number; // userID
+          username: string;
+          rank?: number; // Rank of the player in the leaderboar
+          wins: number;
+          losses: number;
+          points: number; // Points of the player in the leaderboard
+        },...]
+      */
+      const topTen: TopTenPlayers[] = await getLeaderboard();
+      console.table(topTen);
+
+      const userIds: number[] = topTen.map(player => player.user_id);
+      console.table(userIds);
+      
+
+      const usersData: UsersData[] = await getTopTenData(userIds)
+      console.table(usersData);
+
+      usersData.forEach((user, index) => {
+        PlayerStatsList.push({
+          id: user.user_id,
+          username: user.username,
+          points: user.rating,
+          rank: index + 1,
+          wins: topTen.find(player => player.user_id === user.user_id)?.wins || 0,
+          losses: topTen.find(player => player.user_id === user.user_id)?.losses || 0,
+        });
+      });
+
+      return PlayerStatsList;
+      
+    } catch (error) {
+      console.error("DEBUG:Error fetching leaderboard:", error);
+      throw error;
+    }
+  },
 
   async loadLeaderBoard() {
     const leaderboardRows = document.querySelectorAll('.leaderboard-tr');
@@ -202,89 +253,8 @@ export const HomePage = {
 
         // todo descomentar a de baixo e ver se o retorno vem do genero da de baixo
         // const topTen: PlayerStats[] = await getTopTen();
-       
-        const topTen : PlayerStats[] = [
-          {
-            id: 1,
-            username: "Artur",
-            rank: 1,
-            wins: 89,
-            losses: 12,
-            points: 1247,
-          },
-          {
-            id: 2,
-            username: "Miguel",
-            rank: 2,
-            wins: 76,
-            losses: 18,
-            points: 1156,
-          },
-          {
-            id: 3,
-            username: "Toni",
-            rank: 3,
-            wins: 71,
-            losses: 23,
-            points: 1089,
-          },
-          {
-            id: 4,
-            username: "Mica",
-            rank: 4,
-            wins: 65,
-            losses: 28,
-            points: 967,
-          },
-          {
-            id: 5,
-            username: "João",
-            rank: 5,
-            wins: 58,
-            losses: 31,
-            points: 834,
-          },
-          {
-            id: 6,
-            username: "Maria",
-            rank: 6,
-            wins: 45,
-            losses: 27,
-            points: 712,
-          },
-          {
-            id: 7,
-            username: "Sandrinho",
-            rank: 7,
-            wins: 42,
-            losses: 35,
-            points: 689,
-          },
-          {
-            id: 8,
-            username: "Davi",
-            rank: 8,
-            wins: 38,
-            losses: 29,
-            points: 567,
-          },
-          {
-            id: 9,
-            username: "Macaco",
-            rank: 9,
-            wins: 33,
-            losses: 41,
-            points: 456,
-          },
-          {
-            id: 10,
-            username: "Kelson",
-            rank: 10,
-            wins: 28,
-            losses: 37,
-            points: 389,
-          },
-        ];
+        const topTen: PlayerStats[] = await this.getTopTen();
+
         
         leaderboardRows.forEach((row, index) => {
           const positionCell = row.querySelector('.leaderboard-td-position');
