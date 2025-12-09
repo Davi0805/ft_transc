@@ -34,7 +34,7 @@ export const HomePage = {
 
                 <!-- Call to Action -->
                 <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                   <a href="/play" class="play-button inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 text-3xl font-semibold text-white transition-all hover:scale-105 hover:text-[#fca17d] active:scale-95">
+                   <a href="/play" data-link class="play-button inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 text-3xl font-semibold text-white transition-all hover:scale-105 hover:text-[#fca17d] active:scale-95">
                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
@@ -197,24 +197,6 @@ export const HomePage = {
   async getTopTen(): Promise<PlayerStats[]> {
     let PlayerStatsList: PlayerStats[] = [];
     try {
-      /* 
-      [{
-        "user_id": number,
-        "wins": number,
-        "losses": number
-      },...]
-      */
-
-      /*
-        [{
-          id: number; // userID
-          username: string;
-          rank?: number; // Rank of the player in the leaderboar
-          wins: number;
-          losses: number;
-          points: number; // Points of the player in the leaderboard
-        },...]
-      */
       const topTen: TopTenPlayers[] = await getLeaderboard();
 
       const userIds: number[] = topTen.map(player => player.user_id);
@@ -247,8 +229,6 @@ export const HomePage = {
           throw new Error("Someone is messing up the html caralho ta quieto");
         }
 
-        // todo descomentar a de baixo e ver se o retorno vem do genero da de baixo
-        // const topTen: PlayerStats[] = await getTopTen();
         const topTen: PlayerStats[] = await this.getTopTen();
 
         
@@ -275,7 +255,7 @@ export const HomePage = {
               positionCell.classList.remove('text-blue-200');
               positionCell.classList.add('text-yellow-400');
             }
-            nameCell.textContent = playerData.username;
+            nameCell.innerHTML = `<a href='/profile/${playerData.id}' class="hover:text-[#fca17d] transition-all duration-150 ease-in-out" data-link>${playerData.username}</a>`;
             pointsCell.textContent = playerData.points.toString();
             winCell.textContent = playerData.wins.toString();
             lossesCell.textContent = playerData.losses.toString();
