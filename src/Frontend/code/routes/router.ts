@@ -114,7 +114,7 @@ class Router {
         document.getElementById("main")!.innerHTML = await route?.template();
 
         // Update page title
-        header.updateActiveUnderline("Profile"); // this could be wte. just to remove the underline
+        header.updateActiveUnderline(`/profile/${id}`); // this could be wte. just to remove the underline
 
         // Initialize page-specific js (if any)
         route?.script?.init(userData);
