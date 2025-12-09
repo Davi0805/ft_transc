@@ -774,7 +774,7 @@ export const SettingsPage = {
       "user-avatar"
     ) as HTMLImageElement | null;
     const headerAvatarImg = document.querySelector(
-      ".profile-container .profile-avatar"
+      ".profile-avatar"
     ) as HTMLImageElement | null;
 
     if (input && avatarImg) {
