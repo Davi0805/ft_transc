@@ -75,7 +75,7 @@ class FriendRequestRepository {
 
     async getAllFriends(user_id)
     {
-        return await db.raw('SELECT u.user_id, u.name, u.username, u.email, u.user_image '+
+        return await db.raw('SELECT u.user_id, u.name, u.username '+
                             'FROM users u '+
                             'JOIN friend_requests fr '+
                             'ON (fr.from_user_id = u.user_id OR fr.to_user_id = u.user_id) '+
