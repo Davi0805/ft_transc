@@ -10,6 +10,7 @@ import { WarningPopup } from "../utils/popUpWarn";
 export interface ChatWindowMessage {
   convID: number;
   message: string;
+  isGameInvite: boolean;
   isOwn: boolean;
 }
 
@@ -187,6 +188,9 @@ class ChatWindow {
     });
   }
 
+  createInviteMessageElement(): void {
+    
+  }
   // {
   // "id":1,
   //  "conversation_id":1,
@@ -198,6 +202,7 @@ class ChatWindow {
     this.messages.forEach((message) => {
       this.addMessage({
         message: message.message_content,
+        isGameInvite: message.metadata == "match_invite",
         isOwn: message.from_user_id == authService.userID ? true : false,
       } as ChatWindowMessage);
     });
@@ -245,11 +250,13 @@ class ChatWindow {
   /* 
     messageData { convID: 1,
                   message: "oi",
+                  isGameInvite: false,
                   isOwn: false }
   */
   handleRecieveMessage(messageData: ChatWindowMessage): void {
     this.addMessage({
       message: messageData.message,
+      isGameInvite: messageData.isGameInvite,
       isOwn: false,
     } as ChatWindowMessage);
     webSocketService.send({
@@ -269,6 +276,13 @@ class ChatWindow {
       return;
     }
 
+    //todo 
+    if (messageData.isGameInvite) {
+      // logic to append the game invite html
+      // logic to handle game invite clicks
+      return;
+    }
+    
     const newMessage = document.createElement("div");
     newMessage.classList.add("message");
 

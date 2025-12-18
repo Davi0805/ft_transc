@@ -261,18 +261,18 @@ class WebSocketService {
       if (data.metadata === "newConversation") {
         this.triggerFriendsUpdate(data);
         return;
-      }
+      } 
 
       const convID = data.conversation_id;
       const message = data.message;
-
+      
       this.updateConversationTracker(convID, this.getUnreadCount(convID) + 1);
 
       // This will check if there is someone subscribed (chat window open) and if it is use
       // its handler
       const handler = this.messageHandlers.get(convID);
       if (handler) {
-        handler({ convID, message, isOwn: false });
+        handler({ convID, message, isGameInvite: data.metadata == "match_invite",  isOwn: false });
         if (!chatWindowControler.isMinimized) {
           this.markConversationAsRead(convID);
         }
