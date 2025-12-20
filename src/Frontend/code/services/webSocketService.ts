@@ -220,6 +220,7 @@ class WebSocketService {
       typeof data.conversation_id === "number" &&
       typeof data.message === "string" &&
       (typeof data.metadata === "string" ||
+        typeof data.metadata === "number" ||
         data.metadata === null ||
         data.metadata === undefined)
     );
@@ -272,7 +273,7 @@ class WebSocketService {
       // its handler
       const handler = this.messageHandlers.get(convID);
       if (handler) {
-        handler({ convID, message, isGameInvite: data.metadata == "match_invite",  isOwn: false });
+        handler({ convID, message, lobbyID: parseInt(data.metadata as string),  isOwn: false });
         if (!chatWindowControler.isMinimized) {
           this.markConversationAsRead(convID);
         }

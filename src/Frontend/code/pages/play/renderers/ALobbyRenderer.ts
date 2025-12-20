@@ -1,5 +1,7 @@
 import { getAllFriends } from "../../../api/friends/chat/getAllFriendsAPI";
 import { getUserAvatarById } from "../../../api/userData/getUserAvatarAPI";
+import { chatWindowControler } from "../../../components/chatWindow";
+import { lobbyService } from "../../../services/LobbyService";
 import { ErrorPopup } from "../../../utils/popUpError";
 import { applySettingsClicked, inviteUserClicked, leaveClicked, readyClicked, startClicked } from "../buttonCallbacks";
 import { TDynamicLobbySettings, TLobbyType } from "../lobbyTyping";
@@ -218,6 +220,9 @@ export abstract class ALobbyRenderer {
                     "active:scale-[0.97]"
                 );
                 button.classList.add("cursor-default", "bg-white/20");
+                if (chatWindowControler.isChatOpen && chatWindowControler.getFriendID === userID) {
+                    chatWindowControler.AddGameInviteMessage(lobbyService.myID);
+                } 
             };
             button.addEventListener("click", handler);
 
