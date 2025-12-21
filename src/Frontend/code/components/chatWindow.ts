@@ -222,11 +222,6 @@ class ChatWindow {
     const message = messageInput.value.trim();
 
     if (!message) {
-      const warnPopup = new WarningPopup();
-      warnPopup.create(
-        "Something is strange...",
-        "Seems like the message could not be sent... Please refresh the page and try again."
-      );
       return;
     }
 
