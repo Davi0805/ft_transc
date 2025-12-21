@@ -7,6 +7,7 @@ import { UserData } from "../api/userData/types/UserDataType";
 import { getProfileUserData } from "../api/userData/getProfileUserDataAPI";
 import { ProfileDataType } from "../api/userData/types/ProfileDataType";
 import { isUserBlockedByUsername } from "../api/block/isUserBlockedByUsername";
+import DOMPurify from "dompurify";
 
 class Router {
   private routes: Array<Route>;
@@ -80,7 +81,7 @@ class Router {
       header.updateActiveUnderline(path);
 
       // Load HTML template
-      document.getElementById("main")!.innerHTML = await route.template();
+      document.getElementById("main")!.innerHTML = DOMPurify.sanitize(await route.template());
       // Update page title
       document.title = route.title;
       // Initialize page-specific js (if any)
@@ -111,7 +112,7 @@ class Router {
 
         document.title = `${userData.nickname}'s profile`;
         // Load HTML template
-        document.getElementById("main")!.innerHTML = await route?.template();
+        document.getElementById("main")!.innerHTML = DOMPurify.sanitize(await route?.template());
 
         // Update page title
         header.updateActiveUnderline(`/profile/${id}`); // this could be wte. just to remove the underline

@@ -5,6 +5,7 @@ import { debounce } from "../utils/debouncing";
 import { TopTenPlayers } from "../api/leaderboard/types/TopTenPlayers";
 import { UsersData } from "../api/leaderboard/types/usersDataInterface";
 import { getTopTenData } from "../api/leaderboard/getTopTenDataAPI";
+import DOMPurify from "dompurify";
 
 export const HomePage = {
   template() {
@@ -181,6 +182,7 @@ export const HomePage = {
             </div>
 
             <!-- Player Search -->
+            <!--
             <div class="mt-6 flex justify-center">
                 <div class="relative w-full max-w-md">
                     <input id="search-player" type="text" placeholder="Search for a player..." class="w-full rounded-xl border border-blue-400/30 bg-slate-700/50 py-3 px-4 pl-12 text-white placeholder-blue-200/60 transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 focus:outline-none" />
@@ -188,7 +190,7 @@ export const HomePage = {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
         `;
@@ -255,7 +257,7 @@ export const HomePage = {
               positionCell.classList.remove('text-blue-200');
               positionCell.classList.add('text-yellow-400');
             }
-            nameCell.innerHTML = `<a href='/profile/${playerData.id}' class="hover:text-[#fca17d] transition-all duration-150 ease-in-out" data-link>${playerData.username}</a>`;
+            nameCell.innerHTML = DOMPurify.sanitize(`<a href='/profile/${playerData.id}' class="hover:text-[#fca17d] transition-all duration-150 ease-in-out" data-link>${playerData.username}</a>`);
             pointsCell.textContent = playerData.points.toString();
             winCell.textContent = playerData.wins.toString();
             lossesCell.textContent = playerData.losses.toString();
@@ -408,7 +410,7 @@ export const HomePage = {
     this.loadLeaderBoard();
 
     // cada nome uma anchor para o perfil do jogador no nameCell. adicionar href para o sitio correto
-    this.initLeaderboardSearch();
+    // this.initLeaderboardSearch();
 
   },
 } as const;

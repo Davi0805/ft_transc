@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 export class InitialLoader {
     private static instance: InitialLoader | null = null;
     private loaderElement: HTMLElement | null = null;
@@ -9,7 +11,7 @@ export class InitialLoader {
       this.loaderElement = document.createElement("div");
       this.loaderElement.id = "initial-loader";
       this.loaderElement.className = "fixed inset-0 h-full w-full flex flex-col items-center justify-center bg-gray-800 z-50 transition-opacity duration-500 opacity-100";
-      this.loaderElement.innerHTML = `
+      this.loaderElement.innerHTML = DOMPurify.sanitize(`
                                     <!-- Loader -->
       <!-- Logo -->
       <img src="./Assets/42PortoLogo.png" alt="42Porto logo" class="mb-12 w-[300px] h-[150]" draggable="false"> 
@@ -19,7 +21,7 @@ export class InitialLoader {
         <div class="w-6 h-6 rounded-full bg-blue-500 animate-bounce [animation-delay:-.3s]"></div>
         <div class="w-6 h-6 rounded-full bg-blue-700 animate-bounce [animation-delay:-.5s]"></div>
       </div>
-      `;
+      `);
 
       this.loaderElement.addEventListener("transitionend", () => {
           this.loaderElement?.remove();

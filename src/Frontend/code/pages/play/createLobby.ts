@@ -7,6 +7,7 @@ import { lobbySocketService } from "../../services/lobbySocketService";
 //import { lobbySocketService } from "../../testServices/testLobySocketService";
 import { TLobbyType, TMap, TMode, TDuration, LobbyCreationConfigsDTO } from "./lobbyTyping";
 import { lobbyService } from "../../services/LobbyService";
+import DOMPurify from "dompurify";
 
 
 export const CreateLobbyPage = {
@@ -103,11 +104,11 @@ export const CreateLobbyPage = {
       "mutable-settings"
     ) as HTMLElement;
     mutableSettings.innerHTML = "";
-    mutableSettings.innerHTML += getLobbyOptionsHTML(true, currentType, {
+    mutableSettings.innerHTML += DOMPurify.sanitize(getLobbyOptionsHTML(true, currentType, {
       map: "2-players-small",
       mode: "classic",
       duration: "classical",
-    });
+    }));
   },
 
 

@@ -1,4 +1,5 @@
 type TButton = "button" | "submit" | "reset"
+import DOMPurify from "dompurify";
 
 export function setupKeyCaptureButton(button: HTMLButtonElement, inputElement: HTMLInputElement) {
   let isListeningForKey = false;
@@ -48,12 +49,12 @@ export function getTable(id: string, headHtml: string, bodyHtml: string) {
     const thead = document.createElement("thead");
     thead.id = id + "-head";
     thead.className = "sticky top-0 z-1 bg-gray-900/75"
-    thead.innerHTML = headHtml;
+    thead.innerHTML = DOMPurify.sanitize(headHtml);
     table.appendChild(thead);
 
     const tbody = document.createElement("tbody")
     tbody.id = id + "-body";
-    tbody.innerHTML = bodyHtml
+    tbody.innerHTML = DOMPurify.sanitize(bodyHtml);
     table.appendChild(tbody);
 
     out.appendChild(table)

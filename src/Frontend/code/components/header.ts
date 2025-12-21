@@ -3,6 +3,7 @@ import { translator } from "../services/translationService";
 import { router } from "../routes/router";
 import { LanguageCode } from "../languages/languages";
 import { WarningPopup } from "../utils/popUpWarn";
+import DOMPurify from "dompurify";
 
 /**
  * @class Header
@@ -17,7 +18,7 @@ class Header {
     headerElement.id = "header";
     headerElement.className = "fixed top-0 left-0 right-0 z-10 h-[60px] py-2 px-6 \
                               flex gap-6 bg-[#172332] border-b-2 border-b-[#00000066]";
-    headerElement.innerHTML = `
+    headerElement.innerHTML = DOMPurify.sanitize(`
       <div class="flex items-center justify-center flex-none">
         <a href="/" class="flex items-center justify-center gap-2" data-link>
           <img
@@ -99,7 +100,7 @@ class Header {
           </div>
         </div>
       </div>
-      `;
+      `);
 
     document.body.insertAdjacentElement('afterbegin', headerElement);
   }
@@ -224,10 +225,10 @@ class Header {
       if (loggedOut) return;
       loggedOut = this.createElement("div", "log-reg", "log-reg flex gap-6");
 
-      loggedOut.innerHTML = `
+      loggedOut.innerHTML = DOMPurify.sanitize(`
         <a id="login-link" class="nav-link" href="/login" data-link data-i18n="header-login">Login</a>
         <a id="register-link" class="nav-link" href="/register" data-link data-i18n="header-register">Register</a>
-      `;
+      `);
 
       this.navBarElement?.appendChild(loggedOut);
     };
@@ -246,7 +247,7 @@ class Header {
 
       loggedIn = this.createElement("div", "user-in", "user-in flex gap-4");
 
-      loggedIn.innerHTML = `
+      loggedIn.innerHTML = DOMPurify.sanitize(`
         <a id="profile-link" href="/profile/${authService.userID}" class="flex justify-center items-center gap-4 nav-link  transition-all duration-200 ease-in-out" data-link>
           <span>${nickname}</span>
           <img class="profile-avatar w-8 h-8 rounded-full border-2 border-white shadow-md shadow-[#333]" src="${avatarURL}" alt="user profile picture" draggable="false">
@@ -257,7 +258,7 @@ class Header {
         <button id="logout" class="logout flex justify-center items-center">
           <img class="w-6 h-6 hover:scale-125 transition-all duration-200 ease-in-out" src="./Assets/icons/logout.svg" alt="logout icon" draggable="false">
         </button>
-      `;
+      `);
 
       this.navBarElement?.appendChild(loggedIn);
     };

@@ -20,6 +20,7 @@ import { createFriendRequestByUsername } from "../api/friends/createFriendReques
 
 import { SuccessPopup } from "../utils/popUpSuccess";
 import { ErrorPopup } from "../utils/popUpError";
+import DOMPurify from "dompurify";
 
 export interface Friend {
   convID: number;
@@ -56,7 +57,7 @@ export class Chat {
   }
 
   async init(): Promise<void> {
-    this.sidebar.innerHTML = this.renderHTML();
+    this.sidebar.innerHTML = DOMPurify.sanitize(this.renderHTML());
     await this.attachHeaderEventListeners();
 
     webSocketService.connect(authService.userID);
@@ -303,9 +304,9 @@ export class Chat {
     unreadMsg: number
   ): HTMLButtonElement {
     const newContact = document.createElement("button") as HTMLButtonElement;
-    newContact.setAttribute("data-friend", friendName);
+    newContact.setAttribute("data-friend", DOMPurify.sanitize(friendName));
     newContact.className = `contact hover:bg-[#007bff33] hover:scale-105 transition-all duration-200 ease-in-out active:scale-95`;
-    newContact.innerHTML = `
+    newContact.innerHTML = DOMPurify.sanitize(`
                   <img class="rounded-full w-10 h-10 border-2 border-[#676768]" src="${friendAvatar}" width="40px" height="40px">
                   <span>${friendName}</span>
                   <span class="unread-badge -top-0.5 -right-0.5 absolute min-w-[18px] h-[18px] px-1 text-center text-xs font-bold text-myWhite
@@ -313,7 +314,7 @@ export class Chat {
                 shadow-[0_0_4px_rgba(255,71,87,0.4),0_0_6px_rgba(255,71,87,0.2),inset_0_1px_2px_rgba(255,255,255,0.3)]" style="display: ${
                     unreadMsg ? "inline" : "none"
                   };">${unreadMsg}</span>
-                  `;
+                  `);
     return newContact;
   }
 
@@ -329,7 +330,7 @@ export class Chat {
     const newRequest = document.createElement("div") as HTMLDivElement;
     newRequest.classList = `request-wrapper ${friendRequest.sender_username}`;
     const requestAvatar = await getUserAvatarById(friendRequest.sender_id);
-    newRequest.innerHTML = `
+    newRequest.innerHTML = DOMPurify.sanitize(`
         <div class="user-info">
           <img src="${requestAvatar}" alt="user-avatar" />
 
@@ -337,15 +338,15 @@ export class Chat {
         </div>
 
         <div class="request-options">
-          <button class="request-btn accept" id="friend-accept" data-username="${friendRequest.sender_username}" title="Accept">
+          <button class="request-btn accept" id="friend-accept" data-username="${DOMPurify.sanitize(friendRequest.sender_username)}" title="Accept">
             <img src="../../Assets/icons/check-circle.svg" />
           </button>
 
-          <button class="request-btn reject" id="friend-reject" data-username="${friendRequest.sender_username}" title="Reject">
+          <button class="request-btn reject" id="friend-reject" data-username="${DOMPurify.sanitize(friendRequest.sender_username)}" title="Reject">
             <img src="../../Assets/icons/cancel-circle.svg" />
           </button>
         </div>
-    `;
+    `);
     return newRequest;
   }
 

@@ -18,6 +18,7 @@ import { setupKeyCaptureButton } from "../play/utils/stylingComponents";
 import { savePlayerPreferences } from "../../api/settings/preferences/savePlayerPreferencesAPI";
 import { getPlayerPreferences } from "../../api/settings/preferences/getPlayerPreferencesAPI";
 import { PlayerPreferences } from "../../api/settings/preferences/PreferenceInterface";
+import DOMPurify from "dompurify";
 
 export const SettingsPage = {
   template() {
@@ -279,7 +280,7 @@ export const SettingsPage = {
     const newElement = document.createElement("div") as HTMLDivElement;
     newElement.classList = `blocked flex items-center justify-between bg-white/10 rounded-lg px-4 py-2`;
     newElement.setAttribute("data-id", userData.id.toString());
-    newElement.innerHTML = `
+    newElement.innerHTML = DOMPurify.sanitize(`
         <div class="flex items-center gap-3">
           <img src="${avatar}"
               alt="user-avatar"
@@ -290,7 +291,7 @@ export const SettingsPage = {
                 data-id="${userData.id}">
           Unblock
         </button>
-         `;
+         `);
     return newElement;
   },
 
@@ -347,19 +348,19 @@ export const SettingsPage = {
 
     switch (SettingsPage.currentSection) {
       case "account":
-        content.innerHTML = SettingsPage.getAccountHTML();
+        content.innerHTML = DOMPurify.sanitize(SettingsPage.getAccountHTML());
         SettingsPage.initAccountEvents();
         break;
       case "security":
-        content.innerHTML = SettingsPage.getSecurityHTML();
+        content.innerHTML = DOMPurify.sanitize(SettingsPage.getSecurityHTML());
         SettingsPage.initSecurityEvents();
         break;
       case "social":
-        content.innerHTML = await SettingsPage.getSocialHTML();
+        content.innerHTML = DOMPurify.sanitize(await SettingsPage.getSocialHTML());
         SettingsPage.initSocialEvents();
         break;
       case "preferences":
-        content.innerHTML = SettingsPage.getPreferencesHTML();
+        content.innerHTML = DOMPurify.sanitize(SettingsPage.getPreferencesHTML());
         SettingsPage.initPreferencesEvents();
     }
   },
@@ -517,7 +518,7 @@ export const SettingsPage = {
       return;
     }
 
-    content.innerHTML = `
+    content.innerHTML = DOMPurify.sanitize(`
       <h1 class="mb-6 text-4xl font-bold">Settings</h1>
 
       <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Two Factor Authentication</h2>
@@ -549,7 +550,7 @@ export const SettingsPage = {
           </div>
         </form>
       </div>
-    `;
+    `);
     return;
   },
 
@@ -730,7 +731,7 @@ export const SettingsPage = {
         const socialHTML = await SettingsPage.getSocialHTML();
         const content = document.getElementById("settings-content");
         if (content) {
-          content.innerHTML = socialHTML;
+          content.innerHTML = DOMPurify.sanitize(socialHTML);
           SettingsPage.initSocialEvents();
         }
 
