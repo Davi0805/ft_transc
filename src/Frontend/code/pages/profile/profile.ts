@@ -7,6 +7,7 @@ import { PlayerStatistics } from "../../api/userData/types/PlayerStatisticsType"
 import { getStatisticsById } from "../../api/userData/getUserStatisticsAPI";
 import { getMatchHistoryById } from "../../api/userData/getMatchHistoryByUsernameAPI";
 import { MatchHistoryEntry } from "../../api/userData/types/MatchHistoryType";
+import { translator } from "../../services/translationService";
 
 
 export const ProfilePage = {
@@ -32,15 +33,17 @@ export const ProfilePage = {
                     <!-- clip text to create gradient effect -->
                     <h1 id="profile-nickname" class="text-4xl leading-none font-bold text-white "></h1>
                     <p id="profile-username" class="text-lg leading-none text-slate-300 font-medium"></p>
-                    <p class="text-gray-300 text-base leading-none font-semibold">
-                        Friends <span id="profile-friends" class="text-sky-500 font-semibold pl-2"></span>
-                    </p>
+                    <div class="flex items-center">
+                        <p data-i18n="profile-friends-count" class="text-gray-300 text-base leading-none font-semibold">Friends</p>
+                        <span id="profile-friends" class=" text-sky-500 font-semibold pl-2"></span>
+                    </div>
+                    
                 </div>
                 
                 <!-- Ranking Section -->
                 <div class="flex flex-col items-center h-[90px] justify-center min-w-[120px] bg-black/20 rounded-xl border border-white/10">
                     <div id="profile-ranking" class="text-3xl font-bold text-amber-400 mb-1"></div>
-                    <div class="text-sm text-gray-400 uppercase tracking-wider">Ranking</div>
+                    <div data-i18n="profile-ranking" class="text-sm text-gray-400 uppercase tracking-wider">Ranking</div>
                 </div>
             </div>
         </div>
@@ -49,46 +52,46 @@ export const ProfilePage = {
         <div class="flex-1 flex flex-col gap-8">
             <!-- Statistics -->
             <div class="flex flex-col gap-5">
-                <h2 class="text-2xl font-bold mb-2 border-b border-white/20 pb-2">Statistics</h2>
+                <h2 data-i18n="profile-statistics" class="text-2xl font-bold mb-2 border-b border-white/20 pb-2">Statistics</h2>
                 
                 <div class="grid grid-cols-4 gap-4">
                     <div class="text-center p-3 bg-black/20 rounded-lg border border-white/10">
                         <div id="profile-wins" class="text-2xl font-bold text-emerald-400 mb-1">5</div>
-                        <div class="text-sm text-gray-400">Wins</div>
+                        <div data-i18n="profile-wins" class="text-sm text-gray-400">Wins</div>
                     </div>
                     
                     <div class="text-center p-3 bg-black/20 rounded-lg border border-white/10">
                         <div id="profile-losses" class="text-2xl font-bold text-red-400 mb-1">5</div>
-                        <div class="text-sm text-gray-400">Losses</div>
+                        <div data-i18n="profile-losses" class="text-sm text-gray-400">Losses</div>
                     </div>
                     
                     <div class="text-center p-3 bg-black/20 rounded-lg border border-white/10">
                         <div id="profile-wr" class="text-2xl font-bold text-emerald-400 mb-1">50</div>
-                        <div class="text-sm text-gray-400">Winrate</div>
+                        <div data-i18n="profile-winrate" class="text-sm text-gray-400">Winrate</div>
                     </div>
                     
                     <div class="text-center p-3 bg-black/20 rounded-lg border border-white/10">
                         <div id="profile-tournwins" class="text-2xl font-bold text-amber-400 mb-1">3</div>
-                        <div class="text-sm text-gray-400">Tournament Wins</div>
+                        <div data-i18n="profile-tournwins" class="text-sm text-gray-400">Tournament Wins</div>
                     </div>
                 </div>
             </div>
 
             <!-- Match History -->
             <div class="mt-2">
-                <h2 class="mb-5 pb-2 text-2xl font-bold border-b border-white/20">Match History</h2>
+                <h2 data-i18n="profile-match-history" class="mb-5 pb-2 text-2xl font-bold border-b border-white/20">Match History</h2>
                 
                 <div class="w-full rounded-xl border border-blue-500/20 overflow-hidden">
                     <table class="w-full border-separate bg-slate-600/50 min-w-full ">
                         <thead class="bg-black/20">
                             <tr>
-                                <th class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[33%]">
+                                <th data-i18n="profile-match-history-game-mode" class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[33%]">
                                     Game Mode
                                 </th>
-                                <th class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[33%]">
+                                <th data-i18n="profile-match-history-result" class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[33%]">
                                     Result
                                 </th>
-                                <th class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[33%]">
+                                <th data-i18n="profile-match-history-date" class="px-3 py-3 text-center font-semibold text-blue-300 text-sm border-b border-blue-500/30 w-[33%]">
                                     Date
                                 </th>
                             </tr>
@@ -217,11 +220,23 @@ export const ProfilePage = {
             // game
             const gameElement = cells[0] as HTMLTableCellElement;
             gameElement.textContent = matchHistory[index].mode || "";
+            if (matchHistory[index].mode === "Ranked") {
+                gameElement.dataset.i18n = "profile-match-history-mode-ranked";
+                gameElement.textContent = translator.get("profile-match-history-mode-ranked");
+            } else if (matchHistory[index].mode === "Friendly") {
+                gameElement.dataset.i18n = "profile-match-history-mode-friendly";
+                gameElement.textContent = translator.get("profile-match-history-mode-friendly");
+            } else if (matchHistory[index].mode === "Tournament") {
+                gameElement.dataset.i18n = "profile-match-history-mode-tournament";
+                gameElement.textContent = translator.get("profile-match-history-mode-tournament");
+            }
 
             // result
             const resultElement = cells[1] as HTMLTableCellElement;
             const result = matchHistory[index].result || "";
-            resultElement.textContent = result.charAt(0).toUpperCase() + result.slice(1); // Capitalize first letter
+            resultElement.textContent = result === "Won" ?
+                                                    translator.get("profile-match-history-result-win") :
+                                                    translator.get("profile-match-history-result-lost");
             if (result === "Won") {
                 resultElement.classList.add("text-emerald-400");
                 resultElement.classList.remove("text-red-400");

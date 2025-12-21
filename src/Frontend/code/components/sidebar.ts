@@ -21,6 +21,7 @@ import { createFriendRequestByUsername } from "../api/friends/createFriendReques
 import { SuccessPopup } from "../utils/popUpSuccess";
 import { ErrorPopup } from "../utils/popUpError";
 import DOMPurify from "dompurify";
+import { translator } from "../services/translationService";
 
 export interface Friend {
   convID: number;
@@ -110,12 +111,12 @@ export class Chat {
             <img src="./Assets/icons/person-add.svg" alt="Add Friend" />
           </button>
           
-          <input type="text" class="search-input" placeholder="Search..." spellcheck="false" />
+          <input data-i18n="side-search" type="text" class="search-input" placeholder="Search..." spellcheck="false" />
         </div>
 
         <div class="p-0 m-0 border-b-1 border-white/10 bg-abyssblue transition-colors duration-300 ease">
           <button class="w-full justify-between py-1.5 px-2.5 border-none rounded-none text-myWhite text-sm font-medium flex items-center gap-2 overflow-hidden bg-abyssblue active:scale-95 filter hover:brightness-125 transition-all duration-400 ease-in" id="friend-requests-btn">
-            <span class="friend-requests-text">Friend Requests</span>
+            <span data-i18n="side-friend-requests-btn" class="friend-requests-text whitespace-nowrap overflow-hidden">Friend Requests</span>
             <span id="friend-requests-count" class="py-1 px-1.5 min-w-5 rounded-full text-sm leading-none font-bold text-myWhite text-center h-5 bg-[#007bff33]">${this.friendRequestCount}</span>
           </button>
         </div>
@@ -129,8 +130,22 @@ export class Chat {
       </div>
 
       <div id="add-friend-popover" class="flex items-center fixed top-[60px] right-[200px] z-50 p-[5px] w-[200px] min-h-8 gap-1.5 bg-abyssblue border-1 border-r-0 border-white/10 rounded-tl-lg rounded-bl-lg shadow-lg shadow-black/30 opacity-0 transition-all duration-150 ease-in-out">
-        <input type="text" id="friend-username-input" class="outline-none flex-1 py-1 px-1.5 h-7 min-w-0 bg-white/5 border-1 border-white/10 rounded text-myWhite text-sm"  placeholder="Username..." />
-        <button id="send-friend-request-btn" class="flex items-center justify-center w-9 h-7 p-1 text-myWhite text-sm font-medium cursor-pointer rounded bg-[#007bff33] hover:bg-[#007bff59] transition-colors duration-200 ease-in-out ">Add</button>
+        <input data-i18n-placeholder="side-add-friend-input" type="text" id="friend-username-input" class="outline-none flex-1 py-1 px-1.5 h-7 min-w-0 bg-white/5 border-1 border-white/10 rounded text-myWhite text-sm"  placeholder="Username..." />
+        <button id="send-friend-request-btn" class="flex items-center justify-center w-9 h-7 p-1 text-myWhite text-sm font-medium cursor-pointer rounded bg-[#007bff33] hover:bg-[#007bff59] transition-colors duration-200 ease-in-out ">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-4 h-4 text-white"
+          >
+            <path d="M22 2L11 13" />
+            <path d="M22 2L15 22l-4-9-9-4z" />
+          </svg>
+        </button>
       </div>  
 
         `;
@@ -141,7 +156,7 @@ export class Chat {
       <dialog class="friend-requests-wrapper" id="friendRequestsDialog" >
         <button class="close-dialog-btn">&times;</button> <!-- onclick="closeDialog()" -->
 
-        <h1 class="friend-request-header">Friend Requests</h1>
+        <h1 data-i18n="side-friend-requests-dialog-title" class="friend-request-header">${translator.get("side-friend-requests-dialog-title") || "Friend Requests"}</h1>
 
         <div class="requests-container"></div>
       </dialog>
@@ -172,6 +187,7 @@ export class Chat {
     document.addEventListener("click", (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!popover.contains(target) && !addFriendBtn.contains(target)) {
+        popover.classList.toggle("hidden");
         popover.classList.replace("opacity-100", "opacity-0");
         popoverInput.value = "";
       }
