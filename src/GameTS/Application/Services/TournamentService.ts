@@ -8,6 +8,7 @@ import { ROLES, SIDES } from "../game/shared/sharedTypes.js";
 import lobbyService from "./LobbyService.js";
 import matchService from "./MatchService.js";
 import socketService from "./SocketService.js";
+import EventBroadcast from "../../Adapters/Outbound/EventBroadcast.js";
 import { Pairing, SwissService } from "./SwissService.cjs";
 
 
@@ -81,6 +82,9 @@ class TournamentService {
         
         //TODO: Add chat warning that pairings will be done. If users are not present in 10 seconds, they are kicked out of tournament
         const playersToBeNotified = tournament.participants.filter(participant => participant.participating === true);
+        playersToBeNotified.forEach(userId => {
+            EventBroadcast.publish("realTimeNotif", {user_id: String(userId), event: "tournamentNotification"});
+        });
 
         setTimeout(() => {
             this._updateActivePlayers(tournament.participants);
