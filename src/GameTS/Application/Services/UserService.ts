@@ -16,8 +16,7 @@ class UserService {
     }
 
     updateUserRating(userID: number, newRating: number) {
-        const user = userRepository.getUserByID(userID);
-        user.rating = newRating; //TODO a new method in userRepo is needed, because this new value needs to be saved in the database!
+        userRepository.updateUserRating(userID, newRating);
     }
 }
 

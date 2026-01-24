@@ -96,17 +96,17 @@ class MatchService {
         return matchInfos
     }
 
-    updatePlayersRating(players: MatchPlayerT[], result: TMatchResult) {
+    async updatePlayersRating(players: MatchPlayerT[], result: TMatchResult) {
         const playerRatings = new Map<number, number>();
         const updatedRatings = new Map<number, number>();
         const teamToPlayerID = new Map<SIDES, number>();
 
-        players.forEach(player => {
-            const currentRating = userService.getUserRatingByID(player.id);
+        for (const player of players) {
+            const currentRating = await userService.getUserRatingByID(player.id);
             playerRatings.set(player.id, currentRating);
             updatedRatings.set(player.id, currentRating);
             teamToPlayerID.set(player.team, player.id);
-        })
+        }
 
         for (let i = 0; i < result.length - 1; i++) {
             for (let j = i + 1; j < result.length; j++) {

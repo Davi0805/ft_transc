@@ -11,9 +11,9 @@ class UserRepository {
     
    async getUserByID(userID: number): Promise<UserT> {
         try {
-            const reqResponse = await fetch(`http://localhost:8080/users/${userID}`, {
+            const reqResponse = await fetch(`http://user-backend:8080/users/${userID}`, {
                 method: 'GET',
-                headers: {'Authorization': 'sua-chave-secreta'}
+                headers: {'Authorization': 'Bearer sua-chave-secreta'}
             });
             if (!reqResponse.ok) {console.error(reqResponse.text());}
             const responseJson = await reqResponse.json();
@@ -21,6 +21,27 @@ class UserRepository {
                 id: responseJson.user_id, username: responseJson.username,
                 spriteID: responseJson.spriteID, rating: responseJson.rating
             };
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+   }
+
+   async updateUserRating(userID: number, newRating: number) {
+        try {
+            const reqResponse = await fetch(`http://user-backend:8080/user/ratings/${userID}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': 'Bearer sua-chave-secreta',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ rating: newRating })
+            });
+            if (!reqResponse.ok) {
+                const errorText = await reqResponse.text();
+                console.error(errorText);
+                throw new Error(`Failed to update user rating: ${errorText}`);
+            }
         } catch (error) {
             console.error(error);
             throw error;
