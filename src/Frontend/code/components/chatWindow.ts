@@ -7,8 +7,6 @@ import { authService } from "../services/authService";
 import { Friend } from "./sidebar";
 import { WarningPopup } from "../utils/popUpWarn";
 import { PlayPage } from "../pages/play/play";
-import DOMPurify from "dompurify";
-
 export interface ChatWindowMessage {
   convID: number;
   message: string;
@@ -123,7 +121,7 @@ class ChatWindow {
   createElement(): void {
     this.element = document.createElement("div");
     this.element.className = "chat-window animate-slideInUp";
-    this.element.innerHTML = DOMPurify.sanitize(`
+    this.element.innerHTML = `
         <div class="chat-header">
             <img src="${this.friendAvatar}" width="30" height="30" alt="${this.friendName}">
             <a href="/profile/${this.friendID}" data-link class="friend-name">${this.friendName}</a>
@@ -135,7 +133,7 @@ class ChatWindow {
             <input type="text" class="message-input" placeholder="Type a message...">
             <button class="send-btn">Send</button>
         </div>
-        `);
+        `;
   }
 
   toggleMinimize(): void {
@@ -275,7 +273,7 @@ class ChatWindow {
       );
     }
     
-    messageContainer.innerHTML = DOMPurify.sanitize(`
+    messageContainer.innerHTML = `
       <div class="flex flex-col">
         <!-- Header -->
         <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[rgba(255,255,255,0.1)]">
@@ -298,7 +296,7 @@ class ChatWindow {
         </button>
         ` : ''}
       </div>
-    `);
+    `;
     
     return messageContainer;
   }

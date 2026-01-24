@@ -3,6 +3,7 @@ const userService = require('../../../Application/Services/UserService');
 const exception = require('../../../Infrastructure/config/CustomException');
 const redisService = require('../../../Application/Services/RedisService');
 const blockService = require('../../../Application/Services/BlockService');
+const EventBroadcast = require('../Redis pub-sub/EventBroadcast');
 
 class FriendRequestController {
 
@@ -102,6 +103,10 @@ class FriendRequestController {
     {
         //await friendRequest.blockFriend(req.params.id, req.session.user_id);
         await blockService.blockUser(req.session.user_id, req.params.id);
+        EventBroadcast.publish('blockEvents', {user_1: req.session.user_id,
+                                               user_2: req.params.id,
+                                               state: false
+                                            });
         return reply.send();
     }
 
@@ -111,6 +116,10 @@ class FriendRequestController {
         //await friendRequest.blockFriend(req.params.id, req.session.user_id);
         const user = await userService.findByUsername(req.params.username);
         await blockService.blockUser(req.session.user_id, user.user_id);
+        EventBroadcast.publish('blockEvents', {user_1: req.session.user_id,
+                                               user_2: user.user_id,
+                                               state: false
+                                            });
         return reply.send();
     }
 
@@ -124,6 +133,10 @@ class FriendRequestController {
     {
         //await friendRequest.unblockFriend(req.params.id, req.session.user_id);
         await blockService.unblockUser(req.session.user_id, req.params.id);
+        EventBroadcast.publish('blockEvents', {user_1: req.session.user_id,
+                                               user_2: user.user_id,
+                                               state: true
+                                            });
         return reply.send();
     }
 

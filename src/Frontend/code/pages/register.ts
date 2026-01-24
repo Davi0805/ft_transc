@@ -4,7 +4,7 @@ import { translator } from "../services/translationService";
 import { router } from "../routes/router";
 import { ErrorPopup } from "../utils/popUpError";
 import { WarningPopup } from "../utils/popUpWarn";
-import DOMPurify from "dompurify";
+
 
 export const RegisterPage = {
   template(): string {
@@ -22,9 +22,9 @@ export const RegisterPage = {
         </div>
 
         <div class="input-box my-5 mx-0">
-          <input id="name" type="text" placeholder="Nickname" name="name" data-i18n-placeholder="register-place-nickname" required 
+          <input id="nickname" type="text" placeholder="Nickname" name="name" data-i18n-placeholder="register-place-nickname" required 
           pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
-          title="Name must be 2–40 characters long and can include letters and spaces" data-i18n-title="register-title-name" />
+          title="Nickname must be 2–40 characters long and can include letters and spaces" data-i18n-title="register-title-name" />
           <img src="../Assets/icons/id-card.svg" draggable="false" />
         </div>
 
@@ -72,7 +72,7 @@ export const RegisterPage = {
       warnPopup.create("Something is strange...", "Seems like the page was not loaded correctly. Please refresh and try again.");
       return;
     } 
-    wrapper.innerHTML = DOMPurify.sanitize(`
+    wrapper.innerHTML = `
       <div class="registration-success h-[210px] flex flex-col justify-evenly">
         <h1 class="title" data-i18n="register-success-title">Success!</h1>
         <p class="description mt-5 text-center" data-i18n="register-success-description">Congratulations, your account has been successfully created.</p>
@@ -81,7 +81,7 @@ export const RegisterPage = {
           <button id="btn-login" class="button active:bg-[#bdbdbd]" data-i18n="register-success-btn-login">Log In</button>
         </div>
       </div>
-    `);
+    `;
 
     translator.apply();
     const buttonHome = document.getElementById("btn-home") as HTMLButtonElement;
@@ -103,7 +103,7 @@ export const RegisterPage = {
       e.preventDefault(); // prevent default browser action (Refresh)
 
       // Input
-      const name: string = (document.getElementById("name") as HTMLInputElement)?.value;
+      const name: string = (document.getElementById("nickname") as HTMLInputElement)?.value;
       const username = (document.getElementById("username") as HTMLInputElement).value;
       const email = (document.getElementById("email") as HTMLInputElement).value;
       const password_hash = (document.getElementById("password") as HTMLInputElement).value;

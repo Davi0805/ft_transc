@@ -1,5 +1,5 @@
 import { PopupBase } from "./popUpBase"
-import DOMPurify from "dompurify";
+
 
 /* USAGE
 const popup = new ErrorPopup();
@@ -11,7 +11,7 @@ export class ErrorPopup extends PopupBase {
         const popup = document.createElement('div');
         popup.classList = `popup bg-popup-error-bg border-popup-error-border`;
 
-        popup.innerHTML = DOMPurify.sanitize(`
+        popup.innerHTML = (`
                         <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center font-bold text-base text-white bg-[#dc3545]">!</div>
                         <div class="flex-1">
                             <div class="text-base font-semibold mb-1 text-[#721c24]">${title}</div>

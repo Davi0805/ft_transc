@@ -5,7 +5,7 @@ import { debounce } from "../utils/debouncing";
 import { TopTenPlayers } from "../api/leaderboard/types/TopTenPlayers";
 import { UsersData } from "../api/leaderboard/types/usersDataInterface";
 import { getTopTenData } from "../api/leaderboard/getTopTenDataAPI";
-import DOMPurify from "dompurify";
+
 
 export const HomePage = {
   template() {
@@ -257,7 +257,7 @@ export const HomePage = {
               positionCell.classList.remove('text-blue-200');
               positionCell.classList.add('text-yellow-400');
             }
-            nameCell.innerHTML = DOMPurify.sanitize(`<a href='/profile/${playerData.id}' class="hover:text-[#fca17d] transition-all duration-150 ease-in-out" data-link>${playerData.username}</a>`);
+            nameCell.innerHTML = `<a href='/profile/${playerData.id}' class="hover:text-[#fca17d] transition-all duration-150 ease-in-out" data-link>${playerData.username}</a>`;
             pointsCell.textContent = playerData.points.toString();
             winCell.textContent = playerData.wins.toString();
             lossesCell.textContent = playerData.losses.toString();

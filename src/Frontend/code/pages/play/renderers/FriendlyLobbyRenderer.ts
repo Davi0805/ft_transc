@@ -1,4 +1,4 @@
-import DOMPurify from "dompurify";
+
 import { PaddleCarrossel } from "../../../components/carrossel/paddleCarrossel";
 import { ROLES, SIDES } from "../../../match/matchSharedDependencies/sharedTypes";
 import { joinFriendlyClicked, withdrawFriendlyClicked } from "../buttonCallbacks";
@@ -44,7 +44,7 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
 
         const settingsDialog = document.createElement('dialog');
         settingsDialog.className = "flex flex-col m-auto px-16 py-10 rounded-xl bg-[rgb(20,20,20)] shadow-2xl shadow-black border-y border-black text-white"
-        settingsDialog.innerHTML = DOMPurify.sanitize(`
+        settingsDialog.innerHTML = `
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-bold text-white mb-2">Game Settings</h1>
                     <p class="text-white/70">Customize your game settings</p>
@@ -103,7 +103,7 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
                         Join Game
                     </button>
                 </form>
-        `);
+        `;
 
 
         document.body.appendChild(settingsDialog);

@@ -1,4 +1,4 @@
-import DOMPurify from "dompurify";
+
 import { lobbyService } from "../../services/LobbyService";
 import { tournamentService } from "../../services/tournamentService";
 import { quitTournamentClicked } from "./buttonCallbacks";
@@ -62,7 +62,7 @@ export const TournamentPage = {
         })
 
         const pairingsTable = getTable("standings", standingsHead, standingsBody)
-        tournamentBody.innerHTML = DOMPurify.sanitize(pairingsTable.outerHTML);
+        tournamentBody.innerHTML = pairingsTable.outerHTML;
     },
 
     renderPairings() {
@@ -117,6 +117,6 @@ export const TournamentPage = {
             </tr>
         `
         const pairingsTable = getTable("pairings", participantsTableHead, participantsTableBody)
-        tournamentBody.innerHTML = DOMPurify.sanitize(pairingsTable.outerHTML);
+        tournamentBody.innerHTML = pairingsTable.outerHTML;
     }
 }

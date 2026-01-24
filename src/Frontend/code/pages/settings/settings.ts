@@ -18,7 +18,7 @@ import { setupKeyCaptureButton } from "../play/utils/stylingComponents";
 import { savePlayerPreferences } from "../../api/settings/preferences/savePlayerPreferencesAPI";
 import { getPlayerPreferences } from "../../api/settings/preferences/getPlayerPreferencesAPI";
 import { PlayerPreferences } from "../../api/settings/preferences/PreferenceInterface";
-import DOMPurify from "dompurify";
+
 import { translator } from "../../services/translationService";
 
 export const SettingsPage = {
@@ -281,7 +281,7 @@ export const SettingsPage = {
     const newElement = document.createElement("div") as HTMLDivElement;
     newElement.classList = `blocked flex items-center justify-between bg-white/10 rounded-lg px-4 py-2`;
     newElement.setAttribute("data-id", userData.id.toString());
-    newElement.innerHTML = DOMPurify.sanitize(`
+    newElement.innerHTML = `
         <div class="flex items-center gap-3">
           <img src="${avatar}"
               alt="user-avatar"
@@ -292,7 +292,7 @@ export const SettingsPage = {
                 data-id="${userData.id}">
           ${translator.get("settings-social-unblockuser-btn")}
         </button>
-         `);
+         `;
     return newElement;
   },
 
@@ -350,19 +350,19 @@ export const SettingsPage = {
 
     switch (SettingsPage.currentSection) {
       case "account":
-        content.innerHTML = DOMPurify.sanitize(SettingsPage.getAccountHTML());
+        content.innerHTML = (SettingsPage.getAccountHTML());
         SettingsPage.initAccountEvents();
         break;
       case "security":
-        content.innerHTML = DOMPurify.sanitize(SettingsPage.getSecurityHTML());
+        content.innerHTML = (SettingsPage.getSecurityHTML());
         SettingsPage.initSecurityEvents();
         break;
       case "social":
-        content.innerHTML = DOMPurify.sanitize(await SettingsPage.getSocialHTML());
+        content.innerHTML = (await SettingsPage.getSocialHTML());
         SettingsPage.initSocialEvents();
         break;
       case "preferences":
-        content.innerHTML = DOMPurify.sanitize(SettingsPage.getPreferencesHTML());
+        content.innerHTML = (SettingsPage.getPreferencesHTML());
         SettingsPage.initPreferencesEvents();
     }
   },
@@ -520,7 +520,7 @@ export const SettingsPage = {
       return;
     }
 
-    content.innerHTML = DOMPurify.sanitize(`
+    content.innerHTML = (`
       <h1 data-i18n="settings-twofa-title" class="mb-6 text-4xl font-bold">Settings</h1>
 
       <h2 data-i18n="settings-twofa-subtitle" class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Two Factor Authentication</h2>
@@ -718,7 +718,6 @@ export const SettingsPage = {
         warnPopup.create("Invalid Username", "Please enter a valid username to block.");
         return;
       }
-      // todo sanitize check
 
       if (username === authService.userUsername) {
         const warnPopup = new WarningPopup();
@@ -733,7 +732,7 @@ export const SettingsPage = {
         const socialHTML = await SettingsPage.getSocialHTML();
         const content = document.getElementById("settings-content");
         if (content) {
-          content.innerHTML = DOMPurify.sanitize(socialHTML);
+          content.innerHTML = (socialHTML);
           SettingsPage.initSocialEvents();
         }
 

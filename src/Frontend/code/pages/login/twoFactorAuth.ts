@@ -4,7 +4,7 @@ import { translator } from "../../services/translationService";
 import { router } from "../../routes/router";
 import { ErrorPopup } from "../../utils/popUpError";
 import { WarningPopup } from "../../utils/popUpWarn";
-import DOMPurify from "dompurify";
+
 
 export const TwoFactorAuth = {
   renderHTML(): string {
@@ -40,7 +40,7 @@ export const TwoFactorAuth = {
       return;
     }
 
-    container.innerHTML = DOMPurify.sanitize(this.renderHTML());
+    container.innerHTML = this.renderHTML();
     translator.apply();
 
     const inputs = document.querySelectorAll<HTMLInputElement>(".otp-input");

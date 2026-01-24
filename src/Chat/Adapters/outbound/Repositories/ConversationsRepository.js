@@ -34,6 +34,7 @@ class ConversationsRepository {
             FROM conversations c
             LEFT JOIN messages m ON c.id = m.conversation_id
             WHERE (c.user1_id = ? OR c.user2_id = ?)
+            AND active = 1
             GROUP BY c.id, c.user1_id, c.user2_id
         `, [user_id, user_id, user_id]);
     }
@@ -55,6 +56,13 @@ class ConversationsRepository {
            [userA, userB, userB, userA]
        );
 }
+
+    async changeConversationState(conversation_id, state)
+    {
+        return await db.raw(`UPDATE conversations SET active = ? WHERE id = ?`
+            , [state, conversation_id]
+        );
+    }
 }
 
 module.exports = new ConversationsRepository();

@@ -20,7 +20,7 @@ import { createFriendRequestByUsername } from "../api/friends/createFriendReques
 
 import { SuccessPopup } from "../utils/popUpSuccess";
 import { ErrorPopup } from "../utils/popUpError";
-import DOMPurify from "dompurify";
+
 import { translator } from "../services/translationService";
 
 export interface Friend {
@@ -58,7 +58,7 @@ export class Chat {
   }
 
   async init(): Promise<void> {
-    this.sidebar.innerHTML = DOMPurify.sanitize(this.renderHTML());
+    this.sidebar.innerHTML = this.renderHTML();
     await this.attachHeaderEventListeners();
 
     webSocketService.connect(authService.userID);
@@ -129,7 +129,7 @@ export class Chat {
 
       </div>
 
-      <div id="add-friend-popover" class="flex items-center fixed top-[60px] right-[200px] z-50 p-[5px] w-[200px] min-h-8 gap-1.5 bg-abyssblue border-1 border-r-0 border-white/10 rounded-tl-lg rounded-bl-lg shadow-lg shadow-black/30 opacity-0 transition-all duration-150 ease-in-out">
+      <div id="add-friend-popover" class="flex items-center fixed top-[60px] right-[200px] z-50 p-[5px] w-[200px] min-h-8 gap-1.5 bg-abyssblue border-1 border-r-0 border-white/10 rounded-tl-lg rounded-bl-lg shadow-lg shadow-black/30 opacity-0 hidden transition-all duration-150 ease-in-out">
         <input data-i18n-placeholder="side-add-friend-input" type="text" id="friend-username-input" class="outline-none flex-1 py-1 px-1.5 h-7 min-w-0 bg-white/5 border-1 border-white/10 rounded text-myWhite text-sm"  placeholder="Username..." />
         <button id="send-friend-request-btn" class="flex items-center justify-center w-9 h-7 p-1 text-myWhite text-sm font-medium cursor-pointer rounded bg-[#007bff33] hover:bg-[#007bff59] transition-colors duration-200 ease-in-out ">
           <svg
@@ -164,32 +164,51 @@ export class Chat {
   }
 
   async addFriendEventListener(): Promise<void> {
-    const addFriendBtn = document.querySelector(
-      ".add-friend"
-    ) as HTMLButtonElement;
-    const popover = document.getElementById(
-      "add-friend-popover"
-    ) as HTMLDivElement;
-    const popoverInput = document.getElementById(
-      "friend-username-input"
-    ) as HTMLInputElement;
-    const popoverSendBtn = document.getElementById(
-      "send-friend-request-btn"
-    ) as HTMLButtonElement;
+    const addFriendBtn = document.querySelector(".add-friend") as HTMLButtonElement;
+    const popover = document.getElementById("add-friend-popover") as HTMLDivElement;
+    const popoverInput = document.getElementById("friend-username-input") as HTMLInputElement;
+    const popoverSendBtn = document.getElementById("send-friend-request-btn") as HTMLButtonElement;
 
-    addFriendBtn.addEventListener("click", (e: MouseEvent) => {
+    const isOpen = (popover : HTMLElement): boolean => {
+      return !popover.classList.contains("hidden");
+    }
+
+    const openPopover = (popover: HTMLElement) => {
+      popover.classList.remove("hidden");
+      popover.classList.remove("opacity-0");
+      popover.classList.add("opacity-100");
+
+      popoverInput.focus();
+    }
+
+    const closePopover = (popover: HTMLElement) => {
+      popover.classList.remove("opacity-100");
+      popover.classList.add("opacity-0");
+
+      popoverInput.value = "";
+
+      window.setTimeout(() => {
+        if (popover.classList.contains("opacity-0")) {
+          popover.classList.add("hidden");
+        }
+      }, 150);
+    }
+
+    const togglePopover= (popover: HTMLElement) => {
+      if (isOpen(popover)) closePopover(popover);
+      else openPopover(popover);
+    }
+
+    addFriendBtn.addEventListener("click", (e) => {
+      e.preventDefault();
       e.stopPropagation();
-      popover.classList.replace("opacity-0", "opacity-100");
-      if (popover.classList.contains("opacity-0")) popoverInput.value = "";
-      else popoverInput.focus();
+      togglePopover(popover);
     });
 
-    document.addEventListener("click", (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
+    document.addEventListener("click", (e) => {
+      const target = e.target as Node;
       if (!popover.contains(target) && !addFriendBtn.contains(target)) {
-        popover.classList.toggle("hidden");
-        popover.classList.replace("opacity-100", "opacity-0");
-        popoverInput.value = "";
+        if (isOpen(popover)) closePopover(popover);
       }
     });
 
@@ -320,9 +339,9 @@ export class Chat {
     unreadMsg: number
   ): HTMLButtonElement {
     const newContact = document.createElement("button") as HTMLButtonElement;
-    newContact.setAttribute("data-friend", DOMPurify.sanitize(friendName));
+    newContact.setAttribute("data-friend", friendName);
     newContact.className = `contact hover:bg-[#007bff33] hover:scale-105 transition-all duration-200 ease-in-out active:scale-95`;
-    newContact.innerHTML = DOMPurify.sanitize(`
+    newContact.innerHTML = `
                   <img class="rounded-full w-10 h-10 border-2 border-[#676768]" src="${friendAvatar}" width="40px" height="40px">
                   <span>${friendName}</span>
                   <span class="unread-badge -top-0.5 -right-0.5 absolute min-w-[18px] h-[18px] px-1 text-center text-xs font-bold text-myWhite
@@ -330,7 +349,7 @@ export class Chat {
                 shadow-[0_0_4px_rgba(255,71,87,0.4),0_0_6px_rgba(255,71,87,0.2),inset_0_1px_2px_rgba(255,255,255,0.3)]" style="display: ${
                     unreadMsg ? "inline" : "none"
                   };">${unreadMsg}</span>
-                  `);
+                  `;
     return newContact;
   }
 
@@ -346,7 +365,7 @@ export class Chat {
     const newRequest = document.createElement("div") as HTMLDivElement;
     newRequest.classList = `request-wrapper ${friendRequest.sender_username}`;
     const requestAvatar = await getUserAvatarById(friendRequest.sender_id);
-    newRequest.innerHTML = DOMPurify.sanitize(`
+    newRequest.innerHTML = `
         <div class="user-info">
           <img src="${requestAvatar}" alt="user-avatar" />
 
@@ -354,15 +373,15 @@ export class Chat {
         </div>
 
         <div class="request-options">
-          <button class="request-btn accept" id="friend-accept" data-username="${DOMPurify.sanitize(friendRequest.sender_username)}" title="Accept">
+          <button class="request-btn accept" id="friend-accept" data-username="${friendRequest.sender_username}" title="Accept">
             <img src="../../Assets/icons/check-circle.svg" />
           </button>
 
-          <button class="request-btn reject" id="friend-reject" data-username="${DOMPurify.sanitize(friendRequest.sender_username)}" title="Reject">
+          <button class="request-btn reject" id="friend-reject" data-username="${friendRequest.sender_username}" title="Reject">
             <img src="../../Assets/icons/cancel-circle.svg" />
           </button>
         </div>
-    `);
+    `;
     return newRequest;
   }
 
