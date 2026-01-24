@@ -28,6 +28,11 @@ export interface MessageDTO {
   metadata: string | null;
 }
 
+export interface BlockedEvent {
+  event: "conversationBlocked";
+  conversation_id: number;
+}
+
 class WebSocketService {
   private ws: WebSocket | null;
   private reconnectAttempts: number;
@@ -41,6 +46,7 @@ class WebSocketService {
   private onlineCallbacks: FunctionCallback[];
   private friendsUpdateCallbacks: FunctionCallback[];
   private newFriendRequestsCallbacks: FunctionCallback[];
+  private blockedEventCallbacks: FunctionCallback[];
 
   private friendRequestCount: number = 0;
 
@@ -57,6 +63,7 @@ class WebSocketService {
     this.onlineCallbacks = [];
     this.friendsUpdateCallbacks = [];
     this.newFriendRequestsCallbacks = [];
+    this.blockedEventCallbacks = [];
   }
 
   /**
@@ -129,6 +136,7 @@ class WebSocketService {
     this.onlineCallbacks = [];
     this.friendsUpdateCallbacks = [];
     this.newFriendRequestsCallbacks = [];
+    this.blockedEventCallbacks = [];
     this.friendRequestCount = 0;
   }
 
@@ -175,6 +183,10 @@ class WebSocketService {
     this.newFriendRequestsCallbacks.push(callback);
   }
 
+  registerBlockedEventCallback(callback: FunctionCallback): void {
+    this.blockedEventCallbacks.push(callback);
+  }
+
   /**
    * Handles incoming WebSocket messages
    *
@@ -198,19 +210,19 @@ class WebSocketService {
 
   */
   isOnlineUsersEvent(
-    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO
+    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO | BlockedEvent
   ): data is OnlineUsersEvent {
     return (data as OnlineUsersEvent).online_users !== undefined;
   }
 
   isNewFriendRequestEvent(
-    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO
+    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO | BlockedEvent
   ): data is NewFriendRequestEvent {
     return (data as NewFriendRequestEvent).event === "new_friend_request";
   }
 
   isMessageDTO(
-    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO
+    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO  | BlockedEvent
   ): data is MessageDTO {
     return (
       data &&
@@ -226,9 +238,25 @@ class WebSocketService {
     );
   }
 
+  isBlockedEvent(
+    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO | BlockedEvent
+  ): data is BlockedEvent {
+    return (data as BlockedEvent).event === "conversationBlocked";
+  }
+
   handleMessage(
-    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO
+    data: OnlineUsersEvent | NewFriendRequestEvent | MessageDTO | BlockedEvent
   ): void {
+    /**
+     * BlockedEvent
+     * Event for when were blocked by a friend
+     * Gives the conversation_id that was blocked
+    */
+    if(this.isBlockedEvent(data)) {
+      this.triggerBlockedEvent(data.conversation_id);
+      return;
+    }
+
     /*
       Event for online friends
       {online_users: Array<number> }
@@ -338,6 +366,19 @@ class WebSocketService {
       } catch (error) {
         console.log(
           "DEBUG: Error in websocket newFriendRequestsCallbacks callback:",
+          error
+        );
+      }
+    });
+  }
+
+  triggerBlockedEvent(conversation_id: number): void {
+    this.blockedEventCallbacks.forEach((callback) => {
+      try {
+        callback(conversation_id);
+      } catch (error) {
+        console.log(
+          "DEBUG: Error in websocket triggerBlockedEvent callback:",
           error
         );
       }

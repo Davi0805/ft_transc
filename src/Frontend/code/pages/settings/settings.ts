@@ -190,7 +190,7 @@ export const SettingsPage = {
         }
       }
     } catch (error) {
-
+      throw error;
     }
 
 
@@ -285,7 +285,7 @@ export const SettingsPage = {
         <div class="flex items-center gap-3">
           <img src="${avatar}"
               alt="user-avatar"
-              class="w-10 h-10 rounded-full border-2 border-yellow-400" />
+              class="w-10 h-10 rounded-full border-2 border-red-400" />
           <span class="font-medium">${userData.username}</span>
         </div>
         <button data-i18n="settings-social-unblockuser-btn" class="unblock-btn bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-white font-semibold transition duration-200"
@@ -729,6 +729,7 @@ export const SettingsPage = {
         await blockByUserName(username);
 
         // refresh the blocked list
+        console.debug("DEBUG: Refreshing blocked list after blocking a user.");
         const socialHTML = await SettingsPage.getSocialHTML();
         const content = document.getElementById("settings-content");
         if (content) {
@@ -739,9 +740,14 @@ export const SettingsPage = {
         // check if blocked a friend and update friends list if so
         if (authService.isUserAuthenticated()) {
           // returns null if not found
+          console.debug("DEBUG: Checking if blocked user is a friend to update friends list.");
           const friendConvID = authService.sidebar?.getConvIDByFriendUsername(username);
           if (friendConvID) {
+            console.debug("DEBUG: Blocked user is a friend, deleting from friends list.");
             authService.sidebar?.deleteContact(friendConvID);
+          }
+          else {
+            console.debug("DEBUG: Blocked user is not a friend, no update to friends list needed.");
           }
         }
 
@@ -762,10 +768,8 @@ export const SettingsPage = {
           errPopup.create("Unexpected Error", `The username ${username} could not be blocked.`);
           return;
         }
-        console.error("DEBUG: Error blocking user:", error);
       }
     });
-
   },
 
   initChangeAvatarEventListener(): void {

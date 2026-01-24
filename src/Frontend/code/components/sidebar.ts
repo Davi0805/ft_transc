@@ -82,6 +82,14 @@ export class Chat {
       this.updateFriendRequestsNumber(webSocketService.getFriendRequestCount());
     });
 
+    webSocketService.registerBlockedEventCallback((conversation_id) => {
+      this.deleteContact(conversation_id);
+      if (chatWindowControler.isChatOpen &&
+          chatWindowControler.getConvID == conversation_id) {
+            chatWindowControler.close();
+      }
+    });
+
 
     try {
       this.friendRequestCount = await getFriendRequestsCount();

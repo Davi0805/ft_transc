@@ -51,6 +51,10 @@ class ChatWindow {
     return this.friendID;
   }
 
+  get getConvID(): number | null {
+    return this.convID;
+  }
+
   async open(friend: Friend): Promise<void> {
     if (this.isOpen) {
       if (this.convID === friend.convID) {

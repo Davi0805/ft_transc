@@ -45,7 +45,7 @@ class UserController {
     async getById(req, reply)
     {
         const user = await userService.findById(req.params.id);
-        return reply.send({ user_id: user[0].user_id,
+        return reply.send({ id: user[0].user_id,
                             nickname: user[0].name,
                             username: user[0].username,
                             email: user[0].email,
