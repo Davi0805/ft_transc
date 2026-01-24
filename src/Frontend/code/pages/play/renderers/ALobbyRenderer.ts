@@ -1,4 +1,4 @@
-import DOMPurify from "dompurify";
+
 import { getAllFriends } from "../../../api/friends/chat/getAllFriendsAPI";
 import { getUserAvatarById } from "../../../api/userData/getUserAvatarAPI";
 import { chatWindowControler } from "../../../components/chatWindow";
@@ -25,7 +25,7 @@ export abstract class ALobbyRenderer {
     async renderSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings, amIHost: boolean) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
         //As the html for the options is created inside the helper, it is inserted directly in the innerHTML
-        lobbySettingsElement.innerHTML = DOMPurify.sanitize(getLobbyOptionsHTML(false, lobbyType, matchSettings));
+        lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyType, matchSettings);
 
         //Only the host can change the settings, so the button is only rendered in that case
         if (amIHost) {
@@ -45,7 +45,7 @@ export abstract class ALobbyRenderer {
                 ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
             </div>
         `;
-        lobbySettingsElement.innerHTML = DOMPurify.sanitize(lobbySettingsHtml);
+        lobbySettingsElement.innerHTML = lobbySettingsHtml;
 
         //Connect the callback of the apply button
         const formChangeSettings = document.getElementById('settings-change-form') as HTMLElement;
@@ -59,7 +59,6 @@ export abstract class ALobbyRenderer {
         //GetButton is just creates a simple button with the options provided
         const inviteButton = getButton("btn-invite", "button", "Invite");
         inviteButton.addEventListener('click', () => this.InviteClickEventListener());
-        // inviteButton.addEventListener('click', () => inviteUserClicked(1)) //TODO: "1" is hardcoded. Find a way to invite specific user
         buttonsDiv.appendChild(inviteButton);
 
         const leaveButton = getButton("btn-leave", "button", "Leave");
@@ -130,7 +129,7 @@ export abstract class ALobbyRenderer {
         
         let element =document.createElement("div");
         element.classList = "friends-list-entry flex items-center justify-between gap-[16px] py-[12px] border-b border-white/5 last:border-b-0";
-        element.innerHTML = DOMPurify.sanitize(`
+        element.innerHTML = `
                     <div class="flex  items-center gap-[12px] flex-1">
                         <img src="${avatarURL}" alt="user-avatar" class="w-[40px] h-[40px] rounded-full border-2 border-white/20 shadow-[0_0_4px_rgba(0,0,0,0.3)] object-cover">
 
@@ -146,7 +145,7 @@ export abstract class ALobbyRenderer {
                         >
                             Invite
                         </button>
-                    </div>`);
+                    </div>`;
         return element;
     }
 

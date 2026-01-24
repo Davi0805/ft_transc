@@ -5,7 +5,7 @@ import { getSelfData } from "../../api/userData/getSelfDataAPI";
 import { lobbyService } from "../../services/LobbyService";
 import { matchService } from "../../services/matchService";
 import { tournamentService } from "../../services/tournamentService";
-import DOMPurify from "dompurify";
+
 
 export const PlayPage = {
     template() {
@@ -97,10 +97,10 @@ export const PlayPage = {
             row.classList = "w-full h-12 cursor-pointer text-center border-b border-white/10 bg-gray-900/20 transition-colors duration-200 hover:bg-gray-900/60 active:bg-gray-900/25";
             
             row.innerHTML = `
-                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[178px] truncate">${DOMPurify.sanitize(rowData[0])}</td>
-                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[178px] truncate">${DOMPurify.sanitize(rowData[1])}</td>
-                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[96px] truncate capitalize">${DOMPurify.sanitize(rowData[2])}</td>
-                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[148px] truncate">${DOMPurify.sanitize(rowData[3])}</td>
+                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[178px] truncate">${rowData[0]}</td>
+                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[178px] truncate">${rowData[1]}</td>
+                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[96px] truncate capitalize">${rowData[2]}</td>
+                <td class="px-1 py-3 text-base leading-none text-gray-300 font-bold w-[148px] truncate">${rowData[3]}</td>
             `;
 
             //Allows the user to click on a lobby in the list and go to it

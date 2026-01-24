@@ -1,4 +1,4 @@
-import DOMPurify from "dompurify";
+
 import { PopupBase } from "./popUpBase"
 
 /* USAGE
@@ -11,7 +11,7 @@ export class WarningPopup extends PopupBase {
         const popup = document.createElement('div');
         popup.classList = `popup bg-popup-warning-bg border-popup-warning-border`;
 
-        popup.innerHTML = DOMPurify.sanitize(`
+        popup.innerHTML = (`
                         <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center font-bold text-base text-[#212529] bg-[#ffc107]">⚠</div>
                         <div class="flex-1">
                             <div class="text-base font-semibold mb-1 text-[#856404]">${title}</div>
