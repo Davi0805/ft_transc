@@ -26,6 +26,7 @@ const setup = () => {
 
     eventBroadcast.subscribe('realTimeNotif', eventBroadcast.handleRealTimeNotif);
     eventBroadcast.subscribe('lobbyInvites', eventBroadcast.handleLobbyInvitations);
+    eventBroadcast.subscribe('blockEvents', eventBroadcast.handleBlocks);
 
     app.register(sensible);
     app.register(webSocketRoutes);

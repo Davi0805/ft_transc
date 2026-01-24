@@ -114,19 +114,19 @@ services:
     networks:
       - net
 
-  nginx-modsecurity:
-      build: ./nginx
-      ports:
-        - "8888:80"
-        - "8443:8443"
-      volumes:
-        - ./src/Frontend:/usr/share/nginx/html:ro
-        
-      depends_on:
-        - user-backend
-        - chat-backend
-      networks:
-        - net
+  #nginx-modsecurity:
+  #    build: ./nginx
+  #    ports:
+  #      - "8888:80"
+  #      - "8443:8443"
+  #    volumes:
+  #      - ./src/Frontend:/usr/share/nginx/html:ro
+  #      
+  #    depends_on:
+  #      - user-backend
+  #      - chat-backend
+  #    networks:
+  #      - net
 
 networks:
   net:

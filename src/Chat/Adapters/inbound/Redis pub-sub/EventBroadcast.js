@@ -59,6 +59,24 @@ class EventBroadcast {
         socket.send(JSON.stringify({ conversation_id: conversation[0].id,
                          message: 'match_invite', metadata: parsedMsg.lobbyId }));
     }
+
+    async handleBlocks(message)
+    {
+        let parsedMsg;
+        try {
+            parsedMsg = JSON.parse(message);
+            const conversation = await conversationService.getConversationByUserIds(parsedMsg.user_1, parsedMsg.user_2);
+            if (conversation.length == 0) {return;}
+            await conversationService.changeConversationState(conversation[0].id, parsedMsg.state);
+            (await connectedUsersService.getUser(String(parsedMsg.user_1))).send(JSON.stringify({conversation_id: conversation[0].id,
+                                                                                                 event: 'conversationBlocked'}));
+            (await connectedUsersService.getUser(String(parsedMsg.user_2))).send(JSON.stringify({conversation_id: conversation[0].id,
+                                                                                                 event: 'conversationBlocked'}));
+                                                                                                 console.log("BLOCKEEEED");
+        } catch (error) {
+            console.log('GAVE SHIT');            
+        }
+    }
 }
 
 module.exports = new EventBroadcast();
