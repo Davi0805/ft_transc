@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { getSecret } = require('./VaultClient');
+const exception = require('../../Infrastructure/config/CustomException');
 
 class JwtService {
     constructor(secretToken) {
@@ -15,10 +16,16 @@ class JwtService {
     validate(token) {
         try {
             const decoded = jwt.verify(token, this.secretToken);
-            return !!decoded;
+            return !!decoded;return true
         } catch {
             return false;
         }
+    }
+
+    validateInternalService(token)
+    {
+        token = token.substring(7);
+        if (token != this.secretToken) {throw exception('Invalid token',401);}
     }
 }
 

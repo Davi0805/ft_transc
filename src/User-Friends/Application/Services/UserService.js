@@ -201,6 +201,28 @@ class UserService {
         }
     }
 
+    async findRatingById(user_id)
+    {
+        try {
+            const userRating = await userRepository.findRatingById(user_id);
+            if (!userRating[0].rating) {throw exception('User id not found!');}
+            return userRating[0];
+        } catch (error) {
+            console.log(error);
+            throw exception('Failed to find the user rating!', 400);            
+        }
+    }
+
+    async updateUserRating(user_id, newRating)
+    {
+        try {
+            await userRepository.updateUserRating(user_id, newRating);
+        } catch (error) {
+            console.error(error);
+            throw exception('Failed to update the user rating', 400);
+        }
+    }
+
 };
 
 module.exports = new UserService();

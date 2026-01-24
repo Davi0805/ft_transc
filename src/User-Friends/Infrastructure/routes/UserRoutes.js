@@ -90,6 +90,14 @@ async function userRoutes(fastify, options) {
       preHandler: authMiddleware,
       handler: userController.updatePassword
     });
+
+    fastify.get('/user/ratings/:user_id', {
+      handler: userController.getUserRatings
+    });
+
+    fastify.put('/user/ratings/:user_id', {
+      handler: userController.updateUserRating
+    });
 }
 
 module.exports = userRoutes;

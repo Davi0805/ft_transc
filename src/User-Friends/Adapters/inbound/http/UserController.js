@@ -230,6 +230,32 @@ class UserController {
         await redisService.saveSession(jwt, { user_id: session.user_id, twofa_verified: 1 });
         return reply.send();
     }
+
+    /* 
+    *    @brief Endpoint to get the user ratings
+    *    GET - localhost:8080/user/ratings/{user_id}
+    *    @params user_id: (Number) - User identifier
+    */
+   async getUserRatings(req, reply)
+   {
+        await jwtService.validateInternalService(req.headers.authorization);
+        const userRating = await userService.findRatingById(req.params.user_id);
+        return reply.send(userRating)
+   }
+
+   /* 
+    *    @brief Endpoint to update the user ratings
+    *    PUT - localhost:8080/user/ratings/{user_id}
+    *    @params author. Token: (String) - System level secret token 
+    *    @params user_id: (Number) - User identifier
+    *    @params rating (Number) - New user rating
+    */
+   async updateUserRating(req, reply)
+   {
+        await jwtService.validateInternalService(req.headers.authorization);
+        await userService.updateUserRating(req.params.user_id, req.body.rating);
+        return reply.send();
+   }
 }
 
 module.exports = new UserController();

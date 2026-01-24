@@ -12,7 +12,7 @@ class UserService {
 
     getUserRatingByID(userID: number) {
         const user = userRepository.getUserByID(userID);
-        return user.rating;
+        return userRepository.getUserByID(userID).then(user => user.rating);
     }
 
     updateUserRating(userID: number, newRating: number) {
