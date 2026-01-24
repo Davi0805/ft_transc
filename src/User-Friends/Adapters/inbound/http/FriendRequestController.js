@@ -133,6 +133,10 @@ class FriendRequestController {
     {
         //await friendRequest.unblockFriend(req.params.id, req.session.user_id);
         await blockService.unblockUser(req.session.user_id, req.params.id);
+        EventBroadcast.publish('blockEvents', {user_1: req.session.user_id,
+                                               user_2: user.user_id,
+                                               state: true
+                                            });
         return reply.send();
     }
 
