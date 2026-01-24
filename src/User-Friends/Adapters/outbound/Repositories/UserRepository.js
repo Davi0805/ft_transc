@@ -106,6 +106,16 @@ class UserRepository {
             , [path, user_id]
         );
     }
+
+    async findRatingById(user_id)
+    {
+        return db.raw('SELECT rating from users WHERE user_id = ?', [user_id]);
+    }
+
+    async updateUserRating(user_id, newRating)
+    {
+        await db.raw('UPDATE users SET rating = ? WHERE user_id = ?', [newRating, user_id]);
+    }
 }
 
 module.exports = new UserRepository();
