@@ -1,3 +1,5 @@
+
+
 export class InitialLoader {
     private static instance: InitialLoader | null = null;
     private loaderElement: HTMLElement | null = null;

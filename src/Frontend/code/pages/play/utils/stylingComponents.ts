@@ -1,5 +1,6 @@
 type TButton = "button" | "submit" | "reset"
 
+
 export function setupKeyCaptureButton(button: HTMLButtonElement, inputElement: HTMLInputElement) {
   let isListeningForKey = false;
 
@@ -53,7 +54,7 @@ export function getTable(id: string, headHtml: string, bodyHtml: string) {
 
     const tbody = document.createElement("tbody")
     tbody.id = id + "-body";
-    tbody.innerHTML = bodyHtml
+    tbody.innerHTML = bodyHtml;
     table.appendChild(tbody);
 
     out.appendChild(table)

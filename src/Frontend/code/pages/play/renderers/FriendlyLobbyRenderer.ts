@@ -1,3 +1,4 @@
+
 import { PaddleCarrossel } from "../../../components/carrossel/paddleCarrossel";
 import { ROLES, SIDES } from "../../../match/matchSharedDependencies/sharedTypes";
 import { joinFriendlyClicked, withdrawFriendlyClicked } from "../buttonCallbacks";

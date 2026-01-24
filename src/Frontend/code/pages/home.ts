@@ -1,8 +1,11 @@
 import { ErrorPopup } from "../utils/popUpError";
 import { PlayerStats } from "../api/leaderboard/types/PlayerStatsInterface";
-import { searchPlayer } from "../api/leaderboard/searchPlayerAPI";
-import { getTopTen } from "../api/leaderboard/getTopTenAPI";
+import { getLeaderboard } from "../api/leaderboard/getTopTenAPI";
 import { debounce } from "../utils/debouncing";
+import { TopTenPlayers } from "../api/leaderboard/types/TopTenPlayers";
+import { UsersData } from "../api/leaderboard/types/usersDataInterface";
+import { getTopTenData } from "../api/leaderboard/getTopTenDataAPI";
+
 
 export const HomePage = {
   template() {
@@ -26,13 +29,13 @@ export const HomePage = {
             <!-- Content Area -->
             <div class="space-y-6">
                 <div class="text-center">
-                    <h1 class="mb-4 text-3xl font-bold break-words sm:text-4xl md:text-5xl">ft_transcendence</h1>
-                    <p class="mb-8 text-xl leading-relaxed text-blue-100/90">Dive into the ultimate gaming experience where skill meets innovation. Challenge players worldwide in our revolutionary multiplayer platform that pushes the boundaries of competitive gaming.</p>
+                    <h1 class="mb-4 text-3xl font-bold break-words sm:text-4xl md:text-5xl" >ft_transcendence</h1>
+                    <p class="mb-8 text-xl leading-relaxed text-blue-100/90" data-i18n="home-description">Dive into the ultimate gaming experience where skill meets innovation. Challenge players worldwide in our revolutionary multiplayer platform that pushes the boundaries of competitive gaming.</p>
                 </div>
 
                 <!-- Call to Action -->
                 <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                   <a href="/play" class="play-button inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 text-3xl font-semibold text-white transition-all hover:scale-105 hover:text-[#fca17d] active:scale-95">
+                   <a data-i18n="home-play-now" href="/play" data-link class="play-button inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 text-3xl font-semibold text-white transition-all hover:scale-105 hover:text-[#fca17d] active:scale-95">
                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
@@ -42,11 +45,11 @@ export const HomePage = {
                     <div class="flex items-center justify-center gap-6 text-blue-200">
                         <div class="text-center">
                             <div class="text-2xl font-bold text-white">3+</div>
-                            <div class="text-sm opacity-80">Active Players</div>
+                            <div data-i18n="home-active-players" class="text-sm opacity-80">Active Players</div>
                         </div>
                         <div class="text-center">
                             <div class="text-2xl font-bold text-white">24/7</div>
-                            <div class="text-sm opacity-80">Online Gaming</div>
+                            <div data-i18n="home-online-gaming" class="text-sm opacity-80">Online Gaming</div>
                         </div>
                     </div>
                 </div>
@@ -61,8 +64,8 @@ export const HomePage = {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
-                <h3 class="mb-2 font-semibold text-blue-100">Lightning Fast</h3>
-                <p class="text-sm text-blue-200/70">No crazy loading times</p>
+                <h3 data-i18n="home-feature1" class="mb-2 font-semibold text-blue-100">Lightning Fast</h3>
+                <p data-i18n="home-feature1-description" class="text-sm text-blue-200/70">No crazy loading times</p>
             </div>
 
             <div class="p-4 text-center">
@@ -71,8 +74,8 @@ export const HomePage = {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
-                <h3 class="mb-2 font-semibold text-blue-100">Multiplayer</h3>
-                <p class="text-sm text-blue-200/70">Connect, chat and play with friends</p>
+                <h3 data-i18n="home-feature2" class="mb-2 font-semibold text-blue-100">Multiplayer</h3>
+                <p data-i18n="home-feature2-description" class="text-sm text-blue-200/70">Connect, chat and play with friends</p>
             </div>
 
             <div class="p-4 text-center">
@@ -81,25 +84,25 @@ export const HomePage = {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <h3 class="mb-2 font-semibold text-blue-100">Secure</h3>
-                <p class="text-sm text-blue-200/70">We are not data farming</p>
+                <h3 data-i18n="home-feature3" class="mb-2 font-semibold text-blue-100">Secure</h3>
+                <p data-i18n="home-feature3-description" class="text-sm text-blue-200/70">We are not data farming</p>
             </div>
         </div>
 
         <!-- Leaderboard Section -->
         <div class="mt-16 border-t border-blue-300/20 pt-8">
-            <h2 class="mb-8 text-center text-3xl font-bold">Leaderboard</h2>
+            <h2 data-i18n="home-leaderboard" class="mb-8 text-center text-3xl font-bold">Leaderboard</h2>
 
             <div class="rounded-xl border border-blue-400/20 bg-slate-700/50 p-6">
                 <div class="overflow-x-auto">
                     <table class="w-full">
                     <thead>
                         <tr class="border-b border-blue-400/30">
-                        <th class="px-4 py-3 text-left font-semibold text-blue-200">Position</th>
-                        <th class="px-4 py-3 text-left font-semibold text-blue-200">Name</th>
-                        <th class="px-4 py-3 text-center font-semibold text-blue-200">Points</th>
-                        <th class="px-4 py-3 text-center font-semibold text-blue-200">Wins</th>
-                        <th class="px-4 py-3 text-center font-semibold text-blue-200">Losses</th>
+                        <th data-i18n="home-leaderboard-position" class="px-4 py-3 text-left font-semibold text-blue-200">Position</th>
+                        <th data-i18n="home-leaderboard-name" class="px-4 py-3 text-left font-semibold text-blue-200">Name</th>
+                        <th data-i18n="home-leaderboard-points" class="px-4 py-3 text-center font-semibold text-blue-200">Points</th>
+                        <th data-i18n="home-leaderboard-wins" class="px-4 py-3 text-center font-semibold text-blue-200">Wins</th>
+                        <th data-i18n="home-leaderboard-losses" class="px-4 py-3 text-center font-semibold text-blue-200">Losses</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -179,6 +182,7 @@ export const HomePage = {
             </div>
 
             <!-- Player Search -->
+            <!--
             <div class="mt-6 flex justify-center">
                 <div class="relative w-full max-w-md">
                     <input id="search-player" type="text" placeholder="Search for a player..." class="w-full rounded-xl border border-blue-400/30 bg-slate-700/50 py-3 px-4 pl-12 text-white placeholder-blue-200/60 transition-all focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 focus:outline-none" />
@@ -186,12 +190,39 @@ export const HomePage = {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
         `;
   },
 
+  async getTopTen(): Promise<PlayerStats[]> {
+    let PlayerStatsList: PlayerStats[] = [];
+    try {
+      const topTen: TopTenPlayers[] = await getLeaderboard();
+
+      const userIds: number[] = topTen.map(player => player.user_id);
+
+      const usersData: UsersData[] = await getTopTenData(userIds)
+
+      usersData.forEach((user, index) => {
+        PlayerStatsList.push({
+          id: user.user_id,
+          username: user.username,
+          points: user.rating,
+          rank: index + 1,
+          wins: topTen.find(player => player.user_id === user.user_id)?.wins || 0,
+          losses: topTen.find(player => player.user_id === user.user_id)?.losses || 0,
+        });
+      });
+
+      return PlayerStatsList;
+      
+    } catch (error) {
+      console.error("DEBUG:Error fetching leaderboard:", error);
+      throw error;
+    }
+  },
 
   async loadLeaderBoard() {
     const leaderboardRows = document.querySelectorAll('.leaderboard-tr');
@@ -200,91 +231,8 @@ export const HomePage = {
           throw new Error("Someone is messing up the html caralho ta quieto");
         }
 
-        // todo descomentar a de baixo e ver se o retorno vem do genero da de baixo
-        // const topTen: PlayerStats[] = await getTopTen();
-       
-        const topTen : PlayerStats[] = [
-          {
-            id: 1,
-            username: "Artur",
-            rank: 1,
-            wins: 89,
-            losses: 12,
-            points: 1247,
-          },
-          {
-            id: 2,
-            username: "Miguel",
-            rank: 2,
-            wins: 76,
-            losses: 18,
-            points: 1156,
-          },
-          {
-            id: 3,
-            username: "Toni",
-            rank: 3,
-            wins: 71,
-            losses: 23,
-            points: 1089,
-          },
-          {
-            id: 4,
-            username: "Mica",
-            rank: 4,
-            wins: 65,
-            losses: 28,
-            points: 967,
-          },
-          {
-            id: 5,
-            username: "João",
-            rank: 5,
-            wins: 58,
-            losses: 31,
-            points: 834,
-          },
-          {
-            id: 6,
-            username: "Maria",
-            rank: 6,
-            wins: 45,
-            losses: 27,
-            points: 712,
-          },
-          {
-            id: 7,
-            username: "Sandrinho",
-            rank: 7,
-            wins: 42,
-            losses: 35,
-            points: 689,
-          },
-          {
-            id: 8,
-            username: "Davi",
-            rank: 8,
-            wins: 38,
-            losses: 29,
-            points: 567,
-          },
-          {
-            id: 9,
-            username: "Macaco",
-            rank: 9,
-            wins: 33,
-            losses: 41,
-            points: 456,
-          },
-          {
-            id: 10,
-            username: "Kelson",
-            rank: 10,
-            wins: 28,
-            losses: 37,
-            points: 389,
-          },
-        ];
+        const topTen: PlayerStats[] = await this.getTopTen();
+
         
         leaderboardRows.forEach((row, index) => {
           const positionCell = row.querySelector('.leaderboard-td-position');
@@ -309,7 +257,7 @@ export const HomePage = {
               positionCell.classList.remove('text-blue-200');
               positionCell.classList.add('text-yellow-400');
             }
-            nameCell.textContent = playerData.username;
+            nameCell.innerHTML = `<a href='/profile/${playerData.id}' class="hover:text-[#fca17d] transition-all duration-150 ease-in-out" data-link>${playerData.username}</a>`;
             pointsCell.textContent = playerData.points.toString();
             winCell.textContent = playerData.wins.toString();
             lossesCell.textContent = playerData.losses.toString();
@@ -389,72 +337,72 @@ export const HomePage = {
 
   },
 
-  async initLeaderboardSearch(): Promise<void>{
-    const input = document.getElementById("search-player");
-    if (!input ||
-        !(input instanceof HTMLInputElement)) {
-      const errorPopup = new ErrorPopup();
-      errorPopup.create(
-        "Something is strange...",
-        "Seems like the page was not loaded correctly. Please refresh and try again."
-      );
-      return;
-    }
+  // async initLeaderboardSearch(): Promise<void>{
+  //   const input = document.getElementById("search-player");
+  //   if (!input ||
+  //       !(input instanceof HTMLInputElement)) {
+  //     const errorPopup = new ErrorPopup();
+  //     errorPopup.create(
+  //       "Something is strange...",
+  //       "Seems like the page was not loaded correctly. Please refresh and try again."
+  //     );
+  //     return;
+  //   }
 
-    // initialization for for error case
-    let errorShown = false;
-    let errorTimer: ReturnType<typeof setTimeout> | null = null;
+  //   // initialization for for error case
+  //   let errorShown = false;
+  //   let errorTimer: ReturnType<typeof setTimeout> | null = null;
 
-    input.addEventListener("input", async (event) => {
-      event.preventDefault();
+  //   input.addEventListener("input", async (event) => {
+  //     event.preventDefault();
 
-      // makes it so it doesnt call on every single input but with a delay
-      const inputDebounced = debounce(async () => {
+  //     // makes it so it doesnt call on every single input but with a delay
+  //     const inputDebounced = debounce(async () => {
 
-        const playerUsername: string = input.value.trim();
-        if (!playerUsername.length) {
-          await this.loadLeaderBoard();
-          return; 
-        }
+  //       const playerUsername: string = input.value.trim();
+  //       if (!playerUsername.length) {
+  //         await this.loadLeaderBoard();
+  //         return; 
+  //       }
         
-        try {
-          // 200 com dados do jogador
-          // 200 com null se o jogador não existir
-          //! todo delete mock data
-          // const playerData: PlayerStats | null = await searchPlayer(playerUserame);
-          const playerData: PlayerStats | null = {
-            id: 1, // userID
-            username: "artur lindo",
-            rank: 15, // Rank of the player in the leaderboar
-            wins: 69,
-            losses: 420,
-            points: 666, // Points of the player in the leaderboard
-          };
+  //       try {
+  //         // 200 com dados do jogador
+  //         // 200 com null se o jogador não existir
+  //         //! todo delete mock data
+  //         // const playerData: PlayerStats | null = await searchPlayer(playerUserame);
+  //         const playerData: PlayerStats | null = {
+  //           id: 1, // userID
+  //           username: "artur lindo",
+  //           rank: 15, // Rank of the player in the leaderboar
+  //           wins: 69,
+  //           losses: 420,
+  //           points: 666, // Points of the player in the leaderboard
+  //         };
 
-          // Display player data
-          this.updateLeaderBoard(playerData);
-        } catch (error) {
-          // Show error
-          if (!errorShown) {
-            const errPopup = new ErrorPopup();
-            errPopup.create("Error Searching Player!", "Seems like an error occoured while searching player. Please refresh and try again");
-            errorShown = true;
+  //         // Display player data
+  //         this.updateLeaderBoard(playerData);
+  //       } catch (error) {
+  //         // Show error
+  //         if (!errorShown) {
+  //           const errPopup = new ErrorPopup();
+  //           errPopup.create("Error Searching Player!", "Seems like an error occoured while searching player. Please refresh and try again");
+  //           errorShown = true;
 
-            errorTimer && clearTimeout(errorTimer); // short circuting guard
-            // after 5000ms sets the error shown to false so it can appear again if called
-            // this prevents popup spam
-            errorTimer = setTimeout(() => {
-              errorShown = false;
-            }, 5000);
-          }
-        }
-      }, 350); // 500ms debouncing time
+  //           errorTimer && clearTimeout(errorTimer); // short circuting guard
+  //           // after 5000ms sets the error shown to false so it can appear again if called
+  //           // this prevents popup spam
+  //           errorTimer = setTimeout(() => {
+  //             errorShown = false;
+  //           }, 5000);
+  //         }
+  //       }
+  //     }, 350); // 500ms debouncing time
 
-      inputDebounced(); // calling
-    });
+  //     inputDebounced(); // calling
+  //   });
 
 
-  },
+  // },
 
   init() {
     console.log("Home page loaded!");
@@ -462,7 +410,7 @@ export const HomePage = {
     this.loadLeaderBoard();
 
     // cada nome uma anchor para o perfil do jogador no nameCell. adicionar href para o sitio correto
-    this.initLeaderboardSearch();
+    // this.initLeaderboardSearch();
 
   },
 } as const;

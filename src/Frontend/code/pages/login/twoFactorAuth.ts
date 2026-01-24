@@ -5,6 +5,7 @@ import { router } from "../../routes/router";
 import { ErrorPopup } from "../../utils/popUpError";
 import { WarningPopup } from "../../utils/popUpWarn";
 
+
 export const TwoFactorAuth = {
   renderHTML(): string {
     return `

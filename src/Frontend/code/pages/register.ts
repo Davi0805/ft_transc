@@ -5,6 +5,7 @@ import { router } from "../routes/router";
 import { ErrorPopup } from "../utils/popUpError";
 import { WarningPopup } from "../utils/popUpWarn";
 
+
 export const RegisterPage = {
   template(): string {
     return `
@@ -21,9 +22,9 @@ export const RegisterPage = {
         </div>
 
         <div class="input-box my-5 mx-0">
-          <input id="name" type="text" placeholder="Nickname" name="name" data-i18n-placeholder="register-place-nickname" required 
+          <input id="nickname" type="text" placeholder="Nickname" name="name" data-i18n-placeholder="register-place-nickname" required 
           pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
-          title="Name must be 2–40 characters long and can include letters and spaces" data-i18n-title="register-title-name" />
+          title="Nickname must be 2–40 characters long and can include letters and spaces" data-i18n-title="register-title-name" />
           <img src="../Assets/icons/id-card.svg" draggable="false" />
         </div>
 
@@ -92,7 +93,7 @@ export const RegisterPage = {
   },
 
   init(): void {
-    console.log("DEUBG: Register page loaded!");
+    console.debug("DEUBG: Register page loaded!");
 
     togglePasswordVisibility();
 
@@ -102,24 +103,14 @@ export const RegisterPage = {
       e.preventDefault(); // prevent default browser action (Refresh)
 
       // Input
-      const name: string = (document.getElementById("name") as HTMLInputElement)
-        ?.value;
-      const username = (document.getElementById("username") as HTMLInputElement)
-        .value;
-      const email = (document.getElementById("email") as HTMLInputElement)
-        .value;
-      const password_hash = (document.getElementById("password") as HTMLInputElement)
-        .value;
-      const confirmPassword = (
-        document.getElementById("confirm-password") as HTMLInputElement
-      ).value;
+      const name: string = (document.getElementById("nickname") as HTMLInputElement)?.value;
+      const username = (document.getElementById("username") as HTMLInputElement).value;
+      const email = (document.getElementById("email") as HTMLInputElement).value;
+      const password_hash = (document.getElementById("password") as HTMLInputElement).value;
+      const confirmPassword = (document.getElementById("confirm-password") as HTMLInputElement).value;
 
-      const passError = document.querySelector(
-        '.error[data-i18n="register-pass-error"]'
-      ) as HTMLElement;
-      const takenError = document.querySelector(
-        '.error[data-i18n="register-taken-error"]'
-      ) as HTMLElement;
+      const passError = document.querySelector('.error[data-i18n="register-pass-error"]') as HTMLElement;
+      const takenError = document.querySelector('.error[data-i18n="register-taken-error"]') as HTMLElement;
 
       passError.hidden = true;
       takenError.hidden = true;

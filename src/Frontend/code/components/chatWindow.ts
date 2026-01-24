@@ -6,10 +6,11 @@ import {
 import { authService } from "../services/authService";
 import { Friend } from "./sidebar";
 import { WarningPopup } from "../utils/popUpWarn";
-
+import { PlayPage } from "../pages/play/play";
 export interface ChatWindowMessage {
   convID: number;
   message: string;
+  lobbyID: number;
   isOwn: boolean;
 }
 
@@ -40,6 +41,14 @@ class ChatWindow {
 
     this.isOpen = false;
     this.isMinimized = false;
+  }
+
+  get isChatOpen(): boolean {
+    return this.isOpen;
+  }
+
+  get getFriendID(): number | null {
+    return this.friendID;
   }
 
   async open(friend: Friend): Promise<void> {
@@ -115,7 +124,7 @@ class ChatWindow {
     this.element.innerHTML = `
         <div class="chat-header">
             <img src="${this.friendAvatar}" width="30" height="30" alt="${this.friendName}">
-            <a href="/profile/${this.friendUsername}" data-link class="friend-name">${this.friendName}</a>
+            <a href="/profile/${this.friendID}" data-link class="friend-name">${this.friendName}</a>
             <button class="minimize-btn">−</button>
             <button class="close-btn">×</button>
         </div>
@@ -138,20 +147,22 @@ class ChatWindow {
   }
 
   attachEventListeners(): void {
-    if (!this.element)
-      {
-        console.warn("DEBUG: Chat window element not found.");
-        const warnPopup = new WarningPopup();
-        warnPopup.create(
-          "Something is strange...",
-          "Seems like the chat window could not be found... Please refresh the page and try again."
-        );
-        return;
-      } 
-    const minimizeBtn = this.element.querySelector(".minimize-btn");
-    const closeBtn = this.element.querySelector(".close-btn");
-    const sendBtn = this.element.querySelector(".send-btn");
-    const messageInput = this.element.querySelector(".message-input");
+    const minimizeBtn = this.element?.querySelector(".minimize-btn");
+    const closeBtn = this.element?.querySelector(".close-btn");
+    const sendBtn = this.element?.querySelector(".send-btn");
+    const messageInput = this.element?.querySelector(".message-input");
+    const messageContainer = this.element?.querySelector(".chat-messages");
+
+    if (!this.element || !minimizeBtn || !closeBtn || !sendBtn || !messageInput || !messageContainer) {
+      console.warn("DEBUG: Page did not load correclty.");
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the page was not loaded correctly... Please refresh the page and try again."
+      );
+    }
+
+    sendBtn?.addEventListener("click", () => this.sendMessage());
 
     minimizeBtn?.addEventListener("click", () => {
       this.toggleMinimize();
@@ -161,29 +172,20 @@ class ChatWindow {
       this.close();
     });
 
-    if (!sendBtn) {
-      console.warn("DEBUG: Send button not found.");
-      const warnPopup = new WarningPopup();
-      warnPopup.create(
-        "Something is strange...",
-        "Seems like the send button could not be found... Please refresh the page and try again."
-      );
-      return;
-    }
-    sendBtn.addEventListener("click", () => this.sendMessage());
 
-    if (!messageInput) {
-      console.warn("DEBUG: Message input not found.");
-      const warnPopup = new WarningPopup();
-      warnPopup.create(
-        "Something is strange...",
-        "Seems like the message input could not be found... Please refresh the page and try again."
-      );
-      return;
-    } 
-    messageInput.addEventListener("keydown", (e: Event) => {
+    messageInput?.addEventListener("keydown", (e: Event) => {
       const event = e as KeyboardEvent;
       if (event.key === "Enter") this.sendMessage();
+    });
+
+    messageContainer?.addEventListener("click", (e: Event) => {
+      const target = e.target as HTMLElement;
+      const lobbyID = Number(target.dataset.lobbyId);
+
+      if (target.classList.contains("joinBtn")) {
+        console.debug("Join Game button clicked.");
+        PlayPage.goToLobby(lobbyID);
+      }
     });
   }
 
@@ -198,6 +200,7 @@ class ChatWindow {
     this.messages.forEach((message) => {
       this.addMessage({
         message: message.message_content,
+        lobbyID: parseInt(message.metadata as string),
         isOwn: message.from_user_id == authService.userID ? true : false,
       } as ChatWindowMessage);
     });
@@ -213,17 +216,10 @@ class ChatWindow {
       );
       return;
     } 
-    const messageInput = this.element.querySelector(
-      ".message-input"
-    ) as HTMLInputElement;
+    const messageInput = this.element.querySelector(".message-input") as HTMLInputElement;
     const message = messageInput.value.trim();
 
     if (!message) {
-      const warnPopup = new WarningPopup();
-      warnPopup.create(
-        "Something is strange...",
-        "Seems like the message could not be sent... Please refresh the page and try again."
-      );
       return;
     }
 
@@ -245,17 +241,64 @@ class ChatWindow {
   /* 
     messageData { convID: 1,
                   message: "oi",
+                  lobbyID: 123,
                   isOwn: false }
   */
   handleRecieveMessage(messageData: ChatWindowMessage): void {
-    this.addMessage({
-      message: messageData.message,
-      isOwn: false,
-    } as ChatWindowMessage);
+    this.addMessage(messageData);
     webSocketService.send({
       type: "read_event",
       conversation_id: messageData.convID,
     } as ReadEvent); // read trigger event
+  }
+
+  CreateInviteMessage(dataMessage: ChatWindowMessage): HTMLElement {
+    const messageContainer = document.createElement("div");
+    
+    messageContainer.className = "relative mb-2 p-[8px_10px] rounded-xl max-w-[80%] break-words text-[14px] leading-[1.4]";
+    
+    if (dataMessage.isOwn) {
+      messageContainer.classList.add(
+        "bg-[linear-gradient(90deg,#627ec0,#314d8a)]",
+        "rounded-br-[4px]",
+        "text-[#eee]",
+        "ml-auto"
+      );
+    } else {
+      messageContainer.classList.add(
+        "bg-[linear-gradient(90deg,#ffffff1a,#1c2333)]",
+        "rounded-bl-[4px]",
+        "text-[#eee]",
+        "mr-auto"
+      );
+    }
+    
+    messageContainer.innerHTML = `
+      <div class="flex flex-col">
+        <!-- Header -->
+        <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[rgba(255,255,255,0.1)]">
+          <div class="w-6 h-6 bg-[linear-gradient(135deg,#6e8ed7,#314d8a)] rounded flex items-center justify-center text-xs font-bold text-white">
+            ♔
+          </div>
+          <div class="font-medium text-[#6e8ed7] text-[14px]">Pong Battle</div>
+          <div class="text-[11px] text-[rgba(238,238,238,0.6)] ml-auto">Game Invite</div>
+        </div>
+        
+        <!-- Description -->
+        <div class="mb-3 text-[rgba(238,238,238,0.8)] text-[13px]" ">
+          Join me for a quick match if you have the balls!
+        </div>
+        
+        ${!dataMessage.isOwn ? `
+        <!-- Play Button (only for received invitations) -->
+        <button data-lobby-id="${dataMessage.lobbyID}" class="joinBtn w-full h-8 px-4 py-1.5 bg-[#6e8ed7] border-none rounded text-white text-[13px] font-medium cursor-pointer transition-all duration-200 hover:bg-[#5a7bc4] active:scale-95">
+          Join Game
+        </button>
+        ` : ''}
+      </div>
+    `;
+    
+    return messageContainer;
   }
 
   addMessage(messageData: ChatWindowMessage): void {
@@ -269,6 +312,14 @@ class ChatWindow {
       return;
     }
 
+    if (messageData.lobbyID) {
+      const inviteElement = this.CreateInviteMessage(messageData);
+      messageContainer.appendChild(inviteElement);
+      messageContainer.scrollTop = messageContainer.scrollHeight; 
+      
+      return;
+    }
+    
     const newMessage = document.createElement("div");
     newMessage.classList.add("message");
 
@@ -281,6 +332,32 @@ class ChatWindow {
     newMessage.innerText = messageData.message;
     messageContainer.appendChild(newMessage);
     messageContainer.scrollTop = messageContainer.scrollHeight;
+  }
+
+  AddGameInviteMessage(lobbyID: number): void {
+    if (!this.element) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the message window could not be found..."
+      );
+      return;
+    }
+    
+    const messageContainer = this.element.querySelector(".chat-messages");
+    if (!messageContainer) {
+      const warnPopup = new WarningPopup();
+      warnPopup.create(
+        "Something is strange...",
+        "Seems like the message container could not be found..."
+      );
+      return;
+    }
+
+    this.addMessage({ convID: this.convID!,
+                   message: "",
+                   lobbyID: lobbyID,
+                   isOwn: true } as ChatWindowMessage);
   }
 }
 

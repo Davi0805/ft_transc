@@ -6,6 +6,7 @@ import { lobbyService } from "../../services/LobbyService";
 import { matchService } from "../../services/matchService";
 import { tournamentService } from "../../services/tournamentService";
 
+
 export const PlayPage = {
     template() {
         return `
@@ -77,7 +78,7 @@ export const PlayPage = {
 
         //RENDERING
         const lobbiesBody = document.getElementById('lobbies-body') as HTMLElement; //"lobbies-body" is an id created by getTable()
-        lobbiesBody.innerHTML = ""
+        lobbiesBody.innerHTML = "";
         const categories = ["name", "host", "type", "capacity"] as const
 
         for (let i = 0; i < lobbiesInfo.length; i++) {

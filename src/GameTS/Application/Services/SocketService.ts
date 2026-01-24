@@ -75,7 +75,7 @@ class SocketService {
                 lobbyService.updateSettings(lobbyID, senderID, dto.data.settings);
                 break;
             case "inviteUserToLobby":
-                console.log("Invite user to lobby not implemented yet") //TODO
+                lobbyService.inviteUserToLobby(senderID, lobbyID, dto.data.userID)
                 break;
             case "updateReadiness":
                 lobbyService.updateUserReadinesss(lobbyID, senderID, dto.data.ready);

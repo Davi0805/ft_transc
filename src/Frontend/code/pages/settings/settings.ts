@@ -19,6 +19,8 @@ import { savePlayerPreferences } from "../../api/settings/preferences/savePlayer
 import { getPlayerPreferences } from "../../api/settings/preferences/getPlayerPreferencesAPI";
 import { PlayerPreferences } from "../../api/settings/preferences/PreferenceInterface";
 
+import { translator } from "../../services/translationService";
+
 export const SettingsPage = {
   template() {
     const nickname = authService.userNick;
@@ -57,15 +59,15 @@ export const SettingsPage = {
 
                 <!-- NAVBAR -->
                 <div class="navbar mt-4 w-full text-center">
-                  <button id="settings-account" class="transition- w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100 settings-active">Account</button>
-                  <button id="settings-preferences" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Preferences</button>
-                  <button id="settings-security" class="w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Security</button>
-                  <button id="settings-social" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Social</button>
+                  <button data-i18n="settings-nav-account" id="settings-account" class="transition- w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100 settings-active">Account</button>
+                  <button data-i18n="settings-nav-preferences" id="settings-preferences" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Preferences</button>
+                  <button data-i18n="settings-nav-security" id="settings-security" class="w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Security</button>
+                  <button data-i18n="settings-nav-social" id="settings-social" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Social</button>
                 </div>
 
                 <!-- LOGOUT -->
                 <div class="mt-auto w-full">
-                  <button id="settings-logout" class="w-full rounded-sm border-t border-white/20 py-2 brightness-85 transition-all duration-200 ease-in hover:bg-red-500/70 hover:brightness-100">Log Out</button>
+                  <button data-i18n="settings-nav-logout" id="settings-logout" class="w-full rounded-sm border-t border-white/20 py-2 brightness-85 transition-all duration-200 ease-in hover:bg-red-500/70 hover:brightness-100">Log Out</button>
                 </div>
               </div>
 
@@ -86,13 +88,13 @@ export const SettingsPage = {
     const email = authService.userEmail;
 
     return `
-            <h1 class="mb-6 text-4xl font-bold">Settings</h1>
-            <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Account</h2>
+            <h1 data-i18n="settings-account-title" class="mb-6 text-4xl font-bold">Settings</h1>
+            <h2 data-i18n="settings-account-subtitle" class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Account</h2>
 
             <div class="info flex-1 space-y-6">
               <!-- Username -->
               <div class="flex items-center space-x-3">
-                <label for="settings-username" class="w-20 font-semibold">Username</label>
+                <label data-i18n="settings-account-username" for="settings-username" class="w-20 font-semibold">Username</label>
                 <input id="settings-username" type="text" value="${username}" disabled readonly 
                 class="input-settings-disable" />
                 <span class="text-sm text-gray-400">🔒</span>
@@ -100,7 +102,7 @@ export const SettingsPage = {
 
               <!-- Email -->
               <div class="flex items-center space-x-3">
-                <label for="settings-email" class="w-20 font-semibold">Email</label>
+                <label data-i18n="settings-account-email" for="settings-email" class="w-20 font-semibold">Email</label>
                 <input id="settings-email" type="text" value="${email}" disabled readonly 
                 class="input-settings-disable" />
                 <span class="text-sm text-gray-400">🔒</span>
@@ -109,18 +111,18 @@ export const SettingsPage = {
               <!-- Name -->
               <form>
                 <div class="flex items-center space-x-3">
-                  <label for="settings-name" class="w-20 font-semibold">Name</label>
+                  <label data-i18n="settings-account-name" for="settings-name" class="w-20 font-semibold">Name</label>
                   <input id="settings-name" type="text" value="${nickname}" 
-                    pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,40}$" 
+                    pattern="^(?=.*[A-Za-z])[A-Za-z ]{2,15}$" 
                     required
-                    title="Name must be 2–40 characters long and can include letters and spaces"
+                    title="Name must be 2–15 characters long and can include letters and spaces"
                     class="input-settings" />
                   <span class="edit transition-colors duration-200 hover:text-blue-300" title="Edit">✎</span>
                 </div>
                 
                 <!-- Save button -->
                 <div class="mt-auto flex justify-end pt-6">
-                  <button id="save-btn" type="submit" class="btn-settings ">Save</button>
+                  <button id="save-btn" type="submit" class="btn-settings " data-i18n="settings-save-btn">Save</button>
                 </div>
               </form>
               `;
@@ -128,28 +130,32 @@ export const SettingsPage = {
 
   getSecurityHTML(): string {
     return `
-          <h1 class="mb-6 text-4xl font-bold">Settings</h1>
-          <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Security</h2>
+          <h1 data-i18n="settings-secutiry-title" class="mb-6 text-4xl font-bold">Settings</h1>
+          <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold" data-i18n="settings-secutiry-subtitle">Security</h2>
 
           <form id="security-form" class="flex flex-col flex-1 space-y-6">
+
+            <!-- hidden username so password manager can work -->
+            <input type="text" class="hidden" autocomplete="username" />
+
             <!-- Old Password -->
             <div class="old-pass flex items-center space-x-3">
-              <label for="old-pass" class="w-20 font-semibold text-center">Current password*</label>
-              <input id="old-pass" type="password" required class="input-settings"
+              <label data-i18n="settings-secutiry-current-password" for="old-pass" class="w-20 font-semibold text-center mr-4">Current password*</label>
+              <input id="old-pass" type="password" autocomplete="current-password" required class="input-settings"
                />
             </div>
 
             <!-- New Password -->
             <div class="flex items-center space-x-3">
-              <label for="new-pass" class="w-20 font-semibold text-center">New password</label>
-              <input id="new-pass" type="password" class="input-settings" 
+              <label data-i18n="settings-secutiry-new-password" for="new-pass" class="w-20 font-semibold text-center mr-4">New password</label>
+              <input id="new-pass" autocomplete="new-password" type="password" class="input-settings"
               pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*._\\-+=?])[A-Za-z\\d!@#$%^&*._\\-+=?]{8,}$"
               title="Must contain at least one digit, one uppercase and lowercase letter and one special character (!@#$%^&*.\\-_+=?)" data-i18n-title="register-title-pass"
               />
             </div>
 
             <div class="flex items-center">
-              <h3 class="mr-6 text-l font-semibold">Enable/Disable 2FA</h3>
+              <h3 data-i18n="settings-secutiry-twofa" class="mr-6 text-l font-semibold">${translator.get("settings-secutiry-twofa")}</h3>
               <label class="relative inline-block w-[60px] h-[34px]">
                 <input id="two-fac" type="checkbox" class="peer sr-only" 
                 ${authService.getHas2FA() ? "checked" : ""}
@@ -160,7 +166,7 @@ export const SettingsPage = {
             </div>
 
             <div id="save-btn" class="mt-auto flex justify-end ">
-             <button type="submit" class="btn-settings">Save</button>
+             <button data-i18n="settings-save-btn" type="submit" class="btn-settings">Save</button>
             </div>
           </form>
 
@@ -189,23 +195,23 @@ export const SettingsPage = {
 
 
     return `
-          <h1 class="mb-6 text-4xl font-bold">Settings</h1>
-          <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Social</h2>
+          <h1 data-i18n="settings-social-title" class="mb-6 text-4xl font-bold">${translator.get("settings-social-title")}</h1>
+          <h2 data-i18n="settings-social-subtitle" class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">${translator.get("settings-social-subtitle")}</h2>
 
           <!-- Blocked Users List -->
-          <h3 class="font-semibold mb-2">Blocked users</h3>
+          <h3 data-i18n="settings-social-blocked" class="font-semibold mb-2">${translator.get("settings-social-blocked")}</h3>
 
           <div id="blocked-users-list" class="overflow-y-auto h-[240px] pr-2 space-y-3 no-scrollbar">
             <!-- Will insert blocked users dynamically -->
-              ${blockListHTML.trim() === "" ? "<p>No users on this list.</p>" : blockListHTML}
+              ${blockListHTML.trim() === "" ? `<p data-i18n="settings-social-noblocked">${translator.get("settings-social-noblocked")}</p>` : blockListHTML}
           </div>
 
           <!-- Block User by Username -->
           <div class="mt-4">
-            <h3 class="font-semibold mb-1">Block User</h3>
+            <h3 data-i18n="settings-social-blockuser" class="font-semibold mb-1">${translator.get("settings-social-blockuser")}</h3>
             <div class="flex items-center space-x-3">
-              <input id="username-to-block" type="text" class="input-settings" placeholder="Enter username" />
-              <button id="block-btn"  class="btn-settings">Block</button>
+              <input  id="username-to-block" type="text" class="input-settings" placeholder="${translator.get("settings-social-blockuser-placeholder")}" data-i18n-placeholder="settings-social-blockuser-placeholder" />
+              <button id="block-btn"  class="btn-settings" data-i18n="settings-social-blockuser-btn">${translator.get("settings-social-blockuser-btn")}</button>
             </div>
           </div>
     `;
@@ -213,14 +219,14 @@ export const SettingsPage = {
 
   getPreferencesHTML(): string {
     return `
-          <h1 class="mb-6 text-4xl font-bold">Settings</h1>
-          <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Preferences</h2>
+          <h1 data-i18n="settings-preferences-title" class="mb-6 text-4xl font-bold">Settings</h1>
+          <h2 data-i18n="settings-preferences-subtitle" class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Preferences</h2>
 
           <form id="player-settings" method="dialog">
             <!-- Alias Section -->
             <div class="flex items-center space-x-3 mb-6">
-              <label for="player-alias" class="w-20 block text-base font-semibold text-white mb-2">Alias</label>
-              <input
+              <label for="player-alias" data-i18n="settings-preferences-alias" class="w-20 block text-base font-semibold text-white mb-2">Alias</label>
+              <input data-i18n-placeholder="settings-preferences-alias-placeholder"
                 id="player-alias"
                 name="player-alias"
                 type="text"
@@ -232,7 +238,7 @@ export const SettingsPage = {
 
             <!-- Paddle Section -->
             <div class="flex items-center space-x-3 mb-6">
-              <h3 class="w-20 block text-base font-semibold text-white mb-2">Paddle</h3>
+              <h3 data-i18n="settings-preferences-paddle" class="w-20 block text-base font-semibold text-white mb-2">Paddle</h3>
               ${PaddleCarrossel.getPaddleCarrosselHTML()}
             </div>
 
@@ -241,7 +247,7 @@ export const SettingsPage = {
             <!-- Controls Section -->
             <div class="flex gap-20 items-center justify-center mb-6">
               <div class="flex flex-col justify-center gap-1">
-                  <label for="up-config" class="block text-base font-semibold text-white text-center">Up Button</label>
+                  <label  for="up-config" data-i18n="settings-preferences-up-btn" class="block text-base font-semibold text-white text-center">Up Button</label>
                   <button 
                       type="button" 
                       id="up-config" 
@@ -251,7 +257,7 @@ export const SettingsPage = {
               </div>
 
               <div class="flex flex-col justify-center gap-1">
-                  <label for="down-config" class="block text-base font-semibold text-white text-center">Down Button</label>
+                  <label  for="down-config" data-i18n="settings-preferences-down-btn" class="block text-base font-semibold text-white text-center">Down Button</label>
                   <button 
                       type="button" 
                       id="down-config" 
@@ -264,7 +270,7 @@ export const SettingsPage = {
 
             <!-- Submit Button -->
             <div class="-mt-4 flex justify-end ">
-             <button id="save-btn" type="submit" class="btn-settings">Save</button>
+             <button data-i18n="settings-save-btn" id="save-btn" type="submit" class="btn-settings">Save</button>
             </div>
           </form>
     `;
@@ -282,9 +288,9 @@ export const SettingsPage = {
               class="w-10 h-10 rounded-full border-2 border-yellow-400" />
           <span class="font-medium">${userData.username}</span>
         </div>
-        <button class="unblock-btn bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-white font-semibold transition duration-200"
+        <button data-i18n="settings-social-unblockuser-btn" class="unblock-btn bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-white font-semibold transition duration-200"
                 data-id="${userData.id}">
-          Unblock
+          ${translator.get("settings-social-unblockuser-btn")}
         </button>
          `;
     return newElement;
@@ -300,6 +306,7 @@ export const SettingsPage = {
     SettingsPage.currentSection = section;
     SettingsPage.updateActiveSection();
     SettingsPage.updateContent();
+    translator.apply();
   },
 
   updateActiveSection(): void {
@@ -343,19 +350,19 @@ export const SettingsPage = {
 
     switch (SettingsPage.currentSection) {
       case "account":
-        content.innerHTML = SettingsPage.getAccountHTML();
+        content.innerHTML = (SettingsPage.getAccountHTML());
         SettingsPage.initAccountEvents();
         break;
       case "security":
-        content.innerHTML = SettingsPage.getSecurityHTML();
+        content.innerHTML = (SettingsPage.getSecurityHTML());
         SettingsPage.initSecurityEvents();
         break;
       case "social":
-        content.innerHTML = await SettingsPage.getSocialHTML();
+        content.innerHTML = (await SettingsPage.getSocialHTML());
         SettingsPage.initSocialEvents();
         break;
       case "preferences":
-        content.innerHTML = SettingsPage.getPreferencesHTML();
+        content.innerHTML = (SettingsPage.getPreferencesHTML());
         SettingsPage.initPreferencesEvents();
     }
   },
@@ -513,12 +520,12 @@ export const SettingsPage = {
       return;
     }
 
-    content.innerHTML = `
-      <h1 class="mb-6 text-4xl font-bold">Settings</h1>
+    content.innerHTML = (`
+      <h1 data-i18n="settings-twofa-title" class="mb-6 text-4xl font-bold">Settings</h1>
 
-      <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Two Factor Authentication</h2>
+      <h2 data-i18n="settings-twofa-subtitle" class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Two Factor Authentication</h2>
 
-      <p class="mb-6 text-sm text-white/90 max-w-lg">
+      <p data-i18n="settings-twofa-description" class="mb-6 text-sm text-white/90 max-w-lg">
         Read the following QR code on your Google Authenticator app and enter the verification code to activate 2FA.
       </p>
 
@@ -528,7 +535,7 @@ export const SettingsPage = {
 
         <!-- Form -->
         <form id="twofa-form" class="flex flex-col">
-          <h4 class="mb-2 text-lg font-medium text-center">Verification Code</h4>
+          <h4 data-i18n="settings-twofa-code" class="mb-2 text-lg font-medium text-center">Verification Code</h4>
           <div id="otp-container" class="flex gap-2">
             <input type="text" placeholder="X" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" autofocus />
             <input type="text" placeholder="X" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" />
@@ -541,11 +548,11 @@ export const SettingsPage = {
           <div id="twofacode-error" aria-live="polite" hidden class="text-sm text-red-500 mt-2"></div>
           
           <div class="mt-auto flex justify-center ">
-            <button type="submit" class="btn-settings mt-4">Verify</button>
+            <button data-i18n="settings-twofa-verify" type="submit" class="btn-settings mt-4">Verify</button>
           </div>
         </form>
       </div>
-    `;
+    `);
     return;
   },
 
@@ -711,7 +718,6 @@ export const SettingsPage = {
         warnPopup.create("Invalid Username", "Please enter a valid username to block.");
         return;
       }
-      // todo sanitize check
 
       if (username === authService.userUsername) {
         const warnPopup = new WarningPopup();
@@ -726,7 +732,7 @@ export const SettingsPage = {
         const socialHTML = await SettingsPage.getSocialHTML();
         const content = document.getElementById("settings-content");
         if (content) {
-          content.innerHTML = socialHTML;
+          content.innerHTML = (socialHTML);
           SettingsPage.initSocialEvents();
         }
 
@@ -770,7 +776,7 @@ export const SettingsPage = {
       "user-avatar"
     ) as HTMLImageElement | null;
     const headerAvatarImg = document.querySelector(
-      ".profile-container .profile-avatar"
+      ".profile-avatar"
     ) as HTMLImageElement | null;
 
     if (input && avatarImg) {

@@ -10,6 +10,7 @@ import tournamentService from "./TournamentService.js";
 import matchService from "./MatchService.js";
 import matchRepository from "../../Adapters/Outbound/MatchRepository.js"; // TODO goddamnit
 import { ROLES, SIDES } from "../game/shared/sharedTypes.js";
+import EventBroadcast from "../../Adapters/Outbound/EventBroadcast.js";
 
 //When a client wants to see the list of lobbies available, receives an array of these
 export type LobbyForDisplayT = {
@@ -47,6 +48,10 @@ class LobbyService {
         }
 
         return false;
+    }
+
+    inviteUserToLobby(fromUserId: number, lobbyId: number, toUserId: number): void {
+        EventBroadcast.publish('lobbyInvites', {lobbyId: lobbyId, from_user: fromUserId, to_user: toUserId});
     }
 
     getLobbiesForDisplay(): LobbyForDisplayT[] {

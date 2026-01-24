@@ -14,6 +14,21 @@ class UserRepository {
         return db.raw('SELECT * FROM users WHERE user_id = ?', [id]);
     }
 
+    async findbyIdIn(ids)
+    {
+        if (!Array.isArray(ids) || ids.length === 0) {
+        return [];
+        }
+        const placeholders = ids.map(() => '?').join(', ');
+        return db.raw(
+            `SELECT user_id, name, username, rating 
+             FROM users 
+             WHERE user_id IN (${placeholders})
+             ORDER BY rating DESC`,
+            ids
+        );
+    }
+
     async findByUsername(username)
     {
         return db.raw('SELECT * FROM users WHERE username = ?', [username]);
@@ -76,7 +91,13 @@ class UserRepository {
     async addTwoFactorAuth(user_id, twofa_secret)
     {
         return db.raw('UPDATE users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?',
-        [twofa_secret, true, user_id]);
+                    [twofa_secret, true, user_id]);
+    }
+
+    async removeTwoFactorAuth(user_id)
+    {
+        return db.raw('UPDATE users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?',
+                    [null, false, user_id]);
     }
 
     async updateUserImagePath(path, user_id)

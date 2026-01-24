@@ -8,6 +8,7 @@ import { getProfileUserData } from "../api/userData/getProfileUserDataAPI";
 import { ProfileDataType } from "../api/userData/types/ProfileDataType";
 import { isUserBlockedByUsername } from "../api/block/isUserBlockedByUsername";
 
+
 class Router {
   private routes: Array<Route>;
 
@@ -72,11 +73,15 @@ class Router {
       this.routes.find((r: Route) => r.path === "/404") ||
       null;
 
+    if (!route || route?.path === "/404") {
+      history.replaceState(null, "", "/404");
+    }
+
     if (route) {
       header.updateActiveUnderline(path);
 
       // Load HTML template
-      document.getElementById("main")!.innerHTML = await route.template();
+      document.getElementById("main")!.innerHTML = (await route.template());
       // Update page title
       document.title = route.title;
       // Initialize page-specific js (if any)
@@ -87,19 +92,18 @@ class Router {
   }
 
   // Profile page has a dynamic url
-  // /profile/${username}
+  // /profile/${id}
   async handleProfileRoute(path: string): Promise<void> {
     if (path.startsWith("/profile/")) {
       try {
-        // Extract username from the path
-        const username: string = path.split("/")[2];
-  
-        // regex validation for username
-        if (!username || !/^[a-zA-Z0-9_\\-]{3,15}$/.test(username)) {
-          throw new Error("Invalid username format");
-        } 
-        const userData: ProfileDataType | null = await getProfileUserData(username);
-        userData.is_blocked = await isUserBlockedByUsername(userData.username);
+        // Extract id from the path
+        const id: string = path.split("/")[2];
+
+        // regex validation for id
+        if (!id || !/^\d+$/.test(id)) {
+          throw new Error("Invalid id format");
+        }
+        const userData: ProfileDataType | null = await getProfileUserData(parseInt(id));
         let route: Route | null =
           this.routes.find((r: Route) => r.path.startsWith("/profile")) ||
           this.routes.find((r: Route) => r.path === "/404") ||
@@ -108,10 +112,10 @@ class Router {
 
         document.title = `${userData.nickname}'s profile`;
         // Load HTML template
-        document.getElementById("main")!.innerHTML = await route?.template();
+        document.getElementById("main")!.innerHTML = (await route?.template());
 
         // Update page title
-        header.updateActiveUnderline("Profile"); // this could be wte. just to remove the underline
+        header.updateActiveUnderline(`/profile/${id}`); // this could be wte. just to remove the underline
 
         // Initialize page-specific js (if any)
         route?.script?.init(userData);
@@ -122,6 +126,7 @@ class Router {
         console.error("Failed to fetch user data:", error);
         path = "/404"; // User not found, redirect to 404
         history.replaceState(null, "", path);
+        await this.loadRoute();
       }
     }
   }

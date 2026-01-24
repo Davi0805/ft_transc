@@ -9,6 +9,7 @@ import { TLobbyType, TMap, TMode, TDuration, LobbyCreationConfigsDTO } from "./l
 import { lobbyService } from "../../services/LobbyService";
 
 
+
 export const CreateLobbyPage = {
   template() {
     return `
