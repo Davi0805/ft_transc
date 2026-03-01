@@ -1,6 +1,6 @@
 import { point, SIDES, BALL_TYPES } from "../shared/sharedTypes.js";
 import SBall, { TSBallConfigs } from "./SBall.js";
-import SPaddle from "../Objects/SPaddle.js";
+import SPaddle from "./SPaddle.js";
 import Point from "../shared/Point.js";
 import { getRandomInt } from "../shared/sharedUtils.js";
 import STeamsManager from "../STeamsManager.js";
