@@ -41,15 +41,16 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
 
                 // Slot row
                 const slotRow = document.createElement("div");
-                slotRow.className = "flex justify-between items-center bg-black/30 px-4 py-3 rounded-lg border border-white/10";
+                slotRow.className = "flex justify-between items-center min-h-[52px] bg-black/30 px-4 py-3 rounded-lg border border-white/10";
                 slotRow.id = `slot-${teamName}-${roleName}`;
 
                 const roleLabel = document.createElement("span");
-                roleLabel.className = "font-medium text-sm";
+                roleLabel.className = "font-bold text-sm uppercase tracking-wide";
                 roleLabel.textContent = roleName;
                 slotRow.appendChild(roleLabel);
 
                 const slotSpaceElement = document.createElement("div");
+                slotSpaceElement.className = "min-w-0 overflow-hidden flex items-center";
                 if (player != null) {
                     this._renderOccupiedSlot(slotSpaceElement, player, myID);
                 } else if (this._canUserJoin()) {
@@ -72,16 +73,22 @@ export abstract class AMatchLobbyRenderer extends ALobbyRenderer {
     //Renders the player information in that slot.
     // NOTE: If different info of the player is needed, TPlayerInSlot can be changed and getSlot() updated accordingly
     private _renderOccupiedSlot(slotSpaceElement: HTMLDivElement, player: TPlayerInSlot, myID: number) {
+        const isMe = player.userID === myID;
+
         const playerDiv = document.createElement("div");
-        playerDiv.className = "flex items-center gap-2";
+        playerDiv.className = "flex items-center gap-2 min-w-0";
 
         const playerName = document.createElement("span");
-        playerName.className = "font-medium text-sm";
+        if (isMe) {
+            playerName.className = "font-bold text-sm text-emerald-400 truncate";
+        } else {
+            playerName.className = "font-medium text-sm text-sky-300 truncate";
+        }
         playerName.textContent = player.nickname.toString();
         playerDiv.appendChild(playerName);
 
         //Render the button to leave slot in case the user owns the player in it
-        if (player.userID === myID) {
+        if (isMe) {
             this._renderWithdrawButton(playerDiv, player);
         }
         slotSpaceElement.appendChild(playerDiv);

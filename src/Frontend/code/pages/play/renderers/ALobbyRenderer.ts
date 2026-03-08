@@ -23,46 +23,46 @@ export abstract class ALobbyRenderer {
 
     private _pencilIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
 
-    //Renders the settings header (title + optional edit button) and the static settings display
+    //Renders the settings. Selects always visible but disabled until host clicks pencil.
     async renderSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings, amIHost: boolean) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
 
-        const editBtnHTML = amIHost
+        const pencilBtn = amIHost
             ? `<button id="btn-change-settings" class="bg-white/10 border border-white/20 w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:bg-white/20 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30 text-white" title="Edit Settings">${this._pencilIconSVG}</button>`
             : '';
 
         lobbySettingsElement.innerHTML = `
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-3xl font-semibold">Lobby Settings</h2>
-                ${editBtnHTML}
-            </div>
-            ${getLobbyOptionsHTML(false, lobbyType, matchSettings)}
-        `;
-
-        if (amIHost) {
-            document.getElementById('btn-change-settings')
-                ?.addEventListener('click', () => this.renderChangeSettings(lobbyType, matchSettings));
-        }
-    }
-
-    //Renders the settings as editable dropdowns
-    renderChangeSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings) {
-        const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-
-        lobbySettingsElement.innerHTML = `
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-3xl font-semibold">Lobby Settings</h2>
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-xl font-semibold">Lobby Settings</h2>
+                ${pencilBtn}
             </div>
             <form id="settings-change-form" class="flex flex-col gap-4">
                 ${getLobbyOptionsHTML(true, lobbyType, matchSettings)}
-                <button type="submit" id="apply-lobby-settings" class="px-6 py-3.5 border-0 rounded-lg font-semibold text-base cursor-pointer transition-all uppercase tracking-wide text-white bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/30">
+                <button type="submit" id="apply-lobby-settings" class="hidden px-6 py-3.5 border-0 rounded-lg font-semibold text-base cursor-pointer transition-all uppercase tracking-wide text-white bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/30">
                     Apply
                 </button>
             </form>
         `;
 
-        document.getElementById('settings-change-form')
-            ?.addEventListener('submit', (e: SubmitEvent) => applySettingsClicked(e));
+        // Selects start disabled for everyone
+        lobbySettingsElement.querySelectorAll('select').forEach(s => (s as HTMLSelectElement).disabled = true);
+
+        if (amIHost) {
+            document.getElementById('btn-change-settings')?.addEventListener('click', () => {
+                const isEditing = !document.getElementById('apply-lobby-settings')?.classList.contains('hidden');
+                // Toggle edit mode: enable/disable selects and show/hide Apply
+                lobbySettingsElement.querySelectorAll('select').forEach(s => (s as HTMLSelectElement).disabled = isEditing);
+                document.getElementById('apply-lobby-settings')?.classList.toggle('hidden');
+                // Hide all action buttons except Leave while editing
+                ['btn-invite', 'btn-ready', 'btn-start'].forEach(id => {
+                    document.getElementById(id)?.classList.toggle('hidden', !isEditing);
+                });
+            });
+            document.getElementById('settings-change-form')?.addEventListener('submit', (e: SubmitEvent) => {
+                applySettingsClicked(e);
+                // settings re-render from server will reset the state (and re-render re-shows all buttons)
+            });
+        }
     }
     
     //The action buttons are the ones on the bottom right of the screen

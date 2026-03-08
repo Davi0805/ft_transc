@@ -7,7 +7,7 @@ import { TDynamicLobbySettings } from "../lobbyTyping";
 //    They are static normal labels usually, but if the user clicks on the button, they become dropdowns
 // - type: the type of lobby. It is needed to decide which maps should be an option (for example, ranked matches do not allow for team matches)
 // - lobbySettings: The settings to render
-export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySettings: TDynamicLobbySettings) {
+export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySettings: TDynamicLobbySettings, selectWrapperClass?: string) {
     let tagType = "";
     let mapOptionsHtml = "";
     let modeOptionsHtml = ""
@@ -83,25 +83,27 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
     const displayClass = "px-4 py-3 bg-black/30 rounded-full text-base border border-white/10 font-medium";
     const chevron = `<div class="absolute inset-y-0 right-3 flex items-center pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>`;
 
+    const wrapperClass = selectWrapperClass ?? "relative flex-1 min-w-0";
+
     if (editable) {
         return `
             <div class="flex flex-row items-center justify-between gap-4">
                 <label for="match-map" class="text-base font-medium text-white/90 min-w-fit shrink-0">Map</label>
-                <div class="relative flex-1 min-w-0">
+                <div class="${wrapperClass}">
                     <select id="match-map" name="match-map" class="${selectClass}">${mapOptionsHtml}</select>
                     ${chevron}
                 </div>
             </div>
             <div class="flex flex-row items-center justify-between gap-4">
                 <label for="match-mode" class="text-base font-medium text-white/90 min-w-fit shrink-0">Mode</label>
-                <div class="relative flex-1 min-w-0">
+                <div class="${wrapperClass}">
                     <select id="match-mode" name="match-mode" class="${selectClass}">${modeOptionsHtml}</select>
                     ${chevron}
                 </div>
             </div>
             <div class="flex flex-row items-center justify-between gap-4">
                 <label for="match-duration" class="text-base font-medium text-white/90 min-w-fit shrink-0">Duration</label>
-                <div class="relative flex-1 min-w-0">
+                <div class="${wrapperClass}">
                     <select id="match-duration" name="match-duration" class="${selectClass}">${durationOptionsHtml}</select>
                     ${chevron}
                 </div>
@@ -110,17 +112,17 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
     }
 
     return `
-        <div class="mb-5">
-            <label class="block mb-2 font-medium text-white/90">Map</label>
-            <p id="match-map" class="${displayClass}">${mapOptionsHtml}</p>
+        <div class="flex items-center justify-between gap-3">
+            <label class="text-sm font-semibold text-white/80 shrink-0">Map</label>
+            <p id="match-map" class="px-3 py-1.5 bg-black/30 rounded-full text-sm border border-white/10 font-medium truncate">${mapOptionsHtml}</p>
         </div>
-        <div class="mb-5">
-            <label class="block mb-2 font-medium text-white/90">Mode</label>
-            <p id="match-mode" class="${displayClass}">${modeOptionsHtml}</p>
+        <div class="flex items-center justify-between gap-3">
+            <label class="text-sm font-semibold text-white/80 shrink-0">Mode</label>
+            <p id="match-mode" class="px-3 py-1.5 bg-black/30 rounded-full text-sm border border-white/10 font-medium truncate">${modeOptionsHtml}</p>
         </div>
-        <div class="mb-5">
-            <label class="block mb-2 font-medium text-white/90">Duration</label>
-            <p id="match-duration" class="${displayClass}">${durationOptionsHtml}</p>
+        <div class="flex items-center justify-between gap-3">
+            <label class="text-sm font-semibold text-white/80 shrink-0">Duration</label>
+            <p id="match-duration" class="px-3 py-1.5 bg-black/30 rounded-full text-sm border border-white/10 font-medium truncate">${durationOptionsHtml}</p>
         </div>
     `
 }

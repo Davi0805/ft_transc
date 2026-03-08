@@ -24,12 +24,12 @@ export const CreateLobbyPage = {
       <form id="lobby-creation-form" class="space-y-6">
         <!-- Lobby Name -->
         <div class="flex flex-row items-center justify-between gap-4">
-          <label for="lobby-name" class="text-base font-medium text-myWhite/90 min-w-fit">Name</label>
-          <input 
-              id="lobby-name" 
-              name="lobby-name" 
-              type="text" 
-              class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite px-[20px] py-[20px] pr-[45px] text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in"
+          <label for="lobby-name" class="text-base font-medium text-myWhite/90 min-w-fit shrink-0">Name</label>
+          <input
+              id="lobby-name"
+              name="lobby-name"
+              type="text"
+              class="h-11 w-[300px] rounded-3xl border-2 border-black/20 bg-myWhite pl-5 pr-4 text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300 transition-all duration-200 ease-in"
               placeholder="Enter lobby name"
               required
           >
@@ -37,17 +37,20 @@ export const CreateLobbyPage = {
 
 
         <div class="flex flex-row items-center justify-between gap-4">
-            <label for="lobby-type" class="text-base font-medium text-myWhite/90 min-w-fit">Type</label>
-            <select 
-                id="lobby-type" 
-                name="lobby-type" 
-                class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-[20px] font-medium  text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in"
-                required
-            >
-                <option value="friendly">Friendly Match</option>
-                <option value="ranked">Ranked Match</option>
-                <option value="tournament">Tournament</option>
-            </select>
+            <label for="lobby-type" class="text-base font-medium text-myWhite/90 min-w-fit shrink-0">Type</label>
+            <div class="relative w-[300px]">
+              <select
+                  id="lobby-type"
+                  name="lobby-type"
+                  class="h-11 w-full rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-5 pr-10 font-medium text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300 transition-all duration-200 ease-in appearance-none"
+                  required
+              >
+                  <option value="friendly">Friendly Match</option>
+                  <option value="ranked">Ranked Match</option>
+                  <option value="tournament">Tournament</option>
+              </select>
+              <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </div>
         </div>
 
 
@@ -108,7 +111,7 @@ export const CreateLobbyPage = {
       map: "2-players-small",
       mode: "classic",
       duration: "classical",
-    });
+    }, "relative w-[300px]");
   },
 
 

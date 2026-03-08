@@ -21,9 +21,12 @@ export class RankedLobbyRenderer extends AMatchLobbyRenderer {
         const slotJoinElement = document.createElement('button');
         slotJoinElement.id = `join-${teamName}-${roleName}`;
         slotJoinElement.type = "button";
-        slotJoinElement.className = "bg-gradient-to-br from-emerald-500 to-emerald-600 px-5 py-2 rounded-md text-white font-semibold cursor-pointer transition-all hover:from-emerald-600 hover:to-emerald-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/30";
+        slotJoinElement.className = "bg-gradient-to-br from-emerald-500 to-emerald-600 px-5 py-2 rounded-md text-white font-semibold cursor-pointer transition-all hover:from-emerald-600 hover:to-emerald-700 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/30";
         slotJoinElement.textContent = "Join";
-        slotJoinElement.addEventListener('click', async () => joinRankedClicked(SIDES[teamName], ROLES[roleName]));
+        slotJoinElement.addEventListener('click', () => {
+            document.querySelectorAll<HTMLButtonElement>('[id^="join-"]').forEach(b => b.disabled = true);
+            joinRankedClicked(SIDES[teamName], ROLES[roleName]);
+        });
         slotSpaceElement.appendChild(slotJoinElement);
     }
 
