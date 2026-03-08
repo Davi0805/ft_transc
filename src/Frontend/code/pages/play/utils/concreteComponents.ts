@@ -79,22 +79,32 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
 
 
 
-    const selectClass = "h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-white text-base pl-[20px] font-medium text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300 transition-all duration-200 ease-in";
+    const selectClass = "h-11 w-full rounded-3xl border-2 border-black/20 bg-white text-base pl-5 pr-10 font-medium text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300 transition-all duration-200 ease-in appearance-none";
     const displayClass = "px-4 py-3 bg-black/30 rounded-full text-base border border-white/10 font-medium";
+    const chevron = `<div class="absolute inset-y-0 right-3 flex items-center pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>`;
 
     if (editable) {
         return `
             <div class="flex flex-row items-center justify-between gap-4">
-                <label for="match-map" class="text-base font-medium text-white/90 min-w-fit">Map</label>
-                <select id="match-map" name="match-map" class="${selectClass}">${mapOptionsHtml}</select>
+                <label for="match-map" class="text-base font-medium text-white/90 min-w-fit shrink-0">Map</label>
+                <div class="relative flex-1 min-w-0">
+                    <select id="match-map" name="match-map" class="${selectClass}">${mapOptionsHtml}</select>
+                    ${chevron}
+                </div>
             </div>
             <div class="flex flex-row items-center justify-between gap-4">
-                <label for="match-mode" class="text-base font-medium text-white/90 min-w-fit">Mode</label>
-                <select id="match-mode" name="match-mode" class="${selectClass}">${modeOptionsHtml}</select>
+                <label for="match-mode" class="text-base font-medium text-white/90 min-w-fit shrink-0">Mode</label>
+                <div class="relative flex-1 min-w-0">
+                    <select id="match-mode" name="match-mode" class="${selectClass}">${modeOptionsHtml}</select>
+                    ${chevron}
+                </div>
             </div>
             <div class="flex flex-row items-center justify-between gap-4">
-                <label for="match-duration" class="text-base font-medium text-white/90 min-w-fit">Duration</label>
-                <select id="match-duration" name="match-duration" class="${selectClass}">${durationOptionsHtml}</select>
+                <label for="match-duration" class="text-base font-medium text-white/90 min-w-fit shrink-0">Duration</label>
+                <div class="relative flex-1 min-w-0">
+                    <select id="match-duration" name="match-duration" class="${selectClass}">${durationOptionsHtml}</select>
+                    ${chevron}
+                </div>
             </div>
         `;
     }

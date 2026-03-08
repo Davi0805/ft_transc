@@ -7,23 +7,25 @@ export const LobbyPage = {
 
     template() {
         return `
+            <div class="w-full h-full px-4 py-4 lg:px-16 lg:py-8">
             <div class="flex rounded-xl bg-gradient-to-b from-blue-500 via-blue-800 to-neutral-900 shadow-2xl shadow-black border-y border-black text-white w-full h-full overflow-hidden">
-                <div class="flex-1 p-8 flex flex-col gap-5 relative overflow-y-auto">
-                    <div class="text-center mb-8">
-                        <h1 id="lobby-title" class="text-4xl font-bold mb-2 tracking-widest"></h1>
-                        <h3 id="lobby-subtitle" class="text-xl opacity-80"></h3>
+                <div class="flex-1 p-4 lg:p-8 flex flex-col gap-3 lg:gap-5 relative overflow-y-auto">
+                    <div class="text-center mb-4 lg:mb-8">
+                        <h1 id="lobby-title" class="text-2xl lg:text-4xl font-bold mb-2 tracking-widest"></h1>
+                        <h3 id="lobby-subtitle" class="text-base lg:text-xl opacity-80"></h3>
                     </div>
-                    <div id="players" class="grid grid-cols-2 gap-5 mb-8">
+                    <div id="players" class="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 mb-4 lg:mb-8">
                     </div>
                     <h3 id="current-round"></h3>
                 </div>
-                <div id="lobby-settings-and-buttons" class="w-96 bg-black/20 p-8 flex flex-col border-l border-white/10 relative">
+                <div id="lobby-settings-and-buttons" class="w-72 lg:w-96 bg-black/20 p-4 lg:p-8 flex flex-col border-l border-white/10 relative">
                     <div id="lobby-settings" class="flex flex-col">
                     </div>
-                    <div class="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-5"></div>
-                    <div id="lobby-buttons" class="mt-auto flex flex-col gap-4">
+                    <div class="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-4 lg:my-5"></div>
+                    <div id="lobby-buttons" class="mt-auto flex flex-col gap-2 lg:gap-4">
                     </div>
                 </div>
+            </div>
             </div>
         `;
     },
