@@ -23,22 +23,22 @@ export const CreateLobbyPage = {
       <!-- Lobby creation form -->
       <form id="lobby-creation-form" class="space-y-6">
         <!-- Lobby Name -->
-        <div class="flex flex-row items-center justify-between gap-4">
-          <label for="lobby-name" class="text-base font-medium text-myWhite/90 min-w-fit shrink-0">Name</label>
+        <div class="flex flex-row items-center gap-4">
+          <label for="lobby-name" class="w-[80px] shrink-0 text-base font-medium text-myWhite/90">Name</label>
           <input
               id="lobby-name"
               name="lobby-name"
               type="text"
-              class="h-11 w-[300px] rounded-3xl border-2 border-black/20 bg-myWhite pl-5 pr-4 text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300 transition-all duration-200 ease-in"
+              class="h-11 flex-1 rounded-3xl border-2 border-black/20 bg-myWhite pl-5 pr-4 text-base font-medium text-black caret-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300 transition-all duration-200 ease-in"
               placeholder="Enter lobby name"
               required
           >
         </div>
 
 
-        <div class="flex flex-row items-center justify-between gap-4">
-            <label for="lobby-type" class="text-base font-medium text-myWhite/90 min-w-fit shrink-0">Type</label>
-            <div class="relative w-[300px]">
+        <div class="flex flex-row items-center gap-4">
+            <label for="lobby-type" class="w-[80px] shrink-0 text-base font-medium text-myWhite/90">Type</label>
+            <div class="relative flex-1">
               <select
                   id="lobby-type"
                   name="lobby-type"
@@ -111,7 +111,7 @@ export const CreateLobbyPage = {
       map: "2-players-small",
       mode: "classic",
       duration: "classical",
-    }, "relative w-[300px]");
+    }, "relative flex-1 min-w-0", "w-[80px] shrink-0 text-base font-medium text-myWhite/90");
   },
 
 

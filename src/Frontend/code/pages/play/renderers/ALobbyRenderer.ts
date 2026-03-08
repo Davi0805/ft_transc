@@ -44,14 +44,16 @@ export abstract class ALobbyRenderer {
             </form>
         `;
 
-        // Selects start disabled for everyone
+        // Selects and chevrons start hidden/disabled for everyone
         lobbySettingsElement.querySelectorAll('select').forEach(s => (s as HTMLSelectElement).disabled = true);
+        lobbySettingsElement.querySelectorAll('.select-chevron').forEach(c => (c as HTMLElement).style.display = 'none');
 
         if (amIHost) {
             document.getElementById('btn-change-settings')?.addEventListener('click', () => {
                 const isEditing = !document.getElementById('apply-lobby-settings')?.classList.contains('hidden');
-                // Toggle edit mode: enable/disable selects and show/hide Apply
+                // Toggle edit mode: enable/disable selects and show/hide Apply + chevrons
                 lobbySettingsElement.querySelectorAll('select').forEach(s => (s as HTMLSelectElement).disabled = isEditing);
+                lobbySettingsElement.querySelectorAll('.select-chevron').forEach(c => (c as HTMLElement).style.display = isEditing ? 'none' : 'flex');
                 document.getElementById('apply-lobby-settings')?.classList.toggle('hidden');
                 // Hide all action buttons except Leave while editing
                 ['btn-invite', 'btn-ready', 'btn-start'].forEach(id => {

@@ -7,7 +7,7 @@ import { TDynamicLobbySettings } from "../lobbyTyping";
 //    They are static normal labels usually, but if the user clicks on the button, they become dropdowns
 // - type: the type of lobby. It is needed to decide which maps should be an option (for example, ranked matches do not allow for team matches)
 // - lobbySettings: The settings to render
-export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySettings: TDynamicLobbySettings, selectWrapperClass?: string) {
+export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySettings: TDynamicLobbySettings, selectWrapperClass?: string, labelClass?: string) {
     let tagType = "";
     let mapOptionsHtml = "";
     let modeOptionsHtml = ""
@@ -59,15 +59,30 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
             "marathon"
         ]
 
+        const mapLabels: Record<string, string> = {
+            "2-players-small":  "Small 1Px2T",
+            "2-players-medium": "Medium 1Px2T",
+            "2-players-big":    "Big 1Px2T",
+            "4-players-small":  "Small 1Px4T",
+            "4-players-medium": "Medium 1Px4T",
+            "4-players-big":    "Big 1Px4T",
+            "2-teams-small":    "Small 2Px2T",
+            "2-teams-medium":   "Medium 2Px2T",
+            "2-teams-big":      "Big 2Px2T",
+            "4-teams-small":    "Small 2Px4T",
+            "4-teams-medium":   "Medium 2Px4T",
+            "4-teams-big":      "Big 2Px4T",
+        }
+
         //Creates the html with all the options
         for (let option of mapOptions) {
-            mapOptionsHtml += `<option value="${option}" ${lobbySettings.map === option ? "selected" : ""}>${option}</option>`;
+            mapOptionsHtml += `<option value="${option}" ${lobbySettings.map === option ? "selected" : ""}>${mapLabels[option] ?? option}</option>`;
         }
         for (let option of modeOptions) {
-            modeOptionsHtml += `<option value="${option}" ${lobbySettings.mode === option ? "selected" : ""}>${option}</option>`;
+            modeOptionsHtml += `<option value="${option}" ${lobbySettings.mode === option ? "selected" : ""}>${option.charAt(0).toUpperCase() + option.slice(1)}</option>`;
         }
         for (let option of lengthOptions) {
-            durationOptionsHtml += `<option value="${option}" ${lobbySettings.duration === option ? "selected" : ""}>${option}</option>`;
+            durationOptionsHtml += `<option value="${option}" ${lobbySettings.duration === option ? "selected" : ""}>${option.charAt(0).toUpperCase() + option.slice(1)}</option>`;
         }
     } else {
         //If options are not editable, a single p tag with the selected option will suffice
@@ -81,28 +96,29 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
 
     const selectClass = "h-11 w-full rounded-3xl border-2 border-black/20 bg-white text-base pl-5 pr-10 font-medium text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300 transition-all duration-200 ease-in appearance-none";
     const displayClass = "px-4 py-3 bg-black/30 rounded-full text-base border border-white/10 font-medium";
-    const chevron = `<div class="absolute inset-y-0 right-3 flex items-center pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>`;
+    const chevron = `<div class="select-chevron absolute inset-y-0 right-3 flex items-center pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>`;
 
     const wrapperClass = selectWrapperClass ?? "relative flex-1 min-w-0";
+    const lblClass = labelClass ?? "text-base font-medium text-white/90 min-w-fit shrink-0";
 
     if (editable) {
         return `
-            <div class="flex flex-row items-center justify-between gap-4">
-                <label for="match-map" class="text-base font-medium text-white/90 min-w-fit shrink-0">Map</label>
+            <div class="flex flex-row items-center gap-4">
+                <label for="match-map" class="${lblClass}">Map</label>
                 <div class="${wrapperClass}">
                     <select id="match-map" name="match-map" class="${selectClass}">${mapOptionsHtml}</select>
                     ${chevron}
                 </div>
             </div>
-            <div class="flex flex-row items-center justify-between gap-4">
-                <label for="match-mode" class="text-base font-medium text-white/90 min-w-fit shrink-0">Mode</label>
+            <div class="flex flex-row items-center gap-4">
+                <label for="match-mode" class="${lblClass}">Mode</label>
                 <div class="${wrapperClass}">
                     <select id="match-mode" name="match-mode" class="${selectClass}">${modeOptionsHtml}</select>
                     ${chevron}
                 </div>
             </div>
-            <div class="flex flex-row items-center justify-between gap-4">
-                <label for="match-duration" class="text-base font-medium text-white/90 min-w-fit shrink-0">Duration</label>
+            <div class="flex flex-row items-center gap-4">
+                <label for="match-duration" class="${lblClass}">Duration</label>
                 <div class="${wrapperClass}">
                     <select id="match-duration" name="match-duration" class="${selectClass}">${durationOptionsHtml}</select>
                     ${chevron}
