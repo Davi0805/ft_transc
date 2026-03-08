@@ -79,24 +79,38 @@ export function getLobbyOptionsHTML(editable: boolean, type: TLobbyType, lobbySe
 
 
 
+    const selectClass = "h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-white text-base pl-[20px] font-medium text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300 transition-all duration-200 ease-in";
+    const displayClass = "px-4 py-3 bg-black/30 rounded-full text-base border border-white/10 font-medium";
+
+    if (editable) {
+        return `
+            <div class="flex flex-row items-center justify-between gap-4">
+                <label for="match-map" class="text-base font-medium text-white/90 min-w-fit">Map</label>
+                <select id="match-map" name="match-map" class="${selectClass}">${mapOptionsHtml}</select>
+            </div>
+            <div class="flex flex-row items-center justify-between gap-4">
+                <label for="match-mode" class="text-base font-medium text-white/90 min-w-fit">Mode</label>
+                <select id="match-mode" name="match-mode" class="${selectClass}">${modeOptionsHtml}</select>
+            </div>
+            <div class="flex flex-row items-center justify-between gap-4">
+                <label for="match-duration" class="text-base font-medium text-white/90 min-w-fit">Duration</label>
+                <select id="match-duration" name="match-duration" class="${selectClass}">${durationOptionsHtml}</select>
+            </div>
+        `;
+    }
+
     return `
-        <div class="flex flex-row items-center justify-between gap-4">
-            <label for="match-map" class="text-base font-medium text-white/90 min-w-fit">Map</label>
-            <${tagType} id="match-map" name="match-map" class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-[20px] font-medium  text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in">
-                ${mapOptionsHtml}
-            </${tagType}>
+        <div class="mb-5">
+            <label class="block mb-2 font-medium text-white/90">Map</label>
+            <p id="match-map" class="${displayClass}">${mapOptionsHtml}</p>
         </div>
-        <div class="flex flex-row items-center justify-between gap-4">
-            <label for="match-mode" class="text-base font-medium text-white/90 min-w-fit">Mode</label>
-            <${tagType} id="match-mode" name="match-mode" class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-[20px] font-medium  text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in">
-                ${modeOptionsHtml}
-            </${tagType}>
+        <div class="mb-5">
+            <label class="block mb-2 font-medium text-white/90">Mode</label>
+            <p id="match-mode" class="${displayClass}">${modeOptionsHtml}</p>
         </div>
-        <div class="flex flex-row items-center justify-between gap-4">
-            <label for="match-duration" class="text-base font-medium text-white/90 min-w-fit">Duration</label>
-            <${tagType} id="match-duration" name="match-duration" class="h-11 w-[350px] ml-auto rounded-3xl border-2 border-black/20 bg-myWhite text-base pl-[20px] font-medium  text-black outline-none focus:border-transparent focus:ring-2 focus:ring-blue-300  transition-all duration-200 ease-in">
-                ${durationOptionsHtml}
-            </${tagType}>
+        <div class="mb-5">
+            <label class="block mb-2 font-medium text-white/90">Duration</label>
+            <p id="match-duration" class="${displayClass}">${durationOptionsHtml}</p>
         </div>
     `
 }

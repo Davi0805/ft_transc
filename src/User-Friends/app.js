@@ -39,7 +39,6 @@ const setup = () => {
 
     inputValid.setup(app);
     app.register(prometheus, { endpoint: '/metrics' });
-    app.register(multer.contentParser);
     app.register(multerConfig);
     app.register(cors, { origin: true });
     app.register(fastifyStatic, {

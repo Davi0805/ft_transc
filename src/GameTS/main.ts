@@ -30,7 +30,9 @@ const setup = () => {
     fastify.register(fastifyWebsocket);
     fastify.register(fastifyMetrics.default, {endpoint: '/metrics'}) //Must check if this works
     fastify.register(cors, {
-        origin: true
+        origin: true,
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
     })
     fastify.register(fastifySensible);
 

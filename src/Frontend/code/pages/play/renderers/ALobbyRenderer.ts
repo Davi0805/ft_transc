@@ -7,7 +7,7 @@ import { ErrorPopup } from "../../../utils/popUpError";
 import { applySettingsClicked, inviteUserClicked, leaveClicked, readyClicked, startClicked } from "../buttonCallbacks";
 import { TDynamicLobbySettings, TLobbyType } from "../lobbyTyping";
 import { getLobbyOptionsHTML } from "../utils/concreteComponents";
-import { flashButton, getButton, toggleButton } from "../utils/stylingComponents";
+import { flashButton } from "../utils/stylingComponents";
 
 //The parent of all parents. Implements the rendering functions that are common to all lobby types
 export abstract class ALobbyRenderer {
@@ -21,69 +21,92 @@ export abstract class ALobbyRenderer {
         subtitleElement.textContent = this.subtitleText;
     }
 
-    //Renders the settings, including the button to change them
+    private _pencilIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+
+    //Renders the settings header (title + optional edit button) and the static settings display
     async renderSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings, amIHost: boolean) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        //As the html for the options is created inside the helper, it is inserted directly in the innerHTML
-        lobbySettingsElement.innerHTML = getLobbyOptionsHTML(false, lobbyType, matchSettings);
 
-        //Only the host can change the settings, so the button is only rendered in that case
+        const editBtnHTML = amIHost
+            ? `<button id="btn-change-settings" class="bg-white/10 border border-white/20 w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:bg-white/20 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30 text-white" title="Edit Settings">${this._pencilIconSVG}</button>`
+            : '';
+
+        lobbySettingsElement.innerHTML = `
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-3xl font-semibold">Lobby Settings</h2>
+                ${editBtnHTML}
+            </div>
+            ${getLobbyOptionsHTML(false, lobbyType, matchSettings)}
+        `;
+
         if (amIHost) {
-            const buttonChangeSettings = getButton("btn-change-settings", "button", "Change lobby settings", false);
-            buttonChangeSettings.addEventListener('click', () => this.renderChangeSettings(lobbyType, matchSettings))
-            lobbySettingsElement.appendChild(buttonChangeSettings);
+            document.getElementById('btn-change-settings')
+                ?.addEventListener('click', () => this.renderChangeSettings(lobbyType, matchSettings));
         }
     }
 
-    //Renders the settings as dropdowns
+    //Renders the settings as editable dropdowns
     renderChangeSettings(lobbyType: TLobbyType, matchSettings: TDynamicLobbySettings) {
         const lobbySettingsElement = document.getElementById('lobby-settings') as HTMLElement;
-        //This time, the getLobbyOptionsHTML "editable" parameter is set as true
-        let lobbySettingsHtml = `
-            <form id="settings-change-form" class="flex flex-col gap-1">
-                ${getLobbyOptionsHTML(true, lobbyType, matchSettings)}
-                ${getButton("apply-lobby-settings", "submit", "Apply", false).outerHTML}
-            </div>
-        `;
-        lobbySettingsElement.innerHTML = lobbySettingsHtml;
 
-        //Connect the callback of the apply button
-        const formChangeSettings = document.getElementById('settings-change-form') as HTMLElement;
-        formChangeSettings.addEventListener('submit', (e: SubmitEvent) => applySettingsClicked(e))
+        lobbySettingsElement.innerHTML = `
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-3xl font-semibold">Lobby Settings</h2>
+            </div>
+            <form id="settings-change-form" class="flex flex-col gap-4">
+                ${getLobbyOptionsHTML(true, lobbyType, matchSettings)}
+                <button type="submit" id="apply-lobby-settings" class="px-6 py-3.5 border-0 rounded-lg font-semibold text-base cursor-pointer transition-all uppercase tracking-wide text-white bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/30">
+                    Apply
+                </button>
+            </form>
+        `;
+
+        document.getElementById('settings-change-form')
+            ?.addEventListener('submit', (e: SubmitEvent) => applySettingsClicked(e));
     }
     
     //The action buttons are the ones on the bottom right of the screen
     async renderActionButtons(amIHost: boolean) {
         const buttonsDiv = document.getElementById("lobby-buttons") as HTMLElement;
+        const base = "px-6 py-3.5 border-0 rounded-lg font-semibold text-base cursor-pointer transition-all uppercase tracking-wide text-white hover:-translate-y-0.5";
 
-        //GetButton is just creates a simple button with the options provided
-        const inviteButton = getButton("btn-invite", "button", "Invite");
+        const inviteButton = document.createElement('button');
+        inviteButton.id = "btn-invite"; inviteButton.type = "button";
+        inviteButton.className = `${base} bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 hover:shadow-xl hover:shadow-purple-500/30`;
+        inviteButton.textContent = "Invite Friends";
         inviteButton.addEventListener('click', () => this.InviteClickEventListener());
         buttonsDiv.appendChild(inviteButton);
 
-        const leaveButton = getButton("btn-leave", "button", "Leave");
+        const leaveButton = document.createElement('button');
+        leaveButton.id = "btn-leave"; leaveButton.type = "button";
+        leaveButton.className = `${base} bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:shadow-xl hover:shadow-red-500/30`;
+        leaveButton.textContent = "Leave Lobby";
         leaveButton.addEventListener('click', () => leaveClicked());
         buttonsDiv.appendChild(leaveButton);
 
-        const readyButton = getButton("btn-ready", "button", "Ready");
-        readyButton.addEventListener('click', () => readyClicked())
+        const readyButton = document.createElement('button');
+        readyButton.id = "btn-ready"; readyButton.type = "button";
+        readyButton.className = `${base} bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-xl hover:shadow-emerald-500/30`;
+        readyButton.textContent = "Ready";
+        readyButton.addEventListener('click', () => readyClicked());
         buttonsDiv.appendChild(readyButton);
 
         //Only render the start button if you are the host
         if (amIHost) {
-            const startButton = getButton("btn-start", "button", "Start");
-            startButton.addEventListener('click', () => startClicked())
+            const startButton = document.createElement('button');
+            startButton.id = "btn-start"; startButton.type = "button";
+            startButton.className = `px-6 py-4 border-0 rounded-lg font-semibold text-lg cursor-pointer transition-all uppercase tracking-wide text-white hover:-translate-y-0.5 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:shadow-2xl hover:shadow-blue-500/40`;
+            startButton.textContent = "Start Game";
+            startButton.addEventListener('click', () => startClicked());
             buttonsDiv.appendChild(startButton);
         }
     }
 
     updateReadyButton(ready: boolean) {
         const readyButton = document.getElementById('btn-ready') as HTMLButtonElement;
-        //We only want to toggle the button if the readiness state this func receives is different from the one already displayed
-        //The button is on ("active" is present in the classList) if the player is ready, off otherwise
-        if (readyButton.classList.contains("active") !== ready) {
-            toggleButton(readyButton, "I'm ready! (cancel...)", "Ready");
-        }
+        if (readyButton.classList.contains("active") === ready) return;
+        readyButton.classList.toggle('active', ready);
+        readyButton.textContent = ready ? "I'm ready! (cancel...)" : "Ready";
     }
 
     //Handling of blocked actions by server (server sends a specific type of message if an action received by it is not allowed)

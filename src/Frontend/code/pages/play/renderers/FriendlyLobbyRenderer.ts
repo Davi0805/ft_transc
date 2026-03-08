@@ -3,7 +3,7 @@ import { PaddleCarrossel } from "../../../components/carrossel/paddleCarrossel";
 import { ROLES, SIDES } from "../../../match/matchSharedDependencies/sharedTypes";
 import { joinFriendlyClicked, withdrawFriendlyClicked } from "../buttonCallbacks";
 import { getDirectionsFromTeam, TPlayerInSlot } from "../utils/helpers";
-import { getButton, setupKeyCaptureButton } from "../utils/stylingComponents";
+import { setupKeyCaptureButton } from "../utils/stylingComponents";
 import { AMatchLobbyRenderer } from "./AMatchLobbyRenderer";
 
 export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
@@ -16,21 +16,26 @@ export class FriendlyLobbyRenderer extends AMatchLobbyRenderer {
     }
 
     protected _renderJoinButton(
-        slotSpaceElement: HTMLTableCellElement,
+        slotSpaceElement: HTMLDivElement,
         teamName: (keyof typeof SIDES),
         roleName: (keyof typeof ROLES)
     ): void {
-        const slotJoinElement = getButton(`join-${teamName}-${roleName}`, "button", "Join", false);
-        //As this is a friendly match, the customize player window should show up when the join button is clicked
-        slotJoinElement.addEventListener('click', async () => this.renderCustomizePlayerWindow(SIDES[teamName], ROLES[roleName]))
+        const slotJoinElement = document.createElement('button');
+        slotJoinElement.id = `join-${teamName}-${roleName}`;
+        slotJoinElement.type = "button";
+        slotJoinElement.className = "bg-gradient-to-br from-emerald-500 to-emerald-600 px-5 py-2 rounded-md text-white font-semibold cursor-pointer transition-all hover:from-emerald-600 hover:to-emerald-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/30";
+        slotJoinElement.textContent = "Join";
+        slotJoinElement.addEventListener('click', async () => this.renderCustomizePlayerWindow(SIDES[teamName], ROLES[roleName]));
         slotSpaceElement.appendChild(slotJoinElement);
     }
 
-
     protected _renderWithdrawButton(playerDiv: HTMLDivElement, player: TPlayerInSlot): void {
-        const withdrawButton = getButton("btn-withdraw", "button", "X", false);
-        //Withdraw the right type of player when the withdraw button is clicked
-        withdrawButton.addEventListener("click", () => withdrawFriendlyClicked(player.id))
+        const withdrawButton = document.createElement('button');
+        withdrawButton.id = "btn-withdraw";
+        withdrawButton.type = "button";
+        withdrawButton.className = "bg-gradient-to-br from-red-500 to-red-600 px-3 py-1 rounded-md text-white font-semibold cursor-pointer transition-all hover:from-red-600 hover:to-red-700 text-xs";
+        withdrawButton.textContent = "X";
+        withdrawButton.addEventListener("click", () => withdrawFriendlyClicked(player.id));
         playerDiv.appendChild(withdrawButton);
     }
 
