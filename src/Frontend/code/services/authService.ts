@@ -3,6 +3,7 @@ import { Chat } from "../components/sidebar";
 import {getSelfData } from "../api/userData/getSelfDataAPI";
 import { getUserAvatarById } from "../api/userData/getUserAvatarAPI";
 import { webSocketService } from "../services/webSocketService";
+import { lobbySocketService } from "../services/lobbySocketService";
 import { chatWindowControler } from "../components/chatWindow";
 import { router } from "../routes/router";
 import { UserData } from "../api/userData/types/UserDataType";
@@ -97,6 +98,7 @@ export class AuthService {
     header.updateHeaderVisibility();
     chatWindowControler.close();
     webSocketService.disconnect();
+    lobbySocketService.disconnect();
     if (this.sidebar) {
       document.body.querySelector("main")?.classList.remove("mr-[200px]");
       document.body.querySelector("main")?.classList.add("mr-0");

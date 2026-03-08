@@ -6,7 +6,7 @@ import { getUserDataByUsername } from "../api/userData/getUserDataByUsernameAPI"
 import { UserData } from "../api/userData/types/UserDataType";
 import { getProfileUserData } from "../api/userData/getProfileUserDataAPI";
 import { ProfileDataType } from "../api/userData/types/ProfileDataType";
-import { isUserBlockedByUsername } from "../api/block/isUserBlockedByUsername";
+import { lobbySocketService } from "../services/lobbySocketService";
 
 
 class Router {
@@ -29,7 +29,7 @@ class Router {
       if (link) {
         e.preventDefault(); // Previne o comportamento padrão do navegador
         const href = link.getAttribute("href"); // Obtém o valor do href
-        //TODO ver se o socket do jogo esta open, se tiver close
+        lobbySocketService.disconnect();
         this.navigateTo(href!); // Navega para a rota usando o router
       }
     });

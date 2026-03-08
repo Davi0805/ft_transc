@@ -1,5 +1,3 @@
-import { getUserDataById } from "../../api/userData/getUserDataByIDAPI";
-import { UserData } from "../../api/userData/types/UserDataType";
 import { authService } from "../../services/authService";
 import { updateName } from "../../api/settings/updateNameAPI";
 import { updatePassword } from "../../api/settings/updatePasswordAPI";
@@ -9,16 +7,9 @@ import { uploadAvatar } from "../../api/settings/uploadAvatarAPI";
 import { WarningPopup } from "../../utils/popUpWarn";
 import { ErrorPopup } from "../../utils/popUpError";
 import { SuccessPopup } from "../../utils/popUpSuccess";
-import { BlockedStatus, getBlockedUsers } from "../../api/block/getAllBlockedAPI";
+import { getAllFriends, FriendInfo } from "../../api/friends/chat/getAllFriendsAPI";
 import { getUserAvatarById } from "../../api/userData/getUserAvatarAPI";
-import { unblockByUserID } from "../../api/block/unblockByIDAPI";
-import { blockByUserName } from "../../api/block/blockByUsernameAPI";
-import { PaddleCarrossel } from "../../components/carrossel/paddleCarrossel";
-import { setupKeyCaptureButton } from "../play/utils/stylingComponents";
-import { savePlayerPreferences } from "../../api/settings/preferences/savePlayerPreferencesAPI";
-import { getPlayerPreferences } from "../../api/settings/preferences/getPlayerPreferencesAPI";
-import { PlayerPreferences } from "../../api/settings/preferences/PreferenceInterface";
-
+import { removeFriend } from "../../api/friends/removeFriendAPI";
 import { translator } from "../../services/translationService";
 
 export const SettingsPage = {
@@ -60,7 +51,6 @@ export const SettingsPage = {
                 <!-- NAVBAR -->
                 <div class="navbar mt-4 w-full text-center">
                   <button data-i18n="settings-nav-account" id="settings-account" class="transition- w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100 settings-active">Account</button>
-                  <button data-i18n="settings-nav-preferences" id="settings-preferences" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Preferences</button>
                   <button data-i18n="settings-nav-security" id="settings-security" class="w-full rounded-sm border-t border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Security</button>
                   <button data-i18n="settings-nav-social" id="settings-social" class="w-full rounded-sm border-y border-white/20 py-2 font-bold brightness-85 transition-all duration-300 ease-in-out hover:bg-gray-400/60 hover:brightness-100">Social</button>
                 </div>
@@ -174,131 +164,53 @@ export const SettingsPage = {
   },
 
   async getSocialHTML(): Promise<string> {
-    let blockListHTML: string = "";
+    let friendsListHTML: string = "";
 
     try {
-      // fetch all blocked users
-      const blockedUsers = await getBlockedUsers() as BlockedStatus[];
-      for (const block of blockedUsers) {
-        // redundant check cuz davi is a monkey
-        if (block.blocked_user_id !== authService.userID) {
-
-          const userData: UserData = await getUserDataById(block.blocked_user_id);
-          const userAvatar: string = await getUserAvatarById(block.blocked_user_id);
-
-          blockListHTML += this.createBlockedFriendElement(userData, userAvatar).outerHTML;
-        }
+      const friends = await getAllFriends() as FriendInfo[];
+      for (const friend of friends) {
+        const avatar: string = friend.user_image ?? await getUserAvatarById(friend.user_id);
+        friendsListHTML += this.createFriendElement(friend, avatar).outerHTML;
       }
     } catch (error) {
       throw error;
     }
 
-
     return `
           <h1 data-i18n="settings-social-title" class="mb-6 text-4xl font-bold">${translator.get("settings-social-title")}</h1>
-          <h2 data-i18n="settings-social-subtitle" class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">${translator.get("settings-social-subtitle")}</h2>
+          <h2 class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Friends</h2>
 
-          <!-- Blocked Users List -->
-          <h3 data-i18n="settings-social-blocked" class="font-semibold mb-2">${translator.get("settings-social-blocked")}</h3>
+          <!-- Friends List -->
+          <h3 class="font-semibold mb-2">Friend List</h3>
 
-          <div id="blocked-users-list" class="overflow-y-auto h-[240px] pr-2 space-y-3 no-scrollbar">
-            <!-- Will insert blocked users dynamically -->
-              ${blockListHTML.trim() === "" ? `<p data-i18n="settings-social-noblocked">${translator.get("settings-social-noblocked")}</p>` : blockListHTML}
-          </div>
-
-          <!-- Block User by Username -->
-          <div class="mt-4">
-            <h3 data-i18n="settings-social-blockuser" class="font-semibold mb-1">${translator.get("settings-social-blockuser")}</h3>
-            <div class="flex items-center space-x-3">
-              <input  id="username-to-block" type="text" class="input-settings" placeholder="${translator.get("settings-social-blockuser-placeholder")}" data-i18n-placeholder="settings-social-blockuser-placeholder" />
-              <button id="block-btn"  class="btn-settings" data-i18n="settings-social-blockuser-btn">${translator.get("settings-social-blockuser-btn")}</button>
-            </div>
+          <div id="friends-list" class="overflow-y-auto h-[240px] pr-2 space-y-3 no-scrollbar">
+            ${friendsListHTML.trim() === "" ? `<p>No friends yet.</p>` : friendsListHTML}
           </div>
     `;
   },
 
-  getPreferencesHTML(): string {
-    return `
-          <h1 data-i18n="settings-preferences-title" class="mb-6 text-4xl font-bold">Settings</h1>
-          <h2 data-i18n="settings-preferences-subtitle" class="mb-4 border-t border-white/20 pt-4 text-2xl font-semibold">Preferences</h2>
-
-          <form id="player-settings" method="dialog">
-            <!-- Alias Section -->
-            <div class="flex items-center space-x-3 mb-6">
-              <label for="player-alias" data-i18n="settings-preferences-alias" class="w-20 block text-base font-semibold text-white mb-2">Alias</label>
-              <input data-i18n-placeholder="settings-preferences-alias-placeholder"
-                id="player-alias"
-                name="player-alias"
-                type="text"
-                class="input-settings"
-                placeholder="Enter your alias"
-                required
-              />
-            </div>
-
-            <!-- Paddle Section -->
-            <div class="flex items-center space-x-3 mb-6">
-              <h3 data-i18n="settings-preferences-paddle" class="w-20 block text-base font-semibold text-white mb-2">Paddle</h3>
-              ${PaddleCarrossel.getPaddleCarrosselHTML()}
-            </div>
-
-
-
-            <!-- Controls Section -->
-            <div class="flex gap-20 items-center justify-center mb-6">
-              <div class="flex flex-col justify-center gap-1">
-                  <label  for="up-config" data-i18n="settings-preferences-up-btn" class="block text-base font-semibold text-white text-center">Up Button</label>
-                  <button 
-                      type="button" 
-                      id="up-config" 
-                      class="px-2 py-1.5 bg-slate-600/80 border border-slate-500/50 rounded-xl text-white text-base cursor-pointer transition-all duration-200 text-center font-semibold hover:bg-slate-600/90 hover:border-blue-500 active:bg-blue-500/20"
-                  >ArrowUp</button>
-                  <input type="hidden" id="up-key" name="up-key" value="ArrowUp">
-              </div>
-
-              <div class="flex flex-col justify-center gap-1">
-                  <label  for="down-config" data-i18n="settings-preferences-down-btn" class="block text-base font-semibold text-white text-center">Down Button</label>
-                  <button 
-                      type="button" 
-                      id="down-config" 
-                      class="px-2 py-1.5 bg-slate-600/80 border border-slate-500/50 rounded-xl text-white text-base cursor-pointer transition-all duration-200 text-center font-semibold hover:bg-slate-600/90 hover:border-blue-500 active:bg-blue-500/20"
-                  >ArrowDown</button>
-                  <input type="hidden" id="down-key" name="down-key" value="ArrowDown">
-              </div>
-            </div>
-
-
-            <!-- Submit Button -->
-            <div class="-mt-4 flex justify-end ">
-             <button data-i18n="settings-save-btn" id="save-btn" type="submit" class="btn-settings">Save</button>
-            </div>
-          </form>
-    `;
-
-  },
-
-  createBlockedFriendElement(userData: UserData, avatar: string): HTMLElement {
+  createFriendElement(friend: FriendInfo, avatar: string): HTMLElement {
     const newElement = document.createElement("div") as HTMLDivElement;
-    newElement.classList = `blocked flex items-center justify-between bg-white/10 rounded-lg px-4 py-2`;
-    newElement.setAttribute("data-id", userData.id.toString());
+    newElement.classList = `friend flex items-center justify-between bg-white/10 rounded-lg px-4 py-2`;
+    newElement.setAttribute("data-id", friend.user_id.toString());
     newElement.innerHTML = `
         <div class="flex items-center gap-3">
           <img src="${avatar}"
               alt="user-avatar"
-              class="w-10 h-10 rounded-full border-2 border-red-400" />
-          <span class="font-medium">${userData.username}</span>
+              class="w-10 h-10 rounded-full border-2 border-sky-400" />
+          <span class="font-medium">${friend.username}</span>
         </div>
-        <button data-i18n="settings-social-unblockuser-btn" class="unblock-btn bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-white font-semibold transition duration-200"
-                data-id="${userData.id}">
-          ${translator.get("settings-social-unblockuser-btn")}
+        <button class="unfriend-btn bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-white font-semibold transition duration-200"
+                data-id="${friend.user_id}">
+          Unfriend
         </button>
          `;
     return newElement;
   },
 
-  currentSection: "account" as "account" | "security" | "social" | "preferences",
+  currentSection: "account" as "account" | "security" | "social",
 
-  setCurrentSection(section: "account" | "security" | "social" | "preferences"): void {
+  setCurrentSection(section: "account" | "security" | "social"): void {
     if (SettingsPage.currentSection === section) {
       return;
     }
@@ -361,9 +273,6 @@ export const SettingsPage = {
         content.innerHTML = (await SettingsPage.getSocialHTML());
         SettingsPage.initSocialEvents();
         break;
-      case "preferences":
-        content.innerHTML = (SettingsPage.getPreferencesHTML());
-        SettingsPage.initPreferencesEvents();
     }
   },
 
@@ -646,11 +555,9 @@ export const SettingsPage = {
   },
 
   initSocialEvents(): void {
-    // block user by username
-    // add the event listener
-    const blockedList = document.getElementById("blocked-users-list");
-    if (!blockedList) {
-      console.error("DEBUG: No blocked list container found.");
+    const friendsList = document.getElementById("friends-list");
+    if (!friendsList) {
+      console.error("DEBUG: No friends list container found.");
 
       const warnPopup = new WarningPopup();
       warnPopup.create(
@@ -660,114 +567,42 @@ export const SettingsPage = {
       return;
     }
 
-    // event delegation for unblock buttons
-    blockedList.addEventListener("click", async (event) => {
+    // event delegation for unfriend buttons
+    friendsList.addEventListener("click", async (event) => {
       const target = event.target as HTMLElement;
-      if (target.classList.contains("unblock-btn")) {
-        const userID = parseInt(target.getAttribute("data-id") || "");
-        if (isNaN(userID)) {
-          console.error("DEBUG: Invalid user id on unblock button.");
-          return;
-        }
+      if (!target.classList.contains("unfriend-btn")) return;
 
-        try {
-          // call the unblock API
-          await unblockByUserID(userID);
-          // remove from DOM
-          const blockedDiv = target.closest(
-            ".blocked"
-          ) as HTMLDivElement | null;
-          if (blockedDiv) {
-            blockedDiv.remove();
-          }
-
-          // UI feedback
-          const succPopup = new SuccessPopup();
-          succPopup.create("User Unblocked", "The user was successfully unblocked.");
-        } catch (error) {
-          console.error("DEBUG: Error unblocking user:", error);
-
-          const errPopup = new ErrorPopup();
-          errPopup.create(
-            "Error Unblocking User",
-            "Seems like there was an error unblocking the user. Please refresh and try again."
-          );
-        }
-      }
-    });
-
-
-    // block user by username
-    const blockBtn = document.getElementById("block-btn");
-    const usernameInput = document.getElementById("username-to-block");
-    if (!blockBtn || !usernameInput) {
-      console.error("DEBUG: Block button or username input not found.");
-
-      const warnPopup = new WarningPopup();
-      warnPopup.create(
-        "Something is strange...",
-        "Seems like the page was not loaded correctly..."
-      );
-      return;
-    }
-
-    blockBtn.addEventListener("click", async () => {
-      const username = (usernameInput as HTMLInputElement).value.trim();
-      if (!username) {
-        const warnPopup = new WarningPopup();
-        warnPopup.create("Invalid Username", "Please enter a valid username to block.");
-        return;
-      }
-
-      if (username === authService.userUsername) {
-        const warnPopup = new WarningPopup();
-        warnPopup.create("Invalid Username", "You cannot block yourself.");
+      const friendID = parseInt(target.getAttribute("data-id") || "");
+      if (isNaN(friendID)) {
+        console.error("DEBUG: Invalid user id on unfriend button.");
         return;
       }
 
       try {
-        await blockByUserName(username);
+        await removeFriend(friendID);
 
-        // refresh the blocked list
-        console.debug("DEBUG: Refreshing blocked list after blocking a user.");
-        const socialHTML = await SettingsPage.getSocialHTML();
-        const content = document.getElementById("settings-content");
-        if (content) {
-          content.innerHTML = (socialHTML);
-          SettingsPage.initSocialEvents();
+        // remove from DOM
+        const friendDiv = target.closest(".friend") as HTMLDivElement | null;
+        if (friendDiv) {
+          friendDiv.remove();
         }
 
-        // check if blocked a friend and update friends list if so
-        if (authService.isUserAuthenticated()) {
-          // returns null if not found
-          console.debug("DEBUG: Checking if blocked user is a friend to update friends list.");
-          const friendConvID = authService.sidebar?.getConvIDByFriendUsername(username);
-          if (friendConvID) {
-            console.debug("DEBUG: Blocked user is a friend, deleting from friends list.");
-            authService.sidebar?.deleteContact(friendConvID);
-          }
-          else {
-            console.debug("DEBUG: Blocked user is not a friend, no update to friends list needed.");
-          }
+        // remove from sidebar contact list
+        const convID = authService.sidebar?.getConvIDByFriendID(friendID);
+        if (convID != null) {
+          authService.sidebar?.deleteContact(convID);
         }
 
-        // UI feedback
         const succPopup = new SuccessPopup();
-        succPopup.create("User Blocked", `The user ${username} was successfully blocked.`);
-      } catch (error: any) {
-        // todo add code for when username is invalid and for when user has been already blocked
-        // todo note that the backend returns 400 for both cases
-        // todo note that both users can be blocked by each other
-        if (error?.status == 400) {
-          const warnPopup = new WarningPopup();
-          warnPopup.create("Invalid Username", `The username ${username} is invalid. Please check and try again.`);
-          return;
-        }
-        else {
-          const errPopup = new ErrorPopup();
-          errPopup.create("Unexpected Error", `The username ${username} could not be blocked.`);
-          return;
-        }
+        succPopup.create("Friend Removed", "The user was successfully removed from your friends.");
+      } catch (error) {
+        console.error("DEBUG: Error removing friend:", error);
+
+        const errPopup = new ErrorPopup();
+        errPopup.create(
+          "Error Removing Friend",
+          "Seems like there was an error removing this friend. Please refresh and try again."
+        );
       }
     });
   },
@@ -853,140 +688,6 @@ export const SettingsPage = {
     }
   },
 
-  async initPreferencesEvents(): Promise<void> {
-    // load player preferences
-    let prefs: PlayerPreferences;
-    try {
-      //todo  const prefs = await getPlayerPreferences();
-      prefs = {
-        alias: "",
-        paddleID: 3,
-        keybinds: {
-          upKey: "w",
-          downKey: "s",
-        },
-      };
-    } catch (error) {
-      console.error("DEBUG: Error loading player preferences:", error);
-      const warnPopup = new WarningPopup();
-      warnPopup.create(
-        "Something is strange...",
-        "Seems like there was an error loading your preferences. Please refresh and try again."
-      );
-
-      // default prefs
-      prefs = {
-        alias: "",
-        paddleID: 1,
-        keybinds: {
-          upKey: "ArrowUp",
-          downKey: "ArrowDown",
-        },
-      };
-    }
-
-    const aliasInput = document.getElementById("player-alias") as HTMLInputElement;
-    const upKeyInput = document.getElementById("up-key") as HTMLInputElement;
-    const downKeyInput = document.getElementById("down-key") as HTMLInputElement;
-    const paddleInput = document.getElementById("player-paddle") as HTMLInputElement;
-
-    if (prefs && aliasInput && upKeyInput && downKeyInput && paddleInput) {
-      aliasInput.value = prefs.alias;
-      upKeyInput.value = prefs.keybinds.upKey;
-      downKeyInput.value = prefs.keybinds.downKey;
-      paddleInput.value = prefs.paddleID.toString();
-
-      // update button text
-      const upButton = document.getElementById("up-config");
-      const downButton = document.getElementById("down-config");
-      if (upButton) upButton.textContent = prefs.keybinds.upKey;
-      if (downButton) downButton.textContent = prefs.keybinds.downKey;
-    }
-
-    // constructor inits event listeners
-    const paddleCarrossel = new PaddleCarrossel(
-      "paddle-prev",
-      "paddle-next",
-      "paddle-image",
-      "player-paddle"
-    );
-
-    // key capture buttons
-    const upListener = document.getElementById("up-config") as HTMLButtonElement
-    const downListener = document.getElementById("down-config") as HTMLButtonElement
-    const upInput = document.getElementById("up-key") as HTMLInputElement
-    const downInput = document.getElementById("down-key") as HTMLInputElement
-
-    setupKeyCaptureButton(upListener, upInput)
-    setupKeyCaptureButton(downListener, downInput)
-
-
-    // form submit
-    const form = document.getElementById("player-settings");
-    if (!(form instanceof HTMLFormElement)) {
-      console.warn("DEBUG: Form element not found or incorrect.");
-
-      const warnPopup = new WarningPopup();
-      warnPopup.create(
-        "Something is strange...",
-        "Seems like the page was not loaded correctly..."
-      );
-      return;
-    }
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const aliasInput = form.querySelector<HTMLInputElement>("#player-alias");
-      const upKeyInput = form.querySelector<HTMLInputElement>("#up-key");
-      const downKeyInput = form.querySelector<HTMLInputElement>("#down-key");
-      const paddleInput = form.querySelector<HTMLInputElement>("#player-paddle");
-
-      if (!aliasInput || !upKeyInput || !downKeyInput || !paddleInput) {
-        console.error("DEBUG: Preferences inputs not found.");
-
-        const warnPopup = new WarningPopup();
-        warnPopup.create(
-          "Something is strange...",
-          "Seems like the page was not loaded correctly..."
-        );
-        return;
-      }
-
-      try {
-        const newAlias = aliasInput.value.trim();
-        const newUpKey = upKeyInput.value;
-        const newDownKey = downKeyInput.value;
-        const newPaddle = parseInt(paddleInput.value, 10);
-
-        const playerPreferences: PlayerPreferences = {
-          alias: newAlias,
-          paddleID: newPaddle,
-          keybinds: {
-            upKey: newUpKey,
-            downKey: newDownKey,
-          },
-        };
-
-        console.log("DEBUG: Saving player Preferences:", playerPreferences);
-        // todo await savePlayerPreferences(playerPreferences);
-
-        // UI feedback
-        const succPopup = new SuccessPopup();
-        succPopup.create("Preferences Saved", "Your player preferences have been successfully saved!");
-      } catch (error) {
-        console.error("DEBUG: Error parsing preferences input:", error);
-
-        const errPopup = new ErrorPopup();
-        errPopup.create(
-          "Error Saving Preferences",
-          "Seems like there was an error saving your preferences. Please refresh and try again."
-        );
-        return;
-      }
-    });
-
-  },
-
   init(): void {
     SettingsPage.currentSection = "account";
 
@@ -1002,8 +703,6 @@ export const SettingsPage = {
 
         if (target.matches("#settings-account")) {
           SettingsPage.setCurrentSection("account");
-        } else if (target.matches("#settings-preferences")) {
-          SettingsPage.setCurrentSection("preferences");
         } else if (target.matches("#settings-security")) {
           SettingsPage.setCurrentSection("security");
         } else if (target.matches("#settings-social")) {
