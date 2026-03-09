@@ -292,11 +292,11 @@ class MatchFactory {
 
     private _getSecondsFromDuration(duration: MatchDurationT) {
         const durationToSeconds: Record<MatchDurationT, number> = {
-            "blitz": 60,
-            "rapid": 90,
-            "classical": 120,
-            "long": 150,
-            "marathon": 180
+            "blitz": 3,
+            "rapid": 3,
+            "classical": 3,
+            "long": 3,
+            "marathon": 3
         }
         return durationToSeconds[duration]
     }

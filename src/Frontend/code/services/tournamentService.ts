@@ -58,6 +58,11 @@ class TournamentService {
         TournamentPage.renderStandings();
     }
 
+    displayTournamentEndOUT(participants: TTournamentParticipant[]) {
+        this.tournament.participants = participants;
+        TournamentPage.renderFinalStandings();
+    }
+
     displayPairingsOUT(pairingsIDs: [number, number][]) {
         const side: SIDES = matchService.getTeamFromPairings(lobbyService.myID, pairingsIDs);
         matchService.addDefaultControls(lobbyService.myID, side);

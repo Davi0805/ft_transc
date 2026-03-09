@@ -162,7 +162,7 @@ class LobbySocketService {
                 tournamentService.displayResultsOUT();
                 break;
             case "displayTournamentEnd":
-                tournamentService.displayStandingsOUT(dto.data.standings);
+                tournamentService.displayTournamentEndOUT(dto.data.standings);
                 break;
             default:
                 throw Error(dto.requestType)

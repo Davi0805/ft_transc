@@ -14,7 +14,7 @@ import { Pairing, SwissService } from "./SwissService.cjs";
 export type TournamentMatchT = [TournamentParticipantT, TournamentParticipantT];
 
 const STANDINGS_DISPLAY_DURATION = 5 * 1000
-const FINAL_STANDINGS_DISPLAY_DURATION = 5 * 1000
+const FINAL_STANDINGS_DISPLAY_DURATION = 10 * 60 * 1000
 const PAIRINGS_DISPLAY_DURATION = 5 * 1000
 const END_OF_GAME_DISPLAY_DURATION = 3 * 1000
 const RESULTS_DISPLAY_DURATION = 5 * 1000
